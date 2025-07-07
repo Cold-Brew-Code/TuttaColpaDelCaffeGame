@@ -67,7 +67,7 @@ public class MainPage extends JFrame {
         // ====================================================
 
         start.addActionListener(e -> {
-            System.out.println("Partita nuova iniziata!");
+            new GamePage(this).setVisible(true);
         });
 
         load.addActionListener(e -> {
