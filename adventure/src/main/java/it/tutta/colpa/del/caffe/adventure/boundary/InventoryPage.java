@@ -227,7 +227,7 @@ public class InventoryPage extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
+        this.setResizable(false);
         pack();
     }// </editor-fold>//GEN-END:initComponents
 

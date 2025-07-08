@@ -4,13 +4,12 @@
  */
 package it.tutta.colpa.del.caffe.adventure.boundary;
 
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
 import it.tutta.colpa.del.caffe.adventure.entity.Inventory;
+import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.util.HashMap;
 
 /**
  *
@@ -51,7 +50,8 @@ public class GamePage extends javax.swing.JFrame {
 
         if (scelta == javax.swing.JOptionPane.YES_OPTION) {
             this.dispose();
-            caller.setVisible(true);
+            new GameEndedPage(GameStatus.PERSA, caller).setVisible(true);
+
         }else if (scelta == javax.swing.JOptionPane.NO_OPTION) {
 
         }
@@ -128,6 +128,10 @@ public class GamePage extends javax.swing.JFrame {
 
         DialogPanel.setBackground(new java.awt.Color(204, 204, 255, 0));
 
+        saveButton.setBackground(Color.WHITE);
+        quitButton.setBackground(Color.WHITE);
+        sendButton.setBackground(Color.WHITE);
+        InvButton.setBackground(Color.WHITE);
 
         DialogTextArea.setEditable(false);
         DialogTextArea.setBackground(new java.awt.Color(255, 255, 255, 128));
@@ -166,14 +170,14 @@ public class GamePage extends javax.swing.JFrame {
             }
         });
 
-        saveButton.setText("Salva Progressi");
+        saveButton.setText("Salva");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
             }
         });
 
-        InvButton.setText("Inventario");
+        InvButton.setText("Zaino");
         InvButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 InvButtonActionPerformed(evt);
@@ -184,7 +188,14 @@ public class GamePage extends javax.swing.JFrame {
                     new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
                                                             .getImage()
                                                             .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
-
+        quitButton.setIcon(
+                new ImageIcon((new ImageIcon(getClass().getResource("/images/exit_icon.png")))
+                        .getImage()
+                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        saveButton.setIcon(
+                new ImageIcon((new ImageIcon(getClass().getResource("/images/save_icon.png")))
+                        .getImage()
+                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
         javax.swing.GroupLayout FooterPanelLayout = new javax.swing.GroupLayout(FooterPanel);
         FooterPanel.setLayout(FooterPanelLayout);
         FooterPanelLayout.setHorizontalGroup(
@@ -253,7 +264,6 @@ public class GamePage extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
