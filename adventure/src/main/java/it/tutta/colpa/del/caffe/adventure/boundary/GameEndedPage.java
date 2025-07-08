@@ -93,7 +93,7 @@ public class GameEndedPage extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(wallpaper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
+        this.setResizable(false);
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -105,7 +105,6 @@ public class GameEndedPage extends javax.swing.JFrame {
     private String getImagePath(GameStatus s){
         String victory_type;
         victory_type = switch (s) {
-            case PERSA -> "partita_persa";
             case VINTA -> "partita_vinta";
             case BAGNO_USATO -> "bocciato";
             default -> "partita_persa";
