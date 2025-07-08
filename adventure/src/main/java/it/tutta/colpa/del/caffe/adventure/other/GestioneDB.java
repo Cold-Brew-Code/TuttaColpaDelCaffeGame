@@ -9,6 +9,7 @@ package it.tutta.colpa.del.caffe.adventure.other;
 import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
 import it.tutta.colpa.del.caffe.adventure.entity.GameMap;
 import it.tutta.colpa.del.caffe.adventure.entity.Room;
+import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -101,16 +102,32 @@ public class GestioneDB {
     private GameMap creaCollegamentoS(GameMap mappa, Room array[]) throws SQLException{
         Room stanza1;
         Room stanza2;
+        Direzione direzione;
         Statement stm= con.createStatement();
         ResultSet rs= stm.executeQuery("SELECT * FROM CollecgamentoStanze");
         while(rs.next()){
             stanza1=array[rs.getInt("idStanzaIniziale")];
-            
-            
-            
-            
+            stanza2=array[rs.getInt("idStanzaFinale")];
+            if (rs.getString("direzione")== "n")
+                direzione= Direzione.NORD;
+            else if(rs.getString("direzione")== "s")
+                    direzione= Direzione.SUD;
+            else if(rs.getString("direzione")== "e")
+                    direzione= Direzione.EST;
+            else if(rs.getString("direzione")== "o")
+                    direzione= Direzione.OVEST;
+            else if(rs.getString("direzione")== "sopra")
+                    direzione= Direzione.SOPRA;
+            else if(rs.getString("direzione")== "sotto")
+                    direzione= Direzione.SOTTO;
+            else 
+                direzione=null;
+            mappa.collegaStanze(stanza1, stanza2, direzione);
+
         }
-        
+        rs.close();
+        stm.close();
+        return mappa;
     }
 
 
@@ -252,6 +269,7 @@ public class GestioneDB {
         return null;
     });
 }
+    
 
     
     
