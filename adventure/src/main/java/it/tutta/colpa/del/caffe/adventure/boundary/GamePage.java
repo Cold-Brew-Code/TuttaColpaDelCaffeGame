@@ -4,9 +4,13 @@
  */
 package it.tutta.colpa.del.caffe.adventure.boundary;
 
+import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
+import it.tutta.colpa.del.caffe.adventure.entity.Inventory;
+
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  *
@@ -176,6 +180,11 @@ public class GamePage extends javax.swing.JFrame {
             }
         });
 
+        InvButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
+                                                            .getImage()
+                                                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+
         javax.swing.GroupLayout FooterPanelLayout = new javax.swing.GroupLayout(FooterPanel);
         FooterPanel.setLayout(FooterPanelLayout);
         FooterPanelLayout.setHorizontalGroup(
@@ -253,7 +262,7 @@ public class GamePage extends javax.swing.JFrame {
     }//GEN-LAST:event_quitButtonActionPerformed
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed
-
+        new InventoryPage(new Inventory()).setVisible(true);
     }//GEN-LAST:event_InvButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitButtonActionPerformed

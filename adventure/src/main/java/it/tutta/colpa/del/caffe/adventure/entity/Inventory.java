@@ -5,46 +5,68 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import it.tutta.colpa.del.caffe.adventure.exception.InventoryException;
 
-/**
- *
- * @author pierpaolo
- */
+import java.util.HashMap;
+import java.util.Map;
+
 public class Inventory {
 
-    private List<AdvObject> list = new ArrayList<>();
+    private Map<AdvObject, Integer> inventory = new HashMap<>();
 
     /**
      *
-     * @return
+     * @return inventory
      */
-    public List<AdvObject> getList() {
-        return list;
+    public Map<AdvObject, Integer> getInventory() {
+        return inventory;
     }
 
     /**
      *
-     * @param list
+     * @param inventory
      */
-    public void setList(List<AdvObject> list) {
-        this.list = list;
-    }
-
-    /**
-     *
-     * @param o
-     */
-    public void add(AdvObject o) {
-        list.add(o);
+    public void setList(Map<AdvObject, Integer> inventory) {
+        this.inventory = inventory;
     }
 
     /**
      *
      * @param o
      */
-    public void remove(AdvObject o) {
-        list.remove(o);
+    public void add(AdvObject o, int quantity) throws InventoryException {
+        if(this.inventory.size()>=4){
+            throw new InventoryException("Attenzione: l'inventario è pieno");
+        }
+        inventory.put(o,quantity);
+    }
+
+    /**
+     *
+     * @param o
+     */
+    public void remove(AdvObject o, int quantity) throws InventoryException {
+        if (!inventory.containsKey(o)) {
+            throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
+        }
+        if (quantity>inventory.get(o)){
+            throw new InventoryException("Attenzione: non hai abbastanza oggetti nell'inventario");
+        }else if (quantity==inventory.get(o)){
+            inventory.remove(o);
+        }
+        inventory.replace(o, inventory.get(o)-quantity);
+    }
+    /**
+     *
+     * @param o
+     */
+    public void remove(AdvObject o) throws InventoryException {
+        if (!inventory.containsKey(o)) {
+            throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
+        }
+        if (1==inventory.get(o)){
+            inventory.remove(o);
+        }
+        inventory.replace(o, inventory.get(o)-1);
     }
 }
