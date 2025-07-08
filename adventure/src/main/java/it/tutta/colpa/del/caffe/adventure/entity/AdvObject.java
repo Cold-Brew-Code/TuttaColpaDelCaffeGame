@@ -32,6 +32,12 @@ public class AdvObject {
     private boolean open = false;
 
     private boolean push = false;
+    private boolean leggibile= false;
+    private boolean cliccabile= false;
+    private boolean visibile= false;
+    private boolean componibile= false;
+    private int utilizzi;
+    private boolean contenitore = false;
 
     /**
      *
@@ -89,7 +95,7 @@ public class AdvObject {
      *
      * @param name
      */
-    public void setName(String name) {
+    public void setNome(String name) {
         this.name = name;
     }
 
@@ -105,7 +111,7 @@ public class AdvObject {
      *
      * @param description
      */
-    public void setDescription(String description) {
+    public void setDescrizione(String description) {
         this.description = description;
     }
 
@@ -188,7 +194,63 @@ public class AdvObject {
     public void setPush(boolean push) {
         this.push = push;
     }
-
+    
+    
+    public void setLeggibile(boolean leggibile){
+        this.leggibile= leggibile;
+    }
+    
+    public boolean isLeggibile() {
+        return leggibile;
+    }
+    
+    public void setCliccabile(boolean cliccabile){
+        this.cliccabile= cliccabile;
+    }
+    
+    public boolean isCliccabile() {
+        return cliccabile;
+    }
+    
+    public void setVisibile(boolean visibile){
+        this.visibile= visibile;
+    }
+    public boolean isVisibile() {
+        return visibile;
+    }
+    
+    public void setComponibile(boolean componibile){
+        this.componibile= componibile;
+    }
+    
+    public boolean isComponibile() {
+        return componibile;
+    }
+    
+    /**
+     *
+     * @param utilizzi
+     */
+    public void setUtilizzi(int utilizzi){
+        this.utilizzi= utilizzi;
+    }
+    
+    /**
+     *
+     * @return
+     */
+    public int getUtilizzi (){
+        return utilizzi;
+    }
+    
+    public void setContenitore(boolean contenitore){
+        this.contenitore= contenitore;
+    }
+    
+     public boolean isContenitore() {
+        return contenitore;
+    }
+    
     /**
      *
      * @return
