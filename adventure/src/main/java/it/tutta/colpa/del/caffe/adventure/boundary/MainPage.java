@@ -72,11 +72,10 @@ public class MainPage extends JFrame {
         });
 
         load.addActionListener(e -> {
-            System.out.println("Caricamento partita...");
+            new ChoseSavePage(this).setVisible(true);
         });
 
         exit.addActionListener(e -> {
-            System.out.println("Chiusura del gioco...");
             System.exit(0);
         });
     }
