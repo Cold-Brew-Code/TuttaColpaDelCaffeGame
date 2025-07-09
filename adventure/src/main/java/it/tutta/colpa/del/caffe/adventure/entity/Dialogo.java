@@ -21,11 +21,11 @@ public class Dialogo  {
         dialogo= new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }
     
-    public void setDialogo(String dialogo){
+    public void addDialogo(String dialogo){
         this.dialogo.addVertex(dialogo);
     }
     
-    public void setRisposta(String domandaP, String domandaA,String risposta){
+    public void addRisposta(String domandaP, String domandaA,String risposta){
         this.dialogo.addEdge(domandaP, domandaA, new StringArcoGrafo(risposta));
     }
    // get da fare 
