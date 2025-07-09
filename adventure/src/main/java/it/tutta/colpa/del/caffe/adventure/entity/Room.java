@@ -5,6 +5,8 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,23 +17,12 @@ import java.util.List;
 public class Room {
 
     private final int id;
-
     private String name;
-
     private String description;
-
     private String look;
-
     private boolean visible = true;
-
-    private Room south = null;
-
-    private Room north = null;
-
-    private Room east = null;
-
-    private Room west = null;
-
+    private boolean denied_entry=false;
+    private ImageIcon image;
     private final List<AdvObject> objects = new ArrayList<>();
 
     /**
@@ -48,10 +39,22 @@ public class Room {
      * @param name
      * @param description
      */
+    public Room(int id, String name, String description,String image_name) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        ImageIcon img=new ImageIcon((new ImageIcon(getClass().getResource("/images/"+image_name)))
+                .getImage()
+                .getScaledInstance(951, javax.swing.GroupLayout.DEFAULT_SIZE, Image.SCALE_SMOOTH));
+        this.image=img;
+    }
+
+    // without image
     public Room(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+        image=null;
     }
 
     /**
@@ -100,70 +103,6 @@ public class Room {
      */
     public void setVisible(boolean visible) {
         this.visible = visible;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Room getSouth() {
-        return south;
-    }
-
-    /**
-     *
-     * @param south
-     */
-    public void setSouth(Room south) {
-        this.south = south;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Room getNorth() {
-        return north;
-    }
-
-    /**
-     *
-     * @param north
-     */
-    public void setNorth(Room north) {
-        this.north = north;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Room getEast() {
-        return east;
-    }
-
-    /**
-     *
-     * @param east
-     */
-    public void setEast(Room east) {
-        this.east = east;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public Room getWest() {
-        return west;
-    }
-
-    /**
-     *
-     * @param west
-     */
-    public void setWest(Room west) {
-        this.west = west;
     }
 
     /**
@@ -246,4 +185,11 @@ public class Room {
         return null;
     }
 
+    public boolean isDeniedEntry() {
+        return denied_entry;
+    }
+
+    public void setDeniedEntry(boolean denied_entry) {
+        this.denied_entry = denied_entry;
+    }
 }
