@@ -4,36 +4,33 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author giovanni
  */
 public class NPC {
     
-    final int id;
-    String nome;
-    int idStanza; 
-    int dialogoCor;
+    private final int id;
+    private String nome;
+    private int dialogoCor;
+    List<Dialogo> dialoghi;
     
     
-    public NPC(int id, String nome, int idStanza) {
+    
+    public NPC(int id, String nome) {
         this.id = id;
         this.nome = nome;
-        this.idStanza = idStanza;
         this.dialogoCor=1;
+        this.dialoghi= new ArrayList<>();
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    public void setIdStanza(int idStanza) {
-        this.idStanza = idStanza;
-    }
-
     
-    
-   
     public int getId() {
         return id;
     }
@@ -41,12 +38,16 @@ public class NPC {
     public String getNome() {
         return nome;
     }
-
-    public int getIdStanza() {
-        return idStanza;
+    
+    public void addDialogo(Dialogo dialogo){
+        this.dialoghi.add(dialogo);
+    }
+    
+    public Dialogo getDialogoCorr(){
+        this.dialogoCor++;
+        return this.dialoghi.get(this.dialogoCor);
     }
 
-    
     @Override
     public int hashCode() {
         int hash = 3;

@@ -49,6 +49,7 @@ create table if not exists Npc(
 );
 
 create table if not exists DialogoNpc(
+    id int,
     Npc int,
     dialogo text,
     iterazione enum(1,2,3),
@@ -332,158 +333,158 @@ values
 (5,'Ivano Ipoclorito (Inserviente)',10),
 (6, 'Dottor Cravattone', 20);
 
-insert into DialogoNpc(Npc, dialogo, iterazione, risposta1, risposta2, passoDialogo, rispostaPrecedente )-- risposta precedente si riferisce alla risposta 1 o 2 che abbiamo scelto 
+insert into DialogoNpc(id,Npc, dialogo, iterazione, risposta1, risposta2, passoDialogo, rispostaPrecedente )-- risposta precedente si riferisce alla risposta 1 o 2 che abbiamo scelto 
 values 
 
 -- dialogo bar 
 
-(7, 'Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!', 1, 'Un bagno? Uhm… fammi pensare… Allora, 
+(1,7, 'Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!', 1, 'Un bagno? Uhm… fammi pensare… Allora, 
 nell''antica Roma i bagni pubblici si chiamavano thermae… e poi c''erano anche le latrinae...', '', 1,0),
 
-(7, '…No, intendo un bagno vero. Qui. Adesso. Nel campus!', 1,'Ah! Allora… credo… no aspetta, forse era dietro il dipartimento di Filosofia… o 
+(1,7, '…No, intendo un bagno vero. Qui. Adesso. Nel campus!', 1,'Ah! Allora… credo… no aspetta, forse era dietro il dipartimento di Filosofia… o 
 forse davanti alla segreteria…', '', 2,1),
-(7, 'Quindi...non sai davvero dove sia?',1,'Ehm... no, scusa... sono solo al primo anno di Storia e credo di aver sbagliato strada… il dipartimento mio 
+(1,7, 'Quindi...non sai davvero dove sia?',1,'Ehm... no, scusa... sono solo al primo anno di Storia e credo di aver sbagliato strada… il dipartimento mio 
 non è nemmeno qui nel campus!\n "In bocca al lupo! E ricordati: la vera storia… la scrive chi arriva in tempo!', '',3,1),
 
 ---------------------------------------------------------
 
 -- dialoghi alunno - portinaio
-( 1, 'Ehilà, ragazzo. Hai l’aria di chi ha urgente bisogno... di informazioni. Posso aiutarti, ma solo se mi dici con esattezza cosa cerchi. Qui si gira per ore senza meta, sa?"
+( 2,1, 'Ehilà, ragazzo. Hai l’aria di chi ha urgente bisogno... di informazioni. Posso aiutarti, ma solo se mi dici con esattezza cosa cerchi. Qui si gira per ore senza meta, sa?"
 ', 1, 'Mi scusi, dove posso trovare un bagno funzionante?','Sa mica dove si tiene l’esame di Metodi Avanzati di Programmazione?', 1,0 ),
 
-(1, 'Eh... il piano terra non ha bagni, per motivi di mistero burocratico. Se sali al primo, magari trovi qualcosa, ma pare che il bagno sia in ostaggio di uno studente con la settimana enigmistica. Buona fortuna.', 1, '','', 2,1),
+(2,1, 'Eh... il piano terra non ha bagni, per motivi di mistero burocratico. Se sali al primo, magari trovi qualcosa, ma pare che il bagno sia in ostaggio di uno studente con la settimana enigmistica. Buona fortuna.', 1, '','', 2,1),
 
-(1, ' Quello? piano terra , a sinistra. Se ci arrivi in orario e asciutto, hai già fatto metà dell''impresa.', 1,'', '' 2,2);
+(2,1, ' Quello? piano terra , a sinistra. Se ci arrivi in orario e asciutto, hai già fatto metà dell''impresa.', 1,'', '' 2,2);
 
 -- secondo indovinello
 
-(1, 'Ti vedo provato il primo piano non ti ha regalato la gioia sperata eh? Il dipartimento è come un labirinto: sali per cercare una risposta e scendi con più domande.',
+(3,1, 'Ti vedo provato il primo piano non ti ha regalato la gioia sperata eh? Il dipartimento è come un labirinto: sali per cercare una risposta e scendi con più domande.',
  2,'Lei si sta divertendo, ma io rischio di esplodere. Aiuti uno studente in difficoltà!', 'Conosce scorciatoie o bagni ''non ufficiali''?',1,0 ),
 
-(1,'Va bene, va bene… al quarto piano c''è un bagno quasi sempre libero. Nessuno ci va perché dicono sia infestato da uno studente fuori corso, ma è solo leggenda.',2, '', '', 2,1),
-(1,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?', 2, '', '', 2,2),
+(3,1,'Va bene, va bene… al quarto piano c''è un bagno quasi sempre libero. Nessuno ci va perché dicono sia infestato da uno studente fuori corso, ma è solo leggenda.',2, '', '', 2,1),
+(3,1,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?', 2, '', '', 2,2),
 
 -- terzo indovinello 
-(1, 'Guarda chi torna... Hai la faccia di chi ha capito che le scale non sono sempre l''opzione migliore, eh?
+(4,1, 'Guarda chi torna... Hai la faccia di chi ha capito che le scale non sono sempre l''opzione migliore, eh?
 Purtroppo, per sbloccare l''ascensore serve rispondere a una domanda che tormenta anche i più bravi.
 Se sbagli, mi dispiace, niente corsa verso l''alto. Allora, senti qua:\n“In Java, quale tra queste forme di ereditarietà non è permessa?”', 3, 
 'L''ereditarietà multipla (una classe con più super-classi dirette).','L''ereditarietà semplice (una classe che estende una sola super-classe).', 1,0),
 
 -- risposta corretta 
-(1, 'Bravo! L''ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono.
+(4,1, 'Bravo! L''ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono.
 Va bene, prendi questa chiave: ti apre l''ascensore fino al settimo piano.Ma occhio: più sali, più i misteri si complicano.', 3, '','',2,1),
 
 --risposta errata
-(1, 'Mi dispiace, ragazzo. Se Java vietasse pure l''ereditarietà semplice, non resterebbe molto da estendere, eh?
+(4,1, 'Mi dispiace, ragazzo. Se Java vietasse pure l''ereditarietà semplice, non resterebbe molto da estendere, eh?
 Riprova quando ti ricordi come funziona davvero l''O.O.', 3,'', '', 2,2),
 
 -----------------------------------
 -- primo piano 
 
 -- dialogo alunno bagno in ostaggio 
-(2,'Chiunque tu sia, fermati! Il sapere è più urgente di qualunque bisogno fisico. Solo chi risponde con intelligenza sarà degno del sapere perduto. Risolvi il mio enigma e avrai una ricompensa.\n"
+(5,2,'Chiunque tu sia, fermati! Il sapere è più urgente di qualunque bisogno fisico. Solo chi risponde con intelligenza sarà degno del sapere perduto. Risolvi il mio enigma e avrai una ricompensa.\n"
  Indovinello:
 "Mi trovi in aula e anche tra le mani, disegno corridoi, scale e piani. Non ti parlo, ma ti dico dove andare… Chi sono? Prova a indovinare."',1,'Una piantina vera!', 'Una mappa!',1,0 ),
 
-(2, 'Una piantina vera????Errore. La piantina ti nutre, ma non ti guida. Mi dispiace, il bisogno di sapere è stato sconfitto dal bisogno… dell''altro genere!',1,'','',2,1),
-(2, 'Bravo. Hai fiuto per l''orientamento, oltre che per l''urgenza. C''è una mappa del dipartimento appesa nell''aula studio al piano terra, ma è coperta da un cartellone pubblicitario. Trovala e saprai dove andare."', 1, '' ,'',2,2),
+(5,2, 'Una piantina vera????Errore. La piantina ti nutre, ma non ti guida. Mi dispiace, il bisogno di sapere è stato sconfitto dal bisogno… dell''altro genere!',1,'','',2,1),
+(5,2, 'Bravo. Hai fiuto per l''orientamento, oltre che per l''urgenza. C''è una mappa del dipartimento appesa nell''aula studio al piano terra, ma è coperta da un cartellone pubblicitario. Trovala e saprai dove andare."', 1, '' ,'',2,2),
 
 
 ------------------------------------------------------
 -- Terzo piano (studente ansioso)
 
-(3,'Oh… tu sembri meno disperato di me… Forse puoi aiutarmi!Ho questo maledetto dubbio sul moto parabolico. Se mi aiuti, 
+(6,3,'Oh… tu sembri meno disperato di me… Forse puoi aiutarmi!Ho questo maledetto dubbio sul moto parabolico. Se mi aiuti, 
 potrei ricompensarti… con informazioni che pochi conoscono.', 1, 'Dimmi pure, vediamo se riesco ad aiutarti.', 'Scusa, non ho tempo, devo trovare un bagno!',1,0)
 
 --prima scelta:
 
-(3, 'La formula della gittata di un proiettile lanciato con velocità iniziale v0 e angolo θ è\n 
+(6,3, 'La formula della gittata di un proiettile lanciato con velocità iniziale v0 e angolo θ è\n 
 G= (v^20 sin2θ)/g  \nQuale di queste affermazioni è vera?', 1, 'La gittata è massima quando 𝜃=45', 'La gittata aumenta sempre se aumento l''angolo θ', 1,1),
 
 -- risposta corretta
 
-(3,'AH GIÀ, È VERO! La gittata è massima proprio a 45 gradi.\n
+(6,3,'AH GIÀ, È VERO! La gittata è massima proprio a 45 gradi.\n
 Come promesso, ti svelo questo:
 Si dice che in un stanze ci siano componenti obsolete, roba fuori produzione, 
 i quali servono per costruire una scheda magica che può aprire qualsiasi porta e mostrare cose che sfuggono agli altri.', 1,'', '', 2,1),
 
 -- risposta errata
-(3, 'Eh no… se aumenti troppo l''angolo, la gittata in realtà diminuisce… Mi sa che non posso aiutarti.', 1,'','', 2,2),
+(6,3, 'Eh no… se aumenti troppo l''angolo, la gittata in realtà diminuisce… Mi sa che non posso aiutarti.', 1,'','', 2,2),
 
 -- se decide di non aiutarlo 
-(3, 'Capisco… buona fortuna allora',1, '', '', 2,2),
+(6,3, 'Capisco… buona fortuna allora',1, '', '', 2,2),
 
 
 
 -------------------------------------------------------------------
 --Quarto piano 
 
-(4, 'Non finisce più questa fila…\n Solo chi capisce i grandi misteri della computazione può bypassare la coda. 
+(7,4, 'Non finisce più questa fila…\n Solo chi capisce i grandi misteri della computazione può bypassare la coda. 
 Rispondi al mio enigma e potrai passare avanti.\n Problemi difficili da calcolare,ma facili da verificare.
 Da sempre ci si chiede con fervore:\n esiste una scorciatoia, oppure è solo un errore? Il mondo attende, ma la risposta non c''è…
 Allora dimmi: P è uguale a…\n', 1, 'NP', 'Non si sa', 1,0),
 
 -- risposta errata
-(4, 'Troppo sicuro di te. Se bastasse affermarlo così, saremmo tutti a casa a scrivere algoritmi perfetti. Torna in coda.', 1,'','',2,1),
+(7,4, 'Troppo sicuro di te. Se bastasse affermarlo così, saremmo tutti a casa a scrivere algoritmi perfetti. Torna in coda.', 1,'','',2,1),
 
 --risposta corretta
 
-(4, 'Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.'
+(7,4, 'Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.'
 , 1, '', '', 2,2),
 
 -- secondo indovinello ( SE IL PRIMO è STATO SBAGLIATO e ha la carta igienica)
-(4, 'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a quesata domanda facile facile ,  roba del primo semestre e potrai saltare la fila. 
+(8,4, 'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a quesata domanda facile facile ,  roba del primo semestre e potrai saltare la fila. 
 Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?', 2, 'O(n^2)', 'O(n)', 1,0),
 
 --risposta corretta
-(4,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2)
+(8,4,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2)
 Come promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!', 2,'', '', 2,1), 
 
 --risposta errata
-(4,'Eh no… per una lista di adiacenza sarebbe O(n), ma con una matrice è più pesante:
+(8,4,'Eh no… per una lista di adiacenza sarebbe O(n), ma con una matrice è più pesante:
 O(n^2). Mi dispiace, resta in coda come tutti gli altri!', 2,'','',2,2), 
 
 -- Terzo indovinello
-(4, 'Ok, va bene… ti vedo proprio sull''orlo.\nPer pietà, ti faccio un''ultima domanda. Se rispondi giusto, giuro che ti lascio 
+(9,4, 'Ok, va bene… ti vedo proprio sull''orlo.\nPer pietà, ti faccio un''ultima domanda. Se rispondi giusto, giuro che ti lascio 
 passare subito! Allora, senti bene:\n
 Cos?è una classe astratta?', 3, 'È una classe che non può essere istanziata, poichè ha metodi non implementati.', 'È una classe che non ha metodi o attributi.'
 , 1,0),
 
 -- risposta corretta
-(4,'Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta.
+(9,4,'Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta.
 Dai, passa… corri! Che la forza sia con te (e col tuo intestino).', 3, '', '', 2,1),
 
 -- risposta errata (perde)
-(4, 'Eh no… una classe astratta può avere attributi e anche metodi implementati.Mi dispiace, ma la fila resta fila…', 3,'','',2,2),
+(9,4, 'Eh no… una classe astratta può avere attributi e anche metodi implementati.Mi dispiace, ma la fila resta fila…', 3,'','',2,2),
 
 --INSERVIENTE QUARTO PIANO:
 
 -- prima domanda
-(5,'Salve… il bagno è un inferno. Sa per caso se c''è un altro?\n Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l''hai?', 1,
+(10,5,'Salve… il bagno è un inferno. Sa per caso se c''è un altro?\n Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l''hai?', 1,
 'Ecco la varechina. L’ho trovata nel laboratorio di robotica.', 'Mi dispiace, non ho la candeggina con me.', 1,0),
 
 -- se ha la varechina
-(5, 'Questa sì che profuma di dedizione.\n"
+(10,5, 'Questa sì che profuma di dedizione.\n"
 Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ,'','',2,1),
 
 -- se non ha la candeggina
-(5, 'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.', 1,'','' 2,2), 
+(10,5, 'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.', 1,'','' 2,2), 
 
 -- IL SALVATORE :
 
-(5, 'Mi scusi… io… non ce la faccio più… non so dove andare… mi sa che… mi scappa…', 1, 'Calma, ragazzo. Ricorda: nessuna corsa può essere vinta 
+(11,5, 'Mi scusi… io… non ce la faccio più… non so dove andare… mi sa che… mi scappa…', 1, 'Calma, ragazzo. Ricorda: nessuna corsa può essere vinta 
 se prima non si respira.Persino il bisogno più urgente va affrontato con dignità… e carta igienica.Tieni, giovane guerriero. Non è molto… ma nelle mani giuste, 
 può fare miracoli.', '' , 1,0), 
-(5, 'Grazie… grazie davvero…',1,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene……ma chi arriva in tempo!', '', 2,1),
+(11,5, 'Grazie… grazie davvero…',1,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene……ma chi arriva in tempo!', '', 2,1),
 
 
 --------------------------------------------
 
 -- Sesto piano
-(6, 'Scusa… ma perché mi guardi in quel modo? Sembra quasi che voglia picchiarmi…', 1,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco…
+(12,6, 'Scusa… ma perché mi guardi in quel modo? Sembra quasi che voglia picchiarmi…', 1,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco…
 Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove sia un bagno qui vicino?', '', 1,0),
 
-(6,'Magari! Lo sto cercando anch’io… mi dispiace, davvero… sto peggio di te.', 1,'Capisco… va bene… speriamo di trovarlo in tempo.
+(12,6,'Magari! Lo sto cercando anch’io… mi dispiace, davvero… sto peggio di te.', 1,'Capisco… va bene… speriamo di trovarlo in tempo.
 Anche se, a dirla tutta… credo che per me sia già troppo tardi…"Buona fortuna, collega… che il destino, e il rotolo di carta igienica, 
 siano con te!', '', 2,1);
 

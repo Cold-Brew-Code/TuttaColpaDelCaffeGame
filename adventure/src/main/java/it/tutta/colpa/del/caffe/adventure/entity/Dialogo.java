@@ -4,47 +4,32 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import it.tutta.colpa.del.caffe.adventure.utility.StringArcoGrafo;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.Graph;
 
 /**
  *
  * @author giova
  */
 public class Dialogo  {
-    int passoC;
-    int risposta;
-    List<Passo> passi;
-
-    public Dialogo() {
-        this.passoC = 1;
-        this.risposta = 0;
-        this.passi = new ArrayList<>();
+    
+    private final Graph <String,StringArcoGrafo> dialogo;
+    
+    public Dialogo(){
+        
+        dialogo= new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }
     
-    public void setPasso(String domanda, String risposta1, String risposta2){
-        this.passi.add(new Passo(domanda, risposta1,risposta2));
+    public void setDialogo(String dialogo){
+        this.dialogo.addVertex(dialogo);
     }
     
+    public void setRisposta(String domandaP, String domandaA,String risposta){
+        this.dialogo.addEdge(domandaP, domandaA, new StringArcoGrafo(risposta));
+    }
+   // get da fare 
     
     
-private class Passo{
-    String domanda;
-    String risposta1;
-    String risposta2;
-
-        public Passo(String domanda, String risposta1, String risposta2) {
-            this.domanda = domanda;
-            this.risposta1 = risposta1;
-            this.risposta2 = risposta2;
-        }
-    
-    
-    
-
-
-
-
-}
 
 }

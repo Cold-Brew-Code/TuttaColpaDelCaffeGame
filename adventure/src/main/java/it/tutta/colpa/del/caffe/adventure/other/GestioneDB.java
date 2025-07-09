@@ -8,6 +8,7 @@ package it.tutta.colpa.del.caffe.adventure.other;
 
 import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
 import it.tutta.colpa.del.caffe.adventure.entity.GameMap;
+import it.tutta.colpa.del.caffe.adventure.entity.NPC;
 import it.tutta.colpa.del.caffe.adventure.entity.Room;
 import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
 
@@ -84,7 +85,7 @@ public class GestioneDB {
     
     
     
-    private GameMap creaMappa()throws SQLException{
+    public GameMap creaMappa()throws SQLException{
         GameMap mappa= new GameMap(); 
         Statement stm= con.createStatement();
         ResultSet rs= stm.executeQuery("SELECT * FROM stanza");
@@ -130,6 +131,7 @@ public class GestioneDB {
         return mappa;
     }
 
+    
 
     //dizionario per l'alias dei comandi e oggetti
    
@@ -207,6 +209,22 @@ public class GestioneDB {
         });
     }
     
+    public List<NPC> getNpcStanza(int id) throws SQLException{
+        List<NPC> listaNpc= new ArrayList<>();
+        PreparedStatement pstm = con.prepareStatement("SELECT * FROM Npc WHERE idStanza=?");
+        pstm.setInt(1,id);
+        ResultSet rs = pstm.executeQuery();
+        while (rs.next()) {
+            NPC npc= creaNpc(rs);
+            listaNpc.add(npc);
+        }
+        rs.close();
+        pstm.close();
+        return listaNpc;
+
+    }
+    
+    
     
     private void oggettoContenitore(List<AdvObject> oggettList, int idOggetto) throws SQLException {
         Statement stm = con.createStatement();
@@ -238,7 +256,7 @@ public class GestioneDB {
 
 
     //lista comandi 
-    private List<String> getComandi(int id) throws SQLException {
+    public List<String> getComandi(int id) throws SQLException {
     return executeWithRetry(() -> {
         List<String> comandi = new ArrayList<>();
         PreparedStatement pstm = con.prepareStatement("SELECT * FROM Comandi WHERE id = ?");
