@@ -59,6 +59,7 @@ public class MainPage extends JFrame {
         wallpaper.add(buttonPanel);
         wallpaper.setLayout(null);
         this.pack();
+        setLocationRelativeTo(null);
         this.setVisible(true);
 
 

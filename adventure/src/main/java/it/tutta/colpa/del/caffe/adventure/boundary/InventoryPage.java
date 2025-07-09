@@ -228,6 +228,7 @@ public class InventoryPage extends javax.swing.JFrame {
             .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         this.setResizable(false);
+        setLocationRelativeTo(null);
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
