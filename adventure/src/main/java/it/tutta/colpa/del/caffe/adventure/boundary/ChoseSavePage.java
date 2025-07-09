@@ -4,6 +4,8 @@
  */
 package it.tutta.colpa.del.caffe.adventure.boundary;
 
+import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -20,6 +22,7 @@ public class ChoseSavePage extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ChoseSavePage.class.getName());
 
     public ChoseSavePage(JFrame parent) {
+        this.parent = parent;
         parent.setVisible(false);
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -223,14 +226,22 @@ public class ChoseSavePage extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        selectedSave.delete();
-        selectedSave.getLabel().setText(selectedSave.getLabel().getText()+"\t[Eliminato]");
-        selectedSave.getLabel().setOpaque(true);
-        selectedSave.getLabel().setBackground(new Color(255,0,0,50));
-        saveButton.setEnabled(false);
-        deleteButton.setEnabled(false);
-        selectedSave=null;
+        int scelta = javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                "Vuoi davvero eliminare il salvataggio selezionato?",
+                "Conferma",
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
 
+        if (scelta == javax.swing.JOptionPane.YES_OPTION) {
+            selectedSave.delete();
+            selectedSave.getLabel().setText(selectedSave.getLabel().getText()+"\t[Eliminato]");
+            selectedSave.getLabel().setOpaque(true);
+            selectedSave.getLabel().setBackground(new Color(255,0,0,50));
+            saveButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+            selectedSave=null;
+        }
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
@@ -243,6 +254,7 @@ public class ChoseSavePage extends javax.swing.JFrame {
         } catch (FileNotFoundException e) {
             System.err.println("Eliminazione file non riuscita");
         }
+        this.parent.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
 
@@ -354,6 +366,7 @@ public class ChoseSavePage extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     private List<Save> saves;
     private Save selectedSave;
+    private JFrame parent;
 
     private class Save{
         private JLabel saveLabel;

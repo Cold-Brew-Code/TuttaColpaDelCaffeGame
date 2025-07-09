@@ -228,8 +228,9 @@ public class InventoryPage extends javax.swing.JFrame {
             .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         this.setResizable(false);
-        setLocationRelativeTo(null);
+
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void firstItemMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firstItemMouseEntered
