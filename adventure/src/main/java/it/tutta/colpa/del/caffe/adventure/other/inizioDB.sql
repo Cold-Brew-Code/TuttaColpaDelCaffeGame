@@ -420,7 +420,7 @@ i quali servono per costruire una scheda magica che può aprire qualsiasi porta 
 ---QUARTO--PIAMO
 
 --IN-FILA---1--INDOVINELLO
-(7,22'Non finisce più questa fila…\n Solo chi capisce i grandi misteri della computazione può bypassare la coda. 
+(7,22,'Non finisce più questa fila…\n Solo chi capisce i grandi misteri della computazione può bypassare la coda.
 Rispondi al mio enigma e potrai passare avanti.\n Problemi difficili da calcolare,ma facili da verificare.
 Da sempre ci si chiede con fervore:\n esiste una scorciatoia, oppure è solo un errore? Il mondo attende, ma la risposta non c''è…
 Allora dimmi: P è uguale a…\n'),
@@ -546,7 +546,7 @@ INSERT INTO RisposteDomande(risposta, domanda_partenza, domanda_arrivo,dialogo) 
 --2--HO--LA--CANDEGGINA--
 ('Ecco la varechina. L''ho trovata nel laboratorio di robotica.',32,33,10),
 --3--NON--HO--LA--CANDEGGINA--
-('Mi dispiace, non ho la candeggina con me.'32,34,10),
+('Mi dispiace, non ho la candeggina con me.',32,34,10),
 -----RISPOSTE----QUARTO--PIANO-----INSERVIENTE---IL--SALVATORE----
 
 --1--
@@ -559,6 +559,6 @@ INSERT INTO RisposteDomande(risposta, domanda_partenza, domanda_arrivo,dialogo) 
 --1--
 ('Scusa… ma perché mi guardi in quel modo? Sembra quasi che voglia picchiarmi…',38,39,12),
 --2--
-('Magari! Lo sto cercando anch''io… mi dispiace, davvero… sto peggio di te.'39,40,12);
+('Magari! Lo sto cercando anch''io… mi dispiace, davvero… sto peggio di te.',39,40,12);
 
 
