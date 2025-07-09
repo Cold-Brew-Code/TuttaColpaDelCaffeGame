@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.adventure.other;
 
 
 import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
+import it.tutta.colpa.del.caffe.adventure.entity.Dialogo;
 import it.tutta.colpa.del.caffe.adventure.entity.GameMap;
 import it.tutta.colpa.del.caffe.adventure.entity.NPC;
 import it.tutta.colpa.del.caffe.adventure.entity.Room;
@@ -222,6 +223,21 @@ public class GestioneDB {
         pstm.close();
         return listaNpc;
 
+    }
+    
+    private NPC creaNpc(ResultSet rs) throws SQLException{
+        NPC npc= new NPC(rs.getInt("id"), rs.getString("nome"));
+        PreparedStatement pstm = con.prepareStatement("SELECT * FROM DialogoNpc WHERE Npc=?");
+        pstm.setInt(1,rs.getInt("id"));
+        ResultSet rs1 = pstm.executeQuery();
+        while (rs1.next()){
+            
+        
+        
+        
+        
+    }
+        return npc;
     }
     
     

@@ -16,7 +16,7 @@ public class NPC {
     private final int id;
     private String nome;
     private int dialogoCor;
-    List<Dialogo> dialoghi;
+    private List<Dialogo> dialoghi;
     
     
     
