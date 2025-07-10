@@ -178,6 +178,8 @@ public class GestioneDB {
                     "    o.cliccabile     AS o_cliccabile, " +
                     "    o.visibile       AS o_visibile, " +
                     "    o.componibile    AS o_componibile, " +
+                    "    o.aperto         AS o_aperto, " +
+                    "    o.raccoglibile   AS o_raccoglibile, " +
                     "    o.utilizzi       AS o_utilizzi, " +
                     "    o.immagine       AS o_immagine " +
                     "FROM stanza_oggetto  AS so " +
@@ -286,6 +288,8 @@ public class GestioneDB {
                 "    o.visibile       AS o_visibile, " +
                 "    o.componibile    AS o_componibile, " +
                 "    o.utilizzi       AS o_utilizzi, " +
+                "    o.aperto         AS o_aperto, " +
+                "    o.raccoglibile   AS o_raccoglibile, " +
                 "    o.immagine       AS o_immagine " +
                 "FROM Contiene AS c " +
                 "INNER JOIN Oggetto AS o ON c.idOggetto2 = o.id " +
@@ -343,14 +347,15 @@ public class GestioneDB {
 
 
     //lista comandi
-    public List<String> getComandi(int id) throws SQLException {
+    public List<Command> getComandi() throws SQLException {
         return executeWithRetry(() -> {
-            List<String> comandi = new ArrayList<>();
-            PreparedStatement pstm = con.prepareStatement("SELECT * FROM Comandi WHERE id = ?");
-            pstm.setInt(1, id);
+            List<Command> comandi = new ArrayList<>();
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM Comandi");
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
-                comandi.add(rs.getString("nome"));
+                Command c = new Command(rs.getString("nome"));
+                c.setAlias(getAliasC(rs.getInt("id")).toArray(new String[0]));
+                comandi.add(c);
             }
             rs.close();
             pstm.close();

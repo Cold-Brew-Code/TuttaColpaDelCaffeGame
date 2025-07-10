@@ -11,7 +11,7 @@ create table if not exists Oggetto(
     utilizzi int,
     immagine VARCHAR(50),
     aperto boolean default false,
-    raccoglibile boolan default true,
+    raccoglibile boolean default true,
     primary key(id)
 );
 
@@ -37,7 +37,7 @@ create table if not exists stanza(
 create table if not exists CollecgamentoStanze(
     idStanzaIniziale int,
     idStanzaFinale int,
-    direzione enum('n', 's', 'e', 'o'),
+    direzione enum('n', 's', 'e', 'o','sopra','sotto'),
     primary key (idStanzaIniziale, idStanzaFinale),
     foreign key (idStanzaIniziale) references stanza(id),
     foreign key (idStanzaFinale) references stanza(id)
@@ -116,7 +116,7 @@ create table if not exists Contiene(
 
 insert into Comandi(id,nome)
 values
-(1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),(5, 'inventario'),
+(1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
 (6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
 (11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi');
 
