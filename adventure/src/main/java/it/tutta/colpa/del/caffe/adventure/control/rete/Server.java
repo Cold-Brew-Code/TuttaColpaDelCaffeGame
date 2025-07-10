@@ -1,10 +1,5 @@
 package it.tutta.colpa.del.caffe.adventure.control.rete;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -12,12 +7,12 @@ import java.sql.SQLException;
 import it.tutta.colpa.del.caffe.adventure.other.GestioneDB;
 
 
-public class server {
+public class Server {
 
     private ServerSocket serverSocket;
-    private final int port =12345;
+    private final int port=49152;
 
-    public server() {
+    public Server() {
         Socket socket = null;
         try {
             serverSocket = new ServerSocket(port);
@@ -25,20 +20,27 @@ public class server {
 
             socket = serverSocket.accept(); // accetta la connessione dal client
             System.out.println("Connessione accettata da " + socket.getInetAddress());
-
+            GestioneDB dataBase = new GestioneDB();
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
 
             while (true) {
                 String richiesta = in.readLine();
-                if (richiesta.equals("inizio")) {
-                    // p = GestioneDB.creaMappa(); // inizializzo il gioco ritorna il grafo 
-                    // c=lista di comandi 
-                    //poi mando l'oggetto al client
-                } else if (richiesta.equals("fine")) {
-                    break;// chiudo la connessione
+                if (richiesta.equals("comandi")) {
+                    out.writeObject(dataBase.getComandi());
+                }else if (richiesta.equals("mappa")){
+                    out.writeObject(dataBase.creaMappa());
+                } else if (richiesta.contains("descrizione-aggiornata-")) {
+                    String[] tk = richiesta.split("-");
+                    out.writeObject(dataBase.aggiornaDialoghi(Integer.parseInt(tk[2])));
+                }else if (richiesta.contains("oggetto-")) {
+                    String[] tk = richiesta.split("-");
+                    //out.writeObject(dataBase.(Integer.parseInt(tk[1])));
+
+                }else if (richiesta.equals("fine")) {
+                    break;      // chiudo la connessione
                 } else {
-                    out.println("Richiesta sconosciuta");
+                    out.writeObject(new Exception("Non trovato"));
                 }
             }
 
