@@ -8,7 +8,9 @@ package it.tutta.colpa.del.caffe.adventure.entity;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -23,7 +25,8 @@ public class Room {
     private boolean visible = true;
     private boolean denied_entry=false;
     private ImageIcon image;
-    private final List<AdvObject> objects = new ArrayList<>();
+    private Map<AdvObject,Integer> objects = new HashMap<>();
+    private List<NPC> NPCs = new ArrayList<>();
 
     /**
      *
@@ -109,7 +112,7 @@ public class Room {
      *
      * @return
      */
-    public List<AdvObject> getObjects() {
+    public Map<AdvObject, Integer> getObjects() {
         return objects;
     }
 
@@ -177,7 +180,7 @@ public class Room {
      * @return
      */
     public AdvObject getObject(int id) {
-        for (AdvObject o : objects) {
+        for (AdvObject o : objects.keySet()) {
             if (o.getId() == id) {
                 return o;
             }
@@ -191,5 +194,17 @@ public class Room {
 
     public void setDeniedEntry(boolean denied_entry) {
         this.denied_entry = denied_entry;
+    }
+
+    public List<NPC> getNPCs() {
+        return NPCs;
+    }
+
+    public void setNPCs(List<NPC> NPCs) {
+        this.NPCs = NPCs;
+    }
+
+    public void setObjects(Map<AdvObject, Integer> objects) {
+        this.objects = objects;
     }
 }

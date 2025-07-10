@@ -5,20 +5,19 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+
+import it.tutta.colpa.del.caffe.adventure.exception.InventoryException;
+
+import java.util.*;
 
 /**
- *
  * @author pierpaolo
  */
 public class AdvObjectContainer extends AdvObject {
 
-    private List<AdvObject> list = new ArrayList<>();
+    private Map<AdvObject, Integer> map = new HashMap<>();
 
     /**
-     *
      * @param id
      */
     public AdvObjectContainer(int id) {
@@ -26,7 +25,6 @@ public class AdvObjectContainer extends AdvObject {
     }
 
     /**
-     *
      * @param id
      * @param name
      */
@@ -35,17 +33,15 @@ public class AdvObjectContainer extends AdvObject {
     }
 
     /**
-     *
      * @param id
      * @param name
      * @param description
      */
-    public AdvObjectContainer(int id, String name, String description) {
-        super(id, name, description);
+    public AdvObjectContainer(int id, String name, String description, String imagePath) {
+        super(id, name, description, imagePath);
     }
 
     /**
-     *
      * @param id
      * @param name
      * @param description
@@ -56,35 +52,54 @@ public class AdvObjectContainer extends AdvObject {
     }
 
     /**
-     *
      * @return
      */
-    public List<AdvObject> getList() {
-        return list;
+    public Map<AdvObject, Integer> getList() {
+        return map;
     }
 
     /**
-     *
-     * @param list
+     * @param map
      */
-    public void setList(List<AdvObject> list) {
-        this.list = list;
+    public void setMap(Map<AdvObject, Integer> map) {
+        this.map = map;
     }
 
     /**
-     *
      * @param o
      */
-    public void add(AdvObject o) {
-        list.add(o);
+    public void add(AdvObject o, int quantity) {
+        map.put(o, quantity);
     }
 
     /**
-     *
+     * @param o
+     */
+    public void remove(AdvObject o, int quantity) {
+        if (!map.containsKey(o)) {
+            throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
+        }
+        if (quantity > map.get(o)) {
+            throw new InventoryException("Attenzione: non hai abbastanza oggetti nell'inventario");
+        } else if (quantity == map.get(o)) {
+            map.remove(o);
+        } else {
+            map.replace(o, map.get(o) - quantity);
+        }
+    }
+
+    /**
      * @param o
      */
     public void remove(AdvObject o) {
-        list.remove(o);
+        if (!map.containsKey(o)) {
+            throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
+        }
+        if (1 == map.get(o)) {
+            map.remove(o);
+        } else {
+            map.replace(o, map.get(o) - 1);
+        }
     }
 
 }
