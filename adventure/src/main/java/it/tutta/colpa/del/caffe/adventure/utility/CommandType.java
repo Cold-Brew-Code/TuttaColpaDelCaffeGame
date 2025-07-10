@@ -20,6 +20,15 @@ public enum CommandType {
      *
      */
     INVENTORY,
+    /**
+     *
+     */
+    READ,
+
+    /**
+     *
+     */
+    MERGE,
 
     /**
      *
@@ -40,6 +49,15 @@ public enum CommandType {
      *
      */
     WEST,
+    /**
+     *
+     */
+    UP,
+
+    /**
+     *
+     */
+    DOWN,
 
     /**
      *

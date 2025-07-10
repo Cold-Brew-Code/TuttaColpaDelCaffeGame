@@ -25,11 +25,10 @@ public class Command {
 
     /**
      *
-     * @param type
      * @param name
      */
-    public Command(CommandType type, String name) {
-        this.type = type;
+    public Command(String name) {
+        this.type = Command.TypeStringToEnum(name);
         this.name = name;
     }
 
@@ -94,6 +93,37 @@ public class Command {
         int hash = 3;
         hash = 97 * hash + Objects.hashCode(this.type);
         return hash;
+    }
+
+    private static CommandType TypeStringToEnum(String command){
+        if(command.equals("nord")){
+            return CommandType.NORD;
+        }if(command.equals("sud")){
+            return CommandType.SOUTH;
+        }if(command.equals("est")){
+            return CommandType.EAST;
+        }if(command.equals("ovest")){
+            return CommandType.WEST;
+        }if(command.equals("sopra")){
+            return CommandType.UP;
+        }if(command.equals("sotto")){
+            return CommandType.DOWN;
+        }if(command.equals("osserva")){
+            return CommandType.LOOK_AT;
+        }if(command.equals("raccogli")){
+            return CommandType.PICK_UP;
+        }if(command.equals("apri")){
+            return CommandType.OPEN;
+        }if(command.equals("premi")){
+            return CommandType.PUSH;
+        }if(command.equals("combina")){
+            return CommandType.MERGE;
+        }if(command.equals("leggi")){
+            return CommandType.READ;
+        }if(command.equals("parla")){
+            return CommandType.TALK_TO;
+        }
+        return null;
     }
 
     /**
