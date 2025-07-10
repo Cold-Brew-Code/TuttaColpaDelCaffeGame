@@ -1,7 +1,6 @@
 package it.tutta.colpa.del.caffe.adventure.boundary;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.net.URL;
 

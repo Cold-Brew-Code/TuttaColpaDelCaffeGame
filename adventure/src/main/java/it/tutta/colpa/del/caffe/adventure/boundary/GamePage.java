@@ -5,6 +5,7 @@
 package it.tutta.colpa.del.caffe.adventure.boundary;
 
 import it.tutta.colpa.del.caffe.adventure.entity.Inventory;
+import it.tutta.colpa.del.caffe.adventure.entity.Room;
 import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
 
 import javax.swing.*;
@@ -55,6 +56,7 @@ public class GamePage extends javax.swing.JFrame {
         }else if (scelta == javax.swing.JOptionPane.NO_OPTION) {
 
         }
+
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -139,6 +141,9 @@ public class GamePage extends javax.swing.JFrame {
         DialogTextArea.setRows(5);
         DialogTextArea.setFocusable(false);
         DialogTextArea.setOpaque(false);
+        DialogTextArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 15));
+        DialogTextArea.setLineWrap(true);
+        DialogTextArea.setWrapStyleWord(true);
         jScrollPane1.setViewportView(DialogTextArea);
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
@@ -281,8 +286,15 @@ public class GamePage extends javax.swing.JFrame {
     }//GEN-LAST:event_saveButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        DialogTextArea.append("Merda "+progressBar.getValue()+"\n");
-        progressBar.setValue(progressBar.getValue()+ 1);
+        //DialogTextArea.append("stocazzo ");
+    }
+
+    private void InitGame(){
+
+    }
+
+    private void InitGame(String savePath){
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

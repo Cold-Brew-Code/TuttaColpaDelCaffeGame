@@ -259,7 +259,7 @@ public class ChoseSavePage extends javax.swing.JFrame {
 
 
     private void deleteFileFromFileSystem() throws FileNotFoundException{
-        File dir = new File("./adventure/src/main/resources/saves");
+        File dir = new File("./src/main/resources/saves");
         if(!(dir.exists() && dir.isDirectory())){
             throw new FileNotFoundException("Cartella salvataggi non presente");
         }
@@ -275,7 +275,7 @@ public class ChoseSavePage extends javax.swing.JFrame {
     }
 
     private void setSaves() throws FileNotFoundException {
-        File savs = new File("./adventure/src/main/resources/saves");
+        File savs = new File("./src/main/resources/saves");
         if(!(savs.exists() && savs.isDirectory())){
             throw new FileNotFoundException("Non è stato possibile trovare la cartella dei salvataggi");
         }
