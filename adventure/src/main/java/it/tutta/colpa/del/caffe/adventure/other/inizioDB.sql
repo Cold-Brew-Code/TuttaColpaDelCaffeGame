@@ -10,6 +10,8 @@ create table if not exists Oggetto(
     componibile boolean default false,
     utilizzi int,
     immagine VARCHAR(50),
+    aperto boolean default false,
+    raccoglibile boolan default true,
     primary key(id)
 );
 
@@ -105,7 +107,7 @@ create table if not exists Evento(
 create table if not exists Contiene(
     idOggetto1 int ,
     idOggetto2 int ,
-    quantità int,
+    quantita int,
     foreign key (idOggetto1) references Oggetto(id),
     foreign key (idOggetto2) references Oggetto(id),
     primary key(idOggetto1,idOggetto2)
@@ -182,7 +184,9 @@ Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche
 permette di scegliere tra decine di aromi personalizzati: dal caffè intenso delle notti d''esame al più delicato decaffeinato del “tanto ormai è andata”. Sul display, brevi messaggi motivazionali compaiono all''improvviso, 
 come bisbigli incoraggianti per studenti assonnati e docenti esausti. Un piccolo altare tecnologico dedicato al culto quotidiano della caffeina.', true,false,false, true, true,true,-1, "macchinetta_del_caffè.png");
 
-insert into Contiene(idOggetto1, idOggetto2, quantità)
+UPDATE Oggetto SET raccoglibile=false WHERE id IN (15,16);
+
+insert into Contiene(idOggetto1, idOggetto2, quantita)
 values
 -- borsellino-moneta-penna
 (7,8,4),(7,10,6),
@@ -325,7 +329,11 @@ values
 (20,21,'e'), (20,22,'n'), (21,20,'o'),(22,20,'s'),
 
 --settimo piano 
-(25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'o'),(28,26,'e');
+(25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'o'),(28,26,'e'),
+
+--sopra/sotto
+(4,6,"sopra"),(6,8,"sopra"), (8,14, "sopra"), (14,10,"sopra"),(10,17,"sopra"),(17,20,"sopra"), (20,25,"sopra"),
+(25,20,"sotto"), (20,17,"sotto"),(17,10,"sotto"),(10,14,"sotto"),(14,8,"sotto"),(8,6,"sotto"),(6,4,"sotto");
 
 insert into stanza_oggetto(idStanza, idOggetto, quantita)
 values
