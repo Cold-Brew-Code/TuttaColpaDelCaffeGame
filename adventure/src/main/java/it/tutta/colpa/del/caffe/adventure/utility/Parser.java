@@ -5,10 +5,11 @@
  */
 package it.tutta.colpa.del.caffe.adventure.utility;
 
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
-import it.tutta.colpa.del.caffe.adventure.entity.Command;
 import java.util.List;
 import java.util.Set;
+
+import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
+import it.tutta.colpa.del.caffe.adventure.entity.Command;
 
 /**
  *
@@ -64,15 +65,38 @@ public class Parser {
             int ic = checkForCommand(tokens.get(0), commands);
             if (ic > -1) {
                 if (tokens.size() > 1) {
-                    int io = checkForObject(tokens.get(1), objects);
+                    int io=0;
+                    String wordmatch="";
+                    if(tokens.size()>2){
+                    wordmatch= tokens.get(1)+" "+tokens.get(2);
+                    io = checkForObject(wordmatch, objects);
+                    }
                     int ioinv = -1;
-                    if (io < 0 && tokens.size() > 2) {
+                    if(io<0 && tokens.size()>3){
+                        wordmatch= tokens.get(2)+" "+tokens.get(3);
+                        io = checkForObject(wordmatch, objects);
+                    }
+                    if (io < 0 && tokens.size() > 1) {
+                        io = checkForObject(tokens.get(1), objects);
+                    }//
+                    if(io<0 && tokens.size()>2){
                         io = checkForObject(tokens.get(2), objects);
                     }
+
                     if (io < 0) {
-                        ioinv = checkForObject(tokens.get(1), inventory);
+                        if(tokens.size()>2){
+                            wordmatch= tokens.get(1)+" "+tokens.get(2);
+                            ioinv = checkForObject(wordmatch, inventory);
+                            }
+                        if(ioinv < 0 && tokens.size() > 3){
+                            wordmatch= tokens.get(2)+" "+tokens.get(3);
+                            ioinv = checkForObject(wordmatch, inventory);
+                        }
                         if (ioinv < 0 && tokens.size() > 2) {
                             ioinv = checkForObject(tokens.get(2), inventory);
+                        }
+                        if(ioinv < 0 && tokens.size() > 1){
+                            ioinv = checkForObject(tokens.get(1), inventory);
                         }
                     }
                     if (io > -1 && ioinv > -1) {
