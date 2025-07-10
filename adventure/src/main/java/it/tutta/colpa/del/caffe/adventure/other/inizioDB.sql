@@ -1,10 +1,10 @@
 create table if not exists Oggetto( 
     id int,
     nome varchar(40),
-    descrizione varchar(40);
+    descrizione text,
     contenitore boolean default false,
     apribile boolean default false,
-    leggibile boolean dafault false,
+    leggibile boolean default false,
     cliccabile boolean default false,
     visibile boolean default false,
     componibile boolean default false,
@@ -46,7 +46,7 @@ create table if not exists Npc(
     id int,
     nome varchar(30),
     idStanza int,
-    foreign key (id) references stanza(id),
+    foreign key (idStanza) references stanza(id),
     primary key (id)
 );
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS DomandeDialoghi(
 CREATE TABLE IF NOT EXISTS RisposteDomande(
     risposta VARCHAR(500),
     domanda_partenza INTEGER REFERENCES DomandeDialoghi(id),
-    domanda_arrivo REFERENCES DomandeDialoghi(id),
+    domanda_arrivo INTEGER REFERENCES DomandeDialoghi(id),
     dialogo INTEGER REFERENCES Dialoghi(id),
     PRIMARY KEY(risposta, domanda_partenza, domanda_arrivo)
 )
@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS RisposteDomande(
 create table if not exists stanza_oggetto(
     idStanza int,
     idOggetto int,
-    quantità int,
+    quantita int,
     primary key (idStanza,idOggetto),
     foreign key (idStanza) references stanza(id),
     foreign key (idOggetto) references Oggetto(id)
@@ -135,7 +135,7 @@ values
 (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare 
 l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,false,false,-1, "chiave.png"),
 
-(1, 'LA MAPPA DEL FUORICORSO'. ' Questa mappa costruita da studenti che vaga da anni nel dipartimento, rileva segreti e stanze nascoste all''interno del dipartiemnto.',false,false,true,false,false,false,false, -1,"mappa.png"),
+(1, 'LA MAPPA DEL FUORICORSO', ' Questa mappa costruita da studenti che vaga da anni nel dipartimento, rileva segreti e stanze nascoste all''interno del dipartiemnto.',false,false,true,false,false,false,false, -1,"mappa.png"),
 (2, 'CAFFÈ RIGENERANTE', 'Un piccolo calice fumante colmo di liquido scuro e amaro, capace di ridare vigore anche allo studente più esausto. Si dice che chi beve il CAFFÈ RIGENERANTE 
 possa restare vigile abbastanza da affrontare persino le lezioni del mattino e le infinite code in segreteria.',false, false, false,false, false, false, -1, "caffè.png"),
 --PRIMO PIANO
@@ -143,7 +143,7 @@ possa restare vigile abbastanza da affrontare persino le lezioni del mattino e l
 Custodisce segreti sulla Macchina di Turing Universale, diagrammi misteriosi e dimostrazioni che si avvolgono su loro stesse come un serpente che non trova la propria coda. Si narra che nelle sue pagine sia celata una verità tanto semplice quanto impossibile da dimostrare… e che 
 chi osa cercarla finisca per perdersi in un labirinto di problemi apparentemente “facili”',false,false,true,false,true,false, -1,"libro_cc.png"),
 -- SECONDO PIANO
-(4,'CANDEGGINATOR 3000"', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: 
+(4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili:
 il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… 
 un po'' come gli esami facili al primo appello.',false, false,false, false,false, false,-1,"candeggina.png"),
 (15, 'ARMADIETTO','Classico armadietto di metallo',true,true,false,false,true,false,-1,"armadietto.png"),
@@ -197,7 +197,7 @@ insert into Alias(id,alias)
 values
 (1,'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1,'map'), 
 (4, '3000'), (4, 'prodotto'), (4, 'cande'),
-(2, 'bevanda'), (2, 'energia' ) (2, 'coffee'),
+(2, 'bevanda'), (2, 'energia' ), (2, 'coffee'),
 (3, 'libro'), (3, 'cc'), (3,'calcolabilià'), (3,'complessità'), (3,'calcol'), (3,'comples'), (3,'lib'),
 (15, 'mobile'), (15, 'armadio'), 
 (5, 'bigliettino'), (5, 'foglio'),
@@ -261,9 +261,9 @@ values
 (16, 'Aula A', ' Sei nella tua vecchia aula , dove hai seguito le tanto amata lezioni di fisica. Ci sono due lavagne , una con il pennarello e una con il gesso , sulla quale ci sono scritti dei geroglifici. Semprerebbe una formula del moto del proiettila o qualcosa del genere. Chissà se possono essere criptati....', 'Osservando meglio la stanze noti un bigliettino sotto il banco dell''utlima fila è il biglittino che permette di criptare la formula del moto del...qualcosa.(fisica non era la tua materia preferita...)',true,true, "aula_A_secondo_piano.png"),-- prende il bigliettino per poi poter aiutare lo stundete . se no deve sperare nelle sue conoscenze
 
 -- terzo piano 
-(14, 'Terzo piano', 'Sei finalemente arrivato al terzo piano.\n Nel corridoio  non c''è nessuno. Del bagno nemmeno l''ombra. Noti a destra (EST) l''aula studio e sulla tua sinistra (OVEST) intravedi il museo di informatica',' Senti dei schiamazzi provenire dall''aula stuido , forse c''è qualcuno.'true,true, "corridoio_terzo_piano.png"),
-(15, 'Aula studio terzo piano', 'La stanza è piena di tavoli scricchiolanti, ma almeno qui le sedie non sono rotte.... Noti uno studente ansioso e spaventato che sta studiando qualcosa, potresti aiutarlo , chissà se per sdebitarsi ti darebbe delle informazioni utili....', 'C''è uno studente ansioso e spaventato sulla tua destra potresti aiutarlo'true,true, "aula_studio_terzo_piano.png"),-- se viene aiutato da un indizio su una scheda magica che può aprire qualsiasi porta e che ti fa vedere cose fuori dal comune(per il bagno magico) serviranno componenti obselete per costruirala
-(30, 'Museo di informatica', ' Sei in una stanza piena di vecchi computer, di fronte a te, un monitor a tubo catodico grande quanto un forno a microonde, schede madri imbalsamate e sulle pareti  manuali ingialliti che giurano di spiegare come installare Windows 95, ma solo se sai leggere il sanscrito.',  ' Osservando la stanza noti una scheda madre rovinata e l''uscita verso EST!' true,true, "museo_di_informatica_terzo_piano.png"),-- se fa raccogli prende la scheda madre rovinata che sarà utile per costruire la scheda magica
+(14, 'Terzo piano', 'Sei finalemente arrivato al terzo piano.\n Nel corridoio  non c''è nessuno. Del bagno nemmeno l''ombra. Noti a destra (EST) l''aula studio e sulla tua sinistra (OVEST) intravedi il museo di informatica',' Senti dei schiamazzi provenire dall''aula stuido , forse c''è qualcuno.', true,true, "corridoio_terzo_piano.png"),
+(15, 'Aula studio terzo piano', 'La stanza è piena di tavoli scricchiolanti, ma almeno qui le sedie non sono rotte.... Noti uno studente ansioso e spaventato che sta studiando qualcosa, potresti aiutarlo , chissà se per sdebitarsi ti darebbe delle informazioni utili....', 'C''è uno studente ansioso e spaventato sulla tua destra potresti aiutarlo', true,true, "aula_studio_terzo_piano.png"),-- se viene aiutato da un indizio su una scheda magica che può aprire qualsiasi porta e che ti fa vedere cose fuori dal comune(per il bagno magico) serviranno componenti obselete per costruirala
+(30, 'Museo di informatica', ' Sei in una stanza piena di vecchi computer, di fronte a te, un monitor a tubo catodico grande quanto un forno a microonde, schede madri imbalsamate e sulle pareti  manuali ingialliti che giurano di spiegare come installare Windows 95, ma solo se sai leggere il sanscrito.',  ' Osservando la stanza noti una scheda madre rovinata e l''uscita verso EST!', true,true, "museo_di_informatica_terzo_piano.png"),-- se fa raccogli prende la scheda madre rovinata che sarà utile per costruire la scheda magica
 
 
 -- quarto piano
@@ -278,8 +278,8 @@ values
 
 -- sesto piano
 (20, 'Sesto piano',  'Corridoio stretto e dall''aria sospesa. Un rumore di sottofondo ti accoglie al sesto piano è il ronzio continuo dei computer dei laboratori, talmente fitto da sembrare quasi un coro di zanzare tecnologiche in piena estate. Ci sono Due porte con targhette metalliche indicano i laboratori di ricerca, uno di Intelligenza Artificiale e l''altro di Calcolo Quantistico.', 'Sei di nuovo all''ingrsso del sesto piano, tra un bip e l''altro, qualche led lampeggia come a salutarti. Inoltre vedi un ragazzo ben vestito e con sguardo minacciso che ti fissa chissà che vorrà. Forse dovrei paralrci',true,true, "corridoio_sesto_piano_(dialogo1).png"),
-(21, 'Laboratorio di Intelligenza Artificiale', ' Inizialmente una luce bianca e accecante ti accoglie, causati da una sfilza di computer accesi. Essi mostrano stringhe di codice e grafici in tempo reale ', 'Osservando meglio, noti che su uno dei monitor lampeggia lentamente l''immagine di una tazza di caffè fumante. Per un attimo ti fermi a guardarla, ipnotizzato...poi la realtà ti colpisce di nuovo: maledizione, ti ricordi all''improvviso della tua urgente necessità di trovare un bagno'true,true, "laboratorio_di_ricerca_Intelligenza_Artificiale_sesto_piano.png"),-- qui la barra che indica fra quanto si caga a dosso aumenta di 1/4 perchè ha visto il caffe
-(22, 'Laboratorio di Calcolo Quantistico', 'Un ambiente più buio, illuminato solo da spie verdi e blu provenienti da strane macchine cilindriche. Cavi intrecciati come radici si diramano lungo il pavimento. Sul tavolo principale, un laptop mostra simulazioni che sembrano incomprensibili.', 'Sei sempre nel solito laborario di ricerca situato a NORD del corridoio. Questa volta noti un cassetto semiaperto con un bigliettino sul quale c''è scritto  “Il segreto è in alto, non fermarti 7FN”.'true,true,"laboratorio_di_ricerca_Calcolo_Quantistico_sesto_piano.png"),
+(21, 'Laboratorio di Intelligenza Artificiale', ' Inizialmente una luce bianca e accecante ti accoglie, causati da una sfilza di computer accesi. Essi mostrano stringhe di codice e grafici in tempo reale ', 'Osservando meglio, noti che su uno dei monitor lampeggia lentamente l''immagine di una tazza di caffè fumante. Per un attimo ti fermi a guardarla, ipnotizzato...poi la realtà ti colpisce di nuovo: maledizione, ti ricordi all''improvviso della tua urgente necessità di trovare un bagno',true,true, "laboratorio_di_ricerca_Intelligenza_Artificiale_sesto_piano.png"),-- qui la barra che indica fra quanto si caga a dosso aumenta di 1/4 perchè ha visto il caffe
+(22, 'Laboratorio di Calcolo Quantistico', 'Un ambiente più buio, illuminato solo da spie verdi e blu provenienti da strane macchine cilindriche. Cavi intrecciati come radici si diramano lungo il pavimento. Sul tavolo principale, un laptop mostra simulazioni che sembrano incomprensibili.', 'Sei sempre nel solito laborario di ricerca situato a NORD del corridoio. Questa volta noti un cassetto semiaperto con un bigliettino sul quale c''è scritto  “Il segreto è in alto, non fermarti 7FN”.',true,true,"laboratorio_di_ricerca_Calcolo_Quantistico_sesto_piano.png"),
 
 -- settimo piano 
 (25, 'Settimo piano', 'Appena salite le scale, ti accoglie un corridoio largo e luminoso, illuminato da grandi finestre. L''aria qui è più silenziosa, quasi solenne. Sulla sinistra, in netto contrasto con i muri rivestiti in legno scuro e le targhe eleganti, 
@@ -327,7 +327,7 @@ values
 --settimo piano 
 (25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'o'),(28,26,'e');
 
-insert into stanza_oggetto(idStanza, idOggetto)
+insert into stanza_oggetto(idStanza, idOggetto, quantita)
 values
 (5,1,1), (7,3,1), (9,15,1), (16,5,1),(30,6,1), (13,7,1), (19,11,1), (25,16,1);
 
