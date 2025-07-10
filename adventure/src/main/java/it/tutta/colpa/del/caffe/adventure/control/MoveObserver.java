@@ -22,6 +22,7 @@ public class MoveObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) {
+        /*
         if (parserOutput.getCommand().getType() == CommandType.NORD) {
             if (description.getCurrentRoom().getNorth() != null) {
                 description.setCurrentRoom(description.getCurrentRoom().getNorth());
@@ -47,6 +48,8 @@ public class MoveObserver implements GameObserver {
                 return "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...";
             }
         }
+        */
+
         return "";
     }
 

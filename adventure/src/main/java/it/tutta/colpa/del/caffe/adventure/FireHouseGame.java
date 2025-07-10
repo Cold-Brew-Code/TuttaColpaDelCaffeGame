@@ -110,8 +110,7 @@ public class FireHouseGame extends GameDescription implements GameObservable {
         hall.setNorth(bathroom);
         bathroom.setSouth(hall);
         yourRoom.setEast(hall);
-
-         */
+        */
         getRooms().add(kitchen);
         getRooms().add(livingRoom);
         getRooms().add(hall);

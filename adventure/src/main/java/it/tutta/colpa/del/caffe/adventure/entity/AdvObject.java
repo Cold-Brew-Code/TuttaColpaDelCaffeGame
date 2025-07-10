@@ -16,21 +16,13 @@ import java.util.Set;
 public class AdvObject {
 
     private final int id;
-
     private String name;
-
     private String description;
-    
     private Set<String> alias;
-
     private boolean openable = false;
-
     private boolean pickupable = true;
-
     private boolean pushable = false;
-
     private boolean open = false;
-
     private boolean push = false;
     private boolean leggibile= false;
     private boolean cliccabile= false;
