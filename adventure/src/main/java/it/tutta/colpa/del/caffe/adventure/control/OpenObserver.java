@@ -40,6 +40,7 @@ public class OpenObserver implements GameObserver {
                             msg.append("Hai aperto: ").append(parserOutput.getObject().getName());
                             AdvObjectContainer c = (AdvObjectContainer) parserOutput.getObject();
                             if (!c.getList().isEmpty()) {
+                                /*
                                 msg.append(c.getName()).append(" contiene:");
                                 Iterator<AdvObject> it = c.getList().iterator();
                                 while (it.hasNext()) {
@@ -49,6 +50,7 @@ public class OpenObserver implements GameObserver {
                                     it.remove();
                                 }
                                 msg.append("\n");
+                                */
                             }
                             parserOutput.getObject().setOpen(true);
                         } else {
@@ -65,13 +67,15 @@ public class OpenObserver implements GameObserver {
                             AdvObjectContainer c = (AdvObjectContainer) parserOutput.getInvObject();
                             if (!c.getList().isEmpty()) {
                                 msg.append(c.getName()).append(" contiene:");
-                                Iterator<AdvObject> it = c.getList().iterator();
+                                //Iterator<AdvObject> it = c.getList().iterator();
+                                /*
                                 while (it.hasNext()) {
                                     AdvObject next = it.next();
                                     description.getInventory().add(next);
                                     msg.append(" ").append(next.getName());
                                     it.remove();
                                 }
+                                */
                                 msg.append("\n");
                             }
                             parserOutput.getInvObject().setOpen(true);
