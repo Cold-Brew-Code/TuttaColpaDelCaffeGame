@@ -5,7 +5,6 @@
 package it.tutta.colpa.del.caffe.adventure.other;
 
 
-
 import it.tutta.colpa.del.caffe.adventure.entity.*;
 import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
 
@@ -19,200 +18,194 @@ import java.util.*;
 
 
 /**
- *
  * @author giova
  */
 public class GestioneDB {
-    
+
     private static Connection con;
     private Properties credenziali;
-    
-    
-    // restituisce la connessione al database
-    public Connection getConnection() throws SQLException {
-    if (con != null) {
-        return con;
-    } else {
-        throw new SQLException("Connessione non inizializzata: chiama prima connessioneDb().");
-    }
-}
 
-// chiusura della connessione al database
-    public void close() throws SQLException{
+    public GestioneDB() throws SQLException{
+        connessioneDb();
+    }
+
+    // chiusura della connessione al database
+    public void close() throws SQLException {
         con.close();
     }
 
 
-    
-    public void connessioneDb()throws SQLException
-    {
-        try{
-            credenziali= new Properties();
-            credenziali.setProperty("user", "tcdf");
-            credenziali.setProperty("pw", "1234");
-            con =DriverManager.getConnection("jdbc:h2:./database", credenziali);
-        }catch(SQLException ex){
-            throw ex;
-        }
+    public void connessioneDb() throws SQLException {
+        credenziali = new Properties();
+        credenziali.setProperty("user", "tcdf");
+        credenziali.setProperty("pw", "1234");
+        con = DriverManager.getConnection("jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'", credenziali);
+
     }
-    
-    
-    
+
+
     private <T> T executeWithRetry(SqlFunction<T> function) throws SQLException {
-    int retryCount = 0, max_retries = 5;
-    while (retryCount < max_retries) {
-        try {
-            return function.apply();
-        } catch (SQLException e) {
-            if (e.getSQLState().equals("08003")) { // connessione chiusa o non valida
-                connessioneDb(); // tentativo di ristabilire la connessione
-            } else {
-                throw e; // altro errore → rilancio subito
+        int retryCount = 0, max_retries = 5;
+        while (retryCount < max_retries) {
+            try {
+                return function.apply();
+            } catch (SQLException e) {
+                if (e.getSQLState().equals("08003")) { // connessione chiusa o non valida
+                    connessioneDb(); // tentativo di ristabilire la connessione
+                } else {
+                    throw e; // altro errore → rilancio subito
+                }
+                retryCount++;
             }
-            retryCount++;
         }
+        throw new SQLException("Operazione fallita dopo " + max_retries + " tentativi.");
     }
-    throw new SQLException("Operazione fallita dopo " + max_retries + " tentativi.");
-    }
-    
-    
-    
-    public GameMap creaMappa()throws SQLException{
-        GameMap mappa= new GameMap(); 
-        Statement stm= con.createStatement();
-        ResultSet rs= stm.executeQuery("SELECT * FROM stanza");
-        Room array[]= new Room[30];
-        while(rs.next()){
-            Room stanza= creaStanza(rs);
-            array[stanza.getId()]= stanza;
+
+
+    public GameMap creaMappa() throws SQLException {
+        GameMap mappa = new GameMap();
+        Statement stm = con.createStatement();
+        ResultSet rs = stm.executeQuery("SELECT * FROM stanza");
+        List<Room> array = new ArrayList<>();
+        while (rs.next()) {
+            Room stanza = creaStanza(rs);
+            array.add(stanza.getId(), stanza);
             mappa.aggiungiStanza(stanza);
         }
         rs.close();
         stm.close();
-        return creaCollegamentoS(mappa,array);
+        return creaCollegamentoS(mappa, array);
     }
-    
-    private GameMap creaCollegamentoS(GameMap mappa, Room array[]) throws SQLException{
+
+    private GameMap creaCollegamentoS(GameMap mappa, List<Room> array) throws SQLException {
         Room stanza1;
         Room stanza2;
         Direzione direzione;
-        Statement stm= con.createStatement();
-        ResultSet rs= stm.executeQuery("SELECT * FROM CollecgamentoStanze");
-        while(rs.next()){
-            stanza1=array[rs.getInt("idStanzaIniziale")];
-            stanza2=array[rs.getInt("idStanzaFinale")];
-            if (rs.getString("direzione")== "n")
-                direzione= Direzione.NORD;
-            else if(rs.getString("direzione").equals("s"))
-                    direzione= Direzione.SUD;
-            else if(rs.getString("direzione").equals("e"))
-                    direzione= Direzione.EST;
-            else if(rs.getString("direzione").equals("o"))
-                    direzione= Direzione.OVEST;
-            else if(rs.getString("direzione").equals("sopra"))
-                    direzione= Direzione.SOPRA;
-            else if(rs.getString("direzione").equals("sotto"))
-                    direzione= Direzione.SOTTO;
-            else 
-                direzione=null;
+        Statement stm = con.createStatement();
+        ResultSet rs = stm.executeQuery("SELECT * FROM CollecgamentoStanze");
+        while (rs.next()) {
+            stanza1 = array.get(rs.getInt("idStanzaIniziale"));
+            stanza2 = array.get(rs.getInt("idStanzaFinale"));
+            if (rs.getString("direzione").equals("n"))
+                direzione = Direzione.NORD;
+            else if (rs.getString("direzione").equals("s"))
+                direzione = Direzione.SUD;
+            else if (rs.getString("direzione").equals("e"))
+                direzione = Direzione.EST;
+            else if (rs.getString("direzione").equals("o"))
+                direzione = Direzione.OVEST;
+            else if (rs.getString("direzione").equals("sopra"))
+                direzione = Direzione.SOPRA;
+            else if (rs.getString("direzione").equals("sotto"))
+                direzione = Direzione.SOTTO;
+            else
+                direzione = null;
             mappa.collegaStanze(stanza1, stanza2, direzione);
-
         }
         rs.close();
         stm.close();
         return mappa;
     }
 
-    
 
     //dizionario per l'alias dei comandi e oggetti
-   
-    
+
+
     private Set<String> getAliasC(int id) throws SQLException {
-    return executeWithRetry(() -> {
-        PreparedStatement pstm = con.prepareStatement("SELECT * FROM Alias WHERE id = ?");
-        pstm.setInt(1, id);
-        ResultSet rs = pstm.executeQuery();
-        
-        Set<String> aliasC = new HashSet<>();
-        while (rs.next()) {
-            aliasC.add(rs.getString("alias"));
-        }
-        
-        rs.close();
-        pstm.close();
-        return aliasC;
-    });
-}
-
-
-    private Set<String> getAliasOgg(int id) throws SQLException {
-    return executeWithRetry(() -> {
-        PreparedStatement pstm = con.prepareStatement("SELECT * FROM Alias WHERE id = ?");
-        pstm.setInt(1, id);
-        ResultSet rs = pstm.executeQuery();
-        
-        Set<String> aliasOg = new HashSet<>();
-        while (rs.next()) {
-            aliasOg.add(rs.getString("alias"));
-        }
-        
-        rs.close();
-        pstm.close();
-        return aliasOg;
-    });
-}
-
-              
-
-    
-    
-    private Room creaStanza(ResultSet rs) throws SQLException {
-        Room stanza = new Room(rs.getInt("id"));
-        stanza.setName(rs.getString("nome"));
-        stanza.setDescription(rs.getString("descrizioneIniziale"));
-        stanza.setLook(rs.getString("descrizioneAggiuntiva"));
-        if(rs.getBoolean("aperto")){
-            stanza.setDeniedEntry(false);
-        }else{
-            stanza.setDeniedEntry(true);
-        }
-
-        stanza.setVisible(rs.getBoolean("visibile"));
-        return stanza;
-    }
-    
-//lista di oggetti di per ogni stanza
-    private List<AdvObject> getOggettoStanza(int id) throws SQLException {
         return executeWithRetry(() -> {
-            List<AdvObject> oggettList = new ArrayList<>();
-            PreparedStatement pstm = con.prepareStatement("SELECT * FROM stanza_oggetto AS so JOIN oggetto AS o ON so.idOggetto = o.id WHERE so.idStanza = ?");
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM AliasComandi WHERE id = ?");
             pstm.setInt(1, id);
             ResultSet rs = pstm.executeQuery();
 
+            Set<String> aliasC = new HashSet<>();
             while (rs.next()) {
-                if(rs.getBoolean("contenitore")){
-                    oggettoContenitore(oggettList,rs.getInt("idOggetto"));
-                }
-                AdvObject oggetto = creaOggetto(rs);
-                int quantita = rs.getInt("quantita");
-                for (int i = 0; i < quantita; i++) {
-                    oggettList.add(oggetto);
+                aliasC.add(rs.getString("alias"));
+            }
+
+            rs.close();
+            pstm.close();
+            return aliasC;
+        });
+    }
+
+
+    private Set<String> getAliasOgg(int id) throws SQLException {
+        return executeWithRetry(() -> {
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM Alias WHERE id = ?");
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+
+            Set<String> aliasOg = new HashSet<>();
+            while (rs.next()) {
+                aliasOg.add(rs.getString("alias"));
+            }
+
+            rs.close();
+            pstm.close();
+            return aliasOg;
+        });
+    }
+
+
+    private Room creaStanza(ResultSet rs) throws SQLException {
+        Room stanza = new Room(rs.getInt("id"),
+                rs.getString("nome"),
+                rs.getString("descrizioneIniziale"),
+                rs.getString("immagine")
+        );
+        stanza.setLook(rs.getString("descrizioneAggiuntiva"));
+        stanza.setDeniedEntry(!rs.getBoolean("aperta"));
+        stanza.setVisible(rs.getBoolean("visibile"));
+        stanza.setObjects(getOggettiStanza(rs.getInt("id")));
+        stanza.setNPCs(getNpcStanza(rs.getInt("id")));
+        return stanza;
+    }
+
+    //lista di oggetti di per ogni stanza
+    private Map<AdvObject, Integer> getOggettiStanza(int id) throws SQLException {
+        return executeWithRetry(() -> {
+            Map<AdvObject, Integer> oggetti = new HashMap<>();
+            PreparedStatement pstm = con.prepareStatement("SELECT " +
+                    "    so.idStanza      AS so_idStanza, " +
+                    "    so.idOggetto     AS so_idOggetto, " +
+                    "    so.quantita      AS so_quantita, " +
+                    "    o.id             AS o_id, " +
+                    "    o.nome           AS o_nome, " +
+                    "    o.descrizione    AS o_descrizione, " +
+                    "    o.contenitore    AS o_contenitore, " +
+                    "    o.apribile       AS o_apribile, " +
+                    "    o.leggibile      AS o_leggibile, " +
+                    "    o.cliccabile     AS o_cliccabile, " +
+                    "    o.visibile       AS o_visibile, " +
+                    "    o.componibile    AS o_componibile, " +
+                    "    o.utilizzi       AS o_utilizzi, " +
+                    "    o.immagine       AS o_immagine " +
+                    "FROM stanza_oggetto  AS so " +
+                    "INNER JOIN Oggetto   AS o ON so.idOggetto = o.id\n" +
+                    "WHERE so.idStanza = ?;");
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                if (rs.getBoolean("o_contenitore")) {
+                    AdvObjectContainer o = creaOggettoContenitore(rs);
+                    oggettoContenitore(oggetti, rs.getInt("so_idOggetto"), o);
+                } else {
+                    oggetti.put(creaOggetto(rs), 1);
                 }
             }
             rs.close();
             pstm.close();
-            return oggettList;
+            return oggetti;
         });
     }
-    
-    public List<NPC> getNpcStanza(int id) throws SQLException{
-        List<NPC> listaNpc= new ArrayList<>();
+
+    private List<NPC> getNpcStanza(int id) throws SQLException {
+        List<NPC> listaNpc = new ArrayList<>();
         PreparedStatement pstm = con.prepareStatement("SELECT * FROM Npc WHERE idStanza=?");
-        pstm.setInt(1,id);
+        pstm.setInt(1, id);
         ResultSet rs = pstm.executeQuery();
         while (rs.next()) {
-            NPC npc= creaNpc(rs);
+            NPC npc = creaNpc(rs);
             listaNpc.add(npc);
         }
         rs.close();
@@ -226,115 +219,167 @@ public class GestioneDB {
         return aggiungiDialoghiNPC(npc);
     }
 
-    private NPC aggiungiDialoghiNPC(NPC n) throws SQLException{
-        PreparedStatement pstm = con.prepareStatement("SELECT d.id AS id_dialogo, g.id AS id_domanda, g.domanda AS domanda" +
-                                                          "FROM Dialoghi AS d " +
-                                                          "INNER JOIN DomandeDialoghi AS g " +
-                                                          "ON d.id=g.dialogo  " +
-                                                          "WHERE NPC=? ORDER BY d.id ASC;");
+    private NPC aggiungiDialoghiNPC(NPC n) throws SQLException {
+        PreparedStatement pstm = con.prepareStatement(
+                "SELECT d.id AS id_dialogo, g.id AS id_domanda, g.domanda AS domanda " +
+                        "FROM Dialoghi AS d " +
+                        "INNER JOIN DomandeDialoghi AS g " +
+                        "ON d.id=g.dialogo  " +
+                        "WHERE NPC=? ORDER BY d.id ASC;");
         pstm.setInt(1, n.getId());
         ResultSet rsDialoghi = pstm.executeQuery();
         pstm.close();
-        List<String> nodi=new ArrayList<>();
-        int dialogoID=-1;
-        ResultSet rsRisposte=null;
-        Dialogo d=new Dialogo();
-        while(rsDialoghi.next()){
-            if((dialogoID!=rsDialoghi.getInt("id_dialogo")) || (dialogoID==-1)){
-                if(dialogoID!=-1){
-                    while(rsRisposte.next()){
+        List<String> nodi = new ArrayList<>();
+        int dialogoID = -1;
+        ResultSet rsRisposte = null;
+        Dialogo d = new Dialogo();
+        while (rsDialoghi.next()) {
+            if ((dialogoID != rsDialoghi.getInt("id_dialogo")) || (dialogoID == -1)) {
+                if (dialogoID != -1) {
+                    while (rsRisposte.next()) {
                         d.addRisposta(nodi.get(rsRisposte.getInt("domanda_partenza")),
-                                      nodi.get(rsRisposte.getInt("domanda_arrivo")),
-                                      rsDialoghi.getString("risposta")
-                                    );
+                                nodi.get(rsRisposte.getInt("domanda_arrivo")),
+                                rsRisposte.getString("risposta")
+                        );
                     }
                 }
-                dialogoID=rsDialoghi.getInt("id_dialogo");
+                dialogoID = rsDialoghi.getInt("id_dialogo");
                 pstm = con.prepareStatement("SELECT * FROM RisposteDomande WHERE dialogo=?;");
                 pstm.setInt(1, dialogoID);
 
                 rsRisposte = pstm.executeQuery();
                 n.addDialogo(d);
-                d=new Dialogo();
+                d = new Dialogo();
             }
-            nodi.add(rsDialoghi.getInt("id_domanda"),rsDialoghi.getString("domanda"));
+            nodi.add(rsDialoghi.getInt("id_domanda"), rsDialoghi.getString("domanda"));
             d.addDialogo(nodi.get(rsDialoghi.getInt("id_domanda")));
         }
+        while (rsRisposte.next()) {
+            d.addRisposta(nodi.get(rsRisposte.getInt("domanda_partenza")),
+                    nodi.get(rsRisposte.getInt("domanda_arrivo")),
+                    rsRisposte.getString("risposta")
+            );
+        }
+        n.addDialogo(d);
         pstm.close();
-        rsRisposte.close();
+        try {
+            rsRisposte.close();
+        } catch (Exception ignored) {
+        }
         rsDialoghi.close();
         return n;
     }
 
-    private void oggettoContenitore(List<AdvObject> oggettList, int idOggetto) throws SQLException {
+    private void oggettoContenitore(Map oggetti, int idOggetto, AdvObjectContainer o) throws SQLException {
         Statement stm = con.createStatement();
-        ResultSet rsContenitore = stm.executeQuery("SELECT * FROM Contiene WHERE idOggetto1="+ idOggetto+";");
+        PreparedStatement pstm = con.prepareStatement("SELECT " +
+                "    c.idOggetto1     AS so_idStanza, " +
+                "    c.idOggetto1     AS so_idOggetto, " +
+                "    c.quantita       AS so_quantita, " +
+                "    o.id             AS o_id, " +
+                "    o.nome           AS o_nome, " +
+                "    o.descrizione    AS o_descrizione, " +
+                "    o.contenitore    AS o_contenitore, " +
+                "    o.apribile       AS o_apribile, " +
+                "    o.leggibile      AS o_leggibile, " +
+                "    o.cliccabile     AS o_cliccabile, " +
+                "    o.visibile       AS o_visibile, " +
+                "    o.componibile    AS o_componibile, " +
+                "    o.utilizzi       AS o_utilizzi, " +
+                "    o.immagine       AS o_immagine " +
+                "FROM Contiene AS c " +
+                "INNER JOIN Oggetto AS o ON c.idOggetto2 = o.id " +
+                "WHERE c.idOggetto1 =?;");
+        pstm.setInt(1, idOggetto);
+        ResultSet rsContenitore = pstm.executeQuery();
 
         while (rsContenitore.next()) {
-            AdvObject oggettoContenitore = creaOggetto(rsContenitore);
-            oggettList.add(oggettoContenitore);
+            if (rsContenitore.getBoolean("o_contenitore")) {
+                o.add(creaOggettoContenitore(rsContenitore), rsContenitore.getInt("quantita"));
+            } else {
+                o.add(creaOggetto(rsContenitore), rsContenitore.getInt("quantita"));
+            }
         }
+        oggetti.put(o, 1);
         rsContenitore.close();
         stm.close();
     }
 
 
-//creazione oggetto dal resulset 
+    //creazione oggetto dal resultset
     private AdvObject creaOggetto(ResultSet rs) throws SQLException {
-        AdvObject oggetto = new AdvObject(rs.getInt("id"), rs.getString("nome"), rs.getString("descrizione"));
-        oggetto.setOpenable(rs.getBoolean("aperto"));
-        oggetto.setPickupable(rs.getBoolean("raccoglibile"));
-        oggetto.setOpen(rs.getBoolean("aperibile"));
-        oggetto.setLeggibile(rs.getBoolean("leggibile"));
-        oggetto.setCliccabile(rs.getBoolean("cliccabile"));
-        oggetto.setVisibile(rs.getBoolean("visibile"));
-        oggetto.setComponibile(rs.getBoolean("componibile"));
-        oggetto.setUtilizzi(rs.getInt("utilizzi"));
-        oggetto.setContenitore(rs.getBoolean("componibile"));
+        AdvObject oggetto = new AdvObject(rs.getInt("o_id"),
+                rs.getString("o_nome"),
+                rs.getString("o_descrizione"),
+                rs.getString("o_immagine"));
+        oggetto.setOpenable(rs.getBoolean("o_apribile"));
+        oggetto.setPickupable(rs.getBoolean("o_raccoglibile"));
+        oggetto.setOpen(rs.getBoolean("o_aperto"));
+        oggetto.setLeggibile(rs.getBoolean("o_leggibile"));
+        oggetto.setCliccabile(rs.getBoolean("o_cliccabile"));
+        oggetto.setVisibile(rs.getBoolean("o_visibile"));
+        oggetto.setComponibile(rs.getBoolean("o_componibile"));
+        oggetto.setUtilizzi(rs.getInt("o_utilizzi"));
+        oggetto.setAlias(getAliasOgg(rs.getInt("o_id")));
+        return oggetto;
+    }
+
+    private AdvObjectContainer creaOggettoContenitore(ResultSet rs) throws SQLException {
+        AdvObjectContainer oggetto = new AdvObjectContainer(rs.getInt("o_id"),
+                rs.getString("o_nome"),
+                rs.getString("o_descrizione"),
+                rs.getString("o_immagine"));
+        oggetto.setOpenable(rs.getBoolean("o_apribile"));
+        oggetto.setPickupable(rs.getBoolean("o_raccoglibile"));
+        oggetto.setOpen(rs.getBoolean("o_aperto"));
+        oggetto.setLeggibile(rs.getBoolean("o_leggibile"));
+        oggetto.setCliccabile(rs.getBoolean("o_cliccabile"));
+        oggetto.setVisibile(rs.getBoolean("o_visibile"));
+        oggetto.setComponibile(rs.getBoolean("o_componibile"));
+        oggetto.setUtilizzi(rs.getInt("o_utilizzi"));
+        oggetto.setAlias(getAliasOgg(rs.getInt("o_id")));
         return oggetto;
     }
 
 
-    //lista comandi 
+    //lista comandi
     public List<String> getComandi(int id) throws SQLException {
-    return executeWithRetry(() -> {
-        List<String> comandi = new ArrayList<>();
-        PreparedStatement pstm = con.prepareStatement("SELECT * FROM Comandi WHERE id = ?");
-        pstm.setInt(1, id);
-        ResultSet rs = pstm.executeQuery();
-        while (rs.next()) {
-            comandi.add(rs.getString("nome"));
-        }
-        rs.close();
-        pstm.close();
-        return comandi;
-    });
-}
+        return executeWithRetry(() -> {
+            List<String> comandi = new ArrayList<>();
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM Comandi WHERE id = ?");
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                comandi.add(rs.getString("nome"));
+            }
+            rs.close();
+            pstm.close();
+            return comandi;
+        });
+    }
 
 
     // aggiornamento dialoghi
-    
-    public String aggiornaDialoghi(int id) throws SQLException {
-    return executeWithRetry(() -> {
-        PreparedStatement pstm= con.prepareStatement("SELECT * FROM Evento where id=?");
-        pstm.setInt(1,id);
-        ResultSet rs=pstm.executeQuery();
-        if(rs.next()){
-            return rs.getString("descrizioneAggiornata");
-        }
-        rs.close();
-        pstm.close();
-        return null;
-    });
-}
-    
 
-    
-    
+    public String aggiornaDialoghi(int id) throws SQLException {
+        return executeWithRetry(() -> {
+            PreparedStatement pstm = con.prepareStatement("SELECT * FROM Evento where id=?");
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+            if (rs.next()) {
+                return rs.getString("descrizioneAggiornata");
+            }
+            rs.close();
+            pstm.close();
+            return null;
+        });
+    }
+
+
     @FunctionalInterface
     /**
      * Interfaccia funzionale per operazioni SQL.
-     * 
+     *
      */
     private interface SqlFunction<T> {
         /**
@@ -345,5 +390,5 @@ public class GestioneDB {
          */
         T apply() throws SQLException;
     }
-    
+
 }
