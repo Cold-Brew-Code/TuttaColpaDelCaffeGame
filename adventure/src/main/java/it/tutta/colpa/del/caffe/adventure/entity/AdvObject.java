@@ -24,6 +24,8 @@ public class AdvObject {
     private boolean pushable = false;
     private boolean open = false;
     private boolean push = false;
+    private int utilizzi= 0;
+    private boolean visibile=false;
 
     /**
      *
@@ -211,6 +213,30 @@ public class AdvObject {
      */
     public int getId() {
         return id;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public boolean isVisibile() {
+        return visibile;
+    }
+
+    /**
+     *
+     * @param visibile
+     */
+    public void setVisibile(boolean visibile) {
+        this.visibile = visibile;
+    }
+
+    public void setUtilizzi(int utilizzi){
+        this.utilizzi= utilizzi; //capiamo 
+    }
+
+    public int getUtilizzi(){
+        return utilizzi;
     }
 
     /**

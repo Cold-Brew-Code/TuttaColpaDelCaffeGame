@@ -5,9 +5,9 @@
 package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.adventure.entity.GameDescription;
+import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
 import it.tutta.colpa.del.caffe.adventure.utility.GameUtils;
 import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
 
 /**
  *
@@ -16,7 +16,7 @@ import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
 public class UseObserver implements GameObserver {
 
     /**
-     *
+     * SE l'oggetto è componibile O se può essere USATO 
      * @param description
      * @param parserOutput
      * @return
@@ -26,56 +26,60 @@ public class UseObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.USE) {
             boolean interact = false;
-            boolean key = parserOutput.getInvObject() != null && parserOutput.getInvObject().getId() == 4;
-            key = key || parserOutput.getObject() != null && parserOutput.getObject().getId() == 4;
-            if (key && description.getCurrentRoom().getObject(2) != null) {
-                if (description.getCurrentRoom().getObject(2).isOpen()) {
-                    msg.append("L'armadio è già aperto...hai la memoria di un criceto!");
-                } else {
-                    if (description.getCurrentRoom().getObject(2).isOpenable()) {
-                        msg.append(("L'armadio è già aperto! Perché mi chiedi di fare cose così stupide..."));
-                    } else {
-                        msg.append("Sei fortunato! La chiave ha sbloccato la serratura dell'armadio. Adesso puoi aprirlo.");
-                        description.getCurrentRoom().getObject(2).setOpenable(true);
-                    }
-                }
-                interact = true;
-            }
-            boolean battery = parserOutput.getInvObject() != null && parserOutput.getInvObject().getId() == 1;
-            battery = battery || parserOutput.getObject() != null && parserOutput.getObject().getId() == 1;
-            if (battery && GameUtils.getObjectFromInventory(description.getInventory(), 3) != null) {
-                GameUtils.getObjectFromInventory(description.getInventory(), 3).setPushable(true);
-                msg.append("Hai inserito le batterie nel giocattolo. Sei ritornato un bambino felice!");
-                interact = true;
-            } else if (battery) {
-                msg.append("Non c'è nessun oggetto nell'inventario che funziona con questo tipo di batterie.");
-                interact = true;
-            }
-            boolean wardrobe = parserOutput.getObject() != null && parserOutput.getObject().getId() == 2;
-            if (wardrobe) {
-                if (parserOutput.getObject().isOpen()) {
-                    msg.append("L'armadio è troppo pieno, non puoi inserirci più nulla!");
-                } else {
-                    msg.append("L'armadio è chiuso e di certo non puoi sollevarlo o spostarlo, è troppo pesante e tu non hai abbastanza muscoli!");
-                }
-                interact = true;
-            }
-            boolean toy = parserOutput.getInvObject() != null && parserOutput.getInvObject().getId() == 3;
-            toy = toy || parserOutput.getObject() != null && parserOutput.getObject().getId() == 3;
-            if (toy) {
-                if (parserOutput.getObject() != null && parserOutput.getObject().getId() == 3) {
-                    msg.append("Devi prima raccoglierlo per poterlo utilizzare.");
-                    interact = true;
-                } else if (parserOutput.getInvObject() != null && parserOutput.getInvObject().getId() == 3) {
-                    if (parserOutput.getInvObject().isPushable()) {
-                        msg.append("Premi il pulsante del giocattolo e in seguito ad una forte esplosione la tua casa prende fuoco...\ntu e tuoi famigliari cercate invano di salvarvi e venite avvolti dalle fiamme...\nè stata una morte CALOROSA...addio!");
-                        description.setCurrentRoom(null);
+            String nameObj= "";
+            if(parserOutput.getInvObject() != null && parserOutput.getInvObject().getId() == 14){// sto usando la carta magica per aprire le port 
+                boolean magicCard =parserOutput.getObject() != null && parserOutput.getObject().getId() == 14;
+                if(magicCard && parserOutput.getObject().getUtilizzi()>0) {
+                    if (description.getCurrentRoom().isOpen()) {
+                        msg.append("La porta è già aperta");
+                    }else{
+                        description.getCurrentRoom().setOpen(true);
+                        parserOutput.getObject().setUtilizzi(parserOutput.getObject().getUtilizzi()-1);
+                        msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza.");
                         interact = true;
-                    } else {
-                        msg.append("Mancano le batterie, non posso utilizzarlo così.");
-                        interact = true;
-                    }
+                    } 
                 }
+                else if(magicCard && parserOutput.getObject().getUtilizzi()<=0 && description.getCurrentRoom().isOpen()== false){
+                    msg.append("sorry but you can not use the magic card becasue you have finished the uses");
+                }
+                else if(magicCard== false && description.getCurrentRoom().isOpen()== false){
+                    nameObj= parserOutput.getObject().getName();
+                    msg.append("You can not use " + nameObj+ " to open the door");
+                }
+            }else if(parserOutput.getObject() != null && parserOutput.getObject().getId() == 16){ // il caffè è l'oggetto 16
+                boolean isInRoom = description.getCurrentRoom().getObject(16) != null;
+                if(isInRoom && GameUtils.getObjectFromInventory(description.getInventory(),8)!= null){
+                    msg.append("You can take a caffè");
+                    parserOutput.getObject().setUtilizzi(parserOutput.getObject().getUtilizzi()-1);
+                    interact= true;
+                } 
+                else if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(),8)== null ){
+                    msg.append("you don't have a money to buy a caffè. You are poor");
+                }
+                else{
+                    msg.append("you don't find a correct room");
+
+                }
+            }else if(parserOutput.getObject() != null && parserOutput.getObject().getId() == 1){
+                boolean isVisibleMap= description.getCurrentRoom().getObject(1) != null;
+                if(isVisibleMap && parserOutput.getObject().isVisibile()== false){
+                    msg.append("there is not a map in this room"); // perche la mappa e visibile solo se passa l'indovinello altrimenti non è nota la sua esistenza.
+                }
+                else if(isVisibleMap && GameUtils.getObjectFromInventory(description.getInventory(),1)== null){
+                    msg.append("You must take the map before!");
+                }else{
+                    interact= true;
+                }
+            }else if (parserOutput.getObject() != null && parserOutput.getObject().getId() == 9){
+                int id= description.getCurrentRoom().getId();
+                boolean takeKey = (id == 3 || id == 4 || id == 5 || id == 6 || id == 14 ||id==17 ||id==20|| id==25);
+                if( takeKey && GameUtils.getObjectFromInventory(description.getInventory(),9)!= null && parserOutput.getObject().isVisibile()){
+                    msg.append("puoi usare la chiave per sbloccare l'ascensore");
+                    interact=true;
+            }else{
+                    msg.append("non esiste nessuna chiave l'urgenza ti sta dando alla testa");// questo perchè la chiave è visible se passi l'indovinello
+                    }
+
             }
             if (!interact) {
                 msg.append("Non ci sono oggetti utilizzabili qui.");
@@ -83,5 +87,5 @@ public class UseObserver implements GameObserver {
         }
         return msg.toString();
     }
-
 }
+
