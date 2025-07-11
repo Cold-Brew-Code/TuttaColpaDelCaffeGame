@@ -4,6 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.adventure.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author giovanni
  */
-public class NPC {
+public class NPC implements Serializable {
     
     private final int id;
     private String nome;

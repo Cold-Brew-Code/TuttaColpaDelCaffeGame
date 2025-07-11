@@ -8,19 +8,26 @@ import it.tutta.colpa.del.caffe.adventure.utility.StringArcoGrafo;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.Graph;
 
+import java.io.Serializable;
+
 /**
  *
  * @author giova
  */
-public class Dialogo  {
+public class Dialogo  implements Serializable {
     
     private final Graph <String,StringArcoGrafo> dialogo;
+    private String currentNode;
     
     public Dialogo(){
-        
         dialogo= new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }
-    
+
+    public void addDialogo(String dialogo, boolean corrente){
+        this.dialogo.addVertex(dialogo);
+        this.currentNode = dialogo;
+    }
+
     public void addDialogo(String dialogo){
         this.dialogo.addVertex(dialogo);
     }

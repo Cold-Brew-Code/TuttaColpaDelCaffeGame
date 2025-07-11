@@ -8,12 +8,13 @@ package it.tutta.colpa.del.caffe.adventure.entity;
 
 import it.tutta.colpa.del.caffe.adventure.exception.InventoryException;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * @author pierpaolo
  */
-public class AdvObjectContainer extends AdvObject {
+public class AdvObjectContainer extends AdvObject implements Serializable {
 
     private Map<AdvObject, Integer> map = new HashMap<>();
 

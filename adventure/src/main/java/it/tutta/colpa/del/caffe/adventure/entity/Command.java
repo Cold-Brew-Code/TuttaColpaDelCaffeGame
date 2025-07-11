@@ -6,6 +6,9 @@
 package it.tutta.colpa.del.caffe.adventure.entity;
 
 import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,7 +18,7 @@ import java.util.Set;
  *
  * @author pierpaolo
  */
-public class Command {
+public class Command implements Serializable {
 
     private final CommandType type;
 

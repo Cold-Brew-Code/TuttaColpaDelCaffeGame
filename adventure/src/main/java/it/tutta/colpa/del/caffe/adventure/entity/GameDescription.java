@@ -10,6 +10,7 @@ import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
 import it.tutta.colpa.del.caffe.adventure.entity.Command;
 import it.tutta.colpa.del.caffe.adventure.entity.Room;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
  *
  * @author pierpaolo
  */
-public abstract class GameDescription {
+public abstract class GameDescription implements Serializable {
 
     private final List<Room> rooms = new ArrayList<>();
 

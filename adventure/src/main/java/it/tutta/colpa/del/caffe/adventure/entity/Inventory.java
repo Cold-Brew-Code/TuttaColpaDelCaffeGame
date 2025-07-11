@@ -7,10 +7,11 @@ package it.tutta.colpa.del.caffe.adventure.entity;
 
 import it.tutta.colpa.del.caffe.adventure.exception.InventoryException;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Inventory {
+public class Inventory implements Serializable {
 
     private Map<AdvObject, Integer> inventory = new HashMap<>();
 

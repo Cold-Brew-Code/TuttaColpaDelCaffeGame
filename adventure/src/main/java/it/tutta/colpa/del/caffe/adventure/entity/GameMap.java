@@ -8,11 +8,14 @@ import it.tutta.colpa.del.caffe.adventure.utility.ArcoGrafo;
 import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.Graph;
+
+import java.io.Serializable;
+
 /**
  * 
  * @author giovanni
  */
-public class GameMap {
+public class GameMap implements Serializable {
     
     private final Graph<Room, ArcoGrafo> grafo;
     

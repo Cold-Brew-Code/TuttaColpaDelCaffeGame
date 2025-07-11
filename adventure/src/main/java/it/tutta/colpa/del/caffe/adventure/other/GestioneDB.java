@@ -309,7 +309,40 @@ public class GestioneDB {
         stm.close();
     }
 
-
+    public AdvObject getOggetto(int id) throws SQLException {
+        return executeWithRetry(() -> {
+            Map<AdvObject, Integer> oggetti = new HashMap<>();
+            PreparedStatement pstm = con.prepareStatement("SELECT " +
+                    "    o.id             AS o_id, " +
+                    "    o.nome           AS o_nome, " +
+                    "    o.descrizione    AS o_descrizione, " +
+                    "    o.contenitore    AS o_contenitore, " +
+                    "    o.apribile       AS o_apribile, " +
+                    "    o.leggibile      AS o_leggibile, " +
+                    "    o.cliccabile     AS o_cliccabile, " +
+                    "    o.visibile       AS o_visibile, " +
+                    "    o.componibile    AS o_componibile, " +
+                    "    o.aperto         AS o_aperto, " +
+                    "    o.raccoglibile   AS o_raccoglibile, " +
+                    "    o.utilizzi       AS o_utilizzi, " +
+                    "    o.immagine       AS o_immagine " +
+                    "FROM Oggetto " +
+                    "WHERE o.id = ?;");
+            pstm.setInt(1, id);
+            ResultSet rs = pstm.executeQuery();
+            AdvObject obj=null;
+            if(rs.next()){
+                if(rs.getBoolean("o_contenitore")){
+                    obj = creaOggettoContenitore(rs);
+                }else{
+                    obj = creaOggetto(rs);
+                }
+            }
+            rs.close();
+            pstm.close();
+            return obj;
+        });
+    }
     //creazione oggetto dal resultset
     private AdvObject creaOggetto(ResultSet rs) throws SQLException {
         AdvObject oggetto = new AdvObject(rs.getInt("o_id"),

@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.adventure.entity;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import java.util.Map;
  *
  * @author pierpaolo
  */
-public class Room {
+public class Room implements Serializable {
 
     private final int id;
     private String name;
