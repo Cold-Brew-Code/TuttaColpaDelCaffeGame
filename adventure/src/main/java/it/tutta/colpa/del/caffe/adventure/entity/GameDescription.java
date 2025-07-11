@@ -20,70 +20,60 @@ import java.util.List;
 public abstract class GameDescription {
 
     private final List<Room> rooms = new ArrayList<>();
-
     private final List<Command> commands = new ArrayList<>();
 
-    private final List<AdvObject> inventory = new ArrayList<>();
+    private final Inventory inventory = new Inventory();
 
     private Room currentRoom;
 
     /**
-     *
-     * @return
+     * Restituisce la lista delle stanze del gioco.
      */
     public List<Room> getRooms() {
         return rooms;
     }
 
     /**
-     *
-     * @return
+     * Restituisce la lista dei comandi disponibili.
      */
     public List<Command> getCommands() {
         return commands;
     }
 
     /**
-     *
-     * @return
+     * Restituisce la stanza attualmente in cui si trova il giocatore.
      */
     public Room getCurrentRoom() {
         return currentRoom;
     }
 
     /**
-     *
-     * @param currentRoom
+     * Imposta la stanza corrente.
      */
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
     }
 
     /**
-     *
-     * @return
+     * Restituisce l'inventario del giocatore.
      */
-    public List<AdvObject> getInventory() {
+    public Inventory getInventory() {
         return inventory;
     }
 
     /**
-     *
-     * @throws Exception
+     * Metodo astratto per inizializzare il gioco.
      */
     public abstract void init() throws Exception;
 
     /**
-     *
-     * @param p
-     * @param out
+     * Metodo astratto per gestire la prossima mossa del giocatore.
      */
     public abstract void nextMove(ParserOutput p, PrintStream out);
-    
+
     /**
-     *
-     * @return
+     * Messaggio di benvenuto del gioco.
      */
     public abstract String getWelcomeMsg();
-
 }
+

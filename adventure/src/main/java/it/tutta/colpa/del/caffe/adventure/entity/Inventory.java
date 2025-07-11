@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.adventure.entity;
 
 import it.tutta.colpa.del.caffe.adventure.exception.InventoryException;
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,26 +15,14 @@ public class Inventory {
 
     private Map<AdvObject, Integer> inventory = new HashMap<>();
 
-    /**
-     *
-     * @return inventory
-     */
     public Map<AdvObject, Integer> getInventory() {
         return inventory;
     }
 
-    /**
-     *
-     * @param inventory
-     */
     public void setList(Map<AdvObject, Integer> inventory) {
         this.inventory = inventory;
     }
 
-    /**
-     *
-     * @param o
-     */
     public void add(AdvObject o, int quantity) throws InventoryException {
         if(this.inventory.size()>=4){
             throw new InventoryException("Attenzione: l'inventario è pieno");
@@ -41,10 +30,6 @@ public class Inventory {
         inventory.put(o,quantity);
     }
 
-    /**
-     *
-     * @param o
-     */
     public void remove(AdvObject o, int quantity) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
@@ -56,10 +41,7 @@ public class Inventory {
         }
         inventory.replace(o, inventory.get(o)-quantity);
     }
-    /**
-     *
-     * @param o
-     */
+
     public void remove(AdvObject o) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
@@ -68,5 +50,20 @@ public class Inventory {
             inventory.remove(o);
         }
         inventory.replace(o, inventory.get(o)-1);
+    }
+
+    public int getQuantity(AdvObject element){
+        if(this.inventory.containsKey(element)){
+            return this.inventory.get(element);
+        }
+        return 0;
+    }
+
+    public int getQuantity(int objID){
+        AdvObject element = new AdvObject(objID);
+        if(this.inventory.containsKey(element)){
+            return this.inventory.get(element);
+        }
+        return 0;
     }
 }
