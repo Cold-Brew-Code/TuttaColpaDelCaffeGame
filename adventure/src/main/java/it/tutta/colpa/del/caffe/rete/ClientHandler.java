@@ -1,6 +1,5 @@
-package it.tutta.colpa.del.caffe.adventure.control.rete;
+package it.tutta.colpa.del.caffe.rete;
 
-import it.tutta.colpa.del.caffe.adventure.other.GestioneDB;
 import java.io.*;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -24,7 +23,7 @@ public class ClientHandler extends Thread {
             GestioneDB dataBase = new GestioneDB();
             String richiesta;
             while ((richiesta = in.readLine()) != null) {
-                System.out.println("Richiesta da " + clientSocket.getInetAddress() + ": " + richiesta);
+                System.out.println("[Debug rete/ClientHandler]Richiesta da " + clientSocket.getInetAddress() + ": " + richiesta);
 
                 if (richiesta.equals("comandi")) {
                     out.writeObject(dataBase.getComandi());
@@ -36,7 +35,7 @@ public class ClientHandler extends Thread {
                 } else if (richiesta.startsWith("oggetto-")) {
                     String[] tk = richiesta.split("-");
                 } else {
-                    out.writeObject("Errore: Comando non riconosciuto");
+                    out.writeObject("[Debug rete/ClientHandler]Errore: Comando non riconosciuto");
                 }
             }
 

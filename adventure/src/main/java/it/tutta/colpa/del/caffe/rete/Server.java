@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.adventure.control.rete;
+package it.tutta.colpa.del.caffe.rete;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,14 +10,14 @@ public class Server {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("Server in ascolto sulla porta " + port);
+            System.out.println("[Debug rete/Server]Server in ascolto sulla porta " + port);
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 new ClientHandler(clientSocket).start();
             }
         } catch (IOException e) {
-            System.err.println("Errore nell'avvio del server: " + e.getMessage());
+            System.err.println("[Debug rete/Server]Errore nell'avvio del server: " + e.getMessage());
             e.printStackTrace();
         }
     }
