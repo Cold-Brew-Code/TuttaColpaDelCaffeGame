@@ -4,8 +4,8 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-import it.tutta.colpa.del.caffe.adventure.utility.ArcoGrafo;
-import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.utility.ArcoGrafo;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.Graph;
 

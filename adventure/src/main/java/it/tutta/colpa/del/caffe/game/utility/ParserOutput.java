@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.tutta.colpa.del.caffe.adventure.utility;
+package it.tutta.colpa.del.caffe.game.utility;
 
 import it.tutta.colpa.del.caffe.game.entity.AdvObject;
 import it.tutta.colpa.del.caffe.game.entity.Command;

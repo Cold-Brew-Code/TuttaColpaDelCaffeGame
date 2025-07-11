@@ -5,7 +5,7 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.CommandType;
 
 import java.io.Serializable;
 import java.util.Arrays;

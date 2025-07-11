@@ -6,7 +6,7 @@ package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.start.boundary.MainPage;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
+import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 
 import javax.swing.*;
 import java.awt.*;

@@ -5,7 +5,7 @@
 package it.tutta.colpa.del.caffe.rete;
 
 
-import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.entity.*;
 
 import java.sql.Connection;

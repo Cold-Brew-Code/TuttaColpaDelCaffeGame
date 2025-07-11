@@ -2,7 +2,7 @@ package it.tutta.colpa.del.caffe.game.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 import javax.swing.*;
 import java.io.Serializable;

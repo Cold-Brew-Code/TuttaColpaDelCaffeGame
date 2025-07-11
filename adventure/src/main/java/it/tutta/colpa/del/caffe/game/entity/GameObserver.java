@@ -4,7 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
  *

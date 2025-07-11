@@ -4,7 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.adventure.utility.StringArcoGrafo;
+import it.tutta.colpa.del.caffe.game.utility.StringArcoGrafo;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.Graph;
 

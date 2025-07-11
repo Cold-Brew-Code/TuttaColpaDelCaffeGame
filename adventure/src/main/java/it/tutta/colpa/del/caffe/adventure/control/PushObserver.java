@@ -5,9 +5,9 @@
 package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
-import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.GameStatus;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 
 /**
