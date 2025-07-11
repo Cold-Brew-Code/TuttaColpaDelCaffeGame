@@ -4,15 +4,11 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
-import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
-import it.tutta.colpa.del.caffe.adventure.entity.GameDescription;
-
 /**
  *
  * @author pierpaolo
  */
+/*
 public class InventoryObserver implements GameObserver {
 
     /**
@@ -20,7 +16,7 @@ public class InventoryObserver implements GameObserver {
      * @param description
      * @param parserOutput
      * @return
-     */
+
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
@@ -38,3 +34,4 @@ public class InventoryObserver implements GameObserver {
     }
 
 }
+*/

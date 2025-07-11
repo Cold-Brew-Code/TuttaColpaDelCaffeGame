@@ -1,6 +1,6 @@
 <div align="center">
     <h1>Tutta colpa del caffè</h1>
-    <img src="docs/img/icon.png" alt="Icona Gioco" width="25%" height="25%"/>
+    <img src="docs/img/icon.png" alt="Icona Gioco" width="25%" />
 </div>
 
 # Trama del gioco

@@ -1,6 +1,6 @@
 <div align="center">
     <h1>Tutta colpa del caffè</h1>
-    <img src="img/icon.png" alt="Icona Gioco" width="25%" height="25%"/>
+    <img src="img/icon.png" alt="Icona Gioco" width="25%"/>
     <h3>Esame di Metodi Avanzati di Programmazione</h3>
     <h3>(track M-Z)</h3>
     <h3>A.A. 2024-2025</h3>
