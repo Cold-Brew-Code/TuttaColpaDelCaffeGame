@@ -4,7 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.adventure.utility;
 
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
+import it.tutta.colpa.del.caffe.game.entity.AdvObject;
 import java.util.List;
 
 /**

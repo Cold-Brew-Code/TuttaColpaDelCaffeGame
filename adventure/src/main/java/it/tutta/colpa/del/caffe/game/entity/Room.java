@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.tutta.colpa.del.caffe.adventure.entity;
+package it.tutta.colpa.del.caffe.game.entity;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +23,7 @@ public class Room implements Serializable {
     private String look;
     private boolean visible = true;
     private boolean denied_entry=false;
-    private ImageIcon image;
+    private String imagePath;
     private Map<AdvObject,Integer> objects = new HashMap<>();
     private List<NPC> NPCs = new ArrayList<>();
 
@@ -47,18 +45,15 @@ public class Room implements Serializable {
         this.id = id;
         this.name = name;
         this.description = description;
-        ImageIcon img=new ImageIcon((new ImageIcon(getClass().getResource("/images/"+image_name)))
-                .getImage()
-                .getScaledInstance(951, javax.swing.GroupLayout.DEFAULT_SIZE, Image.SCALE_SMOOTH));
-        this.image=img;
+        this.imagePath = "/images/" + image_name;
     }
 
-    // without image
+
     public Room(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        image=null;
+        this.imagePath=null;
     }
 
     /**
@@ -207,5 +202,13 @@ public class Room implements Serializable {
 
     public void setObjects(Map<AdvObject, Integer> objects) {
         this.objects = objects;
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                '}';
     }
 }

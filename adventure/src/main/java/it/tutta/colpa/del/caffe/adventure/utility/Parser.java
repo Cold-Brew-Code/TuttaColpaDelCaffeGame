@@ -5,8 +5,8 @@
  */
 package it.tutta.colpa.del.caffe.adventure.utility;
 
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
-import it.tutta.colpa.del.caffe.adventure.entity.Command;
+import it.tutta.colpa.del.caffe.game.entity.AdvObject;
+import it.tutta.colpa.del.caffe.game.entity.Command;
 import java.util.List;
 import java.util.Set;
 

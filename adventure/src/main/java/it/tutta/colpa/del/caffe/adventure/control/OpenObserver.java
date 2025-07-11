@@ -4,12 +4,11 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.adventure.entity.GameDescription;
+import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObject;
-import it.tutta.colpa.del.caffe.adventure.entity.AdvObjectContainer;
+import it.tutta.colpa.del.caffe.game.entity.AdvObjectContainer;
 import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
-import java.util.Iterator;
+import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 
 /**
  *

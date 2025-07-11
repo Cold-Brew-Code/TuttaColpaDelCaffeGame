@@ -1,4 +1,7 @@
-package it.tutta.colpa.del.caffe.adventure.boundary;
+package it.tutta.colpa.del.caffe.start.boundary;
+
+import it.tutta.colpa.del.caffe.game.boundary.GamePage;
+import it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage;
 
 import javax.swing.*;
 import java.awt.*;

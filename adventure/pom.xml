@@ -8,7 +8,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <exec.mainClass>it.tutta.colpa.del.caffe.adventure.boundary.MainPage</exec.mainClass>
+        <exec.mainClass>it.tutta.colpa.del.caffe.start.boundary.MainPage</exec.mainClass>
     </properties>
     <repositories>
         <repository>
@@ -41,7 +41,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>it.tutta.colpa.del.caffe.adventure.boundary.MainPage</mainClass>
+                            <mainClass>it.tutta.colpa.del.caffe.start.boundary.MainPage</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

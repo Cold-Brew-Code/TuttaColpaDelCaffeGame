@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.boundary;
+package it.tutta.colpa.del.caffe.game.boundary;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-import it.tutta.colpa.del.caffe.adventure.entity.Inventory;
+import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
 public class InventoryPage extends javax.swing.JFrame {
     

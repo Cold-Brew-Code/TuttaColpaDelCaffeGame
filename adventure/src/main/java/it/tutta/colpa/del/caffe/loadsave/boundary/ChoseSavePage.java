@@ -2,9 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.boundary;
-
-import it.tutta.colpa.del.caffe.adventure.utility.GameStatus;
+package it.tutta.colpa.del.caffe.loadsave.boundary;
 
 import javax.swing.*;
 import java.awt.*;

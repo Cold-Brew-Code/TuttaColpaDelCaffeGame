@@ -2,9 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.adventure.entity.GameDescription;
 import it.tutta.colpa.del.caffe.adventure.utility.ParserOutput;
 
 /**

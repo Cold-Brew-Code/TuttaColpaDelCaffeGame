@@ -3,11 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.tutta.colpa.del.caffe.adventure.entity;
+package it.tutta.colpa.del.caffe.game.entity;
 
 import it.tutta.colpa.del.caffe.adventure.utility.CommandType;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;

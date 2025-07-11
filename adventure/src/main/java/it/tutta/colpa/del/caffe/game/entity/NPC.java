@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.entity;
+package it.tutta.colpa.del.caffe.game.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class NPC implements Serializable {
     private final int id;
     private String nome;
     private int dialogoCor;
-    private List<Dialogo> dialoghi;
+    private final List<Dialogo> dialoghi;
     
     
     

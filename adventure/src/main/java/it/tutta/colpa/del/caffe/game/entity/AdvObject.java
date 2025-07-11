@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.tutta.colpa.del.caffe.adventure.entity;
+package it.tutta.colpa.del.caffe.game.entity;
 
 import javax.swing.*;
 import java.awt.*;
