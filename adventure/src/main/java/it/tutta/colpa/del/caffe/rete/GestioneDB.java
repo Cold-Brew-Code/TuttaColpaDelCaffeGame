@@ -2,11 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.other;
+package it.tutta.colpa.del.caffe.rete;
 
 
-import it.tutta.colpa.del.caffe.adventure.entity.*;
 import it.tutta.colpa.del.caffe.adventure.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.entity.*;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class GestioneDB {
 
-    private static Connection con;
+    private Connection con;
     private Properties credenziali;
 
     public GestioneDB() throws SQLException{
@@ -66,26 +66,26 @@ public class GestioneDB {
         GameMap mappa = new GameMap();
         Statement stm = con.createStatement();
         ResultSet rs = stm.executeQuery("SELECT * FROM stanza");
-        List<Room> array = new ArrayList<>();
+        Map<Integer, Room> map = new HashMap();
         while (rs.next()) {
             Room stanza = creaStanza(rs);
-            array.add(stanza.getId(), stanza);
+            map.put(stanza.getId(), stanza);
             mappa.aggiungiStanza(stanza);
         }
         rs.close();
         stm.close();
-        return creaCollegamentoS(mappa, array);
+        return creaCollegamentoS(mappa, map);
     }
 
-    private GameMap creaCollegamentoS(GameMap mappa, List<Room> array) throws SQLException {
+    private GameMap creaCollegamentoS(GameMap mappa, Map<Integer,Room> map) throws SQLException {
         Room stanza1;
         Room stanza2;
         Direzione direzione;
         Statement stm = con.createStatement();
         ResultSet rs = stm.executeQuery("SELECT * FROM CollecgamentoStanze");
         while (rs.next()) {
-            stanza1 = array.get(rs.getInt("idStanzaIniziale"));
-            stanza2 = array.get(rs.getInt("idStanzaFinale"));
+            stanza1 = map.get(rs.getInt("idStanzaIniziale"));
+            stanza2 = map.get(rs.getInt("idStanzaFinale"));
             if (rs.getString("direzione").equals("n"))
                 direzione = Direzione.NORD;
             else if (rs.getString("direzione").equals("s"))
@@ -230,8 +230,7 @@ public class GestioneDB {
                         "WHERE NPC=? ORDER BY d.id ASC;");
         pstm.setInt(1, n.getId());
         ResultSet rsDialoghi = pstm.executeQuery();
-        pstm.close();
-        List<String> nodi = new ArrayList<>();
+        Map<Integer,String> nodi = new HashMap<>();
         int dialogoID = -1;
         ResultSet rsRisposte = null;
         Dialogo d = new Dialogo();
@@ -253,7 +252,7 @@ public class GestioneDB {
                 n.addDialogo(d);
                 d = new Dialogo();
             }
-            nodi.add(rsDialoghi.getInt("id_domanda"), rsDialoghi.getString("domanda"));
+            nodi.put(rsDialoghi.getInt("id_domanda"), rsDialoghi.getString("domanda"));
             d.addDialogo(nodi.get(rsDialoghi.getInt("id_domanda")));
         }
         while (rsRisposte.next()) {
