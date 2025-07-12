@@ -350,7 +350,7 @@ public class GestioneDB {
                 rs.getString("o_immagine"));
         oggetto.setOpenable(rs.getBoolean("o_apribile"));
         oggetto.setPickupable(rs.getBoolean("o_raccoglibile"));
-        oggetto.setOpen(rs.getBoolean("o_aperto"));
+        //oggetto.setOpen(rs.getBoolean("o_aperto"));
         oggetto.setLeggibile(rs.getBoolean("o_leggibile"));
         oggetto.setCliccabile(rs.getBoolean("o_cliccabile"));
         oggetto.setVisibile(rs.getBoolean("o_visibile"));

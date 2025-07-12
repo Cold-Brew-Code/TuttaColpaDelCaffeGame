@@ -12,11 +12,13 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * @author pierpaolo
+ * @author giovanni
+ * classe degli oggetti contenitori 
  */
-public class AdvObjectContainer extends AdvObject implements Serializable {
+public class AdvObjectContainer extends AdvObject implements Open, Serializable {
 
     private Map<AdvObject, Integer> map = new HashMap<>();
+    private boolean open = false;
 
     /**
      * @param id
@@ -68,6 +70,7 @@ public class AdvObjectContainer extends AdvObject implements Serializable {
 
     /**
      * @param o
+     * @param quantity
      */
     public void add(AdvObject o, int quantity) {
         map.put(o, quantity);
@@ -75,6 +78,7 @@ public class AdvObjectContainer extends AdvObject implements Serializable {
 
     /**
      * @param o
+     * @param quantity
      */
     public void remove(AdvObject o, int quantity) {
         if (!map.containsKey(o)) {
@@ -101,6 +105,36 @@ public class AdvObjectContainer extends AdvObject implements Serializable {
         } else {
             map.replace(o, map.get(o) - 1);
         }
+    }
+    
+    /**
+    * Restituisce un dizionario con l'oggetto specificato e la sua quantità.
+    * Se l'oggetto non è presente, lancia un'eccezione.
+    *
+    * @param o oggetto da cercare
+    * @return mappa contenente solo l'oggetto cercato e la sua quantità
+    */
+    public Map<AdvObject, Integer> getObject(AdvObject o) {
+       if (!map.containsKey(o)) {
+           throw new IllegalArgumentException("L'oggetto '" + o.getName() + "' non è presente nel contenitore.");
+       }
+
+       int quantity = map.get(o);
+       Map<AdvObject, Integer> result = new HashMap<>();
+       result.put(o, quantity);
+       return result;
+    }
+    
+    
+    
+    @Override
+    public boolean isOpen() {
+        return open;
+    }
+
+    @Override
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 
 }

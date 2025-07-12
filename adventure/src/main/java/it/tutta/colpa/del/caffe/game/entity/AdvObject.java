@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author pierpaolo
+ * @author giovanni
  */
 public class AdvObject implements Serializable {
 
@@ -23,15 +23,11 @@ public class AdvObject implements Serializable {
     private Set<String> alias;
     private boolean openable = false;
     private boolean pickupable = true;
-    private boolean pushable = false;
-    private boolean open = false;
-    private boolean push = false;
     private boolean leggibile = false;
     private boolean cliccabile = false;
     private boolean visibile = false;
     private boolean componibile = false;
     private int utilizzi;
-    private boolean contenitore = false;
     private ImageIcon immagine;
 
     /**
@@ -132,77 +128,73 @@ public class AdvObject implements Serializable {
     public void setPickupable(boolean pickupable) {
         this.pickupable = pickupable;
     }
-
+    
     /**
-     * @return
+     * 
+     * @param leggibile 
      */
-    public boolean isPushable() {
-        return pushable;
-    }
-
-    /**
-     * @param pushable
-     */
-    public void setPushable(boolean pushable) {
-        this.pushable = pushable;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isOpen() {
-        return open;
-    }
-
-    /**
-     * @param open
-     */
-    public void setOpen(boolean open) {
-        this.open = open;
-    }
-
-    /**
-     * @return
-     */
-    public boolean isPush() {
-        return push;
-    }
-
-    /**
-     * @param push
-     */
-    public void setPush(boolean push) {
-        this.push = push;
-    }
-
-
     public void setLeggibile(boolean leggibile) {
         this.leggibile = leggibile;
     }
+    
+    /**
+     * 
+     * @return 
+     */
 
     public boolean isLeggibile() {
         return leggibile;
     }
+    
+    /**
+     * 
+     * @param cliccabile 
+     */
 
     public void setCliccabile(boolean cliccabile) {
         this.cliccabile = cliccabile;
     }
+    
+    /**
+     * 
+     * @return 
+     */
 
     public boolean isCliccabile() {
         return cliccabile;
     }
+    
+    /**
+     * 
+     * @param visibile 
+     */
 
     public void setVisibile(boolean visibile) {
         this.visibile = visibile;
     }
+    
+    /**
+     * 
+     * @return 
+     */
 
     public boolean isVisibile() {
         return visibile;
     }
+    
+    /**
+     * 
+     * @param componibile 
+     */
 
     public void setComponibile(boolean componibile) {
         this.componibile = componibile;
     }
+    
+    /**
+     * 
+     * @return 
+     */
 
     public boolean isComponibile() {
         return componibile;
@@ -220,14 +212,6 @@ public class AdvObject implements Serializable {
      */
     public int getUtilizzi() {
         return utilizzi;
-    }
-
-    public void setContenitore(boolean contenitore) {
-        this.contenitore = contenitore;
-    }
-
-    public boolean isContenitore() {
-        return contenitore;
     }
 
     /**
