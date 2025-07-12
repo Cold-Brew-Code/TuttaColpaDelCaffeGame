@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Inventory implements Serializable {
+public class Inventory  implements Serializable {
 
     private Map<AdvObject, Integer> inventory = new HashMap<>();
 
@@ -24,11 +24,16 @@ public class Inventory implements Serializable {
     }
 
     public void add(AdvObject o, int quantity) throws InventoryException {
-        if(this.inventory.size()>=4){
+        if (this.inventory.size() >= 4 && !inventory.containsKey(o)) {//  l'inventario  pieno e stai cercando di aggiungere un nuovo oggetto
             throw new InventoryException("Attenzione: l'inventario è pieno");
         }
-        inventory.put(o,quantity);
+        if (quantity <= 0) {
+            throw new InventoryException("La quantità deve essere positiva.");
+        }
+        // se ho già l'oggetto all'interno incremento solo la quantità 
+        inventory.merge(o, quantity, (a, b) -> Integer.sum(a, b));
     }
+
 
     public void remove(AdvObject o, int quantity) throws InventoryException {
         if (!inventory.containsKey(o)) {
