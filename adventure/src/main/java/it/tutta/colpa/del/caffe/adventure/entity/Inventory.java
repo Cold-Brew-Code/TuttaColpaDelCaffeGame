@@ -14,59 +14,55 @@ public class Inventory {
 
     private Map<AdvObject, Integer> inventory = new HashMap<>();
 
-    /**
-     *
-     * @return inventory
-     */
     public Map<AdvObject, Integer> getInventory() {
         return inventory;
     }
 
-    /**
-     *
-     * @param inventory
-     */
     public void setList(Map<AdvObject, Integer> inventory) {
         this.inventory = inventory;
     }
 
-    /**
-     *
-     * @param o
-     */
     public void add(AdvObject o, int quantity) throws InventoryException {
-        if(this.inventory.size()>=4){
+        if (this.inventory.size() >= 4) {
             throw new InventoryException("Attenzione: l'inventario è pieno");
         }
-        inventory.put(o,quantity);
+        inventory.put(o, quantity);
     }
 
-    /**
-     *
-     * @param o
-     */
     public void remove(AdvObject o, int quantity) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
-        if (quantity>inventory.get(o)){
+        if (quantity > inventory.get(o)) {
             throw new InventoryException("Attenzione: non hai abbastanza oggetti nell'inventario");
-        }else if (quantity==inventory.get(o)){
+        } else if (quantity == inventory.get(o)) {
             inventory.remove(o);
         }
-        inventory.replace(o, inventory.get(o)-quantity);
+        inventory.replace(o, inventory.get(o) - quantity);
     }
-    /**
-     *
-     * @param o
-     */
+
     public void remove(AdvObject o) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
-        if (1==inventory.get(o)){
+        if (1 == inventory.get(o)) {
             inventory.remove(o);
         }
-        inventory.replace(o, inventory.get(o)-1);
+        inventory.replace(o, inventory.get(o) - 1);
+    }
+
+    public int getQuantity(AdvObject element) {
+        if (this.inventory.containsKey(element)) {
+            return this.inventory.get(element);
+        }
+        return 0;
+    }
+
+    public int getQuantity(int objID) {
+        AdvObject element = new AdvObject(objID);
+        if (this.inventory.containsKey(element)) {
+            return this.inventory.get(element);
+        }
+        return 0;
     }
 }
