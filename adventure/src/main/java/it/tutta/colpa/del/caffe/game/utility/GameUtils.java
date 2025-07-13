@@ -5,7 +5,8 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import java.util.List;
+import it.tutta.colpa.del.caffe.game.entity.Inventory;
+
 
 /**
  *
@@ -19,8 +20,8 @@ public class GameUtils {
      * @param id
      * @return
      */
-    public static GeneralItem getObjectFromInventory(List<GeneralItem> inventory, int id) {
-        for (GeneralItem o : inventory) {
+    public static GeneralItem getObjectFromInventory( Inventory inventory, int id) {
+        for (GeneralItem o : inventory.getInventory().keySet()) {
             if (o.getId() == id) {
                 return o;
             }
