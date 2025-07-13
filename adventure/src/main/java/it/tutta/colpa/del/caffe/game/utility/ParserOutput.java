@@ -5,7 +5,7 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
-import it.tutta.colpa.del.caffe.game.entity.AdvObject;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 
 /**
@@ -16,16 +16,16 @@ public class ParserOutput {
 
     private Command command;
 
-    private AdvObject object;
+    private GeneralItem object;
     
-    private AdvObject invObject;
+    private GeneralItem invObject;
 
     /**
      *
      * @param command
      * @param object
      */
-    public ParserOutput(Command command, AdvObject object) {
+    public ParserOutput(Command command, GeneralItem object) {
         this.command = command;
         this.object = object;
     }
@@ -36,7 +36,7 @@ public class ParserOutput {
      * @param object
      * @param invObejct
      */
-    public ParserOutput(Command command, AdvObject object, AdvObject invObejct) {
+    public ParserOutput(Command command, GeneralItem object, GeneralItem invObejct) {
         this.command = command;
         this.object = object;
         this.invObject = invObejct;
@@ -62,7 +62,7 @@ public class ParserOutput {
      *
      * @return
      */
-    public AdvObject getObject() {
+    public GeneralItem getObject() {
         return object;
     }
 
@@ -70,7 +70,7 @@ public class ParserOutput {
      *
      * @param object
      */
-    public void setObject(AdvObject object) {
+    public void setObject(GeneralItem object) {
         this.object = object;
     }
 
@@ -78,7 +78,7 @@ public class ParserOutput {
      *
      * @return
      */
-    public AdvObject getInvObject() {
+    public GeneralItem getInvObject() {
         return invObject;
     }
 
@@ -86,7 +86,7 @@ public class ParserOutput {
      *
      * @param invObject
      */
-    public void setInvObject(AdvObject invObject) {
+    public void setInvObject(GeneralItem invObject) {
         this.invObject = invObject;
     }
 
