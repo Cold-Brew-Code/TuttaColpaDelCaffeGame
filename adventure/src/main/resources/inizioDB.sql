@@ -114,6 +114,11 @@ CREATE TABLE IF NOT EXISTS ComposedOf(
     PRIMARY KEY (composed_item_id,composing_item_id)
 );
 
+CREATE TABLE IF NOT EXISTS ReadableContent(
+    readable_item_id INT REFERENCES Items(id),
+    content VARCHAR(500),
+    PRIMARY KEY (readable_item_id)
+);
 
 MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
