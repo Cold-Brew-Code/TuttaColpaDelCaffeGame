@@ -5,7 +5,7 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
-import it.tutta.colpa.del.caffe.game.entity.AdvObject;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,7 @@ public class Parser {
         return -1;
     }
 
-    private int checkForObject(String token, List<AdvObject> obejcts) {
+    private int checkForObject(String token, List<GeneralItem> obejcts) {
         for (int i = 0; i < obejcts.size(); i++) {
             if (obejcts.get(i).getName().equals(token) || obejcts.get(i).getAlias().contains(token)) {
                 return i;
@@ -58,7 +58,7 @@ public class Parser {
      * @return
      */
 
-    public ParserOutput parse(String command, List<Command> commands, List<AdvObject> objects, List<AdvObject> inventory) {
+    public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<GeneralItem> inventory) {
         List<String> tokens = Utils.parseString(command, stopwords);
         if (!tokens.isEmpty()) {
             int ic = checkForCommand(tokens.get(0), commands);

@@ -4,7 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
-import it.tutta.colpa.del.caffe.game.entity.AdvObject;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import java.util.List;
 
 /**
@@ -19,8 +19,8 @@ public class GameUtils {
      * @param id
      * @return
      */
-    public static AdvObject getObjectFromInventory(List<AdvObject> inventory, int id) {
-        for (AdvObject o : inventory) {
+    public static GeneralItem getObjectFromInventory(List<GeneralItem> inventory, int id) {
+        for (GeneralItem o : inventory) {
             if (o.getId() == id) {
                 return o;
             }

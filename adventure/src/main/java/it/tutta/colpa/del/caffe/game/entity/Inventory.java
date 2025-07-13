@@ -11,26 +11,31 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Inventory implements Serializable {
+public class Inventory  implements Serializable {
 
-    private Map<AdvObject, Integer> inventory = new HashMap<>();
+    private Map<GeneralItem, Integer> inventory = new HashMap<>();
 
-    public Map<AdvObject, Integer> getInventory() {
+    public Map<GeneralItem, Integer> getInventory() {
         return inventory;
     }
 
-    public void setList(Map<AdvObject, Integer> inventory) {
+    public void setList(Map<GeneralItem, Integer> inventory) {
         this.inventory = inventory;
     }
 
-    public void add(AdvObject o, int quantity) throws InventoryException {
-        if(this.inventory.size()>=4){
+    public void add(GeneralItem o, int quantity) throws InventoryException {
+        if (this.inventory.size() >= 4 && !inventory.containsKey(o)) {//  l'inventario  pieno e stai cercando di aggiungere un nuovo oggetto
             throw new InventoryException("Attenzione: l'inventario è pieno");
         }
-        inventory.put(o,quantity);
+        if (quantity <= 0) {
+            throw new InventoryException("La quantità deve essere positiva.");
+        }
+        // se ho già l'oggetto all'interno incremento solo la quantità 
+        inventory.merge(o, quantity, (a, b) -> Integer.sum(a, b));
     }
 
-    public void remove(AdvObject o, int quantity) throws InventoryException {
+
+    public void remove(GeneralItem o, int quantity) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
@@ -42,7 +47,7 @@ public class Inventory implements Serializable {
         inventory.replace(o, inventory.get(o)-quantity);
     }
 
-    public void remove(AdvObject o) throws InventoryException {
+    public void remove(GeneralItem o) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
@@ -52,18 +57,19 @@ public class Inventory implements Serializable {
         inventory.replace(o, inventory.get(o)-1);
     }
 
-    public int getQuantity(AdvObject element){
+    public int getQuantity(GeneralItem element){
         if(this.inventory.containsKey(element)){
             return this.inventory.get(element);
         }
         return 0;
     }
 
+    /**
     public int getQuantity(int objID){
-        AdvObject element = new AdvObject(objID);
+        GeneralItem element = new GeneralItem(objID);
         if(this.inventory.containsKey(element)){
             return this.inventory.get(element);
         }
         return 0;
-    }
+    }*/
 }

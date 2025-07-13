@@ -24,7 +24,7 @@ public class Room implements Serializable {
     private boolean visible = true;
     private boolean denied_entry=false;
     private String imagePath;
-    private Map<AdvObject,Integer> objects = new HashMap<>();
+    private Map<GeneralItem,Integer> objects = new HashMap<>();
     private List<NPC> NPCs = new ArrayList<>();
 
     /**
@@ -108,7 +108,7 @@ public class Room implements Serializable {
      *
      * @return
      */
-    public Map<AdvObject, Integer> getObjects() {
+    public Map<GeneralItem, Integer> getObjects() {
         return objects;
     }
 
@@ -175,8 +175,8 @@ public class Room implements Serializable {
      * @param id
      * @return
      */
-    public AdvObject getObject(int id) {
-        for (AdvObject o : objects.keySet()) {
+    public GeneralItem getObject(int id) {
+        for (GeneralItem o : objects.keySet()) {
             if (o.getId() == id) {
                 return o;
             }
@@ -200,7 +200,7 @@ public class Room implements Serializable {
         this.NPCs = NPCs;
     }
 
-    public void setObjects(Map<AdvObject, Integer> objects) {
+    public void setObjects(Map<GeneralItem, Integer> objects) {
         this.objects = objects;
     }
 

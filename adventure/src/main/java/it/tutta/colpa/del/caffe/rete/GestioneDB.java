@@ -162,9 +162,9 @@ public class GestioneDB {
     }
 
     //lista di oggetti di per ogni stanza
-    private Map<AdvObject, Integer> getOggettiStanza(int id) throws SQLException {
+    private Map<GeneralItem, Integer> getOggettiStanza(int id) throws SQLException {
         return executeWithRetry(() -> {
-            Map<AdvObject, Integer> oggetti = new HashMap<>();
+            Map<GeneralItem, Integer> oggetti = new HashMap<>();
             PreparedStatement pstm = con.prepareStatement("SELECT " +
                     "    so.idStanza      AS so_idStanza, " +
                     "    so.idOggetto     AS so_idOggetto, " +
@@ -189,7 +189,7 @@ public class GestioneDB {
             ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 if (rs.getBoolean("o_contenitore")) {
-                    AdvObjectContainer o = creaOggettoContenitore(rs);
+                    ItemContainer o = creaOggettoContenitore(rs);
                     oggettoContenitore(oggetti, rs.getInt("so_idOggetto"), o);
                 } else {
                     oggetti.put(creaOggetto(rs), 1);
@@ -271,7 +271,7 @@ public class GestioneDB {
         return n;
     }
 
-    private void oggettoContenitore(Map oggetti, int idOggetto, AdvObjectContainer o) throws SQLException {
+    private void oggettoContenitore(Map oggetti, int idOggetto, ItemContainer o) throws SQLException {
         Statement stm = con.createStatement();
         PreparedStatement pstm = con.prepareStatement("SELECT " +
                 "    c.idOggetto1     AS so_idStanza, " +
@@ -308,9 +308,9 @@ public class GestioneDB {
         stm.close();
     }
 
-    public AdvObject getOggetto(int id) throws SQLException {
+    public GeneralItem getOggetto(int id) throws SQLException {
         return executeWithRetry(() -> {
-            Map<AdvObject, Integer> oggetti = new HashMap<>();
+            Map<GeneralItem, Integer> oggetti = new HashMap<>();
             PreparedStatement pstm = con.prepareStatement("SELECT " +
                     "    o.id             AS o_id, " +
                     "    o.nome           AS o_nome, " +
@@ -329,7 +329,7 @@ public class GestioneDB {
                     "WHERE o.id = ?;");
             pstm.setInt(1, id);
             ResultSet rs = pstm.executeQuery();
-            AdvObject obj=null;
+            GeneralItem obj=null;
             if(rs.next()){
                 if(rs.getBoolean("o_contenitore")){
                     obj = creaOggettoContenitore(rs);
@@ -343,14 +343,14 @@ public class GestioneDB {
         });
     }
     //creazione oggetto dal resultset
-    private AdvObject creaOggetto(ResultSet rs) throws SQLException {
-        AdvObject oggetto = new AdvObject(rs.getInt("o_id"),
+    private GeneralItem creaOggetto(ResultSet rs) throws SQLException {
+        GeneralItem oggetto = new GeneralItem(rs.getInt("o_id"),
                 rs.getString("o_nome"),
                 rs.getString("o_descrizione"),
                 rs.getString("o_immagine"));
         oggetto.setOpenable(rs.getBoolean("o_apribile"));
         oggetto.setPickupable(rs.getBoolean("o_raccoglibile"));
-        oggetto.setOpen(rs.getBoolean("o_aperto"));
+        //oggetto.setOpen(rs.getBoolean("o_aperto"));
         oggetto.setLeggibile(rs.getBoolean("o_leggibile"));
         oggetto.setCliccabile(rs.getBoolean("o_cliccabile"));
         oggetto.setVisibile(rs.getBoolean("o_visibile"));
@@ -360,8 +360,8 @@ public class GestioneDB {
         return oggetto;
     }
 
-    private AdvObjectContainer creaOggettoContenitore(ResultSet rs) throws SQLException {
-        AdvObjectContainer oggetto = new AdvObjectContainer(rs.getInt("o_id"),
+    private ItemContainer creaOggettoContenitore(ResultSet rs) throws SQLException {
+        ItemContainer oggetto = new ItemContainer(rs.getInt("o_id"),
                 rs.getString("o_nome"),
                 rs.getString("o_descrizione"),
                 rs.getString("o_immagine"));

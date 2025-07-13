@@ -6,7 +6,7 @@ package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.game.entity.AdvObjectContainer;
+import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 
@@ -35,15 +35,15 @@ public class OpenObserver implements GameObserver {
             } else {
                 if (parserOutput.getObject() != null) {
                     if (parserOutput.getObject().isOpenable() && parserOutput.getObject().isOpen() == false) {
-                        if (parserOutput.getObject() instanceof AdvObjectContainer) {
+                        if (parserOutput.getObject() instanceof ItemContainer) {
                             msg.append("Hai aperto: ").append(parserOutput.getObject().getName());
-                            AdvObjectContainer c = (AdvObjectContainer) parserOutput.getObject();
+                            ItemContainer c = (ItemContainer) parserOutput.getObject();
                             if (!c.getList().isEmpty()) {
                                 /*
                                 msg.append(c.getName()).append(" contiene:");
                                 Iterator<AdvObject> it = c.getList().iterator();
                                 while (it.hasNext()) {
-                                    AdvObject next = it.next();
+                                    GeneralItem next = it.next();
                                     description.getCurrentRoom().getObjects().add(next);
                                     msg.append(" ").append(next.getName());
                                     it.remove();
@@ -62,14 +62,14 @@ public class OpenObserver implements GameObserver {
                 }
                 if (parserOutput.getInvObject() != null) {
                     if (parserOutput.getInvObject().isOpenable() && parserOutput.getInvObject().isOpen() == false) {
-                        if (parserOutput.getInvObject() instanceof AdvObjectContainer) {
-                            AdvObjectContainer c = (AdvObjectContainer) parserOutput.getInvObject();
+                        if (parserOutput.getInvObject() instanceof ItemContainer) {
+                            ItemContainer c = (ItemContainer) parserOutput.getInvObject();
                             if (!c.getList().isEmpty()) {
                                 msg.append(c.getName()).append(" contiene:");
                                 //Iterator<AdvObject> it = c.getList().iterator();
                                 /*
                                 while (it.hasNext()) {
-                                    AdvObject next = it.next();
+                                    GeneralItem next = it.next();
                                     description.getInventory().add(next);
                                     msg.append(" ").append(next.getName());
                                     it.remove();
