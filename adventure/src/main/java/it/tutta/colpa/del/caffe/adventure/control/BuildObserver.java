@@ -7,7 +7,6 @@ package it.tutta.colpa.del.caffe.adventure.control;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -42,15 +41,17 @@ public class BuildObserver implements GameObserver {
                 boolean labda = pippo.getAlias().stream().anyMatch(alias -> alias.equalsIgnoreCase("carta magica"));
                 if (pippo.getName().equalsIgnoreCase("carta magica") || labda) {
 
-                    IteamCombinable cartaM = (IteamCombinable) obj;
-                    if (GameUtils.getObjectFromInventory(description.getInventory(), cartaM.getId()) != null) {
+                    if (GameUtils.getObjectFromInventory(description.getInventory(), 14) != null) {
                         msg.append("non puoi avere 200 mila tessere magiche, la vita sarebbe troppo bella. Hai già la tessera magica nell'inventario");
                     } else {
                         boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta 
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
                         int IdRoomCurrent = description.getCurrentRoom().getId();
                         if (objInv1 && objInv2) {
-                            //AdvObject cartaMagica= new AdvObject()
+                            /**IteamCombinable cartaMagica= new IteamCombinable()
+                             * quantity= sarà 1;
+                             * description.getInventory().add(picartaMagicappo, quantity);
+                             * */
                             GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
                             GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
                             Item objInvR1 = (Item) obj1;
@@ -77,7 +78,7 @@ public class BuildObserver implements GameObserver {
                     }
                 }
 
-            } else {// se non è un oggetto combinabile allora da errore ( devo considerare il caso in cui abbia indicato i due oggetti che possono essere combinati che danno la magia
+            } else {// se non è un oggetto allora da errore ( devo considerare il caso in cui abbia indicato i due oggetti che possono essere combinati che danno la magia
                 msg.append("non puoi fare ste magie");
             }
 
