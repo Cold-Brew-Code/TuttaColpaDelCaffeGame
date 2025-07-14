@@ -488,7 +488,6 @@ public class DataBaseManager {
     // Room's look refresh
 
     /**
-     *
      * @param eventID
      * @return
      * @throws SQLException
@@ -505,5 +504,32 @@ public class DataBaseManager {
         return null;
     }
 
-
+    public GeneralItem askForItem(int itemID) throws SQLException {
+        GeneralItem item = null;
+        PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                "    i.id               AS i_id, " +
+                "    i.name             AS i_name, " +
+                "    i.description      AS i_description, " +
+                "    i.is_container     AS i_is_container, " +
+                "    i.is_readable      AS i_is_readable, " +
+                "    i.is_visible       AS i_is_visible, " +
+                "    i.is_composable    AS i_is_composable, " +
+                "    i.is_pickable      AS i_is_pickable, " +
+                "    i.uses             AS i_uses, " +
+                "    i.image_path       AS i_image_path " +
+                "FROM Items AS i " +
+                "WHERE i_id = ?;");
+        pstm.setInt(1, itemID);
+        ResultSet rs = pstm.executeQuery();
+        if (rs.next()) {
+            if (rs.getBoolean("i_is_container")) {
+                item = generateContainerItem(rs);
+            } else {
+                item=generateItem(rs);
+            }
+        }
+        rs.close();
+        pstm.close();
+        return item;
+    }
 }
