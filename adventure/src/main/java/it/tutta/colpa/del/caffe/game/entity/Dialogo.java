@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -15,12 +16,13 @@ import java.io.Serializable;
  * @author giova
  */
 public class Dialogo  implements Serializable {
-    
+    private final int id;
     private final Graph <String,StringArcoGrafo> dialogo;
     private String currentNode;
     
-    public Dialogo(){
-        dialogo= new DefaultDirectedGraph<>(StringArcoGrafo.class);
+    public Dialogo(int id){
+        this.id=id;
+        dialogo = new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }
 
     public void addDialogo(String dialogo, boolean corrente){
@@ -36,6 +38,14 @@ public class Dialogo  implements Serializable {
         this.dialogo.addEdge(domandaP, domandaA, new StringArcoGrafo(risposta));
     }
 
-   // get da fare
+    /**
+     *
+     * @return id del dialogo
+     */
+    public int getId() {
+        return id;
+    }
+
+    // get da fare
 
 }
