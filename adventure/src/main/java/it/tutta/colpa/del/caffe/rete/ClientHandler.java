@@ -20,22 +20,22 @@ public class ClientHandler extends Thread {
                 ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
         ) {
-            GestioneDB dataBase = new GestioneDB();
+            DataBaseManager dataBase = new DataBaseManager();
             String richiesta;
             while ((richiesta = in.readLine()) != null) {
                 System.out.println("[Debug rete/ClientHandler]Richiesta da " + clientSocket.getInetAddress() + ": " + richiesta);
 
                 if (richiesta.equals("comandi")) {
-                    out.writeObject(dataBase.getComandi());
+                    out.writeObject(dataBase.askForCommands());
                 } else if (richiesta.equals("mappa")) {
-                    out.writeObject(dataBase.creaMappa());
+                    out.writeObject(dataBase.askForGameMap());
                 } else if (richiesta.startsWith("descrizione-aggiornata-")) {
                     String[] tk = richiesta.split("-");
-                    out.writeObject(dataBase.aggiornaDialoghi(Integer.parseInt(tk[2])));
+                    out.writeObject(dataBase.askForNewRoomLook(Integer.parseInt(tk[2])));
                 } else if (richiesta.startsWith("oggetto-")) {
                     String[] tk = richiesta.split("-");
                 } else {
-                    out.writeObject("[Debug rete/ClientHandler]Errore: Comando non riconosciuto");
+                    out.writeObject("[Debug rete/ClientHandler] said: Errore - Comando non riconosciuto");
                 }
             }
 
