@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.adventure.control;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.utility.CommandType;
 
 /**
  *
@@ -21,36 +22,53 @@ public class MoveObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
-        /*
+    public StringBuilder update(GameDescription description, ParserOutput parserOutput) {
+        StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.NORD) {
             if (description.getCurrentRoom().getNorth() != null) {
                 description.setCurrentRoom(description.getCurrentRoom().getNorth());
-            } else {
-                return "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...";
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg.append(
+                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
             }
         } else if (parserOutput.getCommand().getType() == CommandType.SOUTH) {
             if (description.getCurrentRoom().getSouth() != null) {
                 description.setCurrentRoom(description.getCurrentRoom().getSouth());
-            } else {
-                return "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...";
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg.append(
+                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
             }
         } else if (parserOutput.getCommand().getType() == CommandType.EAST) {
             if (description.getCurrentRoom().getEast() != null) {
                 description.setCurrentRoom(description.getCurrentRoom().getEast());
-            } else {
-                return "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...";
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg.append(
+                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
             }
         } else if (parserOutput.getCommand().getType() == CommandType.WEST) {
             if (description.getCurrentRoom().getWest() != null) {
                 description.setCurrentRoom(description.getCurrentRoom().getWest());
-            } else {
-                return "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...";
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg.append(
+                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
+            }
+        } else if (parserOutput.getCommand().getType() == CommandType.UP) {
+            if (description.getCurrentRoom().getUp() != null) {
+                description.setCurrentRoom(description.getCurrentRoom().getUp());
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg
+                        .append("Da quella parte non si può andare c'è un muro!\nNon puoi ancora usare l'ascensore...");
+            }
+        } else if (parserOutput.getCommand().getType() == CommandType.DOWN) {
+            if (description.getCurrentRoom().getDown() != null) {
+                description.setCurrentRoom(description.getCurrentRoom().getDown());
+            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
+                return msg
+                        .append("Da quella parte non si può andare c'è un muro!\nNon puoi ancora usare l'ascensore...");
             }
         }
-        */
 
-        return "";
+        return msg.append("");
     }
 
 }
