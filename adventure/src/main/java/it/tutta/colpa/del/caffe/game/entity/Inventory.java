@@ -63,6 +63,17 @@ public class Inventory  implements Serializable {
         }
         return 0;
     }
+    
+     /**
+    * Verifica se un oggetto è presente nell'inventario.
+    *
+    * @param item l'oggetto di tipo GeneralItem da cercare nell'inventario
+    * @return true se l'oggetto è presente nell'inventario, false altrimenti
+    */
+    
+    public boolean contains(GeneralItem item) {
+        return inventory.containsKey(item);
+    }
 
     /**
     public int getQuantity(int objID){
