@@ -15,30 +15,37 @@ import java.util.*;
  */
 public class DataBaseManager {
     private Connection connection;
-    private final String dataBasePath = "jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'";
-    private final String username = "cacca";
-    private final String password = "12345";
 
     /**
-     * @throws SQLException
+     * Stabilisce la connessione con il database utilizzando le credenziali fornite.
+     *
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private void establishConnection() throws SQLException {
         Properties dbProperties = new Properties();
+        String username = "cacca";
         dbProperties.setProperty("user", username);
+        String password = "12345";
         dbProperties.setProperty("pw", password);
+        String dataBasePath = "jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'";
         connection = DriverManager.getConnection(dataBasePath,
-                dbProperties);
+                                                 dbProperties);
     }
 
     /**
-     * @throws SQLException
+     * Costruttore della classe DataBaseManager.
+     * Inizializza e stabilisce la connessione al database.
+     *
+     * @throws SQLException se si verifica un errore durante la connessione al database.
      */
     public DataBaseManager() throws SQLException {
         establishConnection();
     }
 
     /**
-     * @throws SQLException
+     * Chiude la connessione al database.
+     *
+     * @throws SQLException se si verifica un errore durante la chiusura della connessione.
      */
     public void closeConnection() throws SQLException {
         connection.close();
@@ -47,6 +54,12 @@ public class DataBaseManager {
 
     // Commands
 
+    /**
+     * Recupera tutti i comandi disponibili dal database, inclusi i loro alias.
+     *
+     * @return una lista di oggetti Command.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
     public List<Command> askForCommands() throws SQLException {
         List<Command> commands = new ArrayList<>();
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Commands;");
@@ -62,9 +75,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param commandID
-     * @return
-     * @throws SQLException
+     * Recupera gli alias di un comando specifico dal database.
+     *
+     * @param commandID l'ID del comando.
+     * @return un insieme di stringhe contenente gli alias del comando.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Set<String> askForCommandAlias(int commandID) throws SQLException {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM CommandAlias WHERE id = ?");
@@ -82,8 +97,10 @@ public class DataBaseManager {
     }
 
     /**
-     * @return
-     * @throws SQLException
+     * Costruisce e restituisce la mappa di gioco completa, con stanze e collegamenti.
+     *
+     * @return l'oggetto GameMap inizializzato.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     public GameMap askForGameMap() throws SQLException {
         GameMap gameMap = new GameMap();
@@ -104,9 +121,11 @@ public class DataBaseManager {
     // Rooms
 
     /**
-     * @param room
-     * @return
-     * @throws SQLException
+     * Genera un oggetto Room a partire dai dati di un ResultSet.
+     *
+     * @param room il ResultSet contenente i dati della stanza.
+     * @return un nuovo oggetto Room.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Room generateRoom(ResultSet room) throws SQLException {
         return new Room(
@@ -123,10 +142,12 @@ public class DataBaseManager {
     }
 
     /**
-     * @param map
-     * @param nodes
-     * @return
-     * @throws SQLException
+     * Collega le stanze nella mappa di gioco in base alle connessioni definite nel database.
+     *
+     * @param map   la mappa di gioco da popolare.
+     * @param nodes una mappa di stanze indicizzate per ID.
+     * @return la mappa di gioco con le stanze collegate.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private GameMap getLinkedMap(GameMap map, Map<Integer, Room> nodes) throws SQLException {
         Room initialRoomId;
@@ -161,9 +182,11 @@ public class DataBaseManager {
     // NPCs
 
     /**
-     * @param roomID
-     * @return
-     * @throws SQLException
+     * Recupera gli NPC presenti in una specifica stanza.
+     *
+     * @param roomID l'ID della stanza.
+     * @return una lista di oggetti NPC.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private List<NPC> askForNPCs(int roomID) throws SQLException {
         List<NPC> NPCs = new ArrayList<>();
@@ -184,9 +207,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsNPC
-     * @return
-     * @throws SQLException
+     * Genera un oggetto NPC a partire dai dati di un ResultSet.
+     *
+     * @param rsNPC il ResultSet contenente i dati dell'NPC.
+     * @return un nuovo oggetto NPC.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private NPC generateNPC(ResultSet rsNPC) throws SQLException {
         return new NPC(
@@ -197,9 +222,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param npcID
-     * @return
-     * @throws SQLException
+     * Recupera i dialoghi associati a un NPC.
+     *
+     * @param npcID l'ID dell'NPC.
+     * @return una lista di oggetti Dialogo.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private List<Dialogo> askForDialogues(int npcID) throws SQLException {
         List<Dialogo> dialogues = new ArrayList<>();
@@ -236,10 +263,12 @@ public class DataBaseManager {
     }
 
     /**
-     * @param dialogue
-     * @param nodes
-     * @return
-     * @throws SQLException
+     * Popola un oggetto Dialogo con le possibili risposte e collegamenti.
+     *
+     * @param dialogue il dialogo da completare.
+     * @param nodes    una mappa di frasi del dialogo indicizzate per ID.
+     * @return l'oggetto Dialogo completo.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Dialogo generateDialogue(Dialogo dialogue, Map<Integer, String> nodes) throws SQLException {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM DialoguesPossibleAnswers WHERE dialogue_id=?;");
@@ -261,9 +290,11 @@ public class DataBaseManager {
     // Items
 
     /**
-     * @param roomID
-     * @return
-     * @throws SQLException
+     * Recupera gli oggetti presenti in una stanza specifica, con le loro quantità.
+     *
+     * @param roomID l'ID della stanza.
+     * @return una mappa di GeneralItem e le loro quantità.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Map<GeneralItem, Integer> askForInRoomItems(int roomID) throws SQLException {
         Map<GeneralItem, Integer> items = new HashMap<>();
@@ -299,16 +330,18 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsItem
-     * @return
-     * @throws SQLException
+     * Genera un oggetto di tipo Item (o una sua sottoclasse) a partire da un ResultSet.
+     *
+     * @param rsItem il ResultSet contenente i dati dell'oggetto.
+     * @return un'istanza di Item o una delle sue sottoclassi (IteamCombinable, ItemRead).
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Item generateItem(ResultSet rsItem) throws SQLException {
         Item i;
         if (rsItem.getBoolean("i_is_composable")) {
-            i = (Item) generateComposableItem(rsItem);
+            i =  generateComposableItem(rsItem);
         } else if (rsItem.getBoolean("i_is_readable")) {
-            i = (Item) generateReadableItem(rsItem);
+            i =  generateReadableItem(rsItem);
         } else {
             i = assembleItem(rsItem);
         }
@@ -316,9 +349,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsItem
-     * @return
-     * @throws SQLException
+     * Assembla un oggetto Item semplice a partire da un ResultSet.
+     *
+     * @param rsItem il ResultSet contenente i dati dell'oggetto.
+     * @return un nuovo oggetto Item.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Item assembleItem(ResultSet rsItem) throws SQLException {
         return new Item(
@@ -332,9 +367,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsItem
-     * @return
-     * @throws SQLException
+     * Genera un oggetto IteamCombinable a partire da un ResultSet.
+     *
+     * @param rsItem il ResultSet contenente i dati dell'oggetto.
+     * @return un nuovo oggetto IteamCombinable.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private IteamCombinable generateComposableItem(ResultSet rsItem) throws SQLException {
         return new IteamCombinable(
@@ -349,9 +386,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param composableItemID
-     * @return
-     * @throws SQLException
+     * Recupera i componenti di un oggetto combinabile.
+     *
+     * @param composableItemID l'ID dell'oggetto combinabile.
+     * @return una lista di Item che compongono l'oggetto.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private List<Item> askForComponentsOf(int composableItemID) throws SQLException {
         List<Item> list = new ArrayList<>();
@@ -382,9 +421,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsItem
-     * @return
-     * @throws SQLException
+     * Genera un oggetto ItemRead a partire da un ResultSet.
+     *
+     * @param rsItem il ResultSet contenente i dati dell'oggetto.
+     * @return un nuovo oggetto ItemRead.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private ItemRead generateReadableItem(ResultSet rsItem) throws SQLException {
         return new ItemRead(
@@ -399,9 +440,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param readableItemID
-     * @return
-     * @throws SQLException
+     * Recupera il contenuto testuale di un oggetto leggibile.
+     *
+     * @param readableItemID l'ID dell'oggetto leggibile.
+     * @return il contenuto testuale come stringa.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private String askForReadableContent(int readableItemID) throws SQLException {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM ReadableContent WHERE readable_item_id=?;");
@@ -417,9 +460,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param rsContainer
-     * @return
-     * @throws SQLException
+     * Genera un oggetto ItemContainer a partire da un ResultSet.
+     *
+     * @param rsContainer il ResultSet contenente i dati del contenitore.
+     * @return un nuovo oggetto ItemContainer.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
         return new ItemContainer(
@@ -434,9 +479,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param containerID
-     * @return
-     * @throws SQLException
+     * Recupera gli oggetti contenuti all'interno di un contenitore.
+     *
+     * @param containerID l'ID del contenitore.
+     * @return una mappa di GeneralItem e le loro quantità.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Map<GeneralItem, Integer> askForContainedItems(int containerID) throws SQLException {
         Map<GeneralItem, Integer> containedItems = new HashMap<>();
@@ -468,9 +515,11 @@ public class DataBaseManager {
     }
 
     /**
-     * @param itemID
-     * @return
-     * @throws SQLException
+     * Recupera gli alias di un oggetto specifico dal database.
+     *
+     * @param itemID l'ID dell'oggetto.
+     * @return un insieme di stringhe contenente gli alias dell'oggetto.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Set<String> askForItemAlias(int itemID) throws SQLException {
         Set<String> alias = new HashSet<>();
@@ -488,9 +537,11 @@ public class DataBaseManager {
     // Room's look refresh
 
     /**
-     * @param eventID
-     * @return
-     * @throws SQLException
+     * Recupera la nuova descrizione 'look' di una stanza a seguito di un evento.
+     *
+     * @param eventID l'ID dell'evento che ha modificato la stanza.
+     * @return la nuova stringa 'look' per la stanza, o null se non trovata.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     public String askForNewRoomLook(int eventID) throws SQLException {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Evento where id=?");
@@ -504,6 +555,13 @@ public class DataBaseManager {
         return null;
     }
 
+    /**
+     * Recupera un singolo oggetto (GeneralItem) dal database usando il suo ID.
+     *
+     * @param itemID l'ID dell'oggetto da recuperare.
+     * @return l'oggetto GeneralItem corrispondente, o null se non trovato.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
     public GeneralItem askForItem(int itemID) throws SQLException {
         GeneralItem item = null;
         PreparedStatement pstm = connection.prepareStatement("SELECT " +
