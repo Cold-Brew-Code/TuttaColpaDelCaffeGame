@@ -34,6 +34,7 @@ public class ClientHandler extends Thread {
                     out.writeObject(dataBase.askForNewRoomLook(Integer.parseInt(tk[2])));
                 } else if (richiesta.startsWith("oggetto-")) {
                     String[] tk = richiesta.split("-");
+                    out.writeObject(dataBase.askForItem(Integer.parseInt(tk[1])));
                 } else {
                     out.writeObject("[Debug rete/ClientHandler] said: Errore - Comando non riconosciuto");
                 }
