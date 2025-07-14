@@ -229,7 +229,7 @@ public class DataBaseManager {
             dialogue.addDialogo(rsDialoghi.getString("ds_dialog_statement"), firstNode);
             firstNode = false;
         }
-
+        if (di != -1) dialogues.add(generateDialogue(dialogue, nodes));
         rsDialoghi.close();
         pstm.close();
         return dialogues;
