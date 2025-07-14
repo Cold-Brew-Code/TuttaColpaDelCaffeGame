@@ -48,12 +48,17 @@ public class Room implements Serializable {
         this.imagePath = "/images/" + image_name;
     }
 
-
-    public Room(int id, String name, String description) {
+    public Room(int id, String name, String description, String look, boolean visible, boolean denied_entry,
+                String imageName, Map<GeneralItem, Integer> objects, List<NPC> NPCs) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imagePath=null;
+        this.look = look;
+        this.visible = visible;
+        this.denied_entry = denied_entry;
+        this.imagePath = "/images/" + imageName;
+        this.objects = objects;
+        this.NPCs = NPCs;
     }
 
     /**

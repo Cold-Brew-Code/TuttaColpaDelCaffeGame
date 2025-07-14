@@ -28,6 +28,13 @@ public class NPC implements Serializable {
         this.dialoghi= new ArrayList<>();
     }
 
+    public NPC(int id, String nome, List<Dialogo> dialoghi) {
+        this.id = id;
+        this.nome = nome;
+        this.dialogoCor = 1;
+        this.dialoghi = dialoghi;
+    }
+
     public void setNome(String nome) {
         this.nome = nome;
     }

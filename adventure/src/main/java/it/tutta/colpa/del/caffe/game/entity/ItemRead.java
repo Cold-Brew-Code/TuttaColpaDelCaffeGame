@@ -17,21 +17,19 @@ public class ItemRead extends Item implements Serializable {
     private String content;
 
     /**
-     * 
-     * @param content
-     * @param uses
+     *
      * @param id
      * @param name
      * @param description
      * @param alias
-     * @param utilizzi
-     * @param immagine 
+     * @param uses
+     * @param immagine
+     * @param content
      */
-    public ItemRead(String content, int uses, int id, String name, String description, Set<String> alias, int utilizzi, ImageIcon immagine) {
-        super(uses, id, name, description, alias, utilizzi, immagine);
+    public ItemRead(int id, String name, String description, Set<String> alias, int uses, String immagine, String content) {
+        super(id, name, description, alias, uses, immagine);
         this.content = content;
     }
-
 
     /**
      * 

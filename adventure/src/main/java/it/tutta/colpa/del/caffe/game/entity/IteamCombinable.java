@@ -13,24 +13,22 @@ import javax.swing.ImageIcon;
  *
  * @author giova
  */
-public class IteamCombinable  extends Item  implements Serializable{
+public class IteamCombinable extends Item implements Serializable{
     
-    private List<Item> composedOf ; 
-    
+    private List<Item> composedOf ;
+
     /**
-     * 
-     * @param composedOf
-     * @param uses
+     *
      * @param id
      * @param name
      * @param description
      * @param alias
-     * @param utilizzi
-     * @param immagine 
+     * @param uses
+     * @param immagine
+     * @param composedOf
      */
-
-    public IteamCombinable(List<Item> composedOf, int uses, int id, String name, String description, Set<String> alias, int utilizzi, ImageIcon immagine) {
-        super(uses, id, name, description, alias, utilizzi, immagine);
+    public IteamCombinable(int id, String name, String description, Set<String> alias, int uses, String immagine, List<Item> composedOf) {
+        super(id, name, description, alias, uses, immagine);
         this.composedOf = composedOf;
     }
 

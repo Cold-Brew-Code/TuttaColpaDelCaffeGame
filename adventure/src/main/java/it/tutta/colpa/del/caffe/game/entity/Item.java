@@ -16,8 +16,8 @@ public class Item  extends GeneralItem implements Serializable {
     
     private int uses ; 
 
-    public Item(int uses, int id, String name, String description, Set<String> alias, int utilizzi, ImageIcon immagine) {
-        super(id, name, description, alias, utilizzi, immagine);
+    public Item(int id, String name, String description, Set<String> alias, int uses, String immagine) {
+        super(id, name, description, alias, immagine);
         this.uses = uses;
     }
 
@@ -28,13 +28,6 @@ public class Item  extends GeneralItem implements Serializable {
     public void setUses(int uses) {
         this.uses = uses;
     }
-    
-    
-    
-  
-    
-    
-    
-    
+
     
 }
