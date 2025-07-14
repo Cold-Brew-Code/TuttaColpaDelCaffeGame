@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -23,15 +24,14 @@ public  abstract class GeneralItem implements Serializable {
     private Set<String> alias;
     private boolean visibile = false;
     private int utilizzi;
-    private ImageIcon immagine;
+    private String immagine;
     private boolean pickupable= false; 
 
-    public GeneralItem(int id, String name, String description, Set<String> alias, int utilizzi, ImageIcon immagine) {
+    public GeneralItem(int id, String name, String description, Set<String> alias, String immagine) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.alias = alias;
-        this.utilizzi = utilizzi;
         this.immagine = immagine;
     }
     
@@ -61,12 +61,12 @@ public  abstract class GeneralItem implements Serializable {
         this.visibile = visibile;
     }
 
-    public ImageIcon getImmagine() {
+    public String getImmagine() {
         return immagine;
     }
 
     
-    public void setImmagine(ImageIcon immagine) {
+    public void setImmagine(String immagine) {
         this.immagine = immagine;
     }
 

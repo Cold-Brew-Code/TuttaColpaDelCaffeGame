@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -26,6 +27,13 @@ public class NPC implements Serializable {
         this.nome = nome;
         this.dialogoCor=1;
         this.dialoghi= new ArrayList<>();
+    }
+
+    public NPC(int id, String nome, List<Dialogo> dialoghi) {
+        this.id = id;
+        this.nome = nome;
+        this.dialogoCor = 1;
+        this.dialoghi = dialoghi;
     }
 
     public void setNome(String nome) {
