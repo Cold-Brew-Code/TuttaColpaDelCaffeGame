@@ -6,7 +6,7 @@ package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.start.boundary.MainPage;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.utility.GameStatus;
+import it.tutta.colpa.del.caffe.game.control.Engine;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,15 +14,17 @@ import java.net.URL;
 
 /**
  *
- * @author giovanni
+ * @author giovav
+ * @since 10/07/2025
  */
 public class GamePage extends javax.swing.JFrame {
 
-    MainPage caller;
+    private MainPage caller;
+    private Engine engine;
 
 
 
-    public GamePage(MainPage main) {
+    public GamePage(MainPage main, Engine e) {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
         // Imposta il layout predefinito di Java
         try {
@@ -38,25 +40,22 @@ public class GamePage extends javax.swing.JFrame {
         initComponents();
         this.caller = main;
         this.caller.setVisible(false);
+        this.engine = e;
     }
 
 
     private void abbandona(){
-        int scelta = javax.swing.JOptionPane.showConfirmDialog(
-                null,
-                "Vuoi davvero abbandonare la partita?",
-                "Conferma",
-                javax.swing.JOptionPane.YES_NO_OPTION
-        );
-
-        if (scelta == javax.swing.JOptionPane.YES_OPTION) {
-            this.dispose();
-            new GameEndedPage(GameStatus.PERSA, caller).setVisible(true);
-
-        }
+        int scelta = showYesNoDialoguePage("Conferma", "Vuoi davvero abbandonare la partita?");
     }
 
-
+    private int showYesNoDialoguePage(String title, String message){
+        return javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                title,
+                message,
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
+    }
 
 
     // <editor-fold defaultstate="collapsed" desc="< GUI variables >">
