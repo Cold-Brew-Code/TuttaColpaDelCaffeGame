@@ -16,28 +16,60 @@ import java.net.Socket;
 import java.util.List;
 
 /**
+ * Classe principale che gestisce la logica di gioco.
+ * Comunica con il server per inizializzare lo stato del gioco,
+ * consente il movimento tra stanze e l'uso dell'ascensore.
+ *
+ * Implementa Serializable per supportare il salvataggio dello stato.
+ *
  * @author giovav
  * @since 11/07/25
  */
 public class Engine implements Serializable {
+
+    /**
+     * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
+     */
     private GamePage frame;
+
+    /**
+     * Descrizione dello stato attuale della partita, contenente mappa e comandi.
+     */
     private GameDescription description;
 
+    /**
+     * Costruttore predefinito.
+     * Tenta di inizializzare una nuova partita comunicando con il server.
+     * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
+     * un dialogo informativo all’utente (da implementare).
+     */
     @SuppressWarnings("unused")
     public Engine() {
         try {
             this.description = initGame();
         } catch (ServerCommunicationException e) {
-            //apre JDialogPane
+            // apre JDialogPane
         }
     }
 
+    /**
+     * Costruttore per l'inizializzazione da file di salvataggio.
+     * Deve essere implementato.
+     *
+     * @param filePath percorso del file di salvataggio
+     */
     @SuppressWarnings("unused")
     public Engine(String filePath) {
 
     }
 
-
+    /**
+     * Inizializza una nuova partita contattando il server locale.
+     * Recupera la mappa e l'elenco dei comandi, verificandone la correttezza.
+     *
+     * @return una GameDescription contenente la mappa e i comandi
+     * @throws ServerCommunicationException se la comunicazione fallisce o i dati sono incompleti
+     */
     @SuppressWarnings("unchecked")
     private GameDescription initGame() throws ServerCommunicationException {
         GameMap gm = null;
@@ -72,7 +104,7 @@ public class Engine implements Serializable {
             out.println("comandi");
             answer = in.readObject();
 
-            //asks for Commands
+            // asks for Commands
             while ((gm != null) && (reCheck) && (timesChecked < 5)) {
                 if (answer instanceof List<?> answerList) {
                     boolean areAllCommands = answerList.stream()
@@ -102,15 +134,27 @@ public class Engine implements Serializable {
         }
 
         GameDescription gd = new GameDescription(gm, commands);
-        //observer attachment
+        // observer attachment
         return gd;
     }
 
+    /**
+     * Inizializza una partita a partire da un file di salvataggio.
+     * Metodo da implementare.
+     *
+     * @param savePath percorso del file di salvataggio
+     */
     @SuppressWarnings("unused")
     private void initGame(String savePath) {
-        //returns GameDescription
+        // returns GameDescription
     }
 
+    /**
+     * Tenta di muoversi nella direzione specificata a partire dalla posizione corrente.
+     *
+     * @param direction la direzione in cui muoversi
+     * @return true se il movimento è valido, false in caso contrario
+     */
     @SuppressWarnings("unused")
     private boolean moveFromHere(Direzione direction) {
         try {
@@ -121,6 +165,12 @@ public class Engine implements Serializable {
         return true;
     }
 
+    /**
+     * Tenta di utilizzare l’ascensore per raggiungere un piano specifico.
+     *
+     * @param floor il piano da raggiungere
+     * @return true se l’operazione è riuscita, false se non è possibile
+     */
     @SuppressWarnings("unused")
     private boolean moveWithElevator(int floor) {
         try {
