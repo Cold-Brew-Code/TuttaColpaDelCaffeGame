@@ -117,11 +117,35 @@ public class Parser {
      * @return
      */
 
-    public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<GeneralItem> inventory) {
+    public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<Room> rooms) {
         List<String> list = Utils.parseString(command, stopwords);
         String[] tokens = list.toArray(new String[0]);
-        return new ParserOutput(null, null);
 
+        Command cd = checkForCommand(tokens[0]);// xkè il comando è sempre in prima posizione
+        if (cd != null) {
+            NPC npcP = findNpc(tokens, rooms);
+            if (tokens.length > 0) {
+                String[] obj = findItem(tokens, objects);
+                if (obj.length == 1) {
+                    // chiamo il construttore di parserOutput con solo un oggetto
+
+                } else if (obj.length == 2) {
+                    // chiamo il costruttore che ha 2 oggetti 
+                } else if (npcP != null) {
+                    // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
+                    // chiama il costruttore con comando ed NPC
+                }else{
+                    // non esiste nessun npc nelle 
+                }
+            }else{
+                // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer 
+                // construttore di parserOutput con comadno e null
+            }
+        }else{
+            // bocciato comando inesistente
+           // costruttore di parseOutput con tutto null o errore 
+        }
+        return new ParserOutput(null, null);
     }
 
 }
