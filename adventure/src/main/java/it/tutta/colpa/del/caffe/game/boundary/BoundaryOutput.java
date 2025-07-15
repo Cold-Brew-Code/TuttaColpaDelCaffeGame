@@ -1,0 +1,40 @@
+package it.tutta.colpa.del.caffe.game.boundary;
+
+/**
+ * Interfaccia che definisce i metodi per la comunicazione in uscita
+ * verso l'attore esterno (es. utente o interfaccia grafica).
+ * I metodi possono essere implementati da UI diverse (testuale, grafica, ecc.)
+ * in modo indipendente dalla logica del gioco.
+ *
+ * @author giovav
+ * @since 15/07/25
+ */
+public interface BoundaryOutput {
+
+    /**
+     * Mostra un messaggio all'utente.
+     *
+     * @param message Il messaggio da visualizzare.
+     */
+    void out(String message);
+
+    /**
+     * Notifica un evento interattivo all'utente, mostrando un messaggio
+     * con intestazione e ottenendo una risposta numerica.
+     * <p>
+     * I possibili valori restituiti indicano la risposta dell'utente:
+     * <ul>
+     *   <li><b>0</b>: Sì / Conferma</li>
+     *   <li><b>1</b>: No / Rifiuto</li>
+     *   <li><b>2</b>: Annulla / Chiudi</li>
+     * </ul>
+     * Questi valori possono essere interpretati liberamente
+     * dal chiamante secondo il contesto applicativo.
+     *
+     * @param header  L'intestazione o titolo del messaggio.
+     * @param message Il messaggio da visualizzare.
+     * @return Un intero che rappresenta la scelta dell'utente:
+     *         0 = sì, 1 = no, 2 = annulla.
+     */
+    int notifySomething(String header, String message);
+}
