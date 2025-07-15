@@ -37,4 +37,16 @@ public interface BoundaryOutput {
      *         0 = sì, 1 = no, 2 = annulla.
      */
     int notifySomething(String header, String message);
+
+    /**
+     * Cambia l'immagine mostrata all'utente, utilizzando il percorso
+     * (path) fornito come riferimento all'immagine.
+     * <p>
+     * L'implementazione dovrà occuparsi di caricare e visualizzare
+     * l'immagine corrispondente al percorso specificato.
+     *
+     * @param path Il percorso (ad esempio, un file system path o URL)
+     *             dell'immagine da mostrare.
+     */
+    void setImage(String path);
 }

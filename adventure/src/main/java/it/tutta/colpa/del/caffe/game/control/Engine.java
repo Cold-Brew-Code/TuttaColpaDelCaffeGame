@@ -1,5 +1,6 @@
 package it.tutta.colpa.del.caffe.game.control;
 
+import it.tutta.colpa.del.caffe.game.boundary.BoundaryOutput;
 import it.tutta.colpa.del.caffe.game.boundary.GamePage;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
@@ -25,12 +26,12 @@ import java.util.List;
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements Serializable {
+public class Engine implements Controller {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
      */
-    private GamePage frame;
+    private BoundaryOutput bo;
 
     /**
      * Descrizione dello stato attuale della partita, contenente mappa e comandi.
@@ -179,5 +180,25 @@ public class Engine implements Serializable {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void notifyNewCommand(String command) {
+
+    }
+
+    @Override
+    public void endGame() {
+
+    }
+
+    @Override
+    public void getInventory() {
+
+    }
+
+    @Override
+    public void saveGame() {
+
     }
 }

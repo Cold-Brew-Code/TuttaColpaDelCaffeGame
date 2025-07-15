@@ -18,11 +18,6 @@ public interface Controller {
     void notifyNewCommand(String command);
 
     /**
-     * Recupera e mostra l'immagine attuale della scena di gioco.
-     */
-    void getCurrentImage();
-
-    /**
      * Termina la partita in corso, eventualmente eseguendo
      * operazioni di pulizia o salvataggio.
      */
