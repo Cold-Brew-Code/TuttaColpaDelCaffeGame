@@ -45,7 +45,15 @@ public class Dialogo  implements Serializable {
     public int getId() {
         return id;
     }
+    
+    
 
-    // get da fare
+    public String getCurrentNode() {
+        return currentNode;
+    }
+
+    public void setCurrentNode(String currentNode) {
+        this.currentNode = currentNode;
+    }
 
 }
