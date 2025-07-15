@@ -1,124 +1,132 @@
-CREATE TABLE IF NOT EXISTS Oggetto(
+CREATE TABLE IF NOT EXISTS Items(
     id INT,
-    nome VARCHAR(40),
-    descrizione TEXT,
-    contenitore BOOLEAN DEFAULT FALSE,
-    apribile BOOLEAN DEFAULT FALSE,
-    leggibile BOOLEAN DEFAULT FALSE,
-    cliccabile BOOLEAN DEFAULT FALSE,
-    visibile BOOLEAN DEFAULT FALSE,
-    componibile BOOLEAN DEFAULT FALSE,
-    utilizzi INT,
-    immagine VARCHAR(100),
-    aperto BOOLEAN DEFAULT FALSE,
-    raccoglibile BOOLEAN DEFAULT TRUE,
+    name VARCHAR(40),
+    description TEXT,
+    is_container BOOLEAN DEFAULT FALSE,
+    is_readable BOOLEAN DEFAULT FALSE,
+    is_visible BOOLEAN DEFAULT FALSE,
+    is_composable BOOLEAN DEFAULT FALSE,
+    uses INT,
+    image_path VARCHAR(100),
+    is_pickable BOOLEAN DEFAULT TRUE,
     PRIMARY KEY(id)
 );
 
-CREATE TABLE IF NOT EXISTS Comandi(
+CREATE TABLE IF NOT EXISTS Commands(
     id INT,
-    nome VARCHAR(40),
+    name VARCHAR(40),
     PRIMARY KEY(id)
 );
 
-CREATE TABLE IF NOT EXISTS stanza(
+CREATE TABLE IF NOT EXISTS Rooms(
     id INT,
-    nome VARCHAR(40),
-    descrizioneIniziale TEXT,
-    descrizioneAggiuntiva TEXT,
-    aperta BOOLEAN DEFAULT TRUE,
-    visibile BOOLEAN DEFAULT TRUE,
-    immagine VARCHAR(100),
+    name VARCHAR(40),
+    description TEXT,
+    look TEXT,
+    allowed_entry BOOLEAN DEFAULT TRUE,
+    is_visible BOOLEAN DEFAULT TRUE,
+    image_path VARCHAR(100),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS CollecgamentoStanze(
-    idStanzaIniziale INT,
-    idStanzaFinale INT,
-    direzione ENUM('n', 's', 'e', 'o','sopra','sotto'),
-    PRIMARY KEY (idStanzaIniziale, idStanzaFinale),
-    FOREIGN KEY (idStanzaIniziale) REFERENCES stanza(id),
-    FOREIGN KEY (idStanzaFinale) REFERENCES stanza(id)
+CREATE TABLE IF NOT EXISTS RoomConnections(
+    initial_room_id INT,
+    target_room_id INT,
+    direction ENUM('n', 's', 'e', 'o','sopra','sotto'),
+    PRIMARY KEY (initial_room_id, target_room_id),
+    FOREIGN KEY (initial_room_id) REFERENCES Rooms(id),
+    FOREIGN KEY (target_room_id) REFERENCES Rooms(id)
 );
 
 -- si occupa anche del collocamento degli npc nelle stanze
-CREATE TABLE IF NOT EXISTS Npc(
+CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
     id INT,
-    nome VARCHAR(30),
-    idStanza INT,
-    FOREIGN KEY (idStanza) REFERENCES stanza(id),
+    name VARCHAR(30),
+    room_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS Dialoghi(
+CREATE TABLE IF NOT EXISTS Dialogues(
     id INTEGER,
-    NPC INTEGER REFERENCES Npc(id),
+    NPC INTEGER REFERENCES NonPlayerCharacters(id),
     PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS DomandeDialoghi(
+CREATE TABLE IF NOT EXISTS DialoguesStatements(
     id INTEGER,
-    dialogo INTEGER REFERENCES Dialoghi(id),
-    domanda VARCHAR(500),
+    dialogue_id INTEGER REFERENCES Dialogues(id),
+    dialog_statement VARCHAR(500),
     PRIMARY KEY(id)
 );
 
-CREATE TABLE IF NOT EXISTS RisposteDomande(
-    risposta VARCHAR(500),
-    domanda_partenza INTEGER REFERENCES DomandeDialoghi(id),
-    domanda_arrivo INTEGER REFERENCES DomandeDialoghi(id),
-    dialogo INTEGER REFERENCES Dialoghi(id),
-    PRIMARY KEY(risposta, domanda_partenza, domanda_arrivo)
+CREATE TABLE IF NOT EXISTS DialoguesPossibleAnswers(
+    answer VARCHAR(500),
+    first_statement INTEGER REFERENCES DialoguesStatements(id),
+    related_answer_statement INTEGER REFERENCES DialoguesStatements(id),
+    dialogue_id INTEGER REFERENCES Dialogues(id),
+    PRIMARY KEY(answer, first_statement, related_answer_statement)
 );
 
-CREATE TABLE IF NOT EXISTS stanza_oggetto(
-    idStanza INT,
-    idOggetto INT,
-    quantita INT,
-    PRIMARY KEY (idStanza,idOggetto),
-    FOREIGN KEY (idStanza) REFERENCES stanza(id),
-    FOREIGN KEY (idOggetto) REFERENCES Oggetto(id)
+CREATE TABLE IF NOT EXISTS InRoomObjects(
+    room_id INT,
+    object_id INT,
+    quantity INT,
+    PRIMARY KEY (room_id,object_id),
+    FOREIGN KEY (room_id) REFERENCES Rooms(id),
+    FOREIGN KEY (object_id) REFERENCES Items(id)
 );
 
-CREATE TABLE IF NOT EXISTS Alias (
+CREATE TABLE IF NOT EXISTS ItemAlias (
     id INT,
-    alias VARCHAR(30),
-    FOREIGN KEY (id) REFERENCES Oggetto(id),
-    PRIMARY KEY (id, alias)
+    item_alias VARCHAR(30),
+    FOREIGN KEY (id) REFERENCES Items(id),
+    PRIMARY KEY (id, item_alias)
 );
 
-CREATE TABLE IF NOT EXISTS AliasComandi(
+CREATE TABLE IF NOT EXISTS CommandAlias(
     id INT,
-    alias VARCHAR(30),
-    FOREIGN KEY (id) REFERENCES Comandi(id),
-    PRIMARY KEY (id, alias)
+    command_alias VARCHAR(30),
+    FOREIGN KEY (id) REFERENCES Commands(id),
+    PRIMARY KEY (id, command_alias)
 );
 
-CREATE TABLE IF NOT EXISTS Evento(
+CREATE TABLE IF NOT EXISTS Event(
     id INT,
-    descrizioneAggiornata TEXT,
-    idStanza INT,
-    FOREIGN KEY (idStanza) REFERENCES stanza(id),
+    updated_room_look TEXT,
+    room_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY(id)
 );
 
-CREATE TABLE IF NOT EXISTS Contiene(
-    idOggetto1 INT ,
-    idOggetto2 INT ,
-    quantita INT,
-    FOREIGN KEY (idOggetto1) REFERENCES Oggetto(id),
-    FOREIGN KEY (idOggetto2) REFERENCES Oggetto(id),
-    PRIMARY KEY(idOggetto1,idOggetto2)
+CREATE TABLE IF NOT EXISTS ContainerContents(
+    container_id INT,
+    content_id INT,
+    quantity INT,
+    FOREIGN KEY (container_id) REFERENCES Items(id),
+    FOREIGN KEY (content_id) REFERENCES Items(id),
+    PRIMARY KEY(container_id,content_id)
 );
 
+CREATE TABLE IF NOT EXISTS ComposedOf(
+    composed_item_id INT REFERENCES Items(id),
+    composing_item_id INT REFERENCES Items(id),
+    PRIMARY KEY (composed_item_id,composing_item_id)
+);
 
-MERGE INTO Comandi(id,nome) KEY(id) VALUES
+CREATE TABLE IF NOT EXISTS ReadableContent(
+    readable_item_id INT REFERENCES Items(id),
+    content VARCHAR(500),
+    PRIMARY KEY (readable_item_id)
+);
+
+MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
 (6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
 (11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi');
 
-MERGE INTO AliasComandi(id,alias) KEY(id, alias) VALUES
-(1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'), (6,'e'),
+MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
+(1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'),
 (6,'caccati'), (6, 'cacca'), (6, 'basta'), (6, 'exit'), (6,'end'), (6,'bocciato'),
 (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
 (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
@@ -128,30 +136,35 @@ MERGE INTO AliasComandi(id,alias) KEY(id, alias) VALUES
 (12, 'sfoglia'), (12, 'decifra'), (12, 'interpretra ') ,
 (13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera');
 
-MERGE INTO Oggetto(id,nome, descrizione, contenitore,apribile, leggibile, cliccabile, visibile, componibile, utilizzi, immagine, aperto, raccoglibile) KEY(id) VALUES
-(9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,false,false,-1, 'chiave.png', false, true),
-(1, 'LA MAPPA DEL FUORICORSO', ' Questa mappa costruita da studenti che vaga da anni nel dipartimento, rileva segreti e stanze nascoste all''interno del dipartiemnto.',false,false,true,false,false,false, -1,'mappa.png', false, true),
-(2, 'CAFFÈ RIGENERANTE', 'Un piccolo calice fumante colmo di liquido scuro e amaro, capace di ridare vigore anche allo studente più esausto. Si dice che chi beve il CAFFÈ RIGENERANTE possa restare vigile abbastanza da affrontare persino le lezioni del mattino e le infinite code in segreteria.',false, false, false,false, false, false, -1, 'caffè.png', false, true),
+MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
+(9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,-1, 'chiave.png', true),
+(1, 'LA MAPPA DEL FUORICORSO', ' Questa mappa costruita da studenti che vaga da anni nel dipartimento, rileva segreti e stanze nascoste all''interno del dipartiemnto.',false,true,false,false, -1,'mappa.png', true),
+(2, 'CAFFÈ RIGENERANTE', 'Un piccolo calice fumante colmo di liquido scuro e amaro, capace di ridare vigore anche allo studente più esausto. Si dice che chi beve il CAFFÈ RIGENERANTE possa restare vigile abbastanza da affrontare persino le lezioni del mattino e le infinite code in segreteria.',false, false, false, false, -1, 'caffè.png', true),
 --PRIMO PIANO
-(3, 'LIBRO DI CALCOLABILITÀ E COMPLESSITÀ','Un voluminoso manoscritto rilegato in pelle consumata, intriso di formule antiche che raccontano le meraviglie (e i tormenti) degli algoritmi. Custodisce segreti sulla Macchina di Turing Universale, diagrammi misteriosi e dimostrazioni che si avvolgono su loro stesse come un serpente che non trova la propria coda. Si narra che nelle sue pagine sia celata una verità tanto semplice quanto impossibile da dimostrare… e che chi osa cercarla finisca per perdersi in un labirinto di problemi apparentemente “facili”',false,false,true,false,true,false, -1,'libro_cc.png', false, true),
+(3, 'LIBRO DI CALCOLABILITÀ E COMPLESSITÀ','Un voluminoso manoscritto rilegato in pelle consumata, intriso di formule antiche che raccontano le meraviglie (e i tormenti) degli algoritmi. Custodisce segreti sulla Macchina di Turing Universale, diagrammi misteriosi e dimostrazioni che si avvolgono su loro stesse come un serpente che non trova la propria coda. Si narra che nelle sue pagine sia celata una verità tanto semplice quanto impossibile da dimostrare… e che chi osa cercarla finisca per perdersi in un labirinto di problemi apparentemente “facili”',false,true,true,false, -1,'libro_cc.png', true),
 -- SECONDO PIANO
-(4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… un po'' come gli esami facili al primo appello.',false, false,false, false,false, false,-1,'candeggina.png', false, true),
-(15, 'ARMADIETTO','Classico armadietto di metallo',true,true,false,false,true,false,-1,'armadietto.png', false, false),
-(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, la scritta «gittata massima 𝜃=45°». Nessuno sa davvero a cosa serva, ma pare abbia qualcosa a che fare con il lanciare cose molto lontano (e con sorprendente precisione).',false,false,true,false,true,false,-1,'bigliettino.png', false, true),
+(4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… un po'' come gli esami facili al primo appello.',false, false,false, false,-1,'candeggina.png', true),
+(15, 'ARMADIETTO','Classico armadietto di metallo',true,false,true,false,-1,'armadietto.png', false),
+(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, la scritta «gittata massima 𝜃=45°». Nessuno sa davvero a cosa serva, ma pare abbia qualcosa a che fare con il lanciare cose molto lontano (e con sorprendente precisione).',false,true,true,false,-1,'bigliettino.png', true),
 -- TERZO PIANO
-(6, 'SCHEDA MADRE', 'Un''antica reliquia elettronica, corrosa dal tempo e da qualche improvvida fuoriuscita di caffè.Le piste appaiono screpolate, i condensatori gonfi come se stessero per esplodere, e i vecchi slot di memoria sembrano trattenere a fatica i ricordi di sistemi mai più avviati. Rinvenuta per terra, impolverata e dimenticata in un angolo del museo di informatica, come se persino il tempo avesse deciso di voltarle le spalle.' , true,false,false,false, true,true,-1,'scheda_madre.png', false, true),
+(6, 'SCHEDA MADRE', 'Un''antica reliquia elettronica, corrosa dal tempo e da qualche improvvida fuoriuscita di caffè.Le piste appaiono screpolate, i condensatori gonfi come se stessero per esplodere, e i vecchi slot di memoria sembrano trattenere a fatica i ricordi di sistemi mai più avviati. Rinvenuta per terra, impolverata e dimenticata in un angolo del museo di informatica, come se persino il tempo avesse deciso di voltarle le spalle.' , true,false,true,true,-1,'scheda_madre.png', true),
 -- QUARTO PIANO
-(7, 'BORSELLINO', 'Un piccolo borsellino in stoffa, pesante come se celasse segreti o vecchie monete, ma sorprendentemente morbido al tatto. I colori originari sono ormai sbiaditi, eppure rimangono visibili dei curiosi simboli che si rincorrono: chicchi di caffè e piccoli diamanti, cuciti in fila come a custodire un significato dimenticato. Nessuno sa davvero cosa contenga, ma scuotendolo si percepisce un tintinnio che fa pensare a qualcosa di prezioso', true,true,false,false,true,false,-1,'borsellino.png', false, true),
-(8, 'MONETA DI METALLO', 'Una moneta particolare, lontana dalle consuete monete europee, dal peso piacevolmente consistente. Da un lato è inciso un piccolo water, mentre dall''altro spicca un simbolo enigmatico che somiglia a una libreria.',true,false,false,false,false,true,-1,'moneta.png', false, true),
-(10, 'PENNA NULL','Una comunissima penna a sfera, con il tappo morsicato e l''inchiostro forse già secco.', false, false,false,false,false,false,-1,'penna.png', false, true),
+(7, 'BORSELLINO', 'Un piccolo borsellino in stoffa, pesante come se celasse segreti o vecchie monete, ma sorprendentemente morbido al tatto. I colori originari sono ormai sbiaditi, eppure rimangono visibili dei curiosi simboli che si rincorrono: chicchi di caffè e piccoli diamanti, cuciti in fila come a custodire un significato dimenticato. Nessuno sa davvero cosa contenga, ma scuotendolo si percepisce un tintinnio che fa pensare a qualcosa di prezioso', true,false,true,false,-1,'borsellino.png', true),
+(8, 'MONETA DI METALLO', 'Una moneta particolare, lontana dalle consuete monete europee, dal peso piacevolmente consistente. Da un lato è inciso un piccolo water, mentre dall''altro spicca un simbolo enigmatico che somiglia a una libreria.',true,false,false,true,-1,'moneta.png', true),
+(10, 'PENNA NULL','Una comunissima penna a sfera, con il tappo morsicato e l''inchiostro forse già secco.', false, false,false,false,-1,'penna.png', true),
 --QUINTO PIANO
-(11,'SCATOLA', 'Una semplice scatola bianca, sorprendentemente leggera, che non emette alcun suono quando la si scuote, come se fosse vuota o custodisse qualcosa di immobile. Sul retro è inciso in piccolo un simbolo misterioso: 7L.', true,true, false, false,true,false,-1,'scatola.png', false, true),
-(12, 'TESSERA SMAGNETIZZATA','Una tessera bianca, dall''aspetto anonimo, priva del chip che le darebbe vita. Un tempo poteva essere una carta di accesso o una vecchia tessera servizi, ora ridotta a un semplice pezzo di plastica apparentemente inutile.', false,false,false,false,false,true,-1, 'tessera_smagnetizzata.png', false, true ),
-(13, 'CARTA IGIENICA', 'Un semplice rotolo di carta igienica, leggermente sgualcito ai bordi.', false,false,false,false,false,false,-1, 'carta_igienica.png', false, true),
-(14, 'TESSERA MAGICA', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,false,false,false,2,'tessera_magica.png', false, true),
-(16, 'MACCHINETTA DEL CAFFE', 'Un''elegante colonna metallica dall''aspetto futuristico, impreziosita da un ampio touch screen lucido come uno specchio. Accetta pagamenti contactless con una rapidità quasi magica e permette di scegliere tra decine di aromi personalizzati: dal caffè intenso delle notti d''esame al più delicato decaffeinato del “tanto ormai è andata”. Sul display, brevi messaggi motivazionali compaiono all''improvviso, come bisbigli incoraggianti per studenti assonnati e docenti esausti. Un piccolo altare tecnologico dedicato al culto quotidiano della caffeina.', true,false,false, true, true,true,-1, 'macchinetta_del_caffè.png', false, false);
+(11,'SCATOLA', 'Una semplice scatola bianca, sorprendentemente leggera, che non emette alcun suono quando la si scuote, come se fosse vuota o custodisse qualcosa di immobile. Sul retro è inciso in piccolo un simbolo misterioso: 7L.', true, false, true,false,-1,'scatola.png', true),
+(12, 'TESSERA SMAGNETIZZATA','Una tessera bianca, dall''aspetto anonimo, priva del chip che le darebbe vita. Un tempo poteva essere una carta di accesso o una vecchia tessera servizi, ora ridotta a un semplice pezzo di plastica apparentemente inutile.', false,false,false,true,-1, 'tessera_smagnetizzata.png', true ),
+(13, 'CARTA IGIENICA', 'Un semplice rotolo di carta igienica, leggermente sgualcito ai bordi.', false,false,false,false,-1, 'carta_igienica.png', true),
+(14, 'TESSERA MAGICA', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,false,2,'tessera_magica.png', true),
+(16, 'MACCHINETTA DEL CAFFE', 'Un''elegante colonna metallica dall''aspetto futuristico, impreziosita da un ampio touch screen lucido come uno specchio. Accetta pagamenti contactless con una rapidità quasi magica e permette di scegliere tra decine di aromi personalizzati: dal caffè intenso delle notti d''esame al più delicato decaffeinato del “tanto ormai è andata”. Sul display, brevi messaggi motivazionali compaiono all''improvviso, come bisbigli incoraggianti per studenti assonnati e docenti esausti. Un piccolo altare tecnologico dedicato al culto quotidiano della caffeina.', true,false,true,true,-1, 'macchinetta_del_caffè.png', false);
 
-MERGE INTO Contiene(idOggetto1, idOggetto2, quantita) KEY(idOggetto1,idOggetto2) VALUES
+
+MERGE INTO ComposedOf(composed_item_id, composing_item_id)  KEY(composed_item_id,composing_item_id) VALUES
+(14,6),(14,12);
+
+
+MERGE INTO ContainerContents(container_id, content_id, quantity) KEY(container_id,content_id) VALUES
 -- borsellino-moneta-penna
 (7,8,4),(7,10,6),
 --armadietto-candeggina
@@ -161,7 +174,7 @@ MERGE INTO Contiene(idOggetto1, idOggetto2, quantita) KEY(idOggetto1,idOggetto2)
 --macchinetta-caffe
 (16,2,1);
 
-MERGE INTO Alias(id,alias) KEY(id, alias) VALUES
+MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
 (1,'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1,'map'),
 (4, '3000'), (4, 'prodotto'), (4, 'cande'),
 (2, 'bevanda'), (2, 'energia' ), (2, 'coffee'),
@@ -178,7 +191,7 @@ MERGE INTO Alias(id,alias) KEY(id, alias) VALUES
 (14, 'magica'), (14,'pass'),
 (16, 'macchinetta'), (16,'distributore');
 
-MERGE INTO stanza(id, nome, descrizioneIniziale, descrizioneAggiuntiva, aperta, visibile, immagine) KEY(id) VALUES
+MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_path) KEY(id) VALUES
     (1, 'Ingresso del Campus', 'Davanti a te si apre il cancello del campus universitario, imponente ma familiare. Oltre il cancello si vede un viale lungo, da grandi palazzi e piccioni prepotenti, pronti a colpirti. A pochi passi dall''ingresso, un piccolo bar brulica di studenti già assonnati e inservienti carichi di pacchi. Il dipartimento di informatica si staglia più avanti, grigio e severo, come un labirinto di vetro e cemento che sembra nascondere più segreti che aule.\n TUTORIAL \n Muoviti tramite i comandi Nord (N), Est (E), Ovest (O), Sud (S), ed arrivare il prima possibile al bagno.\n Guarda attentamente ciò che ti circonda, può sempre essere utile!','',true, true, ''),
     (2, 'Bar', 'Un locale stretto ma accogliente, con il profumo persistente di caffè bruciato e cornetti caldi. Alle pareti, volantini scoloriti pubblicizzano vecchi eventi universitari. Un orologio sopra la macchina del caffè segna sempre le 8:15, bloccato da anni. Dietro il bancone, il barista prepara distrattamente cappuccini, mentre un gruppetto di studenti chiacchiera a voce troppo alta. ', ' Vicino alla cassa, in ato al centro , un piccolo cartello con scritto: “Chi cerca… trova.”\n Ci sono molti studenti , è un buon posto per raccogliere voci di corridoio o chiedere informazioni....',true, true, 'bar-gioco.png'),
     (3, 'Viale verso il dipartimento', 'Stai andando a verso Est \n. Un viale lungo, quasi interminabile, che conduce al cortile interno del dipartimento. Le foglie secche si raccolgono agli angoli, mosse dal vento. Sui lati del percorso, vecchie bacheche arrugginite espongono orari, comunicati e qualche annuncio misterioso. In fondo, le porte a vetri del dipartimento invitano a entrare… o forse a perdersi.', 'Sul lato destro, una bacheca ha una mappa del campus, ma è strappata proprio dove c''è segnato il dipartimento di informatica.',true, true, 'viale.png'),
@@ -192,7 +205,7 @@ MERGE INTO stanza(id, nome, descrizioneIniziale, descrizioneAggiuntiva, aperta, 
 -- secondo piano
     (8, 'Secondo piano','Prendendo le scale sei al secodo piano. noti verso NORD una garnde stanza.' , 'Non c''è nulla di nuovo',true, true, 'corridoio_secondo_piano.png'),
     (9, 'Robotica', 'Un laboratorio pieno di bracci meccanici spenti, monitor sfarfallanti e componenti elettronici sparsi.' , 'Un braccio meccanico inattivo si muove di scatto quando passi vicino, il quale punta sempre verso un armadietto a destra.',true, true, 'laboratorio_di_robotica_secondo_piano.png'), -- trova la varechina richiesta dall'inserviente
-    (16, 'Aula A', ' Sei nella tua vecchia aula , dove hai seguito le tanto amata lezioni di fisica. Ci sono due lavagne , una con il pennarello e una con il gesso , sulla quale ci sono scritti dei geroglifici. Semprerebbe una formula del moto del proiettila o qualcosa del genere. Chissà se possono essere criptati....', 'Osservando meglio la stanze noti un bigliettino sotto il banco dell''utlima fila è il biglittino che permette di criptare la formula del moto del...qualcosa.(fisica non era la tua materia preferita...)',true, true, 'aula_A_secondo_piano.png'),-- prende il bigliettino per poi poter aiutare lo stundete . se no deve sperare nelle sue conoscenze
+    (16, 'Aula A', ' Sei nella tua vecchia aula , dove hai seguito le tanto amata lezioni di fisica. Ci sono due lavagne , una con il pennarello e una con il gesso , sulla quale ci sono scritti dei geroglifici. Semprerebbe una formula del moto del proiettila o qualcosa del genere. Chissà se possono essere criptati....', 'Osservando meglio la stanze noti un bigliettino sotto il banco dell''utlima fila è il biglittino che permette di criptare la formula del moto del...qualcosa.(fisica non era la tua materia preferita...)',true, true, 'aula_A_secondo_piano.png'),-- prende il bigliettino per poi poter aiutare lo stundete. se no deve sperare nelle sue conoscenze
 -- terzo piano
     (14, 'Terzo piano', 'Sei finalemente arrivato al terzo piano.\n Nel corridoio non c''è nessuno. Del bagno nemmeno l''ombra. Noti a destra (EST) l''aula studio e sulla tua sinistra (OVEST) intravedi il museo di informatica',' Senti dei schiamazzi provenire dall''aula stuido , forse c''è qualcuno.', true, true, 'corridoio_terzo_piano.png'),
     (15, 'Aula studio terzo piano', 'La stanza è piena di tavoli scricchiolanti, ma almeno qui le sedie non sono rotte.... Noti uno studente ansioso e spaventato che sta studiando qualcosa, potresti aiutarlo , chissà se per sdebitarsi ti darebbe delle informazioni utili....', 'C''è uno studente ansioso e spaventato sulla tua destra potresti aiutarlo', true, true, 'aula_studio_terzo_piano.png'),-- se viene aiutato da un indizio su una scheda magica che può aprire qualsiasi porta e che ti fa vedere cose fuori dal comune(per il bagno magico) serviranno componenti obselete per costruirala
@@ -217,7 +230,7 @@ MERGE INTO stanza(id, nome, descrizioneIniziale, descrizioneAggiuntiva, aperta, 
     (28, 'Il bagno Diamantato','Sei finalemte arrivato a un bagno e non un bagno qualsiasi...IL BAGNO. Water diamantato con  accanto un rotolo di carta igienica d''oro zecchino il quale brilla in tutta il sua sfarzo. E poi, l''oggetto più raro e prezioso di tutti: una saponetta appoggiata sul lavandino. L’aria profuma di fiori esotici, e persino il getto del rubinetto sembra scorrere più elegante qui dentro. È il trionfo, la meta, la fine del viaggio: il bagno segreto del settimo piano. ' , '',false, false,'bagno_segreto_settimo_piano.png'),
     (29, 'Aula d''esame', 'Qui si tiene l''esame più temuto dell''anno. Una grande aula con sette righe per lato di banchi ognuna da sei posti. Più del 50% dei posti sono occupati da alunni pronti a sostenere il loro esame orale.L''aria è densa di tensione e speranza: l''arrivo in tempo dipende da ogni scelta fatta lungo il percorso.','',true, true, 'aula_esame_pianoT.png');
 
-MERGE INTO Evento(id, descrizioneAggiornata, idStanza) KEY(id) VALUES
+MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 -- bar
 (13,'Il solito bar con  studenti che fanno colazione di fretta, altri che ripetono nervosamente appunti sgualciti, e baristi svogliati che riescono puntualmente a bruciare il caffè. ',2),
 -- se viene raccolto il libro dal primo piano
@@ -239,7 +252,7 @@ MERGE INTO Evento(id, descrizioneAggiornata, idStanza) KEY(id) VALUES
 -- sesto piano
 (12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20);
 
-MERGE INTO CollecgamentoStanze(idStanzaIniziale,idStanzaFinale,direzione) KEY(idStanzaIniziale, idStanzaFinale) VALUES
+MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial_room_id, target_room_id) VALUES
 (1,2,'s'), (2,3,'e'), (3,2,'o'),
 -- pianto terra collegamento
 (3,4,'e'),(4,5,'n'), (4,3,'o'),(5,4,'s'),(4,29,'o'),(29,4,'e'),
@@ -261,11 +274,11 @@ MERGE INTO CollecgamentoStanze(idStanzaIniziale,idStanzaFinale,direzione) KEY(id
 (4,6,'sopra'),(6,8,'sopra'), (8,14, 'sopra'), (14,10,'sopra'),(10,17,'sopra'),(17,20,'sopra'), (20,25,'sopra'),
 (25,20,'sotto'), (20,17,'sotto'),(17,10,'sotto'),(10,14,'sotto'),(14,8,'sotto'),(8,6,'sotto'),(6,4,'sotto');
 
-MERGE INTO stanza_oggetto(idStanza, idOggetto, quantita) KEY(idStanza,idOggetto) VALUES
+MERGE INTO InRoomObjects(room_id, object_id, quantity) KEY(room_id,object_id) VALUES
 (5,1,1), (7,3,1), (9,15,1), (16,5,1),(30,6,1), (13,7,1), (19,11,1), (25,16,1);
 
 -----------------------------
-MERGE INTO Npc(id, nome, idStanza ) KEY(id) VALUES
+MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (7, 'Studente di storia',2),
 (1, 'Bruno il portinaio',4 ),
 (2, 'Ernesto Sapientoni', 12), -- bagno primo piano
@@ -274,12 +287,12 @@ MERGE INTO Npc(id, nome, idStanza ) KEY(id) VALUES
 (5,'Ivano Ipoclorito (Inserviente)',10),
 (6, 'Dottor Cravattone', 20);
 
-MERGE INTO Dialoghi (id, NPC) KEY(id) VALUES
+MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
 (5,2), (6,3), (7,4), (8,4),
 (9,4), (10,5),(11,5), (12,6);
 
-MERGE INTO DomandeDialoghi(dialogo, id, domanda) KEY(id) VALUES
+MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 -- domande bar :
 --1
 (1,1,'Ciao!'),
@@ -373,7 +386,7 @@ MERGE INTO DomandeDialoghi(dialogo, id, domanda) KEY(id) VALUES
 --3--
 (12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!');
 
-MERGE INTO RisposteDomande(risposta, domanda_partenza, domanda_arrivo,dialogo) KEY(risposta, domanda_partenza, domanda_arrivo) VALUES
+MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_statement,dialogue_id) KEY(answer, first_statement, related_answer_statement) VALUES
 -- risposte bar---------------
 ('Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!',1,2,1),
 ('…No, intendo un bagno vero. Qui. Adesso. Nel campus!',2,3,1),

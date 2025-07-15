@@ -8,6 +8,7 @@ package it.tutta.colpa.del.caffe.game.entity;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -28,6 +29,12 @@ public class GameDescription implements GameObservable{
         this.gameMap = gameMap;
         this.commands = commands;
         this.inventory = inventory;
+        this.status = GameStatus.IN_CORSO;
+    }
+    public GameDescription(GameMap gameMap, List<Command> commands) {
+        this.gameMap = gameMap;
+        this.commands = commands;
+        this.inventory = new Inventory();
         this.status = GameStatus.IN_CORSO;
     }
 
