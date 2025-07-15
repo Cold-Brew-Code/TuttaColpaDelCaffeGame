@@ -4,27 +4,25 @@
  */
 package it.tutta.colpa.del.caffe.game.boundary;
 
+import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.start.boundary.MainPage;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.control.Engine;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
 /**
- *
  * @author giovav
  * @since 10/07/2025
  */
-public class GamePage extends javax.swing.JFrame {
+public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     private MainPage caller;
-    private Engine engine;
+    private Controller controller;
 
 
-
-    public GamePage(MainPage main, Engine e) {
+    public GamePage(MainPage main, Controller e) {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
         // Imposta il layout predefinito di Java
         try {
@@ -40,15 +38,10 @@ public class GamePage extends javax.swing.JFrame {
         initComponents();
         this.caller = main;
         this.caller.setVisible(false);
-        this.engine = e;
+        this.controller = e;
     }
 
-
-    private void abbandona(){
-        int scelta = showYesNoDialoguePage("Conferma", "Vuoi davvero abbandonare la partita?");
-    }
-
-    private int showYesNoDialoguePage(String title, String message){
+    private int showYesNoDialoguePage(String title, String message) {
         return javax.swing.JOptionPane.showConfirmDialog(
                 null,
                 title,
@@ -81,8 +74,9 @@ public class GamePage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="< GUI init >">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainContainer = new javax.swing.JPanel(){
+        mainContainer = new javax.swing.JPanel() {
             private final Image wp;
+
             {
                 URL imgUrl = getClass().getResource("/images/gameCover.png");
                 if (imgUrl != null) {
@@ -92,6 +86,7 @@ public class GamePage extends javax.swing.JFrame {
                     System.err.println("Immagine non trovata: images/gameCover.png");
                 }
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -299,31 +294,36 @@ public class GamePage extends javax.swing.JFrame {
 
     // <editor-fold desc="< ActionPerformed(s) >">
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        abbandona();
+        controller.endGame();
     }
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
         new InventoryPage(new Inventory()).setVisible(true);
+        //da modificare spostandolo in Engine
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
-
+        controller.saveGame();
     }
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        //DialogTextArea.append("stocazzo ");
-    }
-
-    private void InitGame(){
-
-    }
-
-    private void InitGame(String savePath){
-
+        if (!this.inputField.getText().isEmpty()) {
+            controller.notifyNewCommand(this.inputField.getText());
+        }
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
-        abbandona();
+        controller.endGame();
+    }
+
+    @Override
+    public void out(String message) {
+        this.DialogTextArea.append("\n" + message);
+    }
+
+    @Override
+    public int notifySomething(String header, String message) {
+        return showYesNoDialoguePage(header, message);
     }
     // </editor-fold>
 
