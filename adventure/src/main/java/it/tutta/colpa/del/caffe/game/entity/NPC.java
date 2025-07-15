@@ -79,5 +79,15 @@ public class NPC implements Serializable {
         return this.id == other.id;
     }
     
+    /**
+     * metodo il quale mi restituisce la lista dei dialoghi dell'NPC    
+     * @return 
+     */
+    
+    public List<Dialogo> getDialoghi() {
+    return dialoghi;
+}
+
+    
     
 }
