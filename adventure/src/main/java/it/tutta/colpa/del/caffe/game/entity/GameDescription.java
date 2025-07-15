@@ -22,13 +22,15 @@ public class GameDescription implements GameObservable{
     private ParserOutput parserOutput;
     private List<GameObserver>  observers;
     private List<String> messages;
+    private final Dialogo dialoghi;
 
 
-    public GameDescription(GameMap gameMap, List<Command> commands, Inventory inventory) {
+    public GameDescription(GameMap gameMap, List<Command> commands, Inventory inventory,Dialogo dialoghi ) {
         this.gameMap = gameMap;
         this.commands = commands;
         this.inventory = inventory;
         this.status = GameStatus.IN_CORSO;
+        this.dialoghi = dialoghi;
     }
 
     @Override
@@ -100,6 +102,14 @@ public class GameDescription implements GameObservable{
     }
     public Room getCurrentRoom(){
         return this.gameMap.getCurrentRoom();
+    }
+    
+    /**
+     * Restituisce un grafo di dialoghi con arco le risposte date e nodi le domande 
+     * @return l'oggetto dialogo 
+     */
+    public Dialogo getDialoghi() {
+        return dialoghi;
     }
     // </editor-fold>>
 }
