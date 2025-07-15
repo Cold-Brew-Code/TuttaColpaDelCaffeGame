@@ -16,7 +16,6 @@ import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 import it.tutta.colpa.del.caffe.game.entity.Room;
 
-
 /**
  *
  * @author giovanni
@@ -107,16 +106,13 @@ public class Parser {
         return null; // nessun NPC trovato
     }
 
-
     /**
      *
      * @param command
      * @param commands
      * @param objects
-     * @param inventory
      * @return
      */
-
     public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<Room> rooms) {
         List<String> list = Utils.parseString(command, stopwords);
         String[] tokens = list.toArray(new String[0]);
@@ -128,24 +124,44 @@ public class Parser {
                 String[] obj = findItem(tokens, objects);
                 if (obj.length == 1) {
                     // chiamo il construttore di parserOutput con solo un oggetto
+                    return new ParserOutput(cd, (GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[0])
+                    ).findFirst().orElse(null));
 
                 } else if (obj.length == 2) {
-                    // chiamo il costruttore che ha 2 oggetti 
+                    // chiamo il costruttore che ha 2 oggetti
+
+                    // prendo il primo oggetto
+                    GeneralItem findItem1=(GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[0])
+                    ).findFirst().orElse(null);
+
+                    // prendo il secondo oggetto
+                    GeneralItem findItem2=(GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[1])
+                    ).findFirst().orElse(null);
+
+                    return new ParserOutput(cd,findItem1 ,findItem2);
+
+
                 } else if (npcP != null) {
                     // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
                     // chiama il costruttore con comando ed NPC
-                }else{
-                    // non esiste nessun npc nelle 
+                    return new ParserOutput(cd, npcP);
+                } else {
+                    // non esiste nessun npc nelle stanze errore 
+                    return new ParserOutput(cd, (NPC) null);
                 }
-            }else{
+            } else {
                 // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer 
                 // construttore di parserOutput con comadno e null
+                return new ParserOutput(cd);
             }
-        }else{
+        } else {
             // bocciato comando inesistente
-           // costruttore di parseOutput con tutto null o errore 
+            // costruttore di parseOutput con tutto null o errore 
+            return new ParserOutput(null, (GeneralItem) null);
         }
-        return new ParserOutput(null, null);
     }
 
 }
