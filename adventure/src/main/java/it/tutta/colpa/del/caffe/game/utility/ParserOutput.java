@@ -5,8 +5,9 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Command;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
 
 /**
  *
@@ -18,7 +19,8 @@ public class ParserOutput {
 
     private GeneralItem object;
     
-    private GeneralItem invObject;
+    private GeneralItem object1;
+    private NPC npc;
 
     /**
      *
@@ -30,16 +32,26 @@ public class ParserOutput {
         this.object = object;
     }
 
+    public ParserOutput(Command command) {
+        this.command = command;
+    }
+
     /**
      *
      * @param command
      * @param object
      * @param invObejct
      */
-    public ParserOutput(Command command, GeneralItem object, GeneralItem invObejct) {
+    public ParserOutput(Command command, GeneralItem object, GeneralItem object1) {
         this.command = command;
         this.object = object;
-        this.invObject = invObejct;
+        this.object1 = object1;
+    }
+
+
+    public ParserOutput(Command command, NPC npc) {
+        this.command = command;
+        this.npc = npc;
     }
 
     /**
@@ -78,16 +90,24 @@ public class ParserOutput {
      *
      * @return
      */
-    public GeneralItem getInvObject() {
-        return invObject;
+    public NPC getNpc() {
+        return npc;
     }
 
     /**
      *
-     * @param invObject
+     * @param n
      */
-    public void setInvObject(GeneralItem invObject) {
-        this.invObject = invObject;
+    public void setObject(NPC npc) {
+        this.npc = npc;
+    }
+
+    public GeneralItem getObject1() {
+        return object1;
+    }
+
+    public void setObject1(GeneralItem object1) {
+        this.object1 = object1;
     }
 
 }

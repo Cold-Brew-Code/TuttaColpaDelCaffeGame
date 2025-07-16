@@ -1,3 +1,4 @@
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -5,11 +6,15 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
+
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 
 /**
  *
@@ -18,103 +23,144 @@ import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 public class Parser {
 
     private final Set<String> stopwords;
+    private final List<Command> commands;
 
-    /**
-     *
-     * @param stopwords
-     */
-    public Parser(Set<String> stopwords) {
+    public Parser(Set<String> stopwords, List<Command> commands) {
         this.stopwords = stopwords;
+        this.commands = commands;
     }
 
-    private int checkForCommand(String token, List<Command> commands) {
-        for (int i = 0; i < commands.size(); i++) {
-            if (commands.get(i).getName().equals(token) || commands.get(i).getAlias().contains(token)) {
-                return i;
-            }
-        }
-        return -1;
+    // Cerca se un token corrisponde a un comando o un suo alias
+    private Command checkForCommand(String token) {
+        return commands.stream()
+                .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
+                .findFirst()
+                .orElse(null);
     }
 
-    private int checkForObject(String token, List<GeneralItem> obejcts) {
-        for (int i = 0; i < obejcts.size(); i++) {
-            if (obejcts.get(i).getName().equals(token) || obejcts.get(i).getAlias().contains(token)) {
-                return i;
+    // Cerca in tutti gli oggetti se la sequenza di token combacia con il nome o alias
+    private String[] findItem(String[] token, List<GeneralItem> items) {
+        List<String> findObj = new ArrayList<>();
+
+        items.stream()
+                .filter(item -> {
+                    // Copio la lista di alias + nome (senza modificare l'originale)
+                    List<String> aliasList = new ArrayList<>(item.getAlias());
+                    aliasList.add(item.getName());
+
+                    // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri speciali)
+                    String regex = aliasList.stream()
+                            .reduce((a, b) -> a + "|" + b)
+                            .orElse("");
+                    Pattern p = Pattern.compile(regex);
+
+                    // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
+                    return tentativo(p, token);
+                })
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
+
+        return findObj.toArray(new String[0]); // converto la lista array di 
+    }
+
+    // metcha il il token con l'espressione regoalre e se non va prende la stringa successiva 
+    private boolean tentativo(Pattern p, String[] token) {
+        // provo tutte le poossibili sottosequenze di token partendo dalla prima posizione poi dalla seconda ecc 
+        for (int start = 0; start < token.length; start++) {
+            StringBuilder sb = new StringBuilder();
+            for (int end = start; end < token.length; end++) {
+                if (sb.length() > 0) {
+                    sb.append(" ");
+                }
+                sb.append(token[end]);// aggiungo la stringa successiva a sb
+                String current = sb.toString(); // restituisco la sequenza di caratteri di sb 
+                if (p.matcher(current).matches()) {
+                    return true;
+                }
             }
         }
-        return -1;
+        return false;
     }
-    /* ATTENZIONE: il parser è implementato in modo abbastanza independete dalla lingua, ma riconosce solo 
-    * frasi semplici del tipo <azione> <oggetto> <oggetto>. Eventuali articoli o preposizioni vengono semplicemente
-    * rimossi.
-     */
+
+    private NPC findNpc(String[] tokens, List<Room> rooms) {
+        for (Room room : rooms) {
+            for (NPC npc : room.getNPCs()) {
+                String npcName = npc.getNome().toLowerCase();
+
+                // provo tutte le possibili sottosequenze di token
+                for (int start = 0; start < tokens.length; start++) {
+                    StringBuilder sb = new StringBuilder();
+                    for (int end = start; end < tokens.length; end++) {
+                        if (sb.length() > 0) {
+                            sb.append(" ");
+                        }
+                        sb.append(tokens[end].toLowerCase());
+                        String current = sb.toString();
+
+                        if (current.equals(npcName)) {
+                            return npc; // trovato
+                        }
+                    }
+                }
+            }
+        }
+        return null; // nessun NPC trovato
+    }
 
     /**
      *
      * @param command
      * @param commands
      * @param objects
-     * @param inventory
      * @return
      */
+    public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<Room> rooms) {
+        List<String> list = Utils.parseString(command, stopwords);
+        String[] tokens = list.toArray(new String[0]);
 
-    public ParserOutput parse(String command, List<Command> commands, List<GeneralItem> objects, List<GeneralItem> inventory) {
-        List<String> tokens = Utils.parseString(command, stopwords);
-        if (!tokens.isEmpty()) {
-            int ic = checkForCommand(tokens.get(0), commands);
-            if (ic > -1) {
-                if (tokens.size() > 1) {
-                    int io=0;
-                    String wordmatch="";
-                    if(tokens.size()>2){
-                    wordmatch= tokens.get(1)+" "+tokens.get(2);
-                    io = checkForObject(wordmatch, objects);
-                    }
-                    int ioinv = -1;
-                    if(io<0 && tokens.size()>3){
-                        wordmatch= tokens.get(2)+" "+tokens.get(3);
-                        io = checkForObject(wordmatch, objects);
-                    }
-                    if (io < 0 && tokens.size() > 1) {
-                        io = checkForObject(tokens.get(1), objects);
-                    }//
-                    if(io<0 && tokens.size()>2){
-                        io = checkForObject(tokens.get(2), objects);
-                    }
+        Command cd = checkForCommand(tokens[0]);// xkè il comando è sempre in prima posizione
+        if (cd != null) {
+            NPC npcP = findNpc(tokens, rooms);
+            if (tokens.length > 0) {
+                String[] obj = findItem(tokens, objects);
+                if (obj.length == 1) {
+                    // chiamo il construttore di parserOutput con solo un oggetto
+                    return new ParserOutput(cd, (GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[0])
+                    ).findFirst().orElse(null));
 
-                    if (io < 0) {
-                        if(tokens.size()>2){
-                            wordmatch= tokens.get(1)+" "+tokens.get(2);
-                            ioinv = checkForObject(wordmatch, inventory);
-                            }
-                        if(ioinv < 0 && tokens.size() > 3){
-                            wordmatch= tokens.get(2)+" "+tokens.get(3);
-                            ioinv = checkForObject(wordmatch, inventory);
-                        }
-                        if (ioinv < 0 && tokens.size() > 2) {
-                            ioinv = checkForObject(tokens.get(2), inventory);
-                        }
-                        if(ioinv < 0 && tokens.size() > 1){
-                            ioinv = checkForObject(tokens.get(1), inventory);
-                        }
-                    }
-                    if (io > -1 && ioinv > -1) {
-                        return new ParserOutput(commands.get(ic), objects.get(io), inventory.get(ioinv));
-                    } else if (io > -1) {
-                        return new ParserOutput(commands.get(ic), objects.get(io), null);
-                    } else if (ioinv > -1) {
-                        return new ParserOutput(commands.get(ic), null, inventory.get(ioinv));
-                    } else {
-                        return new ParserOutput(commands.get(ic), null, null);
-                    }
+                } else if (obj.length == 2) {
+                    // chiamo il costruttore che ha 2 oggetti
+
+                    // prendo il primo oggetto
+                    GeneralItem findItem1=(GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[0])
+                    ).findFirst().orElse(null);
+
+                    // prendo il secondo oggetto
+                    GeneralItem findItem2=(GeneralItem) objects.stream().filter(item
+                            -> item.getName().equals(obj[1])
+                    ).findFirst().orElse(null);
+
+                    return new ParserOutput(cd,findItem1 ,findItem2);
+
+
+                } else if (npcP != null) {
+                    // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
+                    // chiama il costruttore con comando ed NPC
+                    return new ParserOutput(cd, npcP);
                 } else {
-                    return new ParserOutput(commands.get(ic), null);
+                    // non esiste nessun npc nelle stanze errore 
+                    return new ParserOutput(cd, (NPC) null);
                 }
             } else {
-                return new ParserOutput(null, null);
+                // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer 
+                // construttore di parserOutput con comadno e null
+                return new ParserOutput(cd);
             }
         } else {
-            return null;
+            // bocciato comando inesistente
+            // costruttore di parseOutput con tutto null o errore 
+            return new ParserOutput(null, (GeneralItem) null);
         }
     }
 
