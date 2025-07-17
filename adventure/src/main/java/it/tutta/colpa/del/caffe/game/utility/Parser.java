@@ -10,6 +10,11 @@ import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 
 /**
+ * La classe Parser è responsabile dell'analisi del testo di input dell'utente.
+ * Interpreta i comandi, gli oggetti e gli NPC menzionati, trasformando una
+ * stringa di testo grezza in un oggetto {@link ParserOutput} strutturato
+ * che può essere facilmente gestito dalla logica del gioco.
+ *
  * @author giovanni
  */
 public class Parser {
@@ -19,6 +24,14 @@ public class Parser {
     private final List<GeneralItem> items;
     private final List<NPC> NPCs;
 
+    /**
+     * Costruisce un nuovo Parser.
+     *
+     * @param stopwords Un insieme di parole comuni (es. "il", "un") da ignorare durante l'analisi.
+     * @param commands  La lista di tutti i comandi validi nel gioco.
+     * @param items     La lista di tutti gli oggetti (GeneralItem) presenti nel gioco.
+     * @param NPCs      La lista di tutti i personaggi non giocanti (NPC) presenti nel gioco.
+     */
     public Parser(Set<String> stopwords, List<Command> commands, List<GeneralItem> items, List<NPC> NPCs) {
         this.stopwords = stopwords;
         this.commands = commands;
@@ -26,7 +39,12 @@ public class Parser {
         this.NPCs = NPCs;
     }
 
-    // Cerca se un token corrisponde a un comando o un suo alias
+    /**
+     * Controlla se un dato token corrisponde a un comando conosciuto o a uno dei suoi alias.
+     *
+     * @param token La stringa da verificare.
+     * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
+     */
     private Command checkForCommand(String token) {
         return commands.stream()
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
@@ -34,7 +52,13 @@ public class Parser {
                 .orElse(null);
     }
 
-    // Cerca in tutti gli oggetti se la sequenza di token combacia con il nome o alias
+    /**
+     * Cerca corrispondenze di oggetti all'interno di un array di token.
+     * Il metodo confronta tutte le sottosequenze dei token con i nomi e gli alias degli oggetti di gioco.
+     *
+     * @param token L'array di token derivato dall'input dell'utente.
+     * @return Un array di stringhe contenente i nomi degli oggetti trovati.
+     */
     private String[] findItem(String[] token) {
         List<String> findObj = new ArrayList<>();
 
@@ -58,7 +82,13 @@ public class Parser {
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
-    // matcha il token con l'espressione regoalre e se non va prende la stringa successiva
+    /**
+     * Metodo di supporto che verifica se una qualsiasi sottosequenza contigua di token corrisponde a un pattern regex.
+     *
+     * @param p     Il {@link Pattern} regex compilato da confrontare.
+     * @param token L'array di token da esaminare.
+     * @return {@code true} se viene trovata una corrispondenza, altrimenti {@code false}.
+     */
     private boolean tentativo(Pattern p, String[] token) {
         // provo tutte le poossibili sottosequenze di token partendo dalla prima posizione poi dalla seconda ecc 
         for (int start = 0; start < token.length; start++) {
@@ -77,6 +107,13 @@ public class Parser {
         return false;
     }
 
+    /**
+     * Cerca un NPC specifico all'interno di un array di token.
+     * Confronta le sottosequenze dei token con i nomi degli NPC.
+     *
+     * @param tokens L'array di token derivato dall'input dell'utente.
+     * @return L'oggetto {@link NPC} trovato, o {@code null} se nessun NPC corrisponde.
+     */
     private NPC findNpc(String[] tokens) {
         for (NPC npc : this.NPCs) {
             String npcName = npc.getNome().toLowerCase();
@@ -102,8 +139,13 @@ public class Parser {
     }
 
     /**
-     * @param command
-     * @return
+     * Analizza una stringa di comando dell'utente, la suddivide in token e identifica
+     * il comando principale, gli oggetti e/o gli NPC a cui si riferisce.
+     *
+     * @param command La stringa di input completa fornita dall'utente.
+     * @return Un oggetto {@link ParserOutput} che incapsula il risultato dell'analisi.
+     * Questo oggetto conterrà il comando identificato ed eventuali oggetti o NPC
+     * associati. Se il comando non è valido, l'oggetto ParserOutput lo indicherà.
      */
     public ParserOutput parse(String command) {
         List<String> list = Utils.parseString(command, stopwords);
