@@ -17,6 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Gestisce la comunicazione di basso livello con il server di gioco.
+ * Questa classe si occupa di stabilire una connessione, inviare richieste
+ * e ricevere risposte, implementando una logica di tentativi multipli
+ * per gestire errori di comunicazione temporanei.
+ *
  * @author giovav
  * @since 17/07/25
  */
@@ -25,11 +30,17 @@ public class ServerInterface {
     private PrintWriter out;
     private ObjectInputStream in;
 
+    /**
+     * Inizializza l'interfaccia con il server stabilendo la connessione.
+     *
+     * @param IP    L'indirizzo IP del server.
+     * @param porta La porta su cui il server è in ascolto.
+     */
     public ServerInterface(String IP, int porta) {
         try {
             connection = new Socket(IP, porta);
-            PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
-            ObjectInputStream in = new ObjectInputStream(connection.getInputStream());
+            out = new PrintWriter(connection.getOutputStream(), true);
+            in = new ObjectInputStream(connection.getInputStream());
         } catch (Exception e) {
             this.connection = null;
             this.out = null;
@@ -37,6 +48,14 @@ public class ServerInterface {
         }
     }
 
+    /**
+     * Invia una richiesta senza parametri al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
     @SuppressWarnings("unchecked")
     public <T> T requestToServer(RequestType rt) throws ServerCommunicationException {
         boolean reCheck = true;
@@ -70,6 +89,15 @@ public class ServerInterface {
         return answer;
     }
 
+    /**
+     * Invia una richiesta con un parametro ID al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param id  L'identificatore numerico da inviare con la richiesta.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
     @SuppressWarnings("unchecked")
     public <T> T requestToServer(RequestType rt, int id) throws ServerCommunicationException {
         boolean reCheck = true;
@@ -105,8 +133,8 @@ public class ServerInterface {
 
 
     /**
-     * Restituisce l'azione di richiesta al server come un oggetto Callable,
-     * basandosi sul RequestType.
+     * Metodo dispatcher che restituisce un'azione {@link Callable} basata sul {@link RequestType}.
+     * Questa versione gestisce le richieste senza parametri aggiuntivi.
      *
      * @param rt Il tipo di richiesta.
      * @return Un Callable che, quando eseguito, effettua la chiamata al server.
@@ -126,92 +154,120 @@ public class ServerInterface {
         };
     }
 
+    /**
+     * Metodo dispatcher che restituisce un'azione {@link Callable} basata sul {@link RequestType}.
+     * Questa versione gestisce le richieste che richiedono un parametro ID.
+     *
+     * @param rt Il tipo di richiesta.
+     * @param id L'ID da includere nell'azione Callable.
+     * @return Un Callable che, quando eseguito, chiamerà il metodo appropriato con l'ID fornito.
+     * @throws Exception se il tipo di richiesta non è valido per questa firma.
+     */
     private Callable<?> getRequestAction(RequestType rt, int id) throws Exception {
         return switch (rt) {
-            case ITEM -> ()-> this.requestItem(id);
-            case UPDATED_LOOK -> ()->this.requestUpdatedLook(id);
+            case ITEM -> () -> this.requestItem(id);
+            case UPDATED_LOOK -> () -> this.requestUpdatedLook(id);
             default ->
                     throw new ServerCommunicationException("Non puoi effettuare questo tipo di richiesta in questo modo");
         };
     }
 
+    /**
+     * Richiede la mappa di gioco principale al server.
+     *
+     * @return L'oggetto {@link GameMap}.
+     * @throws IOException            se avviene un errore di I/O.
+     * @throws ClassNotFoundException se il server invia un oggetto di tipo inatteso.
+     * @throws ServerException        se il server restituisce un errore logico.
+     */
     private GameMap requestGameMap() throws IOException, ClassNotFoundException {
         GameMap gameMap = null;
         out.println("mappa");
         Object answer = in.readObject();
         if (answer instanceof GameMap) {
             gameMap = (GameMap) answer;
-        } else {
-            if (answer instanceof String) {
-                throw new ServerException((String) answer);
-            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
         }
         return gameMap;
     }
 
+    /**
+     * Richiede la lista degli NPC nella locazione corrente.
+     *
+     * @return Una lista di oggetti {@link NPC}.
+     * @throws Exception se la risposta del server è anomala o si verifica un errore.
+     */
     @SuppressWarnings("unchecked")
     private List<NPC> requestNPCs() throws Exception {
         List<NPC> NPCs = new ArrayList<>();
         out.println("NPCs");
         Object answer = in.readObject();
         if (answer instanceof List<?> answerList) {
-            boolean areAllNPC = answerList.stream()
-                    .allMatch(e -> e instanceof NPC);
-            if (areAllNPC) {
+            if (answerList.stream().allMatch(e -> e instanceof NPC)) {
                 NPCs = (List<NPC>) answerList;
             } else {
                 throw new Exception("Il server risponde in modo anomalo.");
             }
-        } else {
-            if (answer instanceof String) {
-                throw new ServerException((String) answer);
-            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
         }
         return NPCs;
     }
 
+    /**
+     * Richiede la lista degli oggetti nella locazione corrente.
+     *
+     * @return Una lista di oggetti {@link GeneralItem}.
+     * @throws Exception se la risposta del server è anomala o si verifica un errore.
+     */
     @SuppressWarnings("unchecked")
     private List<GeneralItem> requestItems() throws Exception {
         List<GeneralItem> items = null;
         out.println("oggetti");
         Object answer = in.readObject();
         if (answer instanceof List<?> answerList) {
-            boolean areAllItems = answerList.stream()
-                    .allMatch(e -> e instanceof GeneralItem);
-            if (areAllItems) {
+            if (answerList.stream().allMatch(e -> e instanceof GeneralItem)) {
                 items = (List<GeneralItem>) answerList;
             } else {
                 throw new Exception("Il server risponde in modo anomalo.");
             }
-        } else {
-            if (answer instanceof String) {
-                throw new ServerException((String) answer);
-            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
         }
         return items;
     }
 
+    /**
+     * Richiede la lista dei comandi disponibili per il giocatore.
+     *
+     * @return Una lista di oggetti {@link Command}.
+     * @throws Exception se la risposta del server è anomala o si verifica un errore.
+     */
     @SuppressWarnings("unchecked")
     private List<Command> requestCommands() throws Exception {
         List<Command> commands = null;
         out.println("comandi");
         Object answer = in.readObject();
         if (answer instanceof List<?> answerList) {
-            boolean areAllCommands = answerList.stream()
-                    .allMatch(e -> e instanceof Command);
-            if (areAllCommands) {
+            if (answerList.stream().allMatch(e -> e instanceof Command)) {
                 commands = (List<Command>) answerList;
             } else {
                 throw new Exception("Il server risponde in modo anomalo.");
             }
-        } else {
-            if (answer instanceof String) {
-                throw new ServerException((String) answer);
-            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
         }
         return commands;
     }
 
+    /**
+     * Richiede un oggetto specifico basandosi sul suo ID.
+     *
+     * @param itemID L'ID dell'oggetto da richiedere.
+     * @return L'oggetto {@link GeneralItem} corrispondente.
+     * @throws Exception se la risposta del server è anomala o si verifica un errore.
+     */
     private GeneralItem requestItem(int itemID) throws Exception {
         GeneralItem item = null;
         out.println("oggetto-" + itemID);
@@ -224,6 +280,14 @@ public class ServerInterface {
         return item;
     }
 
+    /**
+     * Richiede una descrizione testuale aggiornata a seguito di un evento.
+     *
+     * @param eventID L'ID dell'evento che ha causato la richiesta.
+     * @return La stringa contenente la descrizione aggiornata.
+     * @throws IOException            se avviene un errore di I/O.
+     * @throws ClassNotFoundException se il server invia un oggetto di tipo inatteso.
+     */
     private String requestUpdatedLook(int eventID) throws IOException, ClassNotFoundException {
         String look = null;
         out.println("descrizione-aggiornata-" + eventID);
@@ -234,10 +298,22 @@ public class ServerInterface {
         return look;
     }
 
-    private void closeConnection() throws IOException{
+    /**
+     * Invia il comando di terminazione al server e chiude la connessione.
+     *
+     * @throws IOException se si verifica un errore durante la chiusura del socket.
+     */
+    private void closeConnection() throws IOException {
         out.println("end");
-        connection.close();
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
+
+    /**
+     * Enumera i tipi di richieste che possono essere inviate dal client al server.
+     * L'uso di un enum garantisce type-safety e centralizza le azioni possibili.
+     */
     enum RequestType {
         GAME_MAP,
         NPCs,
