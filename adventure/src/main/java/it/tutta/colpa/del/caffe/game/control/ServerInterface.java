@@ -26,8 +26,8 @@ public class ServerInterface {
     private ObjectInputStream in;
 
     public ServerInterface(String IP, int porta) {
-        try (Socket connection = new Socket(IP, porta)) {
-            this.connection = connection;
+        try {
+            connection = new Socket(IP, porta);
             PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
             ObjectInputStream in = new ObjectInputStream(connection.getInputStream());
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class ServerInterface {
         }
         if (reCheck) {
             try {
-                answer = (T) getRequestAction(rt).call();
+                answer = (T) getRequestAction(rt, id).call();
             } catch (ServerException e) {
                 throw new ServerCommunicationException("Il server non ha elaborato correttamente la richiesta: " + e.getMessage() + ".");
             } catch (IOException e) {
