@@ -1,32 +1,37 @@
 package it.tutta.colpa.del.caffe.game.control;
 
 import it.tutta.colpa.del.caffe.game.boundary.BoundaryOutput;
-import it.tutta.colpa.del.caffe.game.boundary.GamePage;
-import it.tutta.colpa.del.caffe.game.entity.Command;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameMap;
+import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
+import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.Parser;
+import it.tutta.colpa.del.caffe.game.utility.Utils;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
+import java.net.ConnectException;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Classe principale che gestisce la logica di gioco.
  * Comunica con il server per inizializzare lo stato del gioco,
  * consente il movimento tra stanze e l'uso dell'ascensore.
- *
+ * <p>
  * Implementa Serializable per supportare il salvataggio dello stato.
  *
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements Controller {
+public class Engine implements Controller, GameObservable {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
@@ -38,18 +43,48 @@ public class Engine implements Controller {
      */
     private GameDescription description;
 
+    private ParserOutput parserOutput;
+    private final List<GameObserver> observers = new ArrayList<>();
+    private final List<String> messages = new ArrayList<>();
+    private final Parser parser;
+    private final MainPageController mpc;
+
     /**
      * Costruttore predefinito.
      * Tenta di inizializzare una nuova partita comunicando con il server.
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    @SuppressWarnings("unused")
-    public Engine() {
+    public Engine(MainPageController mpc, BoundaryOutput bo) {
+        this.bo = bo;
+        this.mpc = mpc;
+        Parser tmpParser = null;
+        StringBuilder err = new StringBuilder();
         try {
             this.description = initGame();
+            Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
+            //tmpParser = new Parser(stopwords);
         } catch (ServerCommunicationException e) {
-            // apre JDialogPane
+            err.append("Errore di comunicazione con il server: ").append(e.getMessage()).append("\n");
+        } catch (NullPointerException ignored) {
+        } catch (IOException e) {
+            err.append("Errore verificato nel reperimento del file stopwords")
+                    .append(e.getMessage())
+                    .append("\n");
+        }
+        parser = tmpParser;
+        if (!err.isEmpty()) {
+            bo.closeWindow();
+            mpc.openWindow();
+            bo.notifyError("Errore", err.toString());
+        } else {
+            bo.out(description.getWelcomeMsg());
+            bo.out(description.getGameMap().getCurrentRoom().getDescription().replace("\\n","\n"));
+            try {
+                bo.setImage(description.getGameMap().getCurrentRoom().getImagePath());
+            }catch (ImageNotFoundException e){
+                System.err.println("image not found");
+            }
         }
     }
 
@@ -60,8 +95,10 @@ public class Engine implements Controller {
      * @param filePath percorso del file di salvataggio
      */
     @SuppressWarnings("unused")
-    public Engine(String filePath) {
-
+    public Engine(String filePath, MainPageController mpc) {
+        StringBuilder err = new StringBuilder();
+        parser = null;
+        this.mpc = mpc;
     }
 
     /**
@@ -73,69 +110,10 @@ public class Engine implements Controller {
      */
     @SuppressWarnings("unchecked")
     private GameDescription initGame() throws ServerCommunicationException {
-        GameMap gm = null;
-        List<Command> commands = null;
-        try (Socket socket = new Socket("localhost", 49152)) {
-
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-
-            out.println("mappa");
-            Object answer = in.readObject();
-
-            boolean reCheck = true;
-            int timesChecked = 0;
-
-            // ask for GameMap
-            while ((reCheck) && (timesChecked < 5)) {
-                if (answer instanceof GameMap) {
-                    gm = (GameMap) answer;
-                    reCheck = false;
-                } else if (answer instanceof String) {
-                    System.err.println("[Server] Si è verificato un errore: " + answer);
-                } else {
-                    System.err.println("Si è verificato un errore.");
-                }
-                timesChecked++;
-            }
-
-            reCheck = true;
-            timesChecked = 0;
-
-            out.println("comandi");
-            answer = in.readObject();
-
-            // asks for Commands
-            while ((gm != null) && (reCheck) && (timesChecked < 5)) {
-                if (answer instanceof List<?> answerList) {
-                    boolean areAllCommands = answerList.stream()
-                            .allMatch(e -> e instanceof Command);
-                    if (areAllCommands) {
-                        commands = (List<Command>) answerList;
-                        reCheck = false;
-                    } else {
-                        System.err.println("L'oggetto ricevuto non è una lista di comandi.");
-                    }
-                } else if (answer instanceof String) {
-                    System.err.println("[Server] Si è verificato un errore: " + answer);
-                } else {
-                    System.err.println("Si è verificato un errore.");
-                }
-                timesChecked++;
-            }
-
-            if (gm == null || commands == null) {
-                throw new ServerCommunicationException("Comunicazione client-server fallita");
-            } else {
-                System.out.println("[debug] tutto okay amo, funziono!!!");
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Failed to connect to the server.");
-        }
-
-        GameDescription gd = new GameDescription(gm, commands);
-        // observer attachment
+        ServerInterface si = new ServerInterface("localhost",49152);
+        GameDescription gd= new GameDescription(si.requestToServer(ServerInterface.RequestType.GAME_MAP),
+                                                si.requestToServer(ServerInterface.RequestType.COMMANDS));
+        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
         return gd;
     }
 
@@ -182,23 +160,52 @@ public class Engine implements Controller {
         return true;
     }
 
+    public void setBo(BoundaryOutput bo) {
+        this.bo = bo;
+    }
+
     @Override
     public void notifyNewCommand(String command) {
-
+        //parserOutput = parser.parse(command,description.getCommands(),description.getInventory(), description.getGameMap());
+        notifyObservers();
+        bo.out(messages.getLast());
     }
 
     @Override
     public void endGame() {
-
+        if (bo.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
+            this.bo.closeWindow();
+            mpc.openWindow();
+        }
     }
 
     @Override
     public void getInventory() {
-
+        // description.getInventory();
     }
 
     @Override
     public void saveGame() {
-
+        //chiamare LoadSave.save();
     }
+
+    @Override
+    public void attach(GameObserver o) {
+        if (!observers.contains(o))
+            observers.add(o);
+    }
+
+    @Override
+    public void detach(GameObserver o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (GameObserver o : observers) {
+            messages.add(o.update(description, parserOutput).toString());
+        }
+    }
+
+
 }
