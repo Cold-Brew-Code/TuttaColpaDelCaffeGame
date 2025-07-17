@@ -597,9 +597,10 @@ public class DataBaseManager {
     }
 
     /**
+     * Recupera tutti gli oggetti presenti nel database.
      *
-     * @return
-     * @throws SQLException
+     * @return una lista di tutti gli oggetti GeneralItem.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     public List<GeneralItem> askForItems() throws SQLException {
         List<GeneralItem> items = new ArrayList<>();
@@ -629,15 +630,16 @@ public class DataBaseManager {
     }
 
     /**
+     * Recupera tutti gli NPC (Non-Player Characters) dal database.
      *
-     * @return
-     * @throws SQLException
+     * @return una lista di tutti gli NPC.
+     * @throws SQLException se si verifica un errore di accesso al database.
      */
     public List<NPC> askForNonPlayerCharacters() throws SQLException{
         List<NPC> NPCs = new ArrayList<>();
         PreparedStatement pstm = connection.prepareStatement(
                 "SELECT * " +
-                    "FROM NonPlayerCharacters;");
+                        "FROM NonPlayerCharacters;");
         ResultSet rs = pstm.executeQuery();
 
         while (rs.next()) {
