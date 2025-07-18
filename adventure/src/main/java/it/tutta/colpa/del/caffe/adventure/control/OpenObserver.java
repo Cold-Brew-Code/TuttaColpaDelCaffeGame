@@ -42,37 +42,19 @@ public class OpenObserver implements GameObserver {
                     boolean isCurrentRoom= false;
                     // oggetto da aprire: scatola 
                     if(c.getId()== 11){
-                        isCurrentRoom= description.getCurrentRoom().getId()== 19;
-                        if(isCurrentRoom && c.isOpen()== false){
-                            //aprimao l'oggetto
-                            c.setOpen(true);
-                            msg.append("Hai aperto: ").append(c.getName());
-                            if (!c.getList().isEmpty()) {
-                                msg.append(". ").append(c.getName()).append(" contiene:");
-                                c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).
-                                        append(" x ").append(next.getName())
-                                );// mi stampo ogni oggetto con la sua quantità presente nel contenitore: 
-                            }     
-                        }else if(isCurrentRoom && c.isOpen()){
-                            msg.append("L'oggetto ").append(c.getName()).append(" è già aperto");
+                        isCurrentRoom= description.getCurrentRoom().getId()== 19; 
+                        if(isCurrentRoom && c.isOpen()== false && description.getCurrentRoom().hasObject(11)!= false){ // se è nella stanza deve prima raccoglierlo 
+                           
+                            msg.append("Come pretendi di aprirlo se non lo prendi?? L'oggetto: ").append(c.getName()).append("  è nella stanza fai raccogli per prenderlo ");
                         }else if(isCurrentRoom== false){
                            msg.append("Che fai ti immagini gli oggetti???\n L'oggetto ").append(c.getName()).append(" non è in questa stanza.");
                         }
                         // oggetto da aprire: armadietto borsellino
                     } else if(c.getId()== 7){
                        isCurrentRoom= description.getCurrentRoom().getId()== 13;
-                       if(isCurrentRoom && c.isOpen()== false){
-                            //aprimao l'oggetto
-                            c.setOpen(true);
-                            msg.append("Hai aperto: ").append(c.getName());
-                            if (!c.getList().isEmpty()) {
-                                msg.append(". ").append(c.getName()).append(" contiene:");
-                                c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).
-                                        append(" x ").append(next.getName())
-                                );// mi stampo ogni oggetto con la sua quantità presente nel contenitore:
-                            }    
-                        }else if(isCurrentRoom && c.isOpen()){
-                            msg.append("L'oggetto ").append(c.getName()).append(" è già aperto");
+                       if(isCurrentRoom && c.isOpen()== false && description.getCurrentRoom().hasObject(7)!= false){ // se è nella stanza deve prima raccoglierlo 
+                           
+                            msg.append("Come pretendi di aprirlo se non lo prendi?? L'oggetto: ").append(c.getName()).append("  è nella stanza fai raccogli per prenderlo ");
                         }else if(isCurrentRoom== false){
                            msg.append("Che fai ti immagini gli oggetti???\n L'oggetto ").append(c.getName()).append(" non è in questa stanza.");
                         }   
