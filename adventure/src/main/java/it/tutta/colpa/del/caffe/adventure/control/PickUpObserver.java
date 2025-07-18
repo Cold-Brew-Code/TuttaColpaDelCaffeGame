@@ -88,7 +88,7 @@ public class PickUpObserver implements GameObserver {
                                         msg.append(" ").append(quantity).append(" x ").append(objCont.getName());
                                         isobjRoomC.remove(objCont, quantity);
                                         // ho raccolto la candeggina quindi cambio la descrizione della stanza 9
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 2));
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 2));
                                     } catch (InventoryException e) {
                                         msg.append(" Non puoi aggiungere ")
                                                 .append(objCont.getName())
@@ -111,15 +111,26 @@ public class PickUpObserver implements GameObserver {
                         description.getInventory().add(isobjRoom, quantity);
                         msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
                         objRoom.remove(isobjRoom, quantity);
+
                         // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
-                        if(description.getCurrentRoom().getId()==16){ // ha raccolto il bigliettino evento 3
-                        }else if(description.getCurrentRoom().getId()==30){ // ha raccolto scheda madre evento 5
+                        try {
+                            int roomId = description.getCurrentRoom().getId();
+                            switch (roomId) {
+                                case 16 -> // ha raccolto il bigliettino evento 3
+                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
+                                case 30 -> // ha raccolto scheda madre evento 5
+                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
+                                case 13 -> // ha raccolto il borsellino evento 7
+                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
+                                case 19 -> // ha raccolto la scatola evento 9
+                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
+                                default -> {
+                                }
+                            }
+                        } catch (ServerCommunicationException e) {
+                            msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
+                        }
 
-                        }else if(description.getCurrentRoom().getId()==13){// ha raccolto il borsellino evento 7
-
-                        }else if(description.getCurrentRoom().getId()==19){ // ha raccolto la scatola evento 9 
-                        } 
-                            
                     } catch (InventoryException e) {
                         msg.append(" Non puoi aggiungere ").append(isobjRoom.getName()).append(" all'inventario: ").append(e.getMessage());
                     } catch (IllegalArgumentException e) {
