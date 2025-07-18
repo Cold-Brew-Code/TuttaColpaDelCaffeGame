@@ -69,22 +69,8 @@ public class PickUpObserver implements GameObserver {
                     // xkè per controllare all'interno dell'inventario deve prima raccoglierlo o aperto ( per l'armadietto) 
                     if (isobjRoom instanceof ItemContainer isobjRoomC) {
                         if (conteiner && isobjRoom.getId() != 15) {
-                            msg.append("l'oggetto non e nella stanza. C'è l'oggetto: ").append(isobjRoomC.getName())
-                                    .append("potrebbe essere al suo interno. ma devi prima raccoglierolo . (Usa il comando prendi nome oggetto");
-                            // cambio la descrizione 
-                            if (isobjRoomC.getId() == 7) {
-                                try {
-                                    // ho raccolto il borsellino quindi cambio la descrizione della stanza 13
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
-                                } catch (ServerCommunicationException ex) {
-                                }
-                            } else {
-                                try {
-                                    // ho raccolto la scatola quindi cambio la descrizione della stanza 19
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
-                                } catch (ServerCommunicationException ex) {
-                                }
-                            }
+                            msg.append("l'oggetto noon trovato. C'è l'oggetto: ").append(isobjRoomC.getName())
+                                    .append("chissà se al suo intero c'è qualcosa. (Usa il comando prendi nome oggetto");
                             // mentre se l'oggetto non può essere raccolto ma può essere aperto  
                         } else {
                             if (isobjRoomC.isOpen()) {
@@ -125,13 +111,18 @@ public class PickUpObserver implements GameObserver {
                         description.getInventory().add(isobjRoom, quantity);
                         msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
                         objRoom.remove(isobjRoom, quantity);
-                        // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza 
-                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));// evento borsellino 
+                        // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
+                        if(description.getCurrentRoom().getId()==16){ // ha raccolto il bigliettino evento 3
+                        }else if(description.getCurrentRoom().getId()==30){ // ha raccolto scheda madre evento 5
+
+                        }else if(description.getCurrentRoom().getId()==13){// ha raccolto il borsellino evento 7
+
+                        }else if(description.getCurrentRoom().getId()==19){ // ha raccolto la scatola evento 9 
+                        } 
+                            
                     } catch (InventoryException e) {
                         msg.append(" Non puoi aggiungere ").append(isobjRoom.getName()).append(" all'inventario: ").append(e.getMessage());
                     } catch (IllegalArgumentException e) {
-                        msg.append(e.getMessage());
-                    } catch (ServerCommunicationException e) {
                         msg.append(e.getMessage());
                     }
                 }
