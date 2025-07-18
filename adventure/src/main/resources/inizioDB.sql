@@ -234,7 +234,7 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 -- bar
 (13,'Il solito bar con  studenti che fanno colazione di fretta, altri che ripetono nervosamente appunti sgualciti, e baristi svogliati che riescono puntualmente a bruciare il caffè. ',2),
 -- se viene raccolto il libro dal primo piano
-(1, 'La solita biblioteca, stracolma di manuali, libri universitari e vecchie tesi di laurea, che occupano ogni scaffale fino all''orlo.',5),
+(1, 'La solita biblioteca, stracolma di manuali, libri universitari e vecchie tesi di laurea, che occupano ogni scaffale fino all''orlo.',7),
 (11, 'Il bagno è ancora sotto sequestro, forse dovremmo chiamare i carabinieri',12),
 -- se viene presa la candeggina dall'armadietto al secondo piano
 (2, ' Il braccio robotico continua a scatenarsi in una breakdance sfrenata ogni volta che gli passi accanto. Forse vuole sfidarti... ',9),
