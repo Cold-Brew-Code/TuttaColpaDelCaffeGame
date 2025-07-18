@@ -36,7 +36,7 @@ public class ServerInterface {
      * @param IP    L'indirizzo IP del server.
      * @param porta La porta su cui il server è in ascolto.
      */
-    public ServerInterface(String IP, int porta) {
+    public ServerInterface(String IP, int porta) throws ServerCommunicationException {
         try {
             connection = new Socket(IP, porta);
             out = new PrintWriter(connection.getOutputStream(), true);
@@ -45,6 +45,7 @@ public class ServerInterface {
             this.connection = null;
             this.out = null;
             this.in = null;
+            throw new ServerCommunicationException("Il server è spento/non risponde alla richiesta");
         }
     }
 

@@ -13,10 +13,6 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -36,16 +32,14 @@ public class Engine implements Controller, GameObservable {
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
      */
-    private BoundaryOutput bo;
+    private BoundaryOutput GUI;
 
     /**
      * Descrizione dello stato attuale della partita, contenente mappa e comandi.
      */
-    private GameDescription description;
+    private final GameDescription description;
 
-    private ParserOutput parserOutput;
     private final List<GameObserver> observers = new ArrayList<>();
-    private final List<String> messages = new ArrayList<>();
     private final Parser parser;
     private final MainPageController mpc;
 
@@ -55,38 +49,78 @@ public class Engine implements Controller, GameObservable {
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    public Engine(MainPageController mpc, BoundaryOutput bo) {
-        this.bo = bo;
+    public Engine(MainPageController mpc, BoundaryOutput GUI) {
+        this.GUI = GUI;
         this.mpc = mpc;
         Parser tmpParser = null;
-        StringBuilder err = new StringBuilder();
+        GameDescription tmpDescription = null;
+        StringBuilder err = new StringBuilder("<html>");
         try {
-            this.description = initGame();
-            Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
-            //tmpParser = new Parser(stopwords);
+            tmpDescription = initDescriptionFromServer();
+            tmpParser = initParserFromServer(tmpDescription);
+            //timer
         } catch (ServerCommunicationException e) {
-            err.append("Errore di comunicazione con il server: ").append(e.getMessage()).append("\n");
-        } catch (NullPointerException ignored) {
+            err.append("<p><b>Errore di comunicazione con il server</b>:</p><p>").append(e.getMessage()).append("</p>");
         } catch (IOException e) {
-            err.append("Errore verificato nel reperimento del file stopwords")
+            err.append("<p><b>Errore verificato nel reperimento del file stopwords</b></p><p>")
                     .append(e.getMessage())
-                    .append("\n");
+                    .append("</p>");
+        } catch (NullPointerException e) {
+            err.append("<p><b>Errore generico</b>:</p> <p> ")
+                    .append(e.getMessage())
+                    .append("</p>");
         }
-        parser = tmpParser;
-        if (!err.isEmpty()) {
-            bo.closeWindow();
+        err.append("</html>");
+        this.description = tmpDescription;
+        this.parser = tmpParser;
+        if (!err.toString().equals("<html></html>")) {
             mpc.openWindow();
-            bo.notifyError("Errore", err.toString());
+            GUI.closeWindow();
+            GUI.notifyError("Errore", err.toString());
         } else {
-            bo.out(description.getWelcomeMsg());
-            bo.out(description.getGameMap().getCurrentRoom().getDescription().replace("\\n","\n"));
+            //init first scenario
+            GUI.out(description.getWelcomeMsg());
+            GUI.out(description.getCurrentRoom().getDescription());
             try {
-                bo.setImage(description.getGameMap().getCurrentRoom().getImagePath());
-            }catch (ImageNotFoundException e){
-                System.err.println("image not found");
+                GUI.setImage(description.getCurrentRoom().getImagePath());
+            } catch (ImageNotFoundException e) {
+                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
     }
+
+    private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
+        Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
+        ServerInterface si = new ServerInterface("localhost", 49152);
+        Parser p = new Parser(
+                stopwords,
+                description.getCommands(),
+                si.requestToServer(ServerInterface.RequestType.ITEMS),
+                si.requestToServer(ServerInterface.RequestType.NPCs)
+        );
+        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+        return p;
+    }
+
+    /**
+     * Inizializza una nuova partita contattando il server locale.
+     * Recupera la mappa e l'elenco dei comandi, verificandone la correttezza.
+     *
+     * @return una GameDescription contenente la mappa e i comandi
+     * @throws ServerCommunicationException se la comunicazione fallisce o i dati sono incompleti
+     */
+
+    private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
+        ServerInterface si = new ServerInterface("localhost", 49152);
+        GameMap gm = si.requestToServer(ServerInterface.RequestType.GAME_MAP);
+        List<Command> c = si.requestToServer(ServerInterface.RequestType.COMMANDS);
+        GameDescription gd = new GameDescription(
+                si.requestToServer(ServerInterface.RequestType.GAME_MAP),
+                si.requestToServer(ServerInterface.RequestType.COMMANDS));
+        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+        return gd;
+    }
+
 
     /**
      * Costruttore per l'inizializzazione da file di salvataggio.
@@ -98,24 +132,10 @@ public class Engine implements Controller, GameObservable {
     public Engine(String filePath, MainPageController mpc) {
         StringBuilder err = new StringBuilder();
         parser = null;
+        description = null;
         this.mpc = mpc;
     }
 
-    /**
-     * Inizializza una nuova partita contattando il server locale.
-     * Recupera la mappa e l'elenco dei comandi, verificandone la correttezza.
-     *
-     * @return una GameDescription contenente la mappa e i comandi
-     * @throws ServerCommunicationException se la comunicazione fallisce o i dati sono incompleti
-     */
-    @SuppressWarnings("unchecked")
-    private GameDescription initGame() throws ServerCommunicationException {
-        ServerInterface si = new ServerInterface("localhost",49152);
-        GameDescription gd= new GameDescription(si.requestToServer(ServerInterface.RequestType.GAME_MAP),
-                                                si.requestToServer(ServerInterface.RequestType.COMMANDS));
-        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
-        return gd;
-    }
 
     /**
      * Inizializza una partita a partire da un file di salvataggio.
@@ -160,28 +180,24 @@ public class Engine implements Controller, GameObservable {
         return true;
     }
 
-    public void setBo(BoundaryOutput bo) {
-        this.bo = bo;
+    public void setGUI(BoundaryOutput bo) {
+        this.GUI = bo;
     }
 
     @Override
     public void notifyNewCommand(String command) {
-        //parserOutput = parser.parse(command,description.getCommands(),description.getInventory(), description.getGameMap());
-        notifyObservers();
-        bo.out(messages.getLast());
-    }
-
-    @Override
-    public void endGame() {
-        if (bo.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
-            this.bo.closeWindow();
-            mpc.openWindow();
+        if (!command.isEmpty()) {
+            notifyObservers(parser.parse(command));
+            GUI.out(description.getMessages().getLast());
         }
     }
 
     @Override
-    public void getInventory() {
-        // description.getInventory();
+    public void endGame() {
+        if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
+            this.GUI.closeWindow();
+            mpc.openWindow();
+        }
     }
 
     @Override
@@ -201,9 +217,14 @@ public class Engine implements Controller, GameObservable {
     }
 
     @Override
-    public void notifyObservers() {
+    public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
-            messages.add(o.update(description, parserOutput).toString());
+            description.getMessages().add(o.update(description, po).toString());
+            try {
+                GUI.setImage(description.getCurrentRoom().getImagePath());
+            } catch (ImageNotFoundException e) {
+                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+            }
         }
     }
 
