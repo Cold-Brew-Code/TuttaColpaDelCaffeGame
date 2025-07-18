@@ -1,14 +1,13 @@
 package it.tutta.colpa.del.caffe.start.boundary;
 
-import it.tutta.colpa.del.caffe.game.boundary.GamePage;
-import it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
 public class MainPage extends JFrame {
-
+    MainPageController c;
     JPanel wallpaper = new JPanel(){
         private final Image wp;
         {
@@ -32,7 +31,8 @@ public class MainPage extends JFrame {
     JButton load = new PButton("CARICA PARTITA");
     JButton exit = new PButton("ESCI");
 
-    public MainPage(){
+    public MainPage(MainPageController c){
+        this.c=c;
         this.setResizable(false);
         this.setPreferredSize(new Dimension(960,540));
         this.setTitle("Tutta colpa del Caffè!");
@@ -70,20 +70,24 @@ public class MainPage extends JFrame {
         // ====================================================
 
         start.addActionListener(e -> {
-            new GamePage(this).setVisible(true);
+            c.startGame();
         });
 
         load.addActionListener(e -> {
-            new ChoseSavePage(this).setVisible(true);
+            c.loadGame();
         });
 
         exit.addActionListener(e -> {
-            System.exit(0);
+            c.quit();
         });
     }
 
-    public static void main(String[] args){
-        new MainPage();
+    public void close(){
+        this.setVisible(false);
+    }
+
+    public void open(){
+        this.setVisible(true);
     }
 
     private class PButton extends JButton{

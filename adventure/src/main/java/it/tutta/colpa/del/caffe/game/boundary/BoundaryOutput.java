@@ -1,5 +1,8 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+
 /**
  * Interfaccia che definisce i metodi per la comunicazione in uscita
  * verso l'attore esterno (es. utente o interfaccia grafica).
@@ -38,6 +41,9 @@ public interface BoundaryOutput {
      */
     int notifySomething(String header, String message);
 
+
+    void notifyWarning(String header, String message);
+    void notifyError(String header, String message);
     /**
      * Cambia l'immagine mostrata all'utente, utilizzando il percorso
      * (path) fornito come riferimento all'immagine.
@@ -48,5 +54,13 @@ public interface BoundaryOutput {
      * @param path Il percorso (ad esempio, un file system path o URL)
      *             dell'immagine da mostrare.
      */
-    void setImage(String path);
+    void setImage(String path) throws ImageNotFoundException;
+
+    void closeWindow();
+
+    void linkController(Controller controller);
+
+    void setDisplayedClock(String time);
+
+    void increaseProgressBar();
 }
