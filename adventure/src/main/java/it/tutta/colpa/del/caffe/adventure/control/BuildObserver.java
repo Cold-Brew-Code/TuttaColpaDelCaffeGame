@@ -4,13 +4,17 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
 import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 /**
  *
@@ -25,7 +29,7 @@ public class BuildObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput ,ServerInterface server) {
         StringBuilder msg = new StringBuilder();
         // controllo se l'oggetto è stato specificato
         Object obj = parserOutput.getObject();
@@ -48,10 +52,16 @@ public class BuildObserver implements GameObserver {
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
                         int IdRoomCurrent = description.getCurrentRoom().getId();
                         if (objInv1 && objInv2) {
-                            /**IteamCombinable cartaMagica= new IteamCombinable()
-                             * quantity= sarà 1;
-                             * description.getInventory().add(picartaMagicappo, quantity);
-                             * */
+                          
+                            IteamCombinable cartaMagica;
+                            try {
+                                cartaMagica = server.requestToServer(RequestType.ITEM, 14);
+                                description.getInventory().add(cartaMagica, 1);
+                            } catch (ServerCommunicationException ex) {
+                                msg.append(ex.getMessage());
+
+                            }
+
                             GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
                             GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
                             Item objInvR1 = (Item) obj1;
