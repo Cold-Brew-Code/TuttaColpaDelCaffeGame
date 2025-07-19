@@ -40,8 +40,7 @@ public class BuildObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
                 return msg.toString();
-            } else if (obj instanceof GeneralItem) {
-                GeneralItem pippo = (GeneralItem) obj;
+            } else if (obj instanceof GeneralItem pippo) {
                 boolean labda = pippo.getAlias().stream().anyMatch(alias -> alias.equalsIgnoreCase("carta magica"));
                 if (pippo.getName().equalsIgnoreCase("carta magica") || labda) {
 
