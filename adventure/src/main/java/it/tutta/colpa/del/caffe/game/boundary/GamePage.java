@@ -118,7 +118,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         FooterPanel = new javax.swing.JPanel();
         inputField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        progressBar = new javax.swing.JProgressBar();
+        progressBar = new javax.swing.JProgressBar(0,1200);
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
@@ -365,7 +365,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     @Override
-    public void closeWindow() {
+    public void closeWindow() { 
         this.dispose();
     }
 
