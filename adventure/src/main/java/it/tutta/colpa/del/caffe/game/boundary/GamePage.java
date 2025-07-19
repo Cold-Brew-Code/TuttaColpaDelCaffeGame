@@ -6,7 +6,6 @@ package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
-import it.tutta.colpa.del.caffe.start.boundary.MainPage;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
 import javax.swing.*;
@@ -17,7 +16,7 @@ import java.net.URL;
  * @author giovav
  * @since 10/07/2025
  */
-public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
+public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private Controller controller;
 
@@ -312,8 +311,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new InventoryPage(new Inventory()).setVisible(true);
-        //da modificare spostandolo in Engine
+        controller.showInventory();
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -365,7 +363,12 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     @Override
-    public void closeWindow() {
+    public void open() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void close() {
         this.dispose();
     }
 

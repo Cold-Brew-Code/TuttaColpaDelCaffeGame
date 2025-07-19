@@ -1,7 +1,5 @@
 package it.tutta.colpa.del.caffe.game.control;
 
-import it.tutta.colpa.del.caffe.game.boundary.BoundaryOutput;
-
 /**
  * Interfaccia che definisce il contratto per il controller del gioco.
  * Implementa i metodi necessari per la gestione delle interazioni
@@ -29,4 +27,6 @@ public interface Controller {
      * Salva lo stato corrente della partita.
      */
     void saveGame();
+
+    void showInventory();
 }
