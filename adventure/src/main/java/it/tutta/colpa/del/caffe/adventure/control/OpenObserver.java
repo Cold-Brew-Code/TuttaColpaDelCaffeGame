@@ -89,12 +89,12 @@ public class OpenObserver implements GameObserver {
             }
         }
 
-        // se ho l'oggetto nell'inventario 
+        // se ho l'oggetto che può essere raccolto (scatola o borsellino) è nell'inventario 
         if (obj == null & GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId()) != null) {
             GeneralItem invObj = GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId());
-            if (invObj.getId() == 11) {
+            if (invObj.getId() == 11 || invObj.getId() == 7) {
                 ItemContainer c = (ItemContainer) invObj;
-                if (c.isOpen() == false) {
+                if (c.isOpen() == false) { // se non è aperto lo apro e stampo il suo contenuto 
                     c.setOpen(true);
                     msg.append("Hai aperto: ").append(c.getName());
                     if (!c.getList().isEmpty()) {
@@ -106,20 +106,8 @@ public class OpenObserver implements GameObserver {
                 } else if (c.isOpen()) {
                     msg.append("L'oggetto ").append(c.getName()).append(" è già aperto");
                 }
-            } else if (invObj.getId() == 7) {
-                ItemContainer c = (ItemContainer) invObj;
-                if (c.isOpen() == false) {
-                    c.setOpen(true);
-                    msg.append("Hai aperto: ").append(c.getName());
-                    if (!c.getList().isEmpty()) {
-                        msg.append(". ").append(c.getName()).append(" contiene:");
-                        c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).
-                                append(" x ").append(next.getName())
-                        );
-                    }
-                }
-                //caso in cui l'oggetto è nell'inventario ma non è uno di quelli apribili
-            } else if (invObj != null) {
+            } // caso in cui l'oggetto è nell'inventario ma non è uno di quelli apribili
+            else if (invObj != null) {
                 msg.append("L'oggetto indicato non è apribili");
             } else {
                 msg.append("L'oggetto indicato non è nell'inventario");
