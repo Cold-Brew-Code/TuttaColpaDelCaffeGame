@@ -84,7 +84,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
-            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
+            this.timer = new Clock(20, this, GUI);// passo il tempo e l'engine corrente 
             timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription());
