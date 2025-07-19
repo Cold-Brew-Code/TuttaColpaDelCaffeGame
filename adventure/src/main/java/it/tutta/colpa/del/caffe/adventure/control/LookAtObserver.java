@@ -24,14 +24,11 @@ public class LookAtObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
+        
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.LOOK_AT) {
             if (description.getCurrentRoom().getLook() != null) {
                 msg.append(description.getCurrentRoom().getLook());
-                if(description.getCurrentRoom().getId()==21){
-
-
-                }
             } else {
                 msg.append("Non c'è niente di interessante qui.");
             }
