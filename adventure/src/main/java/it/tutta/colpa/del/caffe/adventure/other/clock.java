@@ -5,32 +5,33 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-
-public class clock implements Serializable {
-    //private static final long serialVersionUID=0;
+public class Clock implements Serializable {
 
     private final int initialTimeInSeconds;
     private int remainingTimeInSeconds;
     private boolean isRunning;
-
     private transient ScheduledExecutorService scheduler;
+    private final TimeObserver observer;
 
     /**
      * Costruttore: inizializza il timer con il tempo iniziale desiderato.
      * @param minutes tempo iniziale in minuti
      */
-    public clock(int minutes) {
+    public Clock(int minutes, TimeObserver observer) {
         this.initialTimeInSeconds = minutes * 60;
         this.remainingTimeInSeconds = initialTimeInSeconds;
         this.isRunning = false;
+        this.observer = observer;
     }
-/**
+    /**
      * Avvia il timer se non è già in esecuzione e c'è tempo residuo.
-     * Inizializza uno scheduler che decrementa il tempo residuo ogni secondo. questo fatto n volte 
-     * Quando il tempo residuo arriva a zero, il timer si ferma automaticamente.
+     * Inizializza uno scheduler {@link ScheduledExecutorService}  che decrementa il tempo residuo ogni secondo. questo fatto n volte 
+     * Quando il tempo residuo arriva a zero, il timer si ferma e viene notificato l'osservatore
+     * tramite {@code observer.onTimeExpired()}.
      * scheduleAtFixedRate prende in input l'operazione che deve essere ripetuta , 
      * il tempo di attesa, il tempo di esecuzione tra k e k+1 e l'unità di tempo (in questo caso i secondi)
      */
+
     public void start() {
         if (!isRunning && remainingTimeInSeconds > 0) {
             isRunning = true;
@@ -40,14 +41,18 @@ public class clock implements Serializable {
                     remainingTimeInSeconds--;
                 } else {
                     stop();
+                    observer.onTimeExpired();  // Notifica l'osservatore
                 }
             }, 1, 1, TimeUnit.SECONDS);
         }
     }
 
     /**
-     * stoppa il timer.
+     * Ferma il timer se è attualmente in esecuzione.
+     * <p>
+     * Arresta lo scheduler utilizzato per il conteggio del tempo.
      */
+
     public void stop() {
         if (isRunning) {
             isRunning = false;
@@ -58,41 +63,54 @@ public class clock implements Serializable {
     }
 
     /**
-     * Resetta il timer al tempo iniziale.
+     * Reimposta il timer al valore iniziale specificato al momento della creazione.
+     * <p>
+     * Ferma il timer se è attualmente in esecuzione e riporta il tempo residuo al valore originale.
      */
+
     public void reset() {
         stop();
         remainingTimeInSeconds = initialTimeInSeconds;
     }
 
     /**
-     * permette di cambiare il tempo durante l'esecuzione.
-     * @param seconds tempo residuo
+     * Imposta manualmente il tempo residuo del timer.
+     *
+     * @param seconds nuovo valore del tempo residuo, espresso in secondi
      */
+
     public void setRemainingTime(int seconds) {
         this.remainingTimeInSeconds = seconds;
     }
 
     /**
-     * Restituisce il tempo residuo in secondi.
-     * @return tempo residuo
+     * Restituisce il tempo residuo attuale, espresso in secondi.
+     *
+     * @return il tempo residuo in secondi
      */
+
     public int getRemainingTimeInSeconds() {
         return remainingTimeInSeconds;
     }
 
     /**
-     * Restituisce true se il timer è in esecuzione.
-     * @return true se in esecuzione
+     * Indica se il timer è attualmente in esecuzione.
+     *
+     * @return {@code true} se il timer è in esecuzione, {@code false} altrimenti
      */
+
     public boolean isRunning() {
         return isRunning;
     }
 
     /**
-     * Restituisce il tempo formattato come mm:ss o hh:mm:ss se supera un'ora.
-     * @return tempo formattato
+     * Restituisce il tempo residuo formattato come stringa leggibile.
+     * <p>
+     * Il formato restituito sarà "HH:mm:ss" se il tempo supera un'ora, altrimenti "mm:ss".
+     *
+     * @return una stringa rappresentante il tempo residuo formattato
      */
+
     public String getTimeFormatted() {
         int hours = remainingTimeInSeconds / 3600;
         int minutes = (remainingTimeInSeconds % 3600) / 60;
@@ -103,28 +121,5 @@ public class clock implements Serializable {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
-    }
-
-    /**
-     * Metodo main di esempio: avvia un timer di 20 minuti e stampa il tempo ogni secondo.
-     */
-    public static void main(String[] args) {
-        clock timer = new clock(20); // timer di 20 minuti
-
-        timer.start();
-
-        // Avvia un altro scheduler per stampare il tempo formattato ogni secondo
-        ScheduledExecutorService printer = Executors.newSingleThreadScheduledExecutor();
-        printer.scheduleAtFixedRate(() -> {
-            System.out.println("Tempo residuo: " + timer.getTimeFormatted());
-            if (timer.getRemainingTimeInSeconds()==1140){
-                System.out.println("cambio tempo");
-                timer.setRemainingTime(684);
-            }
-            if (timer.getRemainingTimeInSeconds() <= 0) {
-                System.out.println("Timer scaduto!");
-                printer.shutdown();
-            }
-        }, 0, 1, TimeUnit.SECONDS);
     }
 }

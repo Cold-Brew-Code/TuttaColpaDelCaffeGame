@@ -4,6 +4,8 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+
 /**
  *
  * @author pierpaolo
@@ -25,6 +27,6 @@ public interface GameObservable {
     /**
      *
      */
-    public void notifyObservers();
+    public void notifyObservers(ParserOutput po);
     
 }
