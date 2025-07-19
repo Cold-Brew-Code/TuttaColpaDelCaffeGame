@@ -12,7 +12,7 @@ import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
  * @author giovav
  * @since 15/07/25
  */
-public interface BoundaryOutput {
+public interface BoundaryOutput extends GUI{
 
     /**
      * Mostra un messaggio all'utente.
@@ -55,8 +55,10 @@ public interface BoundaryOutput {
      *             dell'immagine da mostrare.
      */
     void setImage(String path) throws ImageNotFoundException;
+    
+    void open();
 
-    void closeWindow();
+    void close();
 
     void linkController(Controller controller);
 
