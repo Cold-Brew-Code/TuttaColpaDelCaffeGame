@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import javax.swing.*;
@@ -17,11 +14,13 @@ import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
-public class InventoryPage extends JFrame implements GUI {
+public class InventoryPage extends JDialog implements GUI {
     private GeneralItem[] it = new GeneralItem[4];
     private static final Logger logger = Logger.getLogger(InventoryPage.class.getName());
 
-    public InventoryPage(Inventory inventory) {
+    public InventoryPage(Frame parent, Inventory inventory) {
+        super(parent, "Inventario", true);
+
         int i = 0;
         for (GeneralItem iterator : inventory) {
             try {
@@ -66,7 +65,7 @@ public class InventoryPage extends JFrame implements GUI {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
         panel = new JPanel() {
@@ -102,7 +101,7 @@ public class InventoryPage extends JFrame implements GUI {
         scrollPane = new JScrollPane();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Inventario");
+
 
         firstItem.setBackground(new Color(255, 255, 255));
         firstItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
@@ -171,10 +170,7 @@ public class InventoryPage extends JFrame implements GUI {
         descriptionLabel.setText("Seleziona un elemento per conoscerne la descrizione.");
         descriptionLabel.setOpaque(true);
         descriptionLabel.setBackground(new Color(0xF3E28B));
-        //descriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         descriptionLabel.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
-        //descriptionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        //descriptionLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
         descriptionLabel.setFocusable(false);
         descriptionLabel.setEditable(false);
         descriptionLabel.setLineWrap(true);
@@ -278,7 +274,7 @@ public class InventoryPage extends JFrame implements GUI {
 
         pack();
         setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>
 
     private void firstItemMouseEntered(MouseEvent evt) {
         setDescription(1);
@@ -327,7 +323,6 @@ public class InventoryPage extends JFrame implements GUI {
 
     }
 
-
     private JScrollPane scrollPane;
     private JTextArea descriptionLabel;
     private JLabel firstItem;
@@ -353,25 +348,19 @@ public class InventoryPage extends JFrame implements GUI {
 
     @Override
     public void open() {
-
         this.setVisible(true);
     }
 
     private void setDescription(int item) {
         item = item-1;
         if (it[item] != null) {
-            StringBuilder desc = new StringBuilder();
-            desc.append("<html>");
-            desc.append("<p><b>Nome</b>: ").append(it[item].getName()).append("</p>");
+            descriptionLabel.setText("");
+            descriptionLabel.append("Nome: " + it[item].getName() + "\n");
             if (it[item] instanceof Item i) {
                 if (i.getUses() != -1)
-                    desc.append("<p><b>Utilizzi rimanenti</b>: ").append(i.getUses())
-                            .append("</p>");
+                    descriptionLabel.append("Utilizzi rimanenti: " + i.getUses() + "\n");
             }
-            desc.append("<p><b>Descrizione</b>:</p>").append("<p>")
-                    .append(it[item].getDescription()).append("</p>");
-            desc.append("</html>");
-            this.descriptionLabel.setText(desc.toString());
+            descriptionLabel.append("Descrizione: " + it[item].getDescription());
         }
     }
 
