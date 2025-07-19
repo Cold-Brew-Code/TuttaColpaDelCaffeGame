@@ -4,16 +4,14 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-
 import it.tutta.colpa.del.caffe.game.entity.ItemRead;
 import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.ItemException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
-
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
@@ -30,7 +28,7 @@ public class ReadObserver implements GameObserver {
      */
     
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server) {
         StringBuilder msg = new StringBuilder();
         // controllo se l'oggetto è stato specificato
         Object obj = parserOutput.getObject();
@@ -39,8 +37,7 @@ public class ReadObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
                 return msg.toString();
-            }else if(obj instanceof ItemRead){
-                ItemRead pippo= (ItemRead) obj;
+            }else if(obj instanceof ItemRead pippo){
                 Room currRoom= description.getCurrentRoom(); 
                 Inventory inventory= description.getInventory();
                 boolean objInRoom= false;
@@ -57,6 +54,7 @@ public class ReadObserver implements GameObserver {
                         try {
                             pippo.decreaseUses();
                             msg.append("Ti sembra il momento di leggere ora?? Ricordati che gli oggetti più vengono usati più si consumano nel tempo...");
+                            msg.append("Il contenuto è: ").append(pippo.getContent());
                         } catch (ItemException ex) {
                             System.err.append((CharSequence) ex);
                         }
@@ -82,6 +80,7 @@ public class ReadObserver implements GameObserver {
                         try {
                             pippo.decreaseUses();
                             msg.append("Ti sembra il momento di leggere ora?? Ricordati che gli oggetti più vengono usati più si consumano nel tempo...");
+                            msg.append("Il contenuto è: ").append(pippo.getContent());
                         } catch (ItemException ex) {
                             System.err.append((CharSequence) ex);
                         }
@@ -94,9 +93,10 @@ public class ReadObserver implements GameObserver {
                     raccoglire il bigliettino
                     */
                     
-                }else if(objInRoom== false){
+                }else if(objInRoom== false){// no oggetto nell'inventario  ne nella stanza nella quale può raccoglire 
                     msg.append("cosa vuoi leggere il vuoto?? L'oggetto ").append(pippo.getName()).append(" non è nell'inventario");
                 }else{
+                    //si trova nella stanza in cui può raccoglire l'oggetto
                     msg.append("Devi prima ragliere il ").append(pippo.getName()).append(" e poi forse ( se riuscirai ) potrai leggerlo.").append("Usa il comando prendi nome oggetto");
                 }
             }else{
