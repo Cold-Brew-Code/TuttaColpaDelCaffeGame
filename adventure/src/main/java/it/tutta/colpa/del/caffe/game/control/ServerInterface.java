@@ -1,3 +1,4 @@
+
 package it.tutta.colpa.del.caffe.game.control;
 
 import java.io.IOException;
@@ -65,6 +66,25 @@ public class ServerInterface {
         return answer;
     }
 
+    /**
+     * Invia una richiesta con un parametro ID al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param id  L'identificatore numerico da inviare con la richiesta.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T requestToServer(RequestType rt, int id) throws ServerCommunicationException {
+        boolean reCheck = true;
+        int timesChecked = 0;
+        T answer = null;
+
+
+        return answer;
+    }
+
 
     /**
      * Metodo dispatcher che restituisce un'azione {@link Callable} basata sul {@link RequestType}.
@@ -116,8 +136,6 @@ public class ServerInterface {
      */
     private GameMap requestGameMap() throws IOException, ClassNotFoundException {
         GameMap gameMap = null;
-        out.println("mappa");
-
         return gameMap;
     }
 
@@ -129,7 +147,6 @@ public class ServerInterface {
      */
     @SuppressWarnings("unchecked")
     private List<NPC> requestNPCs() throws Exception {
-
         return null;
     }
 
@@ -154,7 +171,7 @@ public class ServerInterface {
     @SuppressWarnings("unchecked")
     private List<Command> requestCommands() throws Exception {
         List<Command> commands = null;
-        
+
         return commands;
     }
 
@@ -166,7 +183,9 @@ public class ServerInterface {
      * @throws Exception se la risposta del server è anomala o si verifica un errore.
      */
     private GeneralItem requestItem(int itemID) throws Exception {
-        return null;
+        GeneralItem item = null;
+
+        return item;
     }
 
     /**
@@ -178,8 +197,9 @@ public class ServerInterface {
      * @throws ClassNotFoundException se il server invia un oggetto di tipo inatteso.
      */
     private String requestUpdatedLook(int eventID) throws IOException, ClassNotFoundException {
-        
-        return null;
+        String look = null;
+
+        return look;
     }
 
     /**
@@ -188,6 +208,10 @@ public class ServerInterface {
      * @throws IOException se si verifica un errore durante la chiusura del socket.
      */
     private void closeConnection() throws IOException {
-        
+        out.println("end");
+        if (connection != null && !connection.isClosed()) {
+            connection.close();
+        }
     }
+
 }
