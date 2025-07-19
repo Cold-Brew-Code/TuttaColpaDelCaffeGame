@@ -4,7 +4,6 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
@@ -20,6 +19,6 @@ public interface GameObserver {
      * @return
      */
 
-    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server);
+    public String update(GameDescription description, ParserOutput parserOutput);
 
 }

@@ -5,7 +5,6 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
@@ -27,7 +26,7 @@ public class OpenObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server) {
+    public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
         if (parserOutput.getCommand().getType() == CommandType.OPEN) {

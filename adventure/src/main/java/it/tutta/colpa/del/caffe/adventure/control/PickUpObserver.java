@@ -38,7 +38,13 @@ public class PickUpObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server) {
+    public String update(GameDescription description, ParserOutput parserOutput) {
+        ServerInterface server;
+        try {
+            server = new ServerInterface("localhost",49152 );
+        } catch (ServerCommunicationException ex) {
+            server= null;
+        }
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
         boolean conteiner = false;
@@ -95,7 +101,7 @@ public class PickUpObserver implements GameObserver {
                                                 .append(" all'inventario: ").append(e.getMessage());
                                     } catch (IllegalArgumentException e) {
                                         msg.append(e.getMessage());
-                                    } catch (ServerCommunicationException ex) {
+                                    } catch (ServerCommunicationException | NullPointerException ex) {
                                     }
                                 }
                             } else { // contenitore chiuso
@@ -127,7 +133,7 @@ public class PickUpObserver implements GameObserver {
                                 default -> {
                                 }
                             }
-                        } catch (ServerCommunicationException e) {
+                        } catch (ServerCommunicationException | NullPointerException e) {
                             msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
                         }
 

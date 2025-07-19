@@ -4,7 +4,6 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
@@ -28,7 +27,7 @@ public class ReadObserver implements GameObserver {
      */
     
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server) {
+    public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
         // controllo se l'oggetto è stato specificato
         Object obj = parserOutput.getObject();

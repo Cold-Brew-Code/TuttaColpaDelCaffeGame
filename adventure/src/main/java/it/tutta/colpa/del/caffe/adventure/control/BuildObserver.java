@@ -29,7 +29,13 @@ public class BuildObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput ,ServerInterface server) {
+    public String update(GameDescription description, ParserOutput parserOutput ) {
+        ServerInterface server;
+        try {
+            server = new ServerInterface("localhost",49152 );
+        } catch (ServerCommunicationException ex) {
+            server= null;
+        }
         StringBuilder msg = new StringBuilder();
         // controllo se l'oggetto è stato specificato
         Object obj = parserOutput.getObject();
@@ -56,7 +62,7 @@ public class BuildObserver implements GameObserver {
                             try {
                                 cartaMagica = server.requestToServer(RequestType.ITEM, 14);
                                 description.getInventory().add(cartaMagica, 1);
-                            } catch (ServerCommunicationException ex) {
+                            } catch (ServerCommunicationException | NullPointerException ex) {
                                 msg.append(ex.getMessage());
 
                             }
@@ -72,7 +78,7 @@ public class BuildObserver implements GameObserver {
                         } else if (objInv1 == false && objInv2) {
                             isRoomCurrent1 = description.getCurrentRoom().getId() == 19;
                             if (isRoomCurrent1) {
-                                msg.append("devi prima raccogliere l'oggetto ").append(description.getCurrentRoom().getObject(12).getName()).append("prima di combinare i due oggetti");;
+                                msg.append("devi prima raccogliere l'oggetto ").append(description.getCurrentRoom().getObject(12).getName()).append("prima di combinare i due oggetti");
                             }// non puoi costrurie
                         } else if (objInv2 == false && objInv1) {
                             isRoomCurrent2 = description.getCurrentRoom().getId() == 30;
