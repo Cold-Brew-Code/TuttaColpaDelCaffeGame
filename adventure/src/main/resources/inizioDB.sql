@@ -252,6 +252,8 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 -- sesto piano
 (12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20);
 
+(14, '', 21);
+
 MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial_room_id, target_room_id) VALUES
 (1,2,'s'), (2,3,'e'), (3,2,'o'),
 -- pianto terra collegamento
