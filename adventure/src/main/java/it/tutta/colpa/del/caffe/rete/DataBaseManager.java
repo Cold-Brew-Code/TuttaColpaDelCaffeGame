@@ -29,7 +29,7 @@ public class DataBaseManager {
         dbProperties.setProperty("pw", password);
         String dataBasePath = "jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'";
         connection = DriverManager.getConnection(dataBasePath,
-                                                 dbProperties);
+                dbProperties);
     }
 
     /**
@@ -105,8 +105,13 @@ public class DataBaseManager {
     public GameMap askForGameMap() throws SQLException {
         GameMap gameMap = new GameMap();
         Statement stm = connection.createStatement();
-        ResultSet rs = stm.executeQuery("SELECT * FROM Rooms;");
+        ResultSet rs = stm.executeQuery("SELECT * FROM Rooms ORDER BY id ASC;");
         Map<Integer, Room> nodes = new HashMap<>();
+        if (rs.next()) {
+            Room room = generateRoom(rs);
+            nodes.put(room.getId(), room);
+            gameMap.aggiungiStanza(room, true);
+        }
         while (rs.next()) {
             Room room = generateRoom(rs);
             nodes.put(room.getId(), room);
@@ -339,9 +344,9 @@ public class DataBaseManager {
     private Item generateItem(ResultSet rsItem) throws SQLException {
         Item i;
         if (rsItem.getBoolean("i_is_composable")) {
-            i =  generateComposableItem(rsItem);
+            i = generateComposableItem(rsItem);
         } else if (rsItem.getBoolean("i_is_readable")) {
-            i =  generateReadableItem(rsItem);
+            i = generateReadableItem(rsItem);
         } else {
             i = assembleItem(rsItem);
         }
@@ -583,11 +588,67 @@ public class DataBaseManager {
             if (rs.getBoolean("i_is_container")) {
                 item = generateContainerItem(rs);
             } else {
-                item=generateItem(rs);
+                item = generateItem(rs);
             }
         }
         rs.close();
         pstm.close();
         return item;
+    }
+
+    /**
+     * Recupera tutti gli oggetti presenti nel database.
+     *
+     * @return una lista di tutti gli oggetti GeneralItem.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    public List<GeneralItem> askForItems() throws SQLException {
+        List<GeneralItem> items = new ArrayList<>();
+        PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                "    i.id               AS i_id, " +
+                "    i.name             AS i_name, " +
+                "    i.description      AS i_description, " +
+                "    i.is_container     AS i_is_container, " +
+                "    i.is_readable      AS i_is_readable, " +
+                "    i.is_visible       AS i_is_visible, " +
+                "    i.is_composable    AS i_is_composable, " +
+                "    i.is_pickable      AS i_is_pickable, " +
+                "    i.uses             AS i_uses, " +
+                "    i.image_path       AS i_image_path " +
+                "FROM Items AS i;");
+        ResultSet rs = pstm.executeQuery();
+        while (rs.next()) {
+            if (rs.getBoolean("i_is_container")) {
+                items.add(generateContainerItem(rs));
+            } else {
+                items.add(generateItem(rs));
+            }
+        }
+        rs.close();
+        pstm.close();
+        return items;
+    }
+
+    /**
+     * Recupera tutti gli NPC (Non-Player Characters) dal database.
+     *
+     * @return una lista di tutti gli NPC.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    public List<NPC> askForNonPlayerCharacters() throws SQLException{
+        List<NPC> NPCs = new ArrayList<>();
+        PreparedStatement pstm = connection.prepareStatement(
+                "SELECT * " +
+                        "FROM NonPlayerCharacters;");
+        ResultSet rs = pstm.executeQuery();
+
+        while (rs.next()) {
+            NPCs.add(generateNPC(rs));
+        }
+
+        rs.close();
+        pstm.close();
+
+        return NPCs;
     }
 }

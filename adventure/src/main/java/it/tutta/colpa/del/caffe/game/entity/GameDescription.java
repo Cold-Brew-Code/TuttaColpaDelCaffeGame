@@ -6,62 +6,34 @@
 package it.tutta.colpa.del.caffe.game.entity;
 
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
-import java.util.HashMap;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author pierpaolo
  */
-public class GameDescription implements GameObservable{
+public class GameDescription implements Serializable {
 
     private final GameMap gameMap;
     private final List<Command> commands;
     private final Inventory inventory;
     private GameStatus status;
-    private ParserOutput parserOutput;
-    private List<GameObserver>  observers;
-    private List<String> messages;
-    private final Dialogo dialoghi;
+    private final List<String> messages;
 
-
-    public GameDescription(GameMap gameMap, List<Command> commands, Inventory inventory,Dialogo dialoghi ) {
-        this.gameMap = gameMap;
-        this.commands = commands;
-        this.inventory = inventory;
-        this.status = GameStatus.IN_CORSO;
-        this.dialoghi = dialoghi;
-    }
     public GameDescription(GameMap gameMap, List<Command> commands) {
         this.gameMap = gameMap;
         this.commands = commands;
         this.inventory = new Inventory();
         this.status = GameStatus.IN_CORSO;
+        this.messages = new ArrayList<>();
     }
 
-    @Override
-    public void attach(GameObserver o) {
-        if (!this.observers.contains(o)) {
-            this.observers.add(o);
-        }
-    }
-
-    @Override
-    public void detach(GameObserver o) {
-        this.observers.remove(o);
-    }
-
-    @Override
-    public void notifyObservers() {
-        for(GameObserver o : this.observers){
-            messages.add(o.update(this, parserOutput));
-        }
-    }
 
     // <editor-fold defaultstate="collapsed" desc="< Get & Set >">
     public String getWelcomeMsg() {
-        return "[ Tutta colpa del caffè! ]";
+        return "\t[ Tutta colpa del caffè! ]";
     }
 
     public GameMap getGameMap() {
@@ -84,39 +56,13 @@ public class GameDescription implements GameObservable{
         this.status = status;
     }
 
-    public ParserOutput getParserOutput() {
-        return parserOutput;
-    }
-
-    public void setParserOutput(ParserOutput parserOutput) {
-        this.parserOutput = parserOutput;
-    }
-
-    public List<GameObserver> getObservers() {
-        return observers;
-    }
-
-    public void setObservers(List<GameObserver> observers) {
-        this.observers = observers;
-    }
-
     public List<String> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<String> messages) {
-        this.messages = messages;
-    }
-    public Room getCurrentRoom(){
+    public Room getCurrentRoom() {
         return this.gameMap.getCurrentRoom();
     }
-    
-    /**
-     * Restituisce un grafo di dialoghi con arco le risposte date e nodi le domande 
-     * @return l'oggetto dialogo 
-     */
-    public Dialogo getDialoghi() {
-        return dialoghi;
-    }
+
     // </editor-fold>>
 }
