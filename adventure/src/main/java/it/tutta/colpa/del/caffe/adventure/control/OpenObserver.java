@@ -9,6 +9,7 @@ import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
@@ -26,7 +27,7 @@ public class OpenObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
         if (parserOutput.getCommand().getType() == CommandType.OPEN) {

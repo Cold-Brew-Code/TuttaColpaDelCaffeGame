@@ -29,7 +29,7 @@ public class BuildObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput ) {
+    public String update(GameDescription description, ParserOutput parserOutput ) throws ServerCommunicationException {
         ServerInterface server;
         try {
             server = new ServerInterface("localhost",49152 );
@@ -60,9 +60,13 @@ public class BuildObserver implements GameObserver {
                           
                             IteamCombinable cartaMagica;
                             try {
-                                cartaMagica = server.requestToServer(RequestType.ITEM, 14);
-                                description.getInventory().add(cartaMagica, 1);
-                            } catch (ServerCommunicationException | NullPointerException ex) {
+                                if (server != null) {
+                                    cartaMagica = server.requestToServer(RequestType.ITEM, 14);
+                                    description.getInventory().add(cartaMagica, 1);
+                                } else {
+                                    throw new ServerCommunicationException ("connessione al server fallita");
+                                }
+                            } catch (ServerCommunicationException ex) {
                                 msg.append(ex.getMessage());
 
                             }

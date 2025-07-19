@@ -38,7 +38,7 @@ public class PickUpObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
         ServerInterface server;
         try {
             server = new ServerInterface("localhost",49152 );
@@ -94,14 +94,17 @@ public class PickUpObserver implements GameObserver {
                                         msg.append(" ").append(quantity).append(" x ").append(objCont.getName());
                                         isobjRoomC.remove(objCont, quantity);
                                         // ho raccolto la candeggina quindi cambio la descrizione della stanza 9
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 2));
+                                        if (server != null) {
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 2));
+                                        } else {
+                                            throw new ServerCommunicationException ("connessione al server fallita");
+                                        }
                                     } catch (InventoryException e) {
                                         msg.append(" Non puoi aggiungere ")
                                                 .append(objCont.getName())
                                                 .append(" all'inventario: ").append(e.getMessage());
                                     } catch (IllegalArgumentException e) {
                                         msg.append(e.getMessage());
-                                    } catch (ServerCommunicationException | NullPointerException ex) {
                                     }
                                 }
                             } else { // contenitore chiuso
@@ -121,17 +124,21 @@ public class PickUpObserver implements GameObserver {
                         // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
                         try {
                             int roomId = description.getCurrentRoom().getId();
-                            switch (roomId) {
-                                case 16 -> // ha raccolto il bigliettino evento 3
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
-                                case 30 -> // ha raccolto scheda madre evento 5
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
-                                case 13 -> // ha raccolto il borsellino evento 7
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
-                                case 19 -> // ha raccolto la scatola evento 9
-                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
-                                default -> {
+                            if(server!= null){
+                                switch (roomId) {
+                                    case 16 -> // ha raccolto il bigliettino evento 3
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
+                                    case 30 -> // ha raccolto scheda madre evento 5
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
+                                    case 13 -> // ha raccolto il borsellino evento 7
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
+                                    case 19 -> // ha raccolto la scatola evento 9
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
+                                    default -> {
+                                    }
                                 }
+                            }else{
+                                 throw new ServerCommunicationException ("connessione al server fallita");
                             }
                         } catch (ServerCommunicationException | NullPointerException e) {
                             msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());

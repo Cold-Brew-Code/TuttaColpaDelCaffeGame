@@ -4,12 +4,12 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
@@ -28,7 +28,7 @@ public class UseObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput, ServerInterface server) {
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
         if (parserOutput.getCommand().getType() == CommandType.USE) {
