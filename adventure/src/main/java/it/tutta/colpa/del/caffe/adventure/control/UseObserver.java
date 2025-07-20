@@ -123,7 +123,6 @@ public class UseObserver implements GameObserver {
                         }else if (takeKey && GameUtils.getObjectFromInventory(description.getInventory(), 9) != null) {
                             msg.append("puoi usare la chiave per sbloccare l'ascensore");
                             description.getInventory().remove(parserOutput.getObject());// sblocco l'ascensore quindi la chiave è stata utilizzata 
-                            // devo modificare qualcosa per la stanza??
                         } else if (keyVisible== false){
                             msg.append("non esiste nessuna chiave l'urgenza ti sta dando alla testa");// questo perchè la chiave è visible se passi l'indovinello
                         }
