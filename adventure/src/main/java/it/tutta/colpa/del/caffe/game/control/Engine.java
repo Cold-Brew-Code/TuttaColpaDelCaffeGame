@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import it.tutta.colpa.del.caffe.adventure.other.Clock;
+import it.tutta.colpa.del.caffe.adventure.other.TimeObserver;
+
+
 /**
  * Classe principale che gestisce la logica di gioco.
  * Comunica con il server per inizializzare lo stato del gioco,
@@ -30,7 +34,7 @@ import java.util.Set;
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements GameController, GameObservable {
+public class Engine implements Controller, GameObservable, TimeObserver  {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
@@ -44,7 +48,8 @@ public class Engine implements GameController, GameObservable {
 
     private final List<GameObserver> observers = new ArrayList<>();
     private final Parser parser;
-    private final it.tutta.colpa.del.caffe.start.control.Engine mpc;
+    private final MainPageController mpc;
+    private Clock timer;
 
     /**
      * Costruttore predefinito.
@@ -82,6 +87,8 @@ public class Engine implements GameController, GameObservable {
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
+            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
+            timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription());
             try {
@@ -248,6 +255,19 @@ public class Engine implements GameController, GameObservable {
             }
         }
     }
+
+    public void finishGame() {
+        GUI.out("Tempo esaurito! La partita è finita.");
+    
+        GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
+        GUI.closeWindow(); 
+    }
+
+    @Override
+    public void onTimeExpired() {
+        finishGame();  // chiama il metodo esistente
+    }
+
 
 
 }
