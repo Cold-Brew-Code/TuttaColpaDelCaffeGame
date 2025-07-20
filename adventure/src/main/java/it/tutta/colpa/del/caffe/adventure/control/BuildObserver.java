@@ -51,7 +51,7 @@ public class BuildObserver implements GameObserver {
                     } else {
                         boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
-                        int IdRoomCurrent = description.getCurrentRoom().getId();
+                        //Sint IdRoomCurrent = description.getCurrentRoom().getId();
                         if (objInv1 && objInv2) {
                             IteamCombinable cartaMagica;
                             try {
