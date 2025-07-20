@@ -3,14 +3,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package it.tutta.colpa.del.caffe.game.entity;
+import java.io.Serializable;
+import java.util.Set;
+
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.utility.ArcoGrafo;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.Graph;
-
-import java.io.Serializable;
-import java.util.Set;
 
 /**
  * 
@@ -107,4 +108,46 @@ public class GameMap implements Serializable {
             System.out.println(this.grafo.getEdgeSource(edge) + " -"+edge.getEtichetta().toString()+"- " + this.grafo.getEdgeTarget(edge));
         }
     }
+
+    /**
+     * Stampa per ogni stanza presente nella mappa di gioco tutte le direzioni
+     * disponibili e le rispettive stanze di destinazione.
+     * <p>
+     * Per ogni nodo (stanza) del grafo, vengono analizzati gli archi uscenti
+     * e viene stampata una lista delle direzioni in cui è possibile muoversi
+     * dalla stanza corrente, insieme al nome della stanza di destinazione
+     * per ciascuna direzione.
+     * </p>
+     * <p>
+     * Se una stanza non ha direzioni disponibili, viene indicato esplicitamente.
+     * </p>
+     *
+     * Esempio di output:
+     * <pre>
+     * Dalla stanza Aula puoi andare in: 
+     *   -> NORD verso 
+     * Biblioteca
+     *
+     *   -> EST verso 
+     * Corridoio
+     * </pre>
+     */
+    public void stampaDirezioniPerStanza() {
+        for (Room room : this.grafo.vertexSet()) {
+            System.out.print("Dalla stanza " + room.getName() + " puoi andare in: \n");
+            
+            // prendo tutti gli archi uscenti dal nodo i-esimo
+            Set<ArcoGrafo> uscenti = this.grafo.outgoingEdgesOf(room);
+            if (uscenti.isEmpty()) {
+                System.out.println("nessuna direzione.");
+            }else{
+                for (ArcoGrafo arco : uscenti) {
+                    Direzione direzione = arco.getEtichetta(); // mi prendo l'etichetta 
+                    Room destinazione = grafo.getEdgeTarget(arco); // mi prendo la stanza in cui arrivo da quella direzione
+                    System.out.println("  -> " + direzione + " verso \n" + destinazione.getName() + "\n");
+                }
+            }
+        } 
+    }
+
 }
