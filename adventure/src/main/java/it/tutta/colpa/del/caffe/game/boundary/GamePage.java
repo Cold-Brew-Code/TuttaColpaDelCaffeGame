@@ -21,7 +21,6 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     private Controller controller;
 
-
     public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
         // Imposta il layout predefinito di Java
@@ -56,10 +55,11 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
                 JOptionPane.ERROR_MESSAGE
         );
     }
+
     public void showWarning(String title, String message) {
         JOptionPane.showMessageDialog(
                 this,
-                 message,
+                message,
                 title,
                 JOptionPane.WARNING_MESSAGE
         );
@@ -80,8 +80,8 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     private javax.swing.JButton quitButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton sendButton;
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(GamePage.class.getName());
+    private static final java.util.logging.Logger logger
+            = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
     @SuppressWarnings("unchecked")
@@ -118,7 +118,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         FooterPanel = new javax.swing.JPanel();
         inputField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        progressBar = new javax.swing.JProgressBar(0,1200);
+        progressBar = new javax.swing.JProgressBar(0, 1200);
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
@@ -180,6 +180,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         jScrollPane1.setViewportView(DialogTextArea);
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
+        progressBar.setForeground(Color.GREEN);
 
         javax.swing.GroupLayout DialogPanelLayout = new javax.swing.GroupLayout(DialogPanel);
         DialogPanel.setLayout(DialogPanelLayout);
@@ -331,7 +332,6 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
     // </editor-fold>
 
-
     @Override
     public void out(String message) {
         this.DialogTextArea.append("\n" + message);
@@ -353,25 +353,25 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     @Override
-    public void setImage(String path) throws  ImageNotFoundException{
+    public void setImage(String path) throws ImageNotFoundException {
         System.out.println(path);
         URL imgUrl = getClass().getResource(path);
         if (imgUrl != null) {
             this.ImageLabel.setIcon(new ImageIcon(
-                    new ImageIcon(imgUrl).getImage().getScaledInstance(this.ImageLabel.getWidth(),this.ImageLabel.getHeight(), Image.SCALE_SMOOTH)));
+                    new ImageIcon(imgUrl).getImage().getScaledInstance(this.ImageLabel.getWidth(), this.ImageLabel.getHeight(), Image.SCALE_SMOOTH)));
         } else {
             throw new ImageNotFoundException("Resource not found: " + path);
         }
     }
 
     @Override
-    public void closeWindow() { 
+    public void closeWindow() {
         this.dispose();
     }
 
     @Override
     public void linkController(Controller controller) {
-        this.controller=controller;
+        this.controller = controller;
     }
 
     @Override
@@ -379,10 +379,44 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     }
 
+    /**
+     * 
+     * <p>
+     * Il metodo esegue l'aggiornamento della {@code progressBar} all'interno 
+     *  Thread (EDT) che si occupa di gestire tutti gli eventi GUI, utilizzando
+     * {@link SwingUtilities#invokeLater(Runnable)}, garantendo che le modifiche
+     * alla GUI siano sicure e corrette.invokeLater assicura che l'aggiornamente della barra venga fatto dal
+     * thread corretto indipendentemente dal thread dell'oggetto timer.
+     * Assicurandoci un corretto aggiornamento e garantendo la corretta
+     * visualizzazione. Incrementa il valore corrente della barra di progresso di
+     * 1 unità in modo thread-safe.
+     * </p>
+     *
+     *
+     * In base al valore aggiornato della barra, cambia il colore e il testo
+     * visualizzato:</p>
+     * <ul>
+     * <li>Valore < 6000: testo "FORZA IL DOVERE CHIAMA" con colore di
+     * default</li> <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol
+     * lare" con colore arancione</li>
+     * <li>Valore > 9000: testo "Sto quasi per mollare" con colore rosso</li>
+     * </ul>
+     */
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue()+1);
+        SwingUtilities.invokeLater(() -> {
+            progressBar.setValue(progressBar.getValue() + 1);
+            if (progressBar.getValue() < 6000) {
+                progressBar.setStringPainted(true);
+                progressBar.setString("FORZA IL DOVERE CHIAMA");
+            } else if (progressBar.getValue() <= 9000) {
+                progressBar.setForeground(Color.ORANGE);
+                progressBar.setString("ahi ho paura di mollare");
+            } else {
+                progressBar.setForeground(Color.RED);
+                progressBar.setString("Sto quasi per mollare");
+            }
+        });
     }
-
 
 }
