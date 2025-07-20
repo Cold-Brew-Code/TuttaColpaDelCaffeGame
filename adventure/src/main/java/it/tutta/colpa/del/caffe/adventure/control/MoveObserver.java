@@ -1,74 +1,93 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 
-/**
- *
- * @author pierpaolo
- */
 public class MoveObserver implements GameObserver {
 
-    /**
-     *
-     * @param description
-     * @param parserOutput
-     * @return
-     */
     @Override
     public StringBuilder update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
-        if (parserOutput.getCommand().getType() == CommandType.NORD) {
-            if (description.getCurrentRoom().getNorth() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getNorth());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg.append(
-                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
+
+        try {
+            CommandType commandType = parserOutput.getCommand().getType();
+            String commandName = parserOutput.getCommand().getName();
+
+            // Se non è un comando principale, verifica se è un alias
+            if (commandType == null && parserOutput.getCommand().getAlias() != null) {
+                commandType = resolveAlias(commandName);
             }
-        } else if (parserOutput.getCommand().getType() == CommandType.SOUTH) {
-            if (description.getCurrentRoom().getSouth() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getSouth());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg.append(
-                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
+
+            if (commandType != null) {
+                switch (commandType) {
+                    case NORD:
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().getStanzaArrivo(Direzione.NORD));
+                        break;
+                    case SOUTH:
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().getStanzaArrivo(Direzione.SUD));
+                        break;
+                    case EAST:
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().getStanzaArrivo(Direzione.EST));
+                        break;
+                    case WEST:
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().getStanzaArrivo(Direzione.OVEST));
+                        break;
+                    case UP:
+                        int currentFloor = 1;
+                        Room currentRoom = description.getGameMap().getCurrentRoom();
+                        for (int floor = 1; floor <= 7; floor++) {
+                            if (description.getGameMap().getPiano(floor).equals(currentRoom)) {
+                                currentFloor = floor;
+                                break;
+                            }
+                        }
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().prendiAscensore(currentFloor + 1));
+                        break;
+                    case DOWN:
+                        currentFloor = 1;
+                        currentRoom = description.getGameMap().getCurrentRoom();
+                        for (int floor = 1; floor <= 7; floor++) {
+                            if (description.getGameMap().getPiano(floor).equals(currentRoom)) {
+                                currentFloor = floor;
+                                break;
+                            }
+                        }
+                        description.getGameMap().setCurrentRoom(
+                                description.getGameMap().prendiAscensore(currentFloor - 1));
+                        break;
+                    default:
+                        break;
+                }
             }
-        } else if (parserOutput.getCommand().getType() == CommandType.EAST) {
-            if (description.getCurrentRoom().getEast() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getEast());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg.append(
-                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
-            }
-        } else if (parserOutput.getCommand().getType() == CommandType.WEST) {
-            if (description.getCurrentRoom().getWest() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getWest());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg.append(
-                        "Da quella parte non si può andare c'è un muro!\nNon hai ancora acquisito i poteri per oltrepassare i muri...");
-            }
-        } else if (parserOutput.getCommand().getType() == CommandType.UP) {
-            if (description.getCurrentRoom().getUp() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getUp());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg
-                        .append("Da quella parte non si può andare c'è un muro!\nNon puoi ancora usare l'ascensore...");
-            }
-        } else if (parserOutput.getCommand().getType() == CommandType.DOWN) {
-            if (description.getCurrentRoom().getDown() != null) {
-                description.setCurrentRoom(description.getCurrentRoom().getDown());
-            } else if (parserOutput.getCommand().getAlias().contains(parserOutput.getCommand())) {
-                return msg
-                        .append("Da quella parte non si può andare c'è un muro!\nNon puoi ancora usare l'ascensore...");
-            }
+        } catch (GameMapException ex) {
+            return msg.append(ex.getMessage());
         }
 
-        return msg.append("");
+        return msg;
     }
 
+    private CommandType resolveAlias(String alias) {
+        if (alias == null)
+            return null;
+
+        return switch (alias.toLowerCase()) {
+            case "n" -> CommandType.NORD;
+            case "s" -> CommandType.SOUTH;
+            case "e" -> CommandType.EAST;
+            case "w" -> CommandType.WEST;
+            case "u" -> CommandType.UP;
+            case "d" -> CommandType.DOWN;
+            default -> null;
+        };
+    }
 }
