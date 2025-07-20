@@ -25,7 +25,7 @@ public class ReadObserver implements GameObserver {
      * @param parserOutput
      * @return
      */
-    
+
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
@@ -37,7 +37,7 @@ public class ReadObserver implements GameObserver {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
                 return msg.toString();
             }else if(obj instanceof ItemRead pippo){
-                Room currRoom= description.getCurrentRoom(); 
+                Room currRoom= description.getCurrentRoom();
                 Inventory inventory= description.getInventory();
                 boolean objInRoom= false;
                 if(pippo.getId()==3 && inventory.contains(pippo) ){// libro cc
@@ -58,14 +58,14 @@ public class ReadObserver implements GameObserver {
                             System.err.append((CharSequence) ex);
                         }
                     }
-                    
+
                 }else if(pippo.getId()==3 && !inventory.contains(pippo) && currRoom.getId()==7){
                     objInRoom= true;
                     /* deve prima raccoglire l'oggetto e poi può leggerlo
                     altrimenti messaggio generale : oggetto non presente nell'inventario 
                     poiche non è nell'inventario ma non è nemmeno nella stanzto in cui può
                     raccoglire il bigliettino
-                    */ 
+                    */
                 }else if(pippo.getId()==5 && inventory.contains(pippo)){
                     if(currRoom.getId()==15){
                         try {// sto leggendo l'ooggetto nella stanza corretta
@@ -84,15 +84,15 @@ public class ReadObserver implements GameObserver {
                             System.err.append((CharSequence) ex);
                         }
                     }
-    
+
                 }else if(pippo.getId()==5 && !inventory.contains(pippo) && currRoom.getId()==16){
                     objInRoom= true;
                     /* devi prima raccoglire il bigliettino e poi puoi leggerlo, 
                     altrimenti messaggio generale : oggetto non presente nell'inventario  poiche non è nell'inventario ma non è nemmeno nella stanzto in cui può
                     raccoglire il bigliettino
                     */
-                    
-                }else if(objInRoom== false){// no oggetto nell'inventario  ne nella stanza nella quale può raccoglire 
+
+                }else if(objInRoom== false){// no oggetto nell'inventario  ne nella stanza nella quale può raccoglire
                     msg.append("cosa vuoi leggere il vuoto?? L'oggetto ").append(pippo.getName()).append(" non è nell'inventario");
                 }else{
                     //si trova nella stanza in cui può raccoglire l'oggetto
