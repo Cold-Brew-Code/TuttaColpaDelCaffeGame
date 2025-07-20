@@ -46,7 +46,7 @@ public class Clock implements Serializable {
                     GUI.increaseProgressBar();
                 } else {
                     stop();
-                    observer.onTimeExpired();  // Notifica l'osservatore
+                    observer.onTimeExpired();  // Notifica Engine che ha finito
                 }
             }, 1, 1, TimeUnit.SECONDS);
         }
