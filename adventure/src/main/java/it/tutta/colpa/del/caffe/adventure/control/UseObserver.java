@@ -32,7 +32,6 @@ public class UseObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
         if (parserOutput.getCommand().getType() == CommandType.USE) {
-            boolean interact = false;
             GeneralItem objInv;
             GeneralItem objInv1;
             if (obj == null) {
@@ -49,15 +48,15 @@ public class UseObserver implements GameObserver {
                             
                             if (hasChip && hasDemagnetizedCard) {
                                 msg.append("Devi creare la carta prima di usarla! (usa il comando 'crea' per creare la carta magica)");
-                                interact = true;
+                                
                             } else if (!hasChip && hasDemagnetizedCard) {
                                 objInv = GameUtils.getObjectFromInventory(description.getInventory(), 12); // chip?
                                 msg.append("Non hai l'oggetto ").append(objInv.getName()).append(" nell'inventario. Quindi non hai la carta magica.");
-                                interact = true;
+                                
                             } else if (!hasDemagnetizedCard && hasChip) {
                                 objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 6); // tessera smagnetizzata
                                 ItemContainer scatola = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), 11); // controllo se ha la scatola nell'inventario
-                                interact = true;
+                                
                                 
                                 if (scatola != null && scatola.isOpen()) {
                                     msg.append("Non hai l'oggetto ").append(objInv1.getName())
@@ -73,16 +72,16 @@ public class UseObserver implements GameObserver {
                             //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
                             if (description.getCurrentRoom().isDeniedEntry() == false) {
                                 msg.append("La porta è già aperta");
-                                interact = true;
+                                
                             } else {
                                 description.getCurrentRoom().setDeniedEntry(false);
                                 parserOutput.getObject().setUtilizzi(parserOutput.getObject().getUtilizzi() - 1);
                                 msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza.");
-                                interact = true;
+                                
                             }
                         } else if (magicCard && parserOutput.getObject().getUtilizzi() <= 0 && description.getCurrentRoom().isDeniedEntry()) {
                             msg.append("sorry but you can not use the magic card becasue you have finished the uses");
-                            interact = true;
+                            
                         }
                     }
                     case 16 -> {
@@ -92,15 +91,15 @@ public class UseObserver implements GameObserver {
                             objInv = GameUtils.getObjectFromInventory(description.getInventory(), 8);
                             msg.append("You can take a caffè");
                             description.getInventory().remove(objInv); // c'è l'oggetto e tolgo una moneta.
-                            interact = true;
+                            
                         } else if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(), 8) == null) {
                             msg.append("you can not take a caffè , because you have not a maney into inventory  you are poor");
-                            interact = true;
+                           
                         } else if (isInRoom == false && GameUtils.getObjectFromInventory(description.getInventory(), 8) != null) {
                             msg.append("non fare lo spendaccione!"); // la stanza è errata ma ha i soldi
-                            interact = true;
+                            
                         }
-                    }
+                    }   //mappa 
                     case 1 -> {
                         boolean isVisibleMap = description.getCurrentRoom().getObject(1) != null;
                         if (isVisibleMap && parserOutput.getObject().isVisibile() == false) {
@@ -108,30 +107,39 @@ public class UseObserver implements GameObserver {
                         } else if (isVisibleMap && GameUtils.getObjectFromInventory(description.getInventory(), 1) == null) {
                             msg.append("You must take the map before!");
                         } else if (isVisibleMap == false && GameUtils.getObjectFromInventory(description.getInventory(), 1) != null) {
-                            interact = true;//la mappa può essere aperta ovunque
+                            //la mappa può essere aperta ovunque
+                            // stampa il contenuto 
                         }
                     }
+
+                    // chiave
                     case 9 -> {
                         int id = description.getCurrentRoom().getId();
                         boolean takeKey = (id == 3 || id == 4 || id == 5 || id == 6 || id == 14 || id == 17 || id == 20 || id == 25);
-                        if (takeKey && GameUtils.getObjectFromInventory(description.getInventory(), 9) != null && parserOutput.getObject().isVisibile()) {
+                        boolean keyVisible=parserOutput.getObject().isVisibile();
+                        if(!takeKey && GameUtils.getObjectFromInventory(description.getInventory(), 9) != null){
+                            msg.append("non c'è l'ascensore qui. Puoi usare questa chiave solo per sbloccare l'asscensore");
+                            
+                        }else if (takeKey && GameUtils.getObjectFromInventory(description.getInventory(), 9) != null) {
                             msg.append("puoi usare la chiave per sbloccare l'ascensore");
-                            interact = true;
-                        } else {
+                            description.getInventory().remove(parserOutput.getObject());// sblocco l'ascensore quindi la chiave è stata utilizzata 
+                            // devo modificare qualcosa per la stanza??
+                        } else if (keyVisible== false){
                             msg.append("non esiste nessuna chiave l'urgenza ti sta dando alla testa");// questo perchè la chiave è visible se passi l'indovinello
+                        }
+                        // se la chiave è visibile ma non ha 
+                        else if (GameUtils.getObjectFromInventory(description.getInventory(), 9) == null && keyVisible && takeKey) {
+                             msg.append("non puoi sbloccare l'ascensore, devi prendere la chiave");
                         }
                     }
                     default -> {
                         Inventory InInventory = description.getInventory();
                         if (InInventory.getQuantity(parserOutput.getObject()) == -1) { // poichè gli oggetti che non possono essere utilizzati hanno una quantità == -1
                             msg.append("non puoi utilizzare l'oggetto");
-                            interact = true;
+                           
                         }
                     }
                 }
-            }
-            if (interact == false) {
-                msg.append("l'oggetto indicato non è nell'inventario");
             }
         }
         return msg.toString();
