@@ -56,8 +56,7 @@ public class PickUpObserver implements GameObserver {
 
             } else if (!description.getCurrentRoom().getObjects().isEmpty()) {
                 GeneralItem isobjRoom = description.getCurrentRoom().getObjects().keySet().stream()
-                        .filter(o -> o.getName().equals(parserOutput.getObject().getName())
-                        || o.getAlias().contains(parserOutput.getObject().getName()))
+                        .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);
 
@@ -75,7 +74,7 @@ public class PickUpObserver implements GameObserver {
                     // xkè per controllare all'interno dell'inventario deve prima raccoglierlo o aperto ( per l'armadietto) 
                     if (isobjRoom instanceof ItemContainer isobjRoomC) {
                         if (conteiner && isobjRoom.getId() != 15) {
-                            msg.append("l'oggetto noon trovato. C'è l'oggetto: ").append(isobjRoomC.getName())
+                            msg.append("l'oggetto non trovato. C'è l'oggetto: ").append(isobjRoomC.getName())
                                     .append("chissà se al suo intero c'è qualcosa. (Usa il comando prendi nome oggetto");
                             // mentre se l'oggetto non può essere raccolto ma può essere aperto  
                         } else {
