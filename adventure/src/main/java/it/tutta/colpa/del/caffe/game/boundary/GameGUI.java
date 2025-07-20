@@ -60,8 +60,6 @@ public interface GameGUI extends GUI{
 
     void close();
 
-    void linkController(Controller controller);
-
     void setDisplayedClock(String time);
 
     void increaseProgressBar();

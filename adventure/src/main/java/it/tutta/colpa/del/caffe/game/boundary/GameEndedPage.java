@@ -4,8 +4,9 @@
  */
 package it.tutta.colpa.del.caffe.game.boundary;
 
+import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
-import it.tutta.colpa.del.caffe.start.control.MainPageController;
+import it.tutta.colpa.del.caffe.start.control.Engine;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,14 +16,14 @@ import java.net.URL;
  *
  * @author giovanni
  */
-public class GameEndedPage extends javax.swing.JFrame {
+public class GameEndedPage extends javax.swing.JFrame implements GUI{
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GameEndedPage.class.getName());
 
     /**
      * Creates new form GameEndedPage
      */
-    public GameEndedPage(GameStatus s, MainPageController mpc) {
+    public GameEndedPage(GameStatus s, Engine mpc) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -97,7 +98,7 @@ public class GameEndedPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {
-        mpc.openWindow();
+        mpc.openGUI();
     }
 
 
@@ -112,6 +113,20 @@ public class GameEndedPage extends javax.swing.JFrame {
     }
 
     private javax.swing.JPanel wallpaper;
-    private MainPageController mpc;
+    private Engine mpc;
 
+    @Override
+    public void open() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void close() {
+        this.dispose();
+    }
+
+    @Override
+    public void linkController(Controller c) {
+
+    }
 }

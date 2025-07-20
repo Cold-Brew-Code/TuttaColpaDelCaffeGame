@@ -1,6 +1,7 @@
 package it.tutta.colpa.del.caffe.start;
 
 import it.tutta.colpa.del.caffe.start.boundary.MainPage;
+import it.tutta.colpa.del.caffe.start.control.Engine;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 /**
@@ -9,8 +10,8 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
  */
 public class StartHandler {
     public static void main(String[] args){
-        MainPageController controller = new MainPageController();
-        MainPage mainPage = new MainPage(controller);
-        controller.setFrame(mainPage);
+        MainPage mainPage = new MainPage();
+        MainPageController controller = new Engine(mainPage);
+        mainPage.linkController(controller);
     }
 }

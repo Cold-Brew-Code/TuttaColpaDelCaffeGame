@@ -5,6 +5,7 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
@@ -18,7 +19,7 @@ import java.net.URL;
  */
 public class GamePage extends javax.swing.JFrame implements GameGUI {
 
-    private Controller controller;
+    private GameController controller;
 
 
     public GamePage() {
@@ -117,7 +118,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         FooterPanel = new javax.swing.JPanel();
         inputField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        progressBar = new javax.swing.JProgressBar();
+        progressBar = new javax.swing.JProgressBar(0, 1200);
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
@@ -374,7 +375,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void linkController(Controller controller) {
-        this.controller=controller;
+        if(controller instanceof GameController) {
+            this.controller = (GameController) controller;
+        } else {
+            new RuntimeException("Il controller per GamePage non è un GameController");
+        }
     }
 
     @Override
@@ -384,7 +389,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue()+1);
+        this.progressBar.setValue(this.progressBar.getValue() + 1);
     }
 
 

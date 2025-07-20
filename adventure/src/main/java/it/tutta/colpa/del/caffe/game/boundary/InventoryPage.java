@@ -9,12 +9,13 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
-public class InventoryPage extends JDialog implements GUI {
+public class InventoryPage extends JDialog implements GUI{
     private GeneralItem[] it = new GeneralItem[4];
     private static final Logger logger = Logger.getLogger(InventoryPage.class.getName());
 
@@ -367,5 +368,10 @@ public class InventoryPage extends JDialog implements GUI {
     @Override
     public void close() {
         this.dispose();
+    }
+
+    @Override
+    public void linkController(Controller c){
+        // controller non necessario per questa finestra
     }
 }

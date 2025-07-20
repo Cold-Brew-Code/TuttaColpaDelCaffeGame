@@ -12,9 +12,7 @@ import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
-import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +30,7 @@ import java.util.Set;
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements Controller, GameObservable {
+public class Engine implements GameController, GameObservable {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
@@ -46,7 +44,7 @@ public class Engine implements Controller, GameObservable {
 
     private final List<GameObserver> observers = new ArrayList<>();
     private final Parser parser;
-    private final MainPageController mpc;
+    private final it.tutta.colpa.del.caffe.start.control.Engine mpc;
 
     /**
      * Costruttore predefinito.
@@ -54,7 +52,7 @@ public class Engine implements Controller, GameObservable {
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    public Engine(MainPageController mpc, GameGUI GUI) {
+    public Engine(it.tutta.colpa.del.caffe.start.control.Engine mpc, GameGUI GUI) {
         this.GUI = GUI;
         this.mpc = mpc;
         Parser tmpParser = null;
@@ -79,7 +77,7 @@ public class Engine implements Controller, GameObservable {
         this.description = tmpDescription;
         this.parser = tmpParser;
         if (!err.toString().equals("<html></html>")) {
-            mpc.openWindow();
+            mpc.openGUI();
             GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
@@ -134,7 +132,7 @@ public class Engine implements Controller, GameObservable {
      * @param filePath percorso del file di salvataggio
      */
     @SuppressWarnings("unused")
-    public Engine(String filePath, MainPageController mpc) {
+    public Engine(String filePath, it.tutta.colpa.del.caffe.start.control.Engine mpc) {
         StringBuilder err = new StringBuilder();
         parser = null;
         description = null;
@@ -190,6 +188,16 @@ public class Engine implements Controller, GameObservable {
     }
 
     @Override
+    public void openGUI() {
+        GUI.open();
+    }
+
+    @Override
+    public void closeGUI() {
+        GUI.close();
+    }
+
+    @Override
     public void notifyNewCommand(String command) {
         if (!command.isEmpty()) {
             notifyObservers(parser.parse(command));
@@ -202,7 +210,7 @@ public class Engine implements Controller, GameObservable {
         if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
             this.GUI.close();
             System.out.println(mpc);
-            new GameEndedPage(this.description.getStatus(),mpc).setVisible(true);
+            new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
     }
 
@@ -213,7 +221,7 @@ public class Engine implements Controller, GameObservable {
 
     @Override
     public void showInventory() {
-        GUI inventory=new InventoryPage((Frame) this.GUI,this.description.getInventory());
+        GUI inventory = new InventoryPage((Frame) this.GUI, this.description.getInventory());
         inventory.open();
     }
 
