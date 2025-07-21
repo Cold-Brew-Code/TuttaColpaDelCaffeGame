@@ -20,7 +20,7 @@ import java.net.URL;
 public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     private Controller controller;
-
+    private TypeWriterEffect typeWriter;
 
     public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
@@ -34,7 +34,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }// </editor-fold>>
+        } // </editor-fold>>
         initComponents();
         this.setVisible(true);
     }
@@ -44,8 +44,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
                 null,
                 message,
                 title,
-                javax.swing.JOptionPane.YES_NO_OPTION
-        );
+                javax.swing.JOptionPane.YES_NO_OPTION);
     }
 
     public void showError(String title, String message) {
@@ -53,16 +52,15 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
                 null,
                 message,
                 title,
-                JOptionPane.ERROR_MESSAGE
-        );
+                JOptionPane.ERROR_MESSAGE);
     }
+
     public void showWarning(String title, String message) {
         JOptionPane.showMessageDialog(
                 this,
-                 message,
+                message,
                 title,
-                JOptionPane.WARNING_MESSAGE
-        );
+                JOptionPane.WARNING_MESSAGE);
     }
 
     // <editor-fold defaultstate="collapsed" desc="< GUI variables >">
@@ -80,12 +78,12 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     private javax.swing.JButton quitButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton sendButton;
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(GamePage.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="< GUI init >">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="< GUI init
+    // >">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         mainContainer = new javax.swing.JPanel() {
@@ -143,23 +141,20 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         HeaderPanel.setLayout(HeaderPanelLayout);
         HeaderPanelLayout.setHorizontalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 0, Short.MAX_VALUE)
-        );
+                        .addGap(0, 0, Short.MAX_VALUE));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 50, Short.MAX_VALUE)
-        );
+                        .addGap(0, 50, Short.MAX_VALUE));
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
         ImagePanelLayout.setHorizontalGroup(
                 ImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 951, Short.MAX_VALUE)
-        );
+                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 951, Short.MAX_VALUE));
         ImagePanelLayout.setVerticalGroup(
                 ImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
         DialogPanel.setBackground(new java.awt.Color(204, 204, 255, 0));
 
@@ -177,6 +172,10 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         DialogTextArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 15));
         DialogTextArea.setLineWrap(true);
         DialogTextArea.setWrapStyleWord(true);
+
+        // Inizializza l'effetto TypeWriter con un delay di 30ms
+        typeWriter = new TypeWriterEffect(DialogTextArea, 60);
+
         jScrollPane1.setViewportView(DialogTextArea);
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
@@ -185,14 +184,22 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         DialogPanel.setLayout(DialogPanelLayout);
         DialogPanelLayout.setHorizontalGroup(
                 DialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-        );
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE));
         DialogPanelLayout.setVerticalGroup(
                 DialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
-        );
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE));
 
         inputField.setToolTipText("");
+
+        // Aggiungi KeyListener per lo skip dell'effetto
+        inputField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE ||
+                        evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    skipTypeWriter();
+                }
+            }
+        });
 
         sendButton.setText("Invia");
         sendButton.addActionListener(new java.awt.event.ActionListener() {
@@ -240,68 +247,86 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
                 FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(FooterPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 454,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(sendButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 494,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
                                 .addComponent(saveButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(quitButton)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
         FooterPanelLayout.setVerticalGroup(
                 FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FooterPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(quitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(FooterPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 39,
+                                                Short.MAX_VALUE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(quitButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(inputField, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap())
-        );
+                                        .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
                 mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(HeaderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout.createSequentialGroup()
+                        .addComponent(HeaderPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout
+                                .createSequentialGroup()
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(DialogPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(DialogPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
-                        .addComponent(FooterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(FooterPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         mainContainerLayout.setVerticalGroup(
                 mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainContainerLayout.createSequentialGroup()
-                                .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(ImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(DialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(mainContainerLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(ImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(DialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(FooterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+                                .addComponent(FooterPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -313,7 +338,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
         new InventoryPage(new Inventory()).setVisible(true);
-        //da modificare spostandolo in Engine
+        // da modificare spostandolo in Engine
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -331,10 +356,24 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
     // </editor-fold>
 
+    private void skipTypeWriter() {
+        if (typeWriter.isRunning()) {
+            typeWriter.skip();
+        }
+    }
 
     @Override
     public void out(String message) {
-        this.DialogTextArea.append("\n" + message);
+        if (typeWriter.isRunning()) {
+            typeWriter.skip();
+        }
+
+        // Se c'è già del testo, aggiungi una nuova riga
+        if (!DialogTextArea.getText().isEmpty()) {
+            DialogTextArea.append("\n");
+        }
+
+        typeWriter.start(message);
     }
 
     @Override
@@ -353,12 +392,13 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     @Override
-    public void setImage(String path) throws  ImageNotFoundException{
+    public void setImage(String path) throws ImageNotFoundException {
         System.out.println(path);
         URL imgUrl = getClass().getResource(path);
         if (imgUrl != null) {
             this.ImageLabel.setIcon(new ImageIcon(
-                    new ImageIcon(imgUrl).getImage().getScaledInstance(this.ImageLabel.getWidth(),this.ImageLabel.getHeight(), Image.SCALE_SMOOTH)));
+                    new ImageIcon(imgUrl).getImage().getScaledInstance(this.ImageLabel.getWidth(),
+                            this.ImageLabel.getHeight(), Image.SCALE_SMOOTH)));
         } else {
             throw new ImageNotFoundException("Resource not found: " + path);
         }
@@ -371,7 +411,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     @Override
     public void linkController(Controller controller) {
-        this.controller=controller;
+        this.controller = controller;
     }
 
     @Override
@@ -381,8 +421,6 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue()+1);
+        this.progressBar.setValue(this.progressBar.getValue() + 1);
     }
-
-
 }
