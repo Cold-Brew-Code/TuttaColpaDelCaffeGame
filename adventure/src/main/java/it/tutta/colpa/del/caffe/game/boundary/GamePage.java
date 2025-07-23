@@ -5,8 +5,8 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
-import it.tutta.colpa.del.caffe.start.boundary.MainPage;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
 import javax.swing.*;
@@ -17,9 +17,9 @@ import java.net.URL;
  * @author giovav
  * @since 10/07/2025
  */
-public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
+public class GamePage extends javax.swing.JFrame implements GameGUI {
 
-    private Controller controller;
+    private GameController controller;
 
 
     public GamePage() {
@@ -118,7 +118,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         FooterPanel = new javax.swing.JPanel();
         inputField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        progressBar = new javax.swing.JProgressBar();
+        progressBar = new javax.swing.JProgressBar(0, 1200);
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
@@ -312,8 +312,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new InventoryPage(new Inventory()).setVisible(true);
-        //da modificare spostandolo in Engine
+        controller.showInventory();
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -365,13 +364,22 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
 
     @Override
-    public void closeWindow() {
+    public void open() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void close() {
         this.dispose();
     }
 
     @Override
     public void linkController(Controller controller) {
-        this.controller=controller;
+        if(controller instanceof GameController) {
+            this.controller = (GameController) controller;
+        } else {
+            new RuntimeException("Il controller per GamePage non è un GameController");
+        }
     }
 
     @Override
@@ -381,7 +389,7 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue()+1);
+        this.progressBar.setValue(this.progressBar.getValue() + 1);
     }
 
 

@@ -45,8 +45,6 @@ public class Dialogo  implements Serializable {
     public int getId() {
         return id;
     }
-    
-    
 
     public String getCurrentNode() {
         return currentNode;

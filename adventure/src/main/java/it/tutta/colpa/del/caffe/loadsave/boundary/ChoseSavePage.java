@@ -4,6 +4,10 @@
  */
 package it.tutta.colpa.del.caffe.loadsave.boundary;
 
+import it.tutta.colpa.del.caffe.game.boundary.GUI;
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.loadsave.control.LoadController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -15,13 +19,11 @@ import java.util.List;
  *
  * @author giovanni
  */
-public class ChoseSavePage extends javax.swing.JFrame {
+public class ChoseSavePage extends JFrame implements GUI {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ChoseSavePage.class.getName());
-
-    public ChoseSavePage(JFrame parent) {
-        this.parent = parent;
-        parent.setVisible(false);
+    LoadController c;
+    public ChoseSavePage() {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -243,16 +245,20 @@ public class ChoseSavePage extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
+        c.cancelOperation();
+
+
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
-        try {
-            deleteFileFromFileSystem();
-        } catch (FileNotFoundException e) {
-            System.err.println("Eliminazione file non riuscita");
-        }
-        this.parent.setVisible(true);
+        c.cancelOperation();
+        /** FIXIT, logica da spostare in EngineController
+            try {
+                deleteFileFromFileSystem();
+            } catch (FileNotFoundException e) {
+                System.err.println("Eliminazione file non riuscita");
+            }
+         */
     }//GEN-LAST:event_formWindowClosed
 
 
@@ -364,7 +370,25 @@ public class ChoseSavePage extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
     private List<Save> saves;
     private Save selectedSave;
-    private JFrame parent;
+
+    @Override
+    public void open() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void close() {
+        this.dispose();
+    }
+
+    @Override
+    public void linkController(Controller c) {
+        try {
+            this.c = (LoadController) c;
+        } catch (Exception e) {
+            throw new RuntimeException("Il controller fornito non è adeguato per ChoseSavePage");
+        }
+    }
 
     private class Save{
         private JLabel saveLabel;

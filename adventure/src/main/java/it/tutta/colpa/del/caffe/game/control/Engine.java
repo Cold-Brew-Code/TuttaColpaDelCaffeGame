@@ -1,6 +1,9 @@
 package it.tutta.colpa.del.caffe.game.control;
 
-import it.tutta.colpa.del.caffe.game.boundary.BoundaryOutput;
+import it.tutta.colpa.del.caffe.game.boundary.GUI;
+import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
+import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
+import it.tutta.colpa.del.caffe.game.boundary.InventoryPage;
 import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
@@ -9,8 +12,8 @@ import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
-import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
      */
-    private BoundaryOutput GUI;
+    private GameGUI GUI;
 
     /**
      * Descrizione dello stato attuale della partita, contenente mappa e comandi.
@@ -54,7 +57,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    public Engine(MainPageController mpc, BoundaryOutput GUI) {
+    public Engine(it.tutta.colpa.del.caffe.start.control.Engine mpc, GameGUI GUI) {
         this.GUI = GUI;
         this.mpc = mpc;
         Parser tmpParser = null;
@@ -79,8 +82,8 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
         this.description = tmpDescription;
         this.parser = tmpParser;
         if (!err.toString().equals("<html></html>")) {
-            mpc.openWindow();
-            GUI.closeWindow();
+            mpc.openGUI();
+            GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
@@ -136,7 +139,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
      * @param filePath percorso del file di salvataggio
      */
     @SuppressWarnings("unused")
-    public Engine(String filePath, MainPageController mpc) {
+    public Engine(String filePath, it.tutta.colpa.del.caffe.start.control.Engine mpc) {
         StringBuilder err = new StringBuilder();
         parser = null;
         description = null;
@@ -187,8 +190,18 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
         return true;
     }
 
-    public void setGUI(BoundaryOutput bo) {
+    public void setGUI(GameGUI bo) {
         this.GUI = bo;
+    }
+
+    @Override
+    public void openGUI() {
+        GUI.open();
+    }
+
+    @Override
+    public void closeGUI() {
+        GUI.close();
     }
 
     @Override
@@ -202,8 +215,9 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
     @Override
     public void endGame() {
         if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
-            this.GUI.closeWindow();
-            mpc.openWindow();
+            this.GUI.close();
+            System.out.println(mpc);
+            new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
     }
 
@@ -211,6 +225,13 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
     public void saveGame() {
         //chiamare LoadSave.save();
     }
+
+    @Override
+    public void showInventory() {
+        GUI inventory = new InventoryPage((Frame) this.GUI, this.description.getInventory());
+        inventory.open();
+    }
+
 
     @Override
     public void attach(GameObserver o) {
@@ -226,7 +247,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
     @Override
     public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
-            description.getMessages().add(o.update(description, po).toString());
+            description.getMessages().add(o.update(description, po));
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {

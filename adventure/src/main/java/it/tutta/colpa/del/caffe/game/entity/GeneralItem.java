@@ -23,7 +23,6 @@ public  abstract class GeneralItem implements Serializable {
     private String description;
     private Set<String> alias;
     private boolean visibile = false;
-    private int utilizzi;
     private String immagine;
     private boolean pickupable= false; 
 
@@ -97,20 +96,7 @@ public  abstract class GeneralItem implements Serializable {
     public void setDescrizione(String description) {
         this.description = description;
     }
-    
-    /**
-     * @param utilizzi
-     */
-    public void setUtilizzi(int utilizzi) {
-        this.utilizzi = utilizzi;
-    }
 
-    /**
-     * @return
-     */
-    public int getUtilizzi() {
-        return utilizzi;
-    }
 
     /**
      * @return

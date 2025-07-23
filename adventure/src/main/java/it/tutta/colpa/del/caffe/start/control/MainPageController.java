@@ -1,37 +1,13 @@
 package it.tutta.colpa.del.caffe.start.control;
 
-import it.tutta.colpa.del.caffe.game.Launcher;
-import it.tutta.colpa.del.caffe.start.boundary.MainPage;
+import it.tutta.colpa.del.caffe.game.control.Controller;
 
 /**
  * @author giovav
- * @since 16/07/25
+ * @since 19/07/25
  */
-public class MainPageController {
-    private MainPage frame;
-
-    public MainPageController() {}
-
-    public void startGame(){
-        Launcher gameLauncher = new Launcher(this);
-    }
-
-    public void loadGame(){
-
-        closeWindow();
-    }
-
-    public void quit(){
-        System.exit(0);
-    }
-
-    public void openWindow(){
-        frame.open();
-    }
-    public void closeWindow(){
-        frame.close();
-    }
-    public void setFrame(MainPage frame){
-        this.frame=frame;
-    }
+public interface MainPageController extends Controller {
+    public void quit();
+    public void loadGame();
+    public void startGame();
 }
