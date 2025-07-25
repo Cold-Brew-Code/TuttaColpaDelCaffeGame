@@ -9,6 +9,7 @@ import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.net.URL;
 
@@ -58,7 +59,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     public void showWarning(String title, String message) {
         JOptionPane.showMessageDialog(
                 this,
-                 message,
+                message,
                 title,
                 JOptionPane.WARNING_MESSAGE
         );
@@ -79,6 +80,19 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JButton quitButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton sendButton;
+    private javax.swing.JButton skipButton;
+    private javax.swing.JButton audioButton;
+    private javax.swing.JPopupMenu audioPopupMenu;
+    private javax.swing.JMenuItem increaseVolumeMenuItem;
+    private javax.swing.JMenuItem decreaseVolumeMenuItem;
+    private javax.swing.JMenuItem toggleMuteMenuItem;
+    // --- NUOVI COMPONENTI EFFETTI VISIVI ---
+    private javax.swing.JButton visualEffectButton;
+    private javax.swing.JPopupMenu visualEffectPopupMenu;
+    private javax.swing.JMenuItem slowEffectMenuItem;
+    private javax.swing.JMenuItem mediumEffectMenuItem;
+    private javax.swing.JMenuItem fastEffectMenuItem;
+    private javax.swing.JMenuItem disabledEffectMenuItem;
     private static final java.util.logging.Logger logger =
             java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
@@ -121,16 +135,35 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
+        skipButton = new javax.swing.JButton();
+
+        audioButton = new javax.swing.JButton();
+        audioPopupMenu = new javax.swing.JPopupMenu();
+        increaseVolumeMenuItem = new javax.swing.JMenuItem("Aumenta Volume");
+        decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
+        toggleMuteMenuItem = new javax.swing.JMenuItem("Disattiva/Attiva Audio");
+
+        // --- INIZIALIZZAZIONE NUOVI COMPONENTI ---
+        visualEffectButton = new javax.swing.JButton();
+        visualEffectPopupMenu = new javax.swing.JPopupMenu();
+        slowEffectMenuItem = new javax.swing.JMenuItem("Lento");
+        mediumEffectMenuItem = new javax.swing.JMenuItem("Medio");
+        fastEffectMenuItem = new javax.swing.JMenuItem("Veloce");
+        disabledEffectMenuItem = new javax.swing.JMenuItem("Disattivo");
+
+
         HeaderPanel.setOpaque(false);
-        HeaderPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         ImagePanel.setOpaque(false);
-        ImagePanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         FooterPanel.setOpaque(false);
-        FooterPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         DialogPanel.setOpaque(false);
-        DialogPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                inputField.requestFocusInWindow();
+            }
+
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -138,15 +171,74 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         setTitle("Tutta Colpa del Caffè!");
         setResizable(false);
 
+        // --- STILE BOTTONI MENU ---
+        audioButton.setText("Audio \u25BC");
+        audioButton.setBackground(Color.WHITE);
+        visualEffectButton.setText("Effetto visivo \u25BC");
+        visualEffectButton.setBackground(Color.WHITE);
+
+        // --- STILE DEGLI ELEMENTI DI TUTTI I MENU ---
+        Dimension menuItemSize = new Dimension(150, 35);
+        Color itemBorderColor = new Color(220, 220, 220);
+        JMenuItem[] allMenuItems = {
+                increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
+                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+        };
+
+        for (JMenuItem item : allMenuItems) {
+            item.setBackground(Color.WHITE);
+            item.setOpaque(true);
+            item.setPreferredSize(menuItemSize);
+            item.setBorder(new LineBorder(itemBorderColor));
+            item.setFont(new Font("Arial", Font.PLAIN, 14));
+        }
+
+        // --- SETUP MENU AUDIO ---
+        audioPopupMenu.setBorder(new LineBorder(Color.GRAY));
+        audioPopupMenu.add(increaseVolumeMenuItem);
+        audioPopupMenu.add(decreaseVolumeMenuItem);
+        audioPopupMenu.add(toggleMuteMenuItem);
+        audioButton.addActionListener(this::audioButtonActionPerformed);
+        increaseVolumeMenuItem.addActionListener(this::increaseVolumeMenuItemActionPerformed);
+        decreaseVolumeMenuItem.addActionListener(this::decreaseVolumeMenuItemActionPerformed);
+        toggleMuteMenuItem.addActionListener(this::toggleMuteMenuItemActionPerformed);
+
+        // --- SETUP MENU EFFETTI VISIVI ---
+        visualEffectPopupMenu.setBorder(new LineBorder(Color.GRAY));
+        visualEffectPopupMenu.add(slowEffectMenuItem);
+        visualEffectPopupMenu.add(mediumEffectMenuItem);
+        visualEffectPopupMenu.add(fastEffectMenuItem);
+        visualEffectPopupMenu.add(disabledEffectMenuItem);
+        visualEffectButton.addActionListener(this::visualEffectButtonActionPerformed);
+        slowEffectMenuItem.addActionListener(this::slowEffectMenuItemActionPerformed);
+        mediumEffectMenuItem.addActionListener(this::mediumEffectMenuItemActionPerformed);
+        fastEffectMenuItem.addActionListener(this::fastEffectMenuItemActionPerformed);
+        disabledEffectMenuItem.addActionListener(this::disabledEffectMenuItemActionPerformed);
+
+
+        // --- LAYOUT HEADERPANEL ---
         javax.swing.GroupLayout HeaderPanelLayout = new javax.swing.GroupLayout(HeaderPanel);
         HeaderPanel.setLayout(HeaderPanelLayout);
         HeaderPanelLayout.setHorizontalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(HeaderPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(visualEffectButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(saveButton)
+                                .addContainerGap())
         );
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 50, Short.MAX_VALUE)
+                        .addGroup(HeaderPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
@@ -166,6 +258,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         quitButton.setBackground(Color.WHITE);
         sendButton.setBackground(Color.WHITE);
         InvButton.setBackground(Color.WHITE);
+        skipButton.setBackground(Color.WHITE);
 
         DialogTextArea.setEditable(false);
         DialogTextArea.setBackground(new java.awt.Color(255, 255, 255, 128));
@@ -194,32 +287,20 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         inputField.setToolTipText("");
 
         sendButton.setText("Invia");
-        sendButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendButtonActionPerformed(evt);
-            }
-        });
+        sendButton.addActionListener(this::sendButtonActionPerformed);
 
         quitButton.setText("Abbandona");
-        quitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quitButtonActionPerformed(evt);
-            }
-        });
+        quitButton.addActionListener(this::quitButtonActionPerformed);
 
-        saveButton.setText("Salva");
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
+        saveButton.setText("Salva partita");
+        saveButton.addActionListener(this::saveButtonActionPerformed);
 
         InvButton.setText("Zaino");
-        InvButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                InvButtonActionPerformed(evt);
-            }
-        });
+        InvButton.addActionListener(this::InvButtonActionPerformed);
+
+        skipButton.setText("Skip");
+        skipButton.addActionListener(this::skipButtonActionPerformed);
+
         ImageLabel.setOpaque(true);
         InvButton.setIcon(
                 new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
@@ -233,6 +314,18 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 new ImageIcon((new ImageIcon(getClass().getResource("/images/save_icon.png")))
                         .getImage()
                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        sendButton.setIcon(
+                new ImageIcon((new ImageIcon(getClass().getResource("/images/send_icon.png")))
+                        .getImage()
+                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        URL skipIconUrl = getClass().getResource("/images/skip_icon.png");
+        if (skipIconUrl != null) {
+            skipButton.setIcon(
+                    new ImageIcon(new ImageIcon(skipIconUrl)
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        }
+
         javax.swing.GroupLayout FooterPanelLayout = new javax.swing.GroupLayout(FooterPanel);
         FooterPanel.setLayout(FooterPanelLayout);
         FooterPanelLayout.setHorizontalGroup(
@@ -243,11 +336,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(sendButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(skipButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
-                                .addComponent(saveButton)
+                                .addComponent(InvButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(quitButton)
                                 .addContainerGap())
@@ -257,8 +350,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FooterPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(skipButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(quitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(inputField, javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -324,8 +417,55 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         }
     }
 
+
+
+    private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        // Logica per saltare (da implementare)
+        System.out.println("Skip cliccato");
+    }
+
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
         controller.endGame();
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="< Audio ActionPerformed(s) >">
+    private void audioButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        audioPopupMenu.show(audioButton, 0, audioButton.getHeight());
+    }
+
+    private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Aumenta volume cliccato");
+    }
+
+    private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Abbassa volume cliccato");
+    }
+
+    private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Attiva/Disattiva audio cliccato");
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="< Visual Effect ActionPerformed(s) >">
+    private void visualEffectButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        visualEffectPopupMenu.show(visualEffectButton, 0, visualEffectButton.getHeight());
+    }
+
+    private void slowEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Effetto visivo: Lento");
+    }
+
+    private void mediumEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Effetto visivo: Medio");
+    }
+
+    private void fastEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Effetto visivo: Veloce");
+    }
+
+    private void disabledEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Effetto visivo: Disattivo");
     }
     // </editor-fold>
 
@@ -377,7 +517,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         if(controller instanceof GameController) {
             this.controller = (GameController) controller;
         } else {
-            new RuntimeException("Il controller per GamePage non è un GameController");
+            throw new RuntimeException("Il controller per GamePage non è un GameController");
         }
     }
 
@@ -390,6 +530,4 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     public void increaseProgressBar() {
         this.progressBar.setValue(this.progressBar.getValue() + 1);
     }
-
-
 }
