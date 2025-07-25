@@ -14,7 +14,7 @@ import javax.swing.*;
  */
 public class Launcher {
     public Launcher(MainPageController mainPageController){
-        mainPageController.closeWindow();
+        mainPageController.closeGUI();
 
         GameGUI bo = new GamePage();
         Controller controller=new Engine(mainPageController, bo);

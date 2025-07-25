@@ -4,9 +4,11 @@
  */
 package it.tutta.colpa.del.caffe.game.boundary;
 
+import com.sun.tools.javac.Main;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.start.control.Engine;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +25,7 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI{
     /**
      * Creates new form GameEndedPage
      */
-    public GameEndedPage(GameStatus s, Engine mpc) {
+    public GameEndedPage(GameStatus s, MainPageController mpc) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -113,7 +115,7 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI{
     }
 
     private javax.swing.JPanel wallpaper;
-    private Engine mpc;
+    private MainPageController mpc;
 
     @Override
     public void open() {
@@ -127,6 +129,6 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI{
 
     @Override
     public void linkController(Controller c) {
-
+        this.mpc= (MainPageController) c;
     }
 }

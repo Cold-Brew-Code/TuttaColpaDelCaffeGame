@@ -12,6 +12,7 @@ import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import java.awt.*;
 import java.io.File;
@@ -22,6 +23,7 @@ import java.util.Set;
 
 import it.tutta.colpa.del.caffe.adventure.other.Clock;
 import it.tutta.colpa.del.caffe.adventure.other.TimeObserver;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 
 /**
@@ -34,7 +36,7 @@ import it.tutta.colpa.del.caffe.adventure.other.TimeObserver;
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements Controller, GameObservable, TimeObserver  {
+public class Engine implements GameController, GameObservable, TimeObserver  {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
@@ -57,7 +59,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    public Engine(it.tutta.colpa.del.caffe.start.control.Engine mpc, GameGUI GUI) {
+    public Engine(it.tutta.colpa.del.caffe.start.control.MainPageController mpc, GameGUI GUI) {
         this.GUI = GUI;
         this.mpc = mpc;
         Parser tmpParser = null;
@@ -260,7 +262,7 @@ public class Engine implements Controller, GameObservable, TimeObserver  {
         GUI.out("Tempo esaurito! La partita è finita.");
     
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
-        GUI.closeWindow(); 
+        GUI.close();
     }
 
     @Override
