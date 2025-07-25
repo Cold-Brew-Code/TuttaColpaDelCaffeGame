@@ -23,7 +23,6 @@ import java.util.Set;
 
 import it.tutta.colpa.del.caffe.adventure.other.Clock;
 import it.tutta.colpa.del.caffe.adventure.other.TimeObserver;
-import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 
 /**
@@ -36,7 +35,7 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
  * @author giovav
  * @since 11/07/25
  */
-public class Engine implements GameController, GameObservable, TimeObserver  {
+public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
@@ -59,7 +58,7 @@ public class Engine implements GameController, GameObservable, TimeObserver  {
      * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
      * un dialogo informativo all’utente (da implementare).
      */
-    public Engine(it.tutta.colpa.del.caffe.start.control.MainPageController mpc, GameGUI GUI) {
+    public Engine(MainPageController mpc, GameGUI GUI) {
         this.GUI = GUI;
         this.mpc = mpc;
         Parser tmpParser = null;
@@ -102,7 +101,7 @@ public class Engine implements GameController, GameObservable, TimeObserver  {
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
-        Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
+        Set<String> stopwords = Utils.loadFileListInSet(new File("/resources/stopwords"));
         ServerInterface si = new ServerInterface("localhost", 49152);
         Parser p = new Parser(
                 stopwords,
@@ -207,9 +206,14 @@ public class Engine implements GameController, GameObservable, TimeObserver  {
     }
 
     @Override
-    public void notifyNewCommand(String command) {
+    public void executeNewCommand(String command) {
         if (!command.isEmpty()) {
             notifyObservers(parser.parse(command));
+            try {
+                GUI.setImage(description.getCurrentRoom().getImagePath());
+            } catch (ImageNotFoundException e) {
+                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+            }
             GUI.out(description.getMessages().getLast());
         }
     }
@@ -250,17 +254,12 @@ public class Engine implements GameController, GameObservable, TimeObserver  {
     public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
             description.getMessages().add(o.update(description, po));
-            try {
-                GUI.setImage(description.getCurrentRoom().getImagePath());
-            } catch (ImageNotFoundException e) {
-                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
-            }
         }
     }
 
     public void finishGame() {
         GUI.out("Tempo esaurito! La partita è finita.");
-    
+
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
     }
@@ -269,7 +268,6 @@ public class Engine implements GameController, GameObservable, TimeObserver  {
     public void onTimeExpired() {
         finishGame();  // chiama il metodo esistente
     }
-
 
 
 }

@@ -7,7 +7,6 @@ package it.tutta.colpa.del.caffe.game.boundary;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
-import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -321,7 +320,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (!this.inputField.getText().isEmpty()) {
-            controller.notifyNewCommand(this.inputField.getText());
+            controller.executeNewCommand(this.inputField.getText());
         }
     }
 

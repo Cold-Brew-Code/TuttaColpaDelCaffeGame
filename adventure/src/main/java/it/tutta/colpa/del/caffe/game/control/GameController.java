@@ -10,7 +10,7 @@ public interface GameController extends Controller{
      *
      * @param command Il comando testuale da elaborare.
      */
-    void notifyNewCommand(String command);
+    void executeNewCommand(String command);
 
     /**
      * Termina la partita in corso, eventualmente eseguendo
