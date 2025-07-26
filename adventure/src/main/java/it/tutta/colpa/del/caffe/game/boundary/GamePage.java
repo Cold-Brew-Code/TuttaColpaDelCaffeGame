@@ -21,6 +21,8 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
 
     private Controller controller;
     private TypeWriterEffect typeWriter;
+    private javax.swing.JButton skipButton;
+    private javax.swing.JComboBox<String> speedComboBox;
 
     public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
@@ -36,7 +38,46 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         } // </editor-fold>>
         initComponents();
+        setupTypeWriterControls();
         this.setVisible(true);
+    }
+
+    /**
+     * Configura i controlli per l'effetto TypeWriter
+     */
+    private void setupTypeWriterControls() {
+        skipButton = new javax.swing.JButton("Skip");
+        skipButton.setEnabled(false);
+        skipButton.addActionListener(e -> skipTypeWriter());
+
+        speedComboBox = new javax.swing.JComboBox<>(new String[] { "Lento", "Normale", "Veloce", "Disattivato" });
+        speedComboBox.setSelectedItem("Normale");
+        speedComboBox.addActionListener(e -> updateTypeWriterSpeed());
+
+        FooterPanel.add(skipButton);
+        FooterPanel.add(new javax.swing.JLabel(" Velocità: "));
+        FooterPanel.add(speedComboBox);
+    }
+
+    /**
+     * Aggiorna la velocità di scrittura in base alla selezione
+     */
+    private void updateTypeWriterSpeed() {
+        String selected = (String) speedComboBox.getSelectedItem();
+        switch (selected) {
+            case "Lento":
+                typeWriter.setDelay(100);
+                break;
+            case "Normale":
+                typeWriter.setDelay(50);
+                break;
+            case "Veloce":
+                typeWriter.setDelay(20);
+                break;
+            case "Disattivato":
+                typeWriter.setDelay(0);
+                break;
+        }
     }
 
     private int showYesNoDialoguePage(String title, String message) {
@@ -169,12 +210,12 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
         DialogTextArea.setRows(5);
         DialogTextArea.setFocusable(false);
         DialogTextArea.setOpaque(false);
-        DialogTextArea.setFont(new java.awt.Font("Arial", java.awt.Font.PLAIN, 15));
+        DialogTextArea.setFont(new java.awt.Font("Courier New", java.awt.Font.PLAIN, 15));
         DialogTextArea.setLineWrap(true);
         DialogTextArea.setWrapStyleWord(true);
 
-        // Inizializza l'effetto TypeWriter con un delay di 30ms
-        typeWriter = new TypeWriterEffect(DialogTextArea, 60);
+        // inizializza l'effetto TypeWriter con delay di default
+        typeWriter = new TypeWriterEffect(DialogTextArea, 50);
 
         jScrollPane1.setViewportView(DialogTextArea);
         jScrollPane1.setOpaque(false);
@@ -190,16 +231,6 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE));
 
         inputField.setToolTipText("");
-
-        // Aggiungi KeyListener per lo skip dell'effetto
-        inputField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ESCAPE ||
-                        evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    skipTypeWriter();
-                }
-            }
-        });
 
         sendButton.setText("Invia");
         sendButton.addActionListener(new java.awt.event.ActionListener() {
@@ -356,24 +387,37 @@ public class GamePage extends javax.swing.JFrame implements BoundaryOutput {
     }
     // </editor-fold>
 
+    /**
+     * salta l'animazione di scrittura corrente
+     */
     private void skipTypeWriter() {
         if (typeWriter.isRunning()) {
             typeWriter.skip();
+            skipButton.setEnabled(false);
         }
     }
 
     @Override
     public void out(String message) {
-        if (typeWriter.isRunning()) {
-            typeWriter.skip();
-        }
+        skipButton.setEnabled(true);
 
-        // Se c'è già del testo, aggiungi una nuova riga
-        if (!DialogTextArea.getText().isEmpty()) {
-            DialogTextArea.append("\n");
+        if (typeWriter.getDelay() == 0) {
+            // se l'effetto è disattivato, mostra subito tutto il testo
+            if (!DialogTextArea.getText().isEmpty()) {
+                DialogTextArea.append("\n");
+            }
+            DialogTextArea.append(message);
+            skipButton.setEnabled(false);
+        } else {
+            // altrimenti usa l'effetto TypeWriter
+            if (typeWriter.isRunning()) {
+                typeWriter.skip();
+            }
+            if (!DialogTextArea.getText().isEmpty()) {
+                DialogTextArea.append("\n");
+            }
+            typeWriter.start(message);
         }
-
-        typeWriter.start(message);
     }
 
     @Override
