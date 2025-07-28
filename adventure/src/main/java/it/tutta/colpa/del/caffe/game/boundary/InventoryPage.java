@@ -1,39 +1,77 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
+import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
-public class InventoryPage extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InventoryPage.class.getName());
+public class InventoryPage extends JDialog implements GUI{
+    private GeneralItem[] it = new GeneralItem[4];
+    private static final Logger logger = Logger.getLogger(InventoryPage.class.getName());
 
-    public InventoryPage(Inventory i) {
+    public InventoryPage(Frame parent, Inventory inventory) {
+        super(parent, "Inventario", true);
+
+        int i = 0;
+        for (GeneralItem iterator : inventory) {
+            try {
+                switch (i) {
+                    case 1:
+                        it[0] = iterator;
+                        setImage(firstItem, iterator.getImmagine());
+                        qtyFirstItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 2:
+                        it[1] = iterator;
+                        setImage(secondItem, iterator.getImmagine());
+                        qtySecondItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 3:
+                        it[2] = iterator;
+                        setImage(thirdItem, iterator.getImmagine());
+                        qtyThirdItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 4:
+                        it[3] = iterator;
+                        setImage(fourthItem, iterator.getImmagine());
+                        qtyFourthItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                }
+            } catch (ImageNotFoundException e) {
+                System.err.println("[Image not found] " + iterator.getImmagine());
+            }
+            i++;
+        }
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (ReflectiveOperationException | UnsupportedLookAndFeelException ex) {
+            logger.log(Level.SEVERE, null, ex);
         }
         initComponents();
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        panel = new javax.swing.JPanel(){
+        panel = new JPanel() {
             private final Image wp;
+
             {
                 URL imgUrl = getClass().getResource("/images/zaino_interno.png");
                 if (imgUrl != null) {
@@ -43,6 +81,7 @@ public class InventoryPage extends javax.swing.JFrame {
                     System.err.println("Immagine non trovata: images/zaino_interno.png");
                 }
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -51,72 +90,80 @@ public class InventoryPage extends javax.swing.JFrame {
                 }
             }
         };
-        firstItem = new javax.swing.JLabel();
-        secondItem = new javax.swing.JLabel();
-        thirdItem = new javax.swing.JLabel();
-        fourthItem = new javax.swing.JLabel();
-        descriptionLabel = new javax.swing.JTextArea();
-        qtyFirstItem = new javax.swing.JLabel();
-        qtySecondItem = new javax.swing.JLabel();
-        qtyThirdItem = new javax.swing.JLabel();
-        qtyFourthItem = new javax.swing.JLabel();
-        scrollPane = new javax.swing.JScrollPane();
+        firstItem = new JLabel();
+        secondItem = new JLabel();
+        thirdItem = new JLabel();
+        fourthItem = new JLabel();
+        descriptionLabel = new JTextArea();
+        qtyFirstItem = new JLabel();
+        qtySecondItem = new JLabel();
+        qtyThirdItem = new JLabel();
+        qtyFourthItem = new JLabel();
+        scrollPane = new JScrollPane();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Inventario");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-        firstItem.setBackground(new java.awt.Color(255, 255, 255));
-        firstItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        firstItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+
+        firstItem.setBackground(new Color(255, 255, 255));
+        firstItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        firstItem.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 firstItemMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+
+            public void mouseEntered(MouseEvent evt) {
                 firstItemMouseEntered(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+
+            public void mouseExited(MouseEvent evt) {
                 firstItemMouseExited(evt);
             }
         });
 
-        secondItem.setBackground(new java.awt.Color(255, 255, 255));
-        secondItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        secondItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        secondItem.setBackground(new Color(255, 255, 255));
+        secondItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        secondItem.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 secondItemMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+
+            public void mouseEntered(MouseEvent evt) {
                 secondItemMouseEntered(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+
+            public void mouseExited(MouseEvent evt) {
                 secondItemMouseExited(evt);
             }
         });
 
-        thirdItem.setBackground(new java.awt.Color(255, 255, 255));
-        thirdItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        thirdItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        thirdItem.setBackground(new Color(255, 255, 255));
+        thirdItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        thirdItem.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 thirdItemMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+
+            public void mouseEntered(MouseEvent evt) {
                 thirdItemMouseEntered(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+
+            public void mouseExited(MouseEvent evt) {
                 thirdItemMouseExited(evt);
             }
         });
 
-        fourthItem.setBackground(new java.awt.Color(255, 255, 255));
-        fourthItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        fourthItem.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        fourthItem.setBackground(new Color(255, 255, 255));
+        fourthItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        fourthItem.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 fourthItemMouseClicked(evt);
             }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
+
+            public void mouseEntered(MouseEvent evt) {
                 fourthItemMouseEntered(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
+
+            public void mouseExited(MouseEvent evt) {
                 fourthItemMouseExited(evt);
             }
         });
@@ -124,175 +171,207 @@ public class InventoryPage extends javax.swing.JFrame {
         descriptionLabel.setText("Seleziona un elemento per conoscerne la descrizione.");
         descriptionLabel.setOpaque(true);
         descriptionLabel.setBackground(new Color(0xF3E28B));
-        //descriptionLabel.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        descriptionLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        //descriptionLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-        //descriptionLabel.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        descriptionLabel.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
         descriptionLabel.setFocusable(false);
         descriptionLabel.setEditable(false);
         descriptionLabel.setLineWrap(true);
         descriptionLabel.setWrapStyleWord(true);
         scrollPane.setViewportView(descriptionLabel);
 
-        qtyFirstItem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        qtyFirstItem.setHorizontalAlignment(SwingConstants.CENTER);
         qtyFirstItem.setOpaque(true);
         qtyFirstItem.setBackground(new Color(0xF3E28B));
         qtyFirstItem.setText("0");
-        qtyFirstItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        qtyFirstItem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        qtyFirstItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        qtyFirstItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        qtySecondItem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        qtySecondItem.setHorizontalAlignment(SwingConstants.CENTER);
         qtySecondItem.setOpaque(true);
         qtySecondItem.setBackground(new Color(0xF3E28B));
         qtySecondItem.setText("0");
-        qtySecondItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        qtySecondItem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        qtySecondItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        qtySecondItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        qtyThirdItem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        qtyThirdItem.setHorizontalAlignment(SwingConstants.CENTER);
         qtyThirdItem.setOpaque(true);
         qtyThirdItem.setBackground(new Color(0xF3E28B));
         qtyThirdItem.setText("0");
-        qtyThirdItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        qtyThirdItem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        qtyThirdItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        qtyThirdItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        qtyFourthItem.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        qtyFourthItem.setHorizontalAlignment(SwingConstants.CENTER);
         qtyFourthItem.setOpaque(true);
         qtyFourthItem.setBackground(new Color(0xF3E28B));
         qtyFourthItem.setText("0");
-        qtyFourthItem.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255), 4));
-        qtyFourthItem.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        qtyFourthItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        qtyFourthItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
+        GroupLayout panelLayout = new GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLayout.createSequentialGroup()
-                .addGap(90, 90, 90)
-                .addComponent(qtyFirstItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(qtySecondItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(87, 87, 87))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                .addGap(90, 90, 90)
-                .addComponent(qtyFourthItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(qtyThirdItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(88, 88, 88))
-            .addGroup(panelLayout.createSequentialGroup()
-                .addGap(60, 60, 60)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(thirdItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(firstItem, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(60, 60, 60)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(secondItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(fourthItem, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
-                .addGap(60, 60, 60))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
-                .addContainerGap())
+                panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(panelLayout.createSequentialGroup()
+                                .addGap(90, 90, 90)
+                                .addComponent(qtyFirstItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(qtySecondItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                .addGap(87, 87, 87))
+                        .addGroup(GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                                .addGap(90, 90, 90)
+                                .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                .addGap(88, 88, 88))
+                        .addGroup(panelLayout.createSequentialGroup()
+                                .addGap(60, 60, 60)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(thirdItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE))
+                                .addGap(60, 60, 60)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
+                                .addGap(60, 60, 60))
+                        .addGroup(GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         panelLayout.setVerticalGroup(
-            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelLayout.createSequentialGroup()
-                .addGap(37, 37, 37)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(secondItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(firstItem, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(qtyFirstItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(qtySecondItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(thirdItem, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                    .addComponent(fourthItem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(qtyFourthItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(qtyThirdItem, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                .addContainerGap())
+                panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addGroup(panelLayout.createSequentialGroup()
+                                .addGap(37, 37, 37)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(qtyFirstItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(qtySecondItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                .addGap(29, 29, 29)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(thirdItem, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
+                                        .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         this.setResizable(false);
 
         pack();
         setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>
 
-    private void firstItemMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firstItemMouseEntered
-        descriptionLabel.append("Oggetto 1:\n Fa questo, quello e quell'altro ancora. \n MOUSE CLICKED");
-    }//GEN-LAST:event_firstItemMouseEntered
+    private void firstItemMouseEntered(MouseEvent evt) {
+        setDescription(1);
+    }
 
-    private void firstItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firstItemMouseClicked
-        descriptionLabel.append("Oggetto 1:\n Fa questo, quello e quell'altro ancora. \n MOUSE CLICKED");
-    }//GEN-LAST:event_firstItemMouseClicked
+    private void firstItemMouseClicked(MouseEvent evt) {
+        setDescription(1);
+    }
 
-    private void firstItemMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_firstItemMouseExited
-        //descriptionLabel.setText("");
-    }//GEN-LAST:event_firstItemMouseExited
+    private void firstItemMouseExited(MouseEvent evt) {
 
-    private void secondItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_secondItemMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_secondItemMouseClicked
+    }
 
-    private void secondItemMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_secondItemMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_secondItemMouseEntered
+    private void secondItemMouseClicked(MouseEvent evt) {
+        setDescription(2);
+    }
 
-    private void secondItemMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_secondItemMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_secondItemMouseExited
+    private void secondItemMouseEntered(MouseEvent evt) {
+        setDescription(2);
+    }
 
-    private void thirdItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thirdItemMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_thirdItemMouseClicked
+    private void secondItemMouseExited(MouseEvent evt) {
+    }
 
-    private void thirdItemMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thirdItemMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_thirdItemMouseEntered
+    private void thirdItemMouseClicked(MouseEvent evt) {
+        setDescription(3);
+    }
 
-    private void thirdItemMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thirdItemMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_thirdItemMouseExited
+    private void thirdItemMouseEntered(MouseEvent evt) {
+        setDescription(3);
+    }
 
-    private void fourthItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fourthItemMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fourthItemMouseClicked
+    private void thirdItemMouseExited(MouseEvent evt) {
 
-    private void fourthItemMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fourthItemMouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fourthItemMouseEntered
+    }
 
-    private void fourthItemMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fourthItemMouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_fourthItemMouseExited
+    private void fourthItemMouseClicked(MouseEvent evt) {
+        setDescription(4);
+    }
 
+    private void fourthItemMouseEntered(MouseEvent evt) {
+        setDescription(4);
+    }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JTextArea descriptionLabel;
-    private javax.swing.JLabel firstItem;
-    private javax.swing.JLabel fourthItem;
-    private javax.swing.JPanel panel;
-    private javax.swing.JLabel qtyFirstItem;
-    private javax.swing.JLabel qtySecondItem;
-    private javax.swing.JLabel qtyThirdItem;
-    private javax.swing.JLabel qtyFourthItem;
-    private javax.swing.JLabel secondItem;
-    private javax.swing.JLabel thirdItem;
-    // End of variables declaration//GEN-END:variables
+    private void fourthItemMouseExited(MouseEvent evt) {
+
+    }
+
+    private JScrollPane scrollPane;
+    private JTextArea descriptionLabel;
+    private JLabel firstItem;
+    private JLabel fourthItem;
+    private JPanel panel;
+    private JLabel qtyFirstItem;
+    private JLabel qtySecondItem;
+    private JLabel qtyThirdItem;
+    private JLabel qtyFourthItem;
+    private JLabel secondItem;
+    private JLabel thirdItem;
+
+    private void setImage(JLabel label, String path) throws ImageNotFoundException {
+        System.out.println(path);
+        URL imgUrl = getClass().getResource(path);
+        if (imgUrl != null) {
+            label.setIcon(new ImageIcon(
+                    new ImageIcon(imgUrl).getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH)));
+        } else {
+            throw new ImageNotFoundException("Resource not found: " + path);
+        }
+    }
+
+    @Override
+    public void open() {
+        this.setVisible(true);
+    }
+
+    private void setDescription(int item) {
+        item = item-1;
+        if (it[item] != null) {
+            descriptionLabel.setText("");
+            descriptionLabel.append("Nome: " + it[item].getName() + "\n");
+            if (it[item] instanceof Item i) {
+                if (i.getUses() != -1)
+                    descriptionLabel.append("Utilizzi rimanenti: " + i.getUses() + "\n");
+            }
+            descriptionLabel.append("Descrizione: " + it[item].getDescription());
+        }
+    }
+
+    @Override
+    public void close() {
+        this.dispose();
+    }
+
+    @Override
+    public void linkController(Controller c){
+        // controller non necessario per questa finestra
+    }
 }

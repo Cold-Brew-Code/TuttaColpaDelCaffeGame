@@ -41,7 +41,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>it.tutta.colpa.del.caffe.start.boundary.MainPage</mainClass>
+                            <mainClass>it.tutta.colpa.del.caffe.TuttaColpaDelCaffe</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

@@ -1,15 +1,19 @@
 package it.tutta.colpa.del.caffe.start.boundary;
 
+import it.tutta.colpa.del.caffe.game.boundary.GUI;
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.start.control.Engine;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
-public class MainPage extends JFrame {
+public class MainPage extends JFrame implements GUI {
     MainPageController c;
-    JPanel wallpaper = new JPanel(){
+    JPanel wallpaper = new JPanel() {
         private final Image wp;
+
         {
             URL imgUrl = getClass().getResource("/images/copertina.png");
             if (imgUrl != null) {
@@ -19,6 +23,7 @@ public class MainPage extends JFrame {
                 System.err.println("Immagine non trovata: images/copertina.png");
             }
         }
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -31,30 +36,30 @@ public class MainPage extends JFrame {
     JButton load = new PButton("CARICA PARTITA");
     JButton exit = new PButton("ESCI");
 
-    public MainPage(MainPageController c){
-        this.c=c;
+    public MainPage() {
+
         this.setResizable(false);
-        this.setPreferredSize(new Dimension(960,540));
+        this.setPreferredSize(new Dimension(960, 540));
         this.setTitle("Tutta colpa del Caffè!");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         URL gameIcon = getClass().getResource("/images/icon.png");
-        try{
+        try {
             this.setIconImage(new ImageIcon(gameIcon).getImage());
-        }catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Icona del gioco non presente.");
         }
         wallpaper.setVisible(true);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(3,1,0,10));
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 0, 10));
         buttonPanel.setOpaque(false);
         this.add(wallpaper);
         buttonPanel.add(start);
         buttonPanel.add(load);
         buttonPanel.add(exit);
 
-        buttonPanel.setBounds(((960 - 260) / 2 )+325,
-                                540 - 250 - 50,
-                                260, 250);
+        buttonPanel.setBounds(((960 - 260) / 2) + 325,
+                540 - 250 - 50,
+                260, 250);
 
         wallpaper.add(buttonPanel);
 
@@ -82,15 +87,27 @@ public class MainPage extends JFrame {
         });
     }
 
-    public void close(){
+    @Override
+    public void close() {
         this.setVisible(false);
     }
 
-    public void open(){
+    @Override
+    public void linkController(Controller c) {
+        if (c instanceof MainPageController) {
+            this.c = (MainPageController) c;
+        } else {
+            throw new RuntimeException("Il controller c non è un controller valido per MainPage");
+        }
+
+    }
+
+    @Override
+    public void open() {
         this.setVisible(true);
     }
 
-    private class PButton extends JButton{
+    private class PButton extends JButton {
 
         private final Image backgroundImage = new ImageIcon(getClass().getResource("/images/button.png"))
                 .getImage();
@@ -102,7 +119,7 @@ public class MainPage extends JFrame {
             setFocusPainted(false);
             setOpaque(false);
             setForeground(new Color(0xFFFFFF));
-            setPreferredSize(new Dimension(250,75));
+            setPreferredSize(new Dimension(250, 75));
             setFont(new Font("Arial", Font.BOLD, 24));
         }
 

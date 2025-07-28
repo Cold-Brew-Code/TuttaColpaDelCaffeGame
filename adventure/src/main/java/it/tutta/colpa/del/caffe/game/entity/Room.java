@@ -210,11 +210,16 @@ public class Room implements Serializable {
         this.objects = objects;
     }
 
+
     @Override
     public String toString() {
         return "Room{" +
                 "name='" + name + '\'' +
                 ", id=" + id +
                 '}';
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 }

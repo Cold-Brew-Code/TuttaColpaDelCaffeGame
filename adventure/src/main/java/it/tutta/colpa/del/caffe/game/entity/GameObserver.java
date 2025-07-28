@@ -18,6 +18,6 @@ public interface GameObserver {
      * @param parserOutput
      * @return
      */
-    public StringBuilder update(GameDescription description, ParserOutput parserOutput);
+    public String update(GameDescription description, ParserOutput parserOutput);
 
 }
