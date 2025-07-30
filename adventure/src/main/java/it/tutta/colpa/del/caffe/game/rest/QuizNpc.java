@@ -107,7 +107,12 @@ public class QuizNpc {
         // Traduce la domanda
         String domandaTradotta= " ";
         try {
-             domandaTradotta = TraduttoreApi.traduci(curr.getQuestion(), "en", "it");
+             domandaTradotta = TraduttoreApi.traduci(curr.getQuestion()
+                                            .replaceAll("&quot;", "\"")
+                                            .replaceAll("&#039;", "'")
+                                            .replaceAll("&#233;", "é")
+                                            .replaceAll("&#225;", "á")
+                                                        , "en", "it");
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
@@ -116,7 +121,10 @@ public class QuizNpc {
 
         // Traduce la risposta corretta
         try {
-            String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer(), "en", "it");
+            String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer()
+                                                            .replaceAll("&quot;", "\"")
+                                                            .replaceAll( "&#039;", "'"), 
+                                                                "en", "it");
             risposteTradotte.add(rispostaCorrettaTradotta);
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
@@ -125,7 +133,10 @@ public class QuizNpc {
         // Traduce e aggiunge le risposte sbagliate
         try{
             for (String rispErrata : curr.getIncorrect_answers()) {
-                risposteTradotte.add(TraduttoreApi.traduci(rispErrata, "en", "it"));
+                risposteTradotte.add(TraduttoreApi.traduci(rispErrata
+                                                .replaceAll("&quot;", "\"")
+                                                .replaceAll( "&#039;", "'"), 
+                                                    "en", "it"));
                 //risposteTradotte.add(rispErrata);
             }
         }catch(TraduzioneException e){

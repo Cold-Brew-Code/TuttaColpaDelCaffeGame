@@ -61,5 +61,6 @@ public class TraduttoreApi {
             }
             
         return rispostaApi.responseData.translatedText; // mi prendo il campo interessto 
+
     }
 }
