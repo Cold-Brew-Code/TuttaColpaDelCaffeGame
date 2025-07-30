@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
 import it.tutta.colpa.del.caffe.game.exception.ErrorConnection;
+import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 
 public class QuizNpc {
 
@@ -104,19 +105,31 @@ public class QuizNpc {
         DomandaApi curr = r.getResults().get(0);
 
         // Traduce la domanda
-        String domandaTradotta = TraduttoreApi.traduci(curr.getQuestion(), "en", "it");
+        String domandaTradotta= " ";
+        try {
+             domandaTradotta = TraduttoreApi.traduci(curr.getQuestion(), "en", "it");
+        } catch (TraduzioneException e) {
+            System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
+        }
 
         List<String> risposteTradotte = new ArrayList<>();
 
         // Traduce la risposta corretta
-        String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer(), "en", "it");
-        risposteTradotte.add(rispostaCorrettaTradotta);
-        //risposteTradotte.add(curr.getCorrect_answer());
+        try {
+            String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer(), "en", "it");
+            risposteTradotte.add(rispostaCorrettaTradotta);
+        } catch (TraduzioneException e) {
+            System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
+        }
 
         // Traduce e aggiunge le risposte sbagliate
-        for (String rispErrata : curr.getIncorrect_answers()) {
-            risposteTradotte.add(TraduttoreApi.traduci(rispErrata, "en", "it"));
-            //risposteTradotte.add(rispErrata);
+        try{
+            for (String rispErrata : curr.getIncorrect_answers()) {
+                risposteTradotte.add(TraduttoreApi.traduci(rispErrata, "en", "it"));
+                //risposteTradotte.add(rispErrata);
+            }
+        }catch(TraduzioneException e){
+            System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
 
         // Mischia tutte le risposte

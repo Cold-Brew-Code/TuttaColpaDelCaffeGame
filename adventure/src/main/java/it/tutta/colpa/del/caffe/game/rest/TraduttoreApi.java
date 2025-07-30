@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 
+import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 /**
  *
  * @author giova
@@ -54,13 +55,11 @@ public class TraduttoreApi {
         Gson g = new Gson();
         // mi predno il contenuto della risposta api e la converto da json a oggetto java
         MyMemoryResponse rispostaApi= g.fromJson(resp.readEntity(String.class),MyMemoryResponse.class ); 
-        // se la risposa hhttp è ok ma c'è stato un problema con il server MyMemory API
+        // se la risposa http è ok ma c'è stato un problema con il server MyMemory API
             if(rispostaApi.responseStatus!=200){
-                System.err.println(rispostaApi.responseDetails);
-                return null;
+                throw new TraduzioneException("Errore dalla MyMemory API: " + rispostaApi.responseDetails);
             }
             
         return rispostaApi.responseData.translatedText; // mi prendo il campo interessto 
-
     }
 }
