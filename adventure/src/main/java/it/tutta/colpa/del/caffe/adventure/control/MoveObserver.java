@@ -11,7 +11,7 @@ import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 public class MoveObserver implements GameObserver {
 
     @Override
-    public StringBuilder update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
 
         try {
@@ -70,10 +70,10 @@ public class MoveObserver implements GameObserver {
                 }
             }
         } catch (GameMapException ex) {
-            return msg.append(ex.getMessage());
+            return ex.getMessage(); // Restituisci direttamente la stringa
         }
 
-        return msg;
+        return msg.toString(); // Converti StringBuilder in String
     }
 
     private CommandType resolveAlias(String alias) {
