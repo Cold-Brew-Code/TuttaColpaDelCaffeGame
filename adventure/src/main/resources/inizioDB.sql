@@ -269,7 +269,7 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial_room_id, target_room_id) VALUES
 (1,2,'s'),(2,1,'n'), (2,3,'e'), (3,2,'o'),
 -- pianto terra collegamento
-(3,4,'e'),(4,5,'n'), (4,3,'o'),(5,4,'s'),(4,29,'o'),(29,4,'e'),
+(3,4,'e'),(4,5,'o'), (4,3,'s'),(5,4,'e'),(4,29,'n'),(29,4,'s'),
 --primo piano collegamento
 (6,7,'n'),(6,12,'o'),(7,6,'s'), (12,6,'e'),
 -- secondo piano

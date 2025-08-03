@@ -282,8 +282,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     @Override
     public void onTimeExpired() {
-        finishGame();  // chiama il metodo esistente
+        // chiama il metodo esistente
+        finishGame();
     }
-
-
 }

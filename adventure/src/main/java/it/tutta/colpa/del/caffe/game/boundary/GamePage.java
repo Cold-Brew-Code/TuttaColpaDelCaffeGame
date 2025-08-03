@@ -98,8 +98,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     // </editor-fold>
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="< GUI init
-    // >">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="< GUI init >">
+    // GEN-BEGIN:initComponents
     private void initComponents() {
 
         mainContainer = new javax.swing.JPanel() {
@@ -214,6 +214,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         mediumEffectMenuItem.addActionListener(this::mediumEffectMenuItemActionPerformed);
         fastEffectMenuItem.addActionListener(this::fastEffectMenuItemActionPerformed);
         disabledEffectMenuItem.addActionListener(this::disabledEffectMenuItemActionPerformed);
+        inputField.addActionListener(this::sendButtonActionPerformed);
 
         // --- LAYOUT HEADERPANEL ---
         javax.swing.GroupLayout HeaderPanelLayout = new javax.swing.GroupLayout(HeaderPanel);

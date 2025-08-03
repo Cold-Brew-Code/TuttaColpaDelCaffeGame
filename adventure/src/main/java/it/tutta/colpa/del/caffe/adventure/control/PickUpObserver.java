@@ -39,17 +39,17 @@ public class PickUpObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
-        ServerInterface server;
-        try {
-            server = new ServerInterface("localhost",49152 );
-        } catch (ServerCommunicationException ex) {
-            server= null;
-        }
         StringBuilder msg = new StringBuilder();
-        Object obj = parserOutput.getObject();
-        boolean conteiner = false;
-
         if (parserOutput.getCommand().getType() == CommandType.PICK_UP) {
+            ServerInterface server;
+            try {
+                server = new ServerInterface("localhost",49152 );
+            } catch (ServerCommunicationException ex) {
+                server= null;
+            }
+
+            Object obj = parserOutput.getObject();
+            boolean conteiner = false;
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da raccogliere. (scrivi 'raccogli nome oggetto')");
                 return msg.toString();

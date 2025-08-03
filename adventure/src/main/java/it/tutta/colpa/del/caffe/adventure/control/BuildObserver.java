@@ -28,17 +28,17 @@ public class BuildObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
-        ServerInterface server;
-        try {
-            server = new ServerInterface("localhost", 49152);
-        } catch (ServerCommunicationException ex) {
-            server = null;
-        }
         StringBuilder msg = new StringBuilder();
-        // controllo se l'oggetto è stato specificato
-        Object obj = parserOutput.getObject();
-
         if (parserOutput.getCommand().getType() == CommandType.CREATE) {
+            ServerInterface server;
+            try {
+                server = new ServerInterface("localhost", 49152);
+            } catch (ServerCommunicationException ex) {
+                server = null;
+            }
+            // controllo se l'oggetto è stato specificato
+            Object obj = parserOutput.getObject();
+
             boolean isRoomCurrent1 = false;
             boolean isRoomCurrent2 = false;
             if (obj == null) {
