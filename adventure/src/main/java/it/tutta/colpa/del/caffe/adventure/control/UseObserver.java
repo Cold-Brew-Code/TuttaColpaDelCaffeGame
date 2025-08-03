@@ -8,6 +8,7 @@ import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
+import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
@@ -71,23 +72,25 @@ public class UseObserver implements GameObserver {
                             }
                             
                         }
-                        /*
-                        else if (magicCard && parserOutput.getObject().getUtilizzi() > 0) {
-                            //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
-                            if (description.getCurrentRoom().isDeniedEntry() == false) {
-                                msg.append("La porta è già aperta");
-                                
-                            } else {
-                                description.getCurrentRoom().setDeniedEntry(false);
-                                parserOutput.getObject().setUtilizzi(parserOutput.getObject().getUtilizzi() - 1);
-                                msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza.");
-                                
-                            }
-                        } else if (magicCard && parserOutput.getObject().getUtilizzi() <= 0 && description.getCurrentRoom().isDeniedEntry()) {
-                            msg.append("sorry but you can not use the magic card becasue you have finished the uses");
+                        
+                        else if (magicCard) {
+
+                            Item card= (Item) parserOutput.getObject();
+                            if(card.getUses()>0){
+                                //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
+                                if (description.getCurrentRoom().isDeniedEntry() == false) {
+                                    msg.append("La porta è già aperta");
+                                }else{
+                                    description.getCurrentRoom().setDeniedEntry(false);
+                                    card.setUses(card.getUses() - 1);
+                                    msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza.");
+                                }
                             
+                            } else if (magicCard && card.getUses() <= 0 && description.getCurrentRoom().isDeniedEntry()) {
+                                msg.append("Mi dipsice, ma non puoi più usare la carta magina. Hai finito gli utilizzi!");
+                                
+                            }      
                         }
-                        */
                     }
                     case 16 -> {
                         // il caffè è l'oggetto 16
