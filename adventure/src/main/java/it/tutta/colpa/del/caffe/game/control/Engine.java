@@ -1,5 +1,6 @@
 package it.tutta.colpa.del.caffe.game.control;
 
+import it.tutta.colpa.del.caffe.adventure.control.*;
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
 import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
@@ -92,13 +93,21 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
             timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
-            GUI.out(description.getCurrentRoom().getDescription());
+            GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
+        this.attach(new BuildObserver());
+        this.attach(new LookAtObserver());
+        this.attach(new MoveObserver());
+        this.attach(new OpenObserver());
+        this.attach(new PickUpObserver());
+        this.attach(new ReadObserver());
+        this.attach(new TalkObserver());
+        this.attach(new UseObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
@@ -209,13 +218,14 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     @Override
     public void executeNewCommand(String command) {
         if (!command.isEmpty()) {
+            GUI.executedCommand();
             notifyObservers(parser.parse(command));
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
-            GUI.out(description.getMessages().getLast());
+            GUI.out(description.getMessages().getLast().translateEscapes());
         }
     }
 
@@ -223,7 +233,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     public void endGame() {
         if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
             this.GUI.close();
-            System.out.println(mpc);
             new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
     }
@@ -255,7 +264,10 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
             try {
-                description.getMessages().add(o.update(description, po));
+                String out = o.update(description, po);
+                if (!out.isEmpty()){
+                    description.getMessages().add(out);
+                }
             } catch (ServerCommunicationException e) {
                 throw new RuntimeException(e);
             }
@@ -264,7 +276,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     public void finishGame() {
         GUI.out("Tempo esaurito! La partita è finita.");
-
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
     }

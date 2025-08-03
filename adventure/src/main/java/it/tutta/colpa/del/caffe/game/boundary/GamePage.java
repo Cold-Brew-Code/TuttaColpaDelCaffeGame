@@ -521,7 +521,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void setImage(String path) throws ImageNotFoundException {
-        System.out.println(path);
         URL imgUrl = getClass().getResource(path);
         if (imgUrl != null) {
             this.ImageLabel.setIcon(new ImageIcon(
@@ -559,5 +558,12 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void increaseProgressBar() {
         this.progressBar.setValue(this.progressBar.getValue() + 1);
+    }
+
+    @Override
+    public void executedCommand() {
+        typeWriterEffect.skip();
+        this.DialogTextArea.append("\n > "+inputField.getText());
+        this.inputField.setText("");
     }
 }

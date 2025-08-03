@@ -55,7 +55,7 @@ public class GameMap implements Serializable {
         }
         return getPiano(pianoArrivo);
     }
-    private Room getPiano(int numeroP) throws GameMapException{
+    public Room getPiano(int numeroP) throws GameMapException{
         final String piano;
         switch(numeroP){
             case 1:
