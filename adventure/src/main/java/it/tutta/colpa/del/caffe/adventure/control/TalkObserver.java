@@ -10,6 +10,7 @@ import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import java.util.List;
 
 /**
  *
@@ -32,7 +33,8 @@ public class TalkObserver implements GameObserver {
             msg.append("Stai parlando con ").append(npcRoom.getNome()).append(". ");
             Dialogo dialogo= npcRoom.getDialoghi().get(0);
             msg.append(dialogo.getCurrentNode());
-            //dialogo.setCurrentNode(currentNode)
+            String currentNode = null;
+            dialogo.setCurrentNode(currentNode);
             
         }
         // lista npc 2 e ha specificato con chi vuole paralre 

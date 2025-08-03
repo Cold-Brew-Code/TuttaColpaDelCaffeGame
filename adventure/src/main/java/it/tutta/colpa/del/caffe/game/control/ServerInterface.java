@@ -1,12 +1,5 @@
-
 package it.tutta.colpa.del.caffe.game.control;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.rmi.ServerException;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 import it.tutta.colpa.del.caffe.game.entity.Command;
@@ -14,7 +7,14 @@ import it.tutta.colpa.del.caffe.game.entity.GameMap;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
-import it.tutta.colpa.del.caffe.game.utility.RequestType;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.rmi.ServerException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Gestisce la comunicazione di basso livello con il server di gioco.
@@ -62,6 +62,30 @@ public class ServerInterface {
         boolean reCheck = true;
         int timesChecked = 0;
         T answer = null;
+        while (reCheck && timesChecked < 4) {
+            try {
+                reCheck = false;
+                answer = (T) getRequestAction(rt).call();
+            } catch (ServerCommunicationException e) {
+                throw e;
+            } catch (Exception e) {
+                reCheck = true;
+            }
+            timesChecked++;
+        }
+        if (reCheck) {
+            try {
+                answer = (T) getRequestAction(rt).call();
+            } catch (ServerException e) {
+                throw new ServerCommunicationException("Il server non ha elaborato correttamente la richiesta: " + e.getMessage() + ".");
+            } catch (IOException e) {
+                throw new ServerCommunicationException("Il server ha chiuso la connessione.");
+            } catch (ClassNotFoundException e) {
+                throw new ServerCommunicationException("Il server ha inviato un oggetto sconosciuto.");
+            } catch (Exception e) {
+                throw new ServerCommunicationException("Errore generico: " + e.getMessage());
+            }
+        }
 
         return answer;
     }
@@ -80,7 +104,30 @@ public class ServerInterface {
         boolean reCheck = true;
         int timesChecked = 0;
         T answer = null;
-
+        while (reCheck && timesChecked < 4) {
+            try {
+                reCheck = false;
+                answer = (T) getRequestAction(rt, id).call();
+            } catch (ServerCommunicationException e) {
+                throw e;
+            } catch (Exception e) {
+                reCheck = true;
+            }
+            timesChecked++;
+        }
+        if (reCheck) {
+            try {
+                answer = (T) getRequestAction(rt, id).call();
+            } catch (ServerException e) {
+                throw new ServerCommunicationException("Il server non ha elaborato correttamente la richiesta: " + e.getMessage() + ".");
+            } catch (IOException e) {
+                throw new ServerCommunicationException("Il server ha chiuso la connessione.");
+            } catch (ClassNotFoundException e) {
+                throw new ServerCommunicationException("Il server ha inviato un oggetto sconosciuto.");
+            } catch (Exception e) {
+                throw new ServerCommunicationException("Errore generico: " + e.getMessage());
+            }
+        }
 
         return answer;
     }
@@ -136,6 +183,13 @@ public class ServerInterface {
      */
     private GameMap requestGameMap() throws IOException, ClassNotFoundException {
         GameMap gameMap = null;
+        out.println("mappa");
+        Object answer = in.readObject();
+        if (answer instanceof GameMap) {
+            gameMap = (GameMap) answer;
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
+        }
         return gameMap;
     }
 
@@ -147,7 +201,19 @@ public class ServerInterface {
      */
     @SuppressWarnings("unchecked")
     private List<NPC> requestNPCs() throws Exception {
-        return null;
+        List<NPC> NPCs = new ArrayList<>();
+        out.println("NPCs");
+        Object answer = in.readObject();
+        if (answer instanceof List<?> answerList) {
+            if (answerList.stream().allMatch(e -> e instanceof NPC)) {
+                NPCs = (List<NPC>) answerList;
+            } else {
+                throw new Exception("Il server risponde in modo anomalo.");
+            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
+        }
+        return NPCs;
     }
 
     /**
@@ -159,6 +225,17 @@ public class ServerInterface {
     @SuppressWarnings("unchecked")
     private List<GeneralItem> requestItems() throws Exception {
         List<GeneralItem> items = null;
+        out.println("oggetti");
+        Object answer = in.readObject();
+        if (answer instanceof List<?> answerList) {
+            if (answerList.stream().allMatch(e -> e instanceof GeneralItem)) {
+                items = (List<GeneralItem>) answerList;
+            } else {
+                throw new Exception("Il server risponde in modo anomalo.");
+            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
+        }
         return items;
     }
 
@@ -171,7 +248,17 @@ public class ServerInterface {
     @SuppressWarnings("unchecked")
     private List<Command> requestCommands() throws Exception {
         List<Command> commands = null;
-
+        out.println("comandi");
+        Object answer = in.readObject();
+        if (answer instanceof List<?> answerList) {
+            if (answerList.stream().allMatch(e -> e instanceof Command)) {
+                commands = (List<Command>) answerList;
+            } else {
+                throw new Exception("Il server risponde in modo anomalo.");
+            }
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
+        }
         return commands;
     }
 
@@ -184,7 +271,13 @@ public class ServerInterface {
      */
     private GeneralItem requestItem(int itemID) throws Exception {
         GeneralItem item = null;
-
+        out.println("oggetto-" + itemID);
+        Object answer = in.readObject();
+        if (answer instanceof GeneralItem) {
+            item = (GeneralItem) answer;
+        } else if (answer instanceof String) {
+            throw new ServerException((String) answer);
+        }
         return item;
     }
 
@@ -198,7 +291,11 @@ public class ServerInterface {
      */
     private String requestUpdatedLook(int eventID) throws IOException, ClassNotFoundException {
         String look = null;
-
+        out.println("descrizione-aggiornata-" + eventID);
+        Object answer = in.readObject();
+        if (answer instanceof String) {
+            look = (String) answer;
+        }
         return look;
     }
 
@@ -214,4 +311,17 @@ public class ServerInterface {
         }
     }
 
+    /**
+     * Enumera i tipi di richieste che possono essere inviate dal client al server.
+     * L'uso di un enum garantisce type-safety e centralizza le azioni possibili.
+     */
+    enum RequestType {
+        GAME_MAP,
+        NPCs,
+        ITEMS,
+        CLOSE_CONNECTION,
+        COMMANDS,
+        UPDATED_LOOK,
+        ITEM
+    }
 }

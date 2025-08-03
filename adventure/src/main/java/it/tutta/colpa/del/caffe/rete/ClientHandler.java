@@ -66,6 +66,10 @@ public class ClientHandler extends Thread {
                     } catch (Exception e) {
                         out.writeObject("Oops, qualcosa è andato storto!");
                     }
+                }else if (richiesta.startsWith("oggetti")) {
+                    out.writeObject(dataBase.askForItems());
+                }else if (richiesta.startsWith("NPCs")) {
+                    out.writeObject(dataBase.askForNonPlayerCharacters());
                 } else if (richiesta.startsWith("oggetto-")) {
                     try {
                         String[] tk = richiesta.split("-");

@@ -4,27 +4,24 @@
  */
 package it.tutta.colpa.del.caffe.game.boundary;
 
-import it.tutta.colpa.del.caffe.start.boundary.MainPage;
-import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.control.Engine;
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.control.GameController;
+import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.net.URL;
 
 /**
- *
  * @author giovav
  * @since 10/07/2025
  */
-public class GamePage extends javax.swing.JFrame {
+public class GamePage extends javax.swing.JFrame implements GameGUI {
 
-    private MainPage caller;
-    private Engine engine;
+    private GameController controller;
 
-
-
-    public GamePage(MainPage main, Engine e) {
+    public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
         // Imposta il layout predefinito di Java
         try {
@@ -36,27 +33,37 @@ public class GamePage extends javax.swing.JFrame {
             }
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }// </editor-fold>>
+        } // </editor-fold>>
         initComponents();
-        this.caller = main;
-        this.caller.setVisible(false);
-        this.engine = e;
+
+        typeWriterEffect = new TypeWriterEffect(DialogTextArea, 50);
+
+        this.setVisible(true);
     }
 
-
-    private void abbandona(){
-        int scelta = showYesNoDialoguePage("Conferma", "Vuoi davvero abbandonare la partita?");
-    }
-
-    private int showYesNoDialoguePage(String title, String message){
+    private int showYesNoDialoguePage(String title, String message) {
         return javax.swing.JOptionPane.showConfirmDialog(
                 null,
-                title,
                 message,
-                javax.swing.JOptionPane.YES_NO_OPTION
-        );
+                title,
+                javax.swing.JOptionPane.YES_NO_OPTION);
     }
 
+    public void showError(String title, String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                title,
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showWarning(String title, String message) {
+        JOptionPane.showMessageDialog(
+                this,
+                message,
+                title,
+                JOptionPane.WARNING_MESSAGE);
+    }
 
     // <editor-fold defaultstate="collapsed" desc="< GUI variables >">
     private javax.swing.JPanel DialogPanel;
@@ -73,16 +80,31 @@ public class GamePage extends javax.swing.JFrame {
     private javax.swing.JButton quitButton;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton sendButton;
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(GamePage.class.getName());
+    private javax.swing.JButton skipButton;
+    private javax.swing.JButton audioButton;
+    private javax.swing.JPopupMenu audioPopupMenu;
+    private javax.swing.JMenuItem increaseVolumeMenuItem;
+    private javax.swing.JMenuItem decreaseVolumeMenuItem;
+    private javax.swing.JMenuItem toggleMuteMenuItem;
+    // --- NUOVI COMPONENTI EFFETTI VISIVI ---
+    private javax.swing.JButton visualEffectButton;
+    private javax.swing.JPopupMenu visualEffectPopupMenu;
+    private javax.swing.JMenuItem slowEffectMenuItem;
+    private javax.swing.JMenuItem mediumEffectMenuItem;
+    private javax.swing.JMenuItem fastEffectMenuItem;
+    private javax.swing.JMenuItem disabledEffectMenuItem;
+    private TypeWriterEffect typeWriterEffect;
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="< GUI init >">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="< GUI init
+    // >">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainContainer = new javax.swing.JPanel(){
+        mainContainer = new javax.swing.JPanel() {
             private final Image wp;
+
             {
                 URL imgUrl = getClass().getResource("/images/gameCover.png");
                 if (imgUrl != null) {
@@ -92,6 +114,7 @@ public class GamePage extends javax.swing.JFrame {
                     System.err.println("Immagine non trovata: images/gameCover.png");
                 }
             }
+
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -109,20 +132,38 @@ public class GamePage extends javax.swing.JFrame {
         FooterPanel = new javax.swing.JPanel();
         inputField = new javax.swing.JTextField();
         sendButton = new javax.swing.JButton();
-        progressBar = new javax.swing.JProgressBar();
+        progressBar = new javax.swing.JProgressBar(0, 1200);
         quitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
         InvButton = new javax.swing.JButton();
+        skipButton = new javax.swing.JButton();
+
+        audioButton = new javax.swing.JButton();
+        audioPopupMenu = new javax.swing.JPopupMenu();
+        increaseVolumeMenuItem = new javax.swing.JMenuItem("Aumenta Volume");
+        decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
+        toggleMuteMenuItem = new javax.swing.JMenuItem("Disattiva/Attiva Audio");
+
+        // --- INIZIALIZZAZIONE NUOVI COMPONENTI ---
+        visualEffectButton = new javax.swing.JButton();
+        visualEffectPopupMenu = new javax.swing.JPopupMenu();
+        slowEffectMenuItem = new javax.swing.JMenuItem("Lento");
+        mediumEffectMenuItem = new javax.swing.JMenuItem("Medio");
+        fastEffectMenuItem = new javax.swing.JMenuItem("Veloce");
+        disabledEffectMenuItem = new javax.swing.JMenuItem("Disattivo");
+
         HeaderPanel.setOpaque(false);
-        HeaderPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         ImagePanel.setOpaque(false);
-        ImagePanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         FooterPanel.setOpaque(false);
-        FooterPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         DialogPanel.setOpaque(false);
-        DialogPanel.setBackground(new java.awt.Color(0, 0, 0, 0));
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                inputField.requestFocusInWindow();
+            }
+
+            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
@@ -130,27 +171,88 @@ public class GamePage extends javax.swing.JFrame {
         setTitle("Tutta Colpa del Caffè!");
         setResizable(false);
 
+        // --- STILE BOTTONI MENU ---
+        audioButton.setText("Audio \u25BC");
+        audioButton.setBackground(Color.WHITE);
+        visualEffectButton.setText("Effetto visivo \u25BC");
+        visualEffectButton.setBackground(Color.WHITE);
+
+        // --- STILE DEGLI ELEMENTI DI TUTTI I MENU ---
+        Dimension menuItemSize = new Dimension(150, 35);
+        Color itemBorderColor = new Color(220, 220, 220);
+        JMenuItem[] allMenuItems = {
+                increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
+                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+        };
+
+        for (JMenuItem item : allMenuItems) {
+            item.setBackground(Color.WHITE);
+            item.setOpaque(true);
+            item.setPreferredSize(menuItemSize);
+            item.setBorder(new LineBorder(itemBorderColor));
+            item.setFont(new Font("Arial", Font.PLAIN, 14));
+        }
+
+        // --- SETUP MENU AUDIO ---
+        audioPopupMenu.setBorder(new LineBorder(Color.GRAY));
+        audioPopupMenu.add(increaseVolumeMenuItem);
+        audioPopupMenu.add(decreaseVolumeMenuItem);
+        audioPopupMenu.add(toggleMuteMenuItem);
+        audioButton.addActionListener(this::audioButtonActionPerformed);
+        increaseVolumeMenuItem.addActionListener(this::increaseVolumeMenuItemActionPerformed);
+        decreaseVolumeMenuItem.addActionListener(this::decreaseVolumeMenuItemActionPerformed);
+        toggleMuteMenuItem.addActionListener(this::toggleMuteMenuItemActionPerformed);
+
+        // --- SETUP MENU EFFETTI VISIVI ---
+        visualEffectPopupMenu.setBorder(new LineBorder(Color.GRAY));
+        visualEffectPopupMenu.add(slowEffectMenuItem);
+        visualEffectPopupMenu.add(mediumEffectMenuItem);
+        visualEffectPopupMenu.add(fastEffectMenuItem);
+        visualEffectPopupMenu.add(disabledEffectMenuItem);
+        visualEffectButton.addActionListener(this::visualEffectButtonActionPerformed);
+        slowEffectMenuItem.addActionListener(this::slowEffectMenuItemActionPerformed);
+        mediumEffectMenuItem.addActionListener(this::mediumEffectMenuItemActionPerformed);
+        fastEffectMenuItem.addActionListener(this::fastEffectMenuItemActionPerformed);
+        disabledEffectMenuItem.addActionListener(this::disabledEffectMenuItemActionPerformed);
+
+        // --- LAYOUT HEADERPANEL ---
         javax.swing.GroupLayout HeaderPanelLayout = new javax.swing.GroupLayout(HeaderPanel);
         HeaderPanel.setLayout(HeaderPanelLayout);
         HeaderPanelLayout.setHorizontalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 0, Short.MAX_VALUE)
-        );
+                        .addGroup(HeaderPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(visualEffectButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(saveButton)
+                                .addContainerGap()));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 50, Short.MAX_VALUE)
-        );
+                        .addGroup(HeaderPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(HeaderPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
+                                                Short.MAX_VALUE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
+                                                Short.MAX_VALUE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
         ImagePanelLayout.setHorizontalGroup(
                 ImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 951, Short.MAX_VALUE)
-        );
+                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 951, Short.MAX_VALUE));
         ImagePanelLayout.setVerticalGroup(
                 ImagePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(ImageLabel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
 
         DialogPanel.setBackground(new java.awt.Color(204, 204, 255, 0));
 
@@ -158,6 +260,7 @@ public class GamePage extends javax.swing.JFrame {
         quitButton.setBackground(Color.WHITE);
         sendButton.setBackground(Color.WHITE);
         InvButton.setBackground(Color.WHITE);
+        skipButton.setBackground(Color.WHITE);
 
         DialogTextArea.setEditable(false);
         DialogTextArea.setBackground(new java.awt.Color(255, 255, 255, 128));
@@ -176,43 +279,29 @@ public class GamePage extends javax.swing.JFrame {
         DialogPanel.setLayout(DialogPanelLayout);
         DialogPanelLayout.setHorizontalGroup(
                 DialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
-        );
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE));
         DialogPanelLayout.setVerticalGroup(
                 DialogPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE)
-        );
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 529, Short.MAX_VALUE));
 
         inputField.setToolTipText("");
 
         sendButton.setText("Invia");
-        sendButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sendButtonActionPerformed(evt);
-            }
-        });
+        sendButton.addActionListener(this::sendButtonActionPerformed);
 
         quitButton.setText("Abbandona");
-        quitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                quitButtonActionPerformed(evt);
-            }
-        });
+        quitButton.addActionListener(this::quitButtonActionPerformed);
 
-        saveButton.setText("Salva");
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
+        saveButton.setText("Salva partita");
+        saveButton.addActionListener(this::saveButtonActionPerformed);
 
         InvButton.setText("Zaino");
-        InvButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                InvButtonActionPerformed(evt);
-            }
-        });
+        InvButton.addActionListener(this::InvButtonActionPerformed);
 
+        skipButton.setText("Skip");
+        skipButton.addActionListener(this::skipButtonActionPerformed);
+
+        ImageLabel.setOpaque(true);
         InvButton.setIcon(
                 new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
                         .getImage()
@@ -225,106 +314,250 @@ public class GamePage extends javax.swing.JFrame {
                 new ImageIcon((new ImageIcon(getClass().getResource("/images/save_icon.png")))
                         .getImage()
                         .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        sendButton.setIcon(
+                new ImageIcon((new ImageIcon(getClass().getResource("/images/send_icon.png")))
+                        .getImage()
+                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        URL skipIconUrl = getClass().getResource("/images/skip_icon.png");
+        if (skipIconUrl != null) {
+            skipButton.setIcon(
+                    new ImageIcon(new ImageIcon(skipIconUrl)
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        }
+
         javax.swing.GroupLayout FooterPanelLayout = new javax.swing.GroupLayout(FooterPanel);
         FooterPanel.setLayout(FooterPanelLayout);
         FooterPanelLayout.setHorizontalGroup(
                 FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(FooterPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 454, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(inputField, javax.swing.GroupLayout.PREFERRED_SIZE, 454,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(sendButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(skipButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
-                                .addComponent(saveButton)
+                                .addComponent(InvButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(quitButton)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
         FooterPanelLayout.setVerticalGroup(
                 FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, FooterPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(FooterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(quitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(FooterPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(skipButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(InvButton, javax.swing.GroupLayout.DEFAULT_SIZE, 39,
+                                                Short.MAX_VALUE)
+                                        .addComponent(quitButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(inputField, javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap())
-        );
+                                        .addComponent(sendButton, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap()));
 
         javax.swing.GroupLayout mainContainerLayout = new javax.swing.GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
                 mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(HeaderPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout.createSequentialGroup()
+                        .addComponent(HeaderPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainContainerLayout
+                                .createSequentialGroup()
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(DialogPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(DialogPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(ImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(ImagePanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
-                        .addComponent(FooterPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(FooterPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         mainContainerLayout.setVerticalGroup(
                 mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(mainContainerLayout.createSequentialGroup()
-                                .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(mainContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(ImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(DialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(mainContainerLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(ImagePanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(DialogPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(FooterPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
+                                .addComponent(FooterPanel, javax.swing.GroupLayout.PREFERRED_SIZE,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(mainContainer, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     // <editor-fold desc="< ActionPerformed(s) >">
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        abbandona();
+        controller.endGame();
     }
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        new InventoryPage(new Inventory()).setVisible(true);
+        controller.showInventory();
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
-
+        controller.saveGame();
     }
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        //DialogTextArea.append("stocazzo ");
+        if (!this.inputField.getText().isEmpty()) {
+            controller.executeNewCommand(this.inputField.getText());
+        }
     }
 
-    private void InitGame(){
-
-    }
-
-    private void InitGame(String savePath){
-
+    private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
+            typeWriterEffect.skip(); // Mostra tutto il testo immediatamente
+        }
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
-        abbandona();
+        controller.endGame();
     }
     // </editor-fold>
 
+    // <editor-fold desc="< Audio ActionPerformed(s) >">
+    private void audioButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        audioPopupMenu.show(audioButton, 0, audioButton.getHeight());
+    }
+
+    private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Aumenta volume cliccato");
+    }
+
+    private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Abbassa volume cliccato");
+    }
+
+    private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Attiva/Disattiva audio cliccato");
+    }
+    // </editor-fold>
+
+    // <editor-fold desc="< Visual Effect ActionPerformed(s) >">
+    private void visualEffectButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        visualEffectPopupMenu.show(visualEffectButton, 0, visualEffectButton.getHeight());
+    }
+
+    private void slowEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        if (typeWriterEffect != null) {
+            typeWriterEffect.setDelay(100);
+            System.out.println("Velocità effetto impostata: Lento");
+        }
+    }
+
+    private void mediumEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        if (typeWriterEffect != null) {
+            typeWriterEffect.setDelay(50);
+            System.out.println("Velocità effetto impostata: Medio");
+        }
+    }
+
+    private void fastEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        if (typeWriterEffect != null) {
+            typeWriterEffect.setDelay(20);
+            System.out.println("Velocità effetto impostata: Veloce");
+        }
+    }
+
+    private void disabledEffectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        if (typeWriterEffect != null) {
+            typeWriterEffect.setDelay(0);
+            System.out.println("Effetto visivo disattivato");
+        }
+    }
+    // </editor-fold>
+
+    @Override
+    public void out(String message) {
+        if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
+            typeWriterEffect.skip(); // Completa l'animazione corrente
+        }
+        typeWriterEffect.start("\n" + message); // Avvia la nuova animazione
+    }
+
+    @Override
+    public int notifySomething(String header, String message) {
+        return showYesNoDialoguePage(header, message);
+    }
+
+    @Override
+    public void notifyWarning(String header, String message) {
+        this.showWarning(header, message);
+    }
+
+    @Override
+    public void notifyError(String header, String message) {
+        this.showError(header, message);
+    }
+
+    @Override
+    public void setImage(String path) throws ImageNotFoundException {
+        System.out.println(path);
+        URL imgUrl = getClass().getResource(path);
+        if (imgUrl != null) {
+            this.ImageLabel.setIcon(new ImageIcon(
+                    new ImageIcon(imgUrl).getImage().getScaledInstance(this.ImageLabel.getWidth(),
+                            this.ImageLabel.getHeight(), Image.SCALE_SMOOTH)));
+        } else {
+            throw new ImageNotFoundException("Resource not found: " + path);
+        }
+    }
+
+    @Override
+    public void open() {
+        this.setVisible(true);
+    }
+
+    @Override
+    public void close() {
+        this.dispose();
+    }
+
+    @Override
+    public void linkController(Controller controller) {
+        if (controller instanceof GameController) {
+            this.controller = (GameController) controller;
+        } else {
+            throw new RuntimeException("Il controller per GamePage non è un GameController");
+        }
+    }
+
+    @Override
+    public void setDisplayedClock(String time) {
+
+    }
+
+    @Override
+    public void increaseProgressBar() {
+        this.progressBar.setValue(this.progressBar.getValue() + 1);
+    }
 }

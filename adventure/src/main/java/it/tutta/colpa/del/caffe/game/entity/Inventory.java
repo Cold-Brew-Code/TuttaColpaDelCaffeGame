@@ -9,11 +9,14 @@ import it.tutta.colpa.del.caffe.game.exception.InventoryException;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
-public class Inventory  implements Serializable {
+public class Inventory  implements Serializable, Iterable<GeneralItem> {
 
     private Map<GeneralItem, Integer> inventory = new HashMap<>();
+
+
 
     public Map<GeneralItem, Integer> getInventory() {
         return inventory;
@@ -39,22 +42,26 @@ public class Inventory  implements Serializable {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
-        if (quantity>inventory.get(o)){
+        int currentQuantity = inventory.get(o);
+        if (quantity > currentQuantity) {
             throw new InventoryException("Attenzione: non hai abbastanza oggetti nell'inventario");
-        }else if (quantity==inventory.get(o)){
+        } else if (quantity == currentQuantity) {
             inventory.remove(o);
+        } else {
+            inventory.replace(o, currentQuantity - quantity); // Altrimenti, aggiorna la quantità
         }
-        inventory.replace(o, inventory.get(o)-quantity);
     }
 
     public void remove(GeneralItem o) throws InventoryException {
         if (!inventory.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
         }
-        if (1==inventory.get(o)){
+        int currentQuantity = inventory.get(o);
+        if (currentQuantity == 1) {
             inventory.remove(o);
+        } else {
+            inventory.replace(o, currentQuantity - 1);
         }
-        inventory.replace(o, inventory.get(o)-1);
     }
 
     public int getQuantity(GeneralItem element){
@@ -83,4 +90,11 @@ public class Inventory  implements Serializable {
         }
         return 0;
     }*/
+
+    @Override
+    public Iterator<GeneralItem> iterator() {
+        // Restituisce l'iteratore delle chiavi della mappa.
+        // Il set di chiavi (keySet) è già una collezione iterabile.
+        return inventory.keySet().iterator();
+    }
 }

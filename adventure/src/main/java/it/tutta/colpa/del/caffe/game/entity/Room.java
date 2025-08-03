@@ -218,12 +218,13 @@ public class Room implements Serializable {
                 '}';
     }
 
+
     /**
- * Restituisce true se la stanza contiene un oggetto con l'ID specificato.
- *
- * @param id l'ID dell'oggetto da cercare
- * @return true se l'oggetto è presente, false altrimenti
- */
+     * Restituisce true se la stanza contiene un oggetto con l'ID specificato.
+     *
+     * @param id l'ID dell'oggetto da cercare
+     * @return true se l'oggetto è presente, false altrimenti
+     */
     public boolean hasObject(int id) {
         for (GeneralItem item : objects.keySet()) {
             if (item.getId() == id) {
@@ -233,4 +234,7 @@ public class Room implements Serializable {
         return false;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
 }
