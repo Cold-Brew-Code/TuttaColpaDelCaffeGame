@@ -13,6 +13,7 @@ import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 import java.awt.*;
 import java.io.File;
@@ -106,10 +107,10 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         Parser p = new Parser(
                 stopwords,
                 description.getCommands(),
-                si.requestToServer(ServerInterface.RequestType.ITEMS),
-                si.requestToServer(ServerInterface.RequestType.NPCs)
+                si.requestToServer(RequestType.ITEMS),
+                si.requestToServer(RequestType.NPCs)
         );
-        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+        si.requestToServer(RequestType.CLOSE_CONNECTION);
         return p;
     }
 
@@ -123,12 +124,12 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
         ServerInterface si = new ServerInterface("localhost", 49152);
-        GameMap gm = si.requestToServer(ServerInterface.RequestType.GAME_MAP);
-        List<Command> c = si.requestToServer(ServerInterface.RequestType.COMMANDS);
+        GameMap gm = si.requestToServer(RequestType.GAME_MAP);
+        List<Command> c = si.requestToServer(RequestType.COMMANDS);
         GameDescription gd = new GameDescription(
-                si.requestToServer(ServerInterface.RequestType.GAME_MAP),
-                si.requestToServer(ServerInterface.RequestType.COMMANDS));
-        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+                si.requestToServer(RequestType.GAME_MAP),
+                si.requestToServer(RequestType.COMMANDS));
+        si.requestToServer(RequestType.CLOSE_CONNECTION);
         return gd;
     }
 
@@ -253,7 +254,11 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     @Override
     public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
-            description.getMessages().add(o.update(description, po));
+            try {
+                description.getMessages().add(o.update(description, po));
+            } catch (ServerCommunicationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

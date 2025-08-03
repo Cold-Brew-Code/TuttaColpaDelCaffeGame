@@ -262,7 +262,7 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 (8, 'La stanza è troppo disordianta, ti sei perso tra libri e appunti? per uscire dalla stanza vai a EST',18),
 (9, 'Niente di nuovo, per uscire vai a OVEST',19),
 -- sesto piano
-(12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20);
+(12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20),
 
 (14, '', 21);-- serve se decidiamo di diminuire il tempo se l'utente vede l'immagine del caffe
 

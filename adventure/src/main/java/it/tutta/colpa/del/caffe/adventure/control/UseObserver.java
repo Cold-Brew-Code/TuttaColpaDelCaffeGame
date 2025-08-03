@@ -70,7 +70,9 @@ public class UseObserver implements GameObserver {
                                 }
                             }
                             
-                        } else if (magicCard && parserOutput.getObject().getUtilizzi() > 0) {
+                        }
+                        /*
+                        else if (magicCard && parserOutput.getObject().getUtilizzi() > 0) {
                             //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
                             if (description.getCurrentRoom().isDeniedEntry() == false) {
                                 msg.append("La porta è già aperta");
@@ -85,6 +87,7 @@ public class UseObserver implements GameObserver {
                             msg.append("sorry but you can not use the magic card becasue you have finished the uses");
                             
                         }
+                        */
                     }
                     case 16 -> {
                         // il caffè è l'oggetto 16

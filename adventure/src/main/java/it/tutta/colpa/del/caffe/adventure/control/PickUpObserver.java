@@ -94,7 +94,7 @@ public class PickUpObserver implements GameObserver {
                                         isobjRoomC.remove(objCont, quantity);
                                         // ho raccolto la candeggina quindi cambio la descrizione della stanza 9
                                         if (server != null) {
-                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 2));
+                                            description.getCurrentRoom().setLook((String)server.requestToServer(UPDATED_LOOK, 2));
                                         } else {
                                             throw new ServerCommunicationException ("connessione al server fallita");
                                         }

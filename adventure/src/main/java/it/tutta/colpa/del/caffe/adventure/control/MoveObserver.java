@@ -11,7 +11,7 @@ import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 public class MoveObserver implements GameObserver {
 
     @Override
-    public StringBuilder update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) {
         StringBuilder msg = new StringBuilder();
 
         try {
@@ -41,6 +41,7 @@ public class MoveObserver implements GameObserver {
                         description.getGameMap().setCurrentRoom(
                                 description.getGameMap().getStanzaArrivo(Direzione.OVEST));
                         break;
+                    /*
                     case UP:
                         int currentFloor = 1;
                         Room currentRoom = description.getGameMap().getCurrentRoom();
@@ -65,15 +66,16 @@ public class MoveObserver implements GameObserver {
                         description.getGameMap().setCurrentRoom(
                                 description.getGameMap().prendiAscensore(currentFloor - 1));
                         break;
+                     */
                     default:
                         break;
                 }
             }
         } catch (GameMapException ex) {
-            return msg.append(ex.getMessage());
+            return msg.append(ex.getMessage()).toString();
         }
 
-        return msg;
+        return msg.toString();
     }
 
     private CommandType resolveAlias(String alias) {
