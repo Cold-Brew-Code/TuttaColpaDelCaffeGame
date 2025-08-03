@@ -1,7 +1,7 @@
 package it.tutta.colpa.del.caffe;
 
 import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
-import it.tutta.colpa.del.caffe.game.exception.ErrorConnection;
+import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.rest.QuizNpc;
 
 public class MainQuizTest {
@@ -17,7 +17,7 @@ public class MainQuizTest {
              System.out.println("id corretto: " + quiz.getIdCorretta());
             System.out.println("Messaggio in caso di successo: " + quiz.getMessaggioCorret());
             System.out.println("Messaggio in caso di errore: " + quiz.getMessaggioErrato());
-        }catch(ErrorConnection e){
+        }catch(ConnectionError e){
             System.out.println("Sei offline! Riprova quando sei connesso.");
 
         }

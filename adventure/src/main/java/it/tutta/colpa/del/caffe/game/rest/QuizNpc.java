@@ -16,7 +16,7 @@ import javax.ws.rs.core.Response;
 import com.google.gson.Gson;
 
 import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
-import it.tutta.colpa.del.caffe.game.exception.ErrorConnection;
+import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 
 public class QuizNpc {
@@ -76,7 +76,7 @@ public class QuizNpc {
     /**
      * Metodo che effettua la richiesta all'API e restituisce la risposta deserializzata
      */
-    public static ResponseRiquest methodRest() {
+    public static ResponseRiquest methodRest() throws ConnectionError {
         try{ 
             Client client = ClientBuilder.newClient();
             WebTarget target = client
@@ -89,7 +89,7 @@ public class QuizNpc {
             Gson g = new Gson();
             return g.fromJson(resp.readEntity(String.class), ResponseRiquest.class);
         }catch (ProcessingException e) {
-            throw new ErrorConnection("Connessione a Internet non disponibile.", e);
+            throw new ConnectionError("Connessione a Internet non disponibile.", e);
         }
     }
 
@@ -97,7 +97,7 @@ public class QuizNpc {
      * Metodo che converte la domanda in un oggetto DialogoQuiz con traduzioni e risposte mischiate
      * @return 
      */
-    public static DialogoQuiz getQuiz() {
+    public static DialogoQuiz getQuiz() throws ConnectionError {
          // esegue la chiamata
         ResponseRiquest r = methodRest();
         if (r.getResults() == null || r.getResults().isEmpty()) {
