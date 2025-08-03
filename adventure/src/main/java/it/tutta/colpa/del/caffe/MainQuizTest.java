@@ -14,7 +14,7 @@ public class MainQuizTest {
             for (int i = 0; i < quiz.getRisposte().size(); i++) {
                 System.out.println((i + 1) + ". " + quiz.getRisposte().get(i));
             }
-
+             System.out.println("id corretto: " + quiz.getIdCorretta());
             System.out.println("Messaggio in caso di successo: " + quiz.getMessaggioCorret());
             System.out.println("Messaggio in caso di errore: " + quiz.getMessaggioErrato());
         }catch(ErrorConnection e){

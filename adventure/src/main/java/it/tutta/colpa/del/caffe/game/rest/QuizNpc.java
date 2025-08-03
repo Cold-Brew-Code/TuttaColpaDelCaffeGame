@@ -2,7 +2,9 @@ package it.tutta.colpa.del.caffe.game.rest;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
@@ -117,15 +119,14 @@ public class QuizNpc {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
 
-        List<String> risposteTradotte = new ArrayList<>();
-
+        Map<String, Boolean> risposteConFlag = new HashMap<>();// dizioanrio con chiave risposta e valore se e corretta o meno
         // Traduce la risposta corretta
         try {
             String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer()
                                                             .replaceAll("&quot;", "\"")
                                                             .replaceAll( "&#039;", "'"), 
                                                                 "en", "it");
-            risposteTradotte.add(rispostaCorrettaTradotta);
+            risposteConFlag.put(rispostaCorrettaTradotta, true);
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
@@ -133,21 +134,28 @@ public class QuizNpc {
         // Traduce e aggiunge le risposte sbagliate
         try{
             for (String rispErrata : curr.getIncorrect_answers()) {
-                risposteTradotte.add(TraduttoreApi.traduci(rispErrata
+                risposteConFlag.put(TraduttoreApi.traduci(rispErrata
                                                 .replaceAll("&quot;", "\"")
                                                 .replaceAll( "&#039;", "'"), 
-                                                    "en", "it"));
-                //risposteTradotte.add(rispErrata);
+                                                    "en", "it"),false);
             }
         }catch(TraduzioneException e){
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
-
+        List<String> risposteTradotte = new ArrayList<>(risposteConFlag.keySet());// lsita con le rispsote 
         // Mischia tutte le risposte
+
+        int indiceCorretta = -1;
         Collections.shuffle(risposteTradotte);
+        for (int i = 0; i < risposteTradotte.size(); i++) {
+            if (risposteConFlag.get(risposteTradotte.get(i))) {
+                indiceCorretta = i;
+                break;
+            }
+        }
 
         // Crea e restituisce il DialogoQuiz
-        DialogoQuiz d = new DialogoQuiz(domandaTradotta, "sei una bomba", "bocciato", risposteTradotte);
+        DialogoQuiz d = new DialogoQuiz(domandaTradotta, "sei una bomba", "bocciato", risposteTradotte, indiceCorretta);
         return d;
     }
 }

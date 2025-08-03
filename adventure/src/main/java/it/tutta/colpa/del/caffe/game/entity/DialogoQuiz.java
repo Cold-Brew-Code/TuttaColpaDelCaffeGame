@@ -15,12 +15,15 @@ public class DialogoQuiz {
     private String messaggioCorret;
     private String messaggioErrato;
     List<String> risposte;
+    private int id_rispostaCorretta;
 
-    public DialogoQuiz(String domanda, String messaggioCorret, String messaggioErrato, List<String> risposte) {
+    public DialogoQuiz(String domanda, String messaggioCorret, String messaggioErrato, List<String> risposte,int id_rispostaCorretta) {
         this.domanda = domanda;
         this.messaggioCorret = messaggioCorret;
         this.messaggioErrato = messaggioErrato;
         this.risposte = risposte;
+        this.id_rispostaCorretta= id_rispostaCorretta;
+
     }
 
     public String getDomanda() {
@@ -55,5 +58,11 @@ public class DialogoQuiz {
         this.risposte = risposte;
     }
     
-    
+    public int getIdCorretta() {
+        return id_rispostaCorretta;
+    }
+
+    public void setIdCorretta(int id_rispostaCorretta) {
+        this.id_rispostaCorretta = id_rispostaCorretta;
+    }
 }
