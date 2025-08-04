@@ -16,9 +16,9 @@ public class MoveObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         CommandType commandType = parserOutput.getCommand().getType();
         String commandName = parserOutput.getCommand().getName();
-        System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
         if (Set.of(CommandType.NORD, CommandType.SOUTH, CommandType.EAST, CommandType.WEST, CommandType.UP, CommandType.DOWN).contains(commandType)) {
             try {
+                 System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
 
                 if (commandType != null) {
                     switch (commandType) {

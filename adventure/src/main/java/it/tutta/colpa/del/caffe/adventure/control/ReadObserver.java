@@ -32,20 +32,27 @@ public class ReadObserver implements GameObserver {
         // controllo se l'oggetto è stato specificato
         Object obj = parserOutput.getObject();
 
+
         if (parserOutput.getCommand().getType() == CommandType.READ) {
+            System.out.println("sono qui");
             if (obj == null) {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
                 return msg.toString();
             }else if(obj instanceof ItemRead pippo){
+                System.out.println("sono qui 2 ");
                 Room currRoom= description.getCurrentRoom();
                 Inventory inventory= description.getInventory();
+                System.out.println("DEBUG: obj class = "+obj.getClass().getName()+
+                   " id = "+((ItemRead)obj).getId());
                 boolean objInRoom= false;
+                System.out.println("LIBRO CC" +  (pippo.getId()==3 && inventory.contains(pippo) ));
                 if(pippo.getId()==3 && inventory.contains(pippo) ){// libro cc
                     if(currRoom.getId()==10){
                         try {// sto leggendo l'ooggetto nella stanza corretta
                             pippo.decreaseUses();
                             msg.append(pippo.getContent());
                         } catch (ItemException ex) {
+                            System.out.println("no2");
                            msg.append(ex.getMessage());
 
                         }
@@ -56,6 +63,7 @@ public class ReadObserver implements GameObserver {
                             msg.append("Ti sembra il momento di leggere ora?? Ricordati che gli oggetti più vengono usati più si consumano nel tempo...");
                             msg.append("Il contenuto è: ").append(pippo.getContent());
                         } catch (ItemException ex) {
+                            System.out.println("no3");
                             msg.append(ex.getMessage());
 
                         }

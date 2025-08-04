@@ -28,27 +28,33 @@ public class BuildObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
+        System.out.println("sono in build");
         StringBuilder msg = new StringBuilder();
-        if (parserOutput.getCommand().getType() == CommandType.CREATE) {
+        if (parserOutput.getCommand().getType() == CommandType.MERGE) {
             ServerInterface server;
+            System.out.println("sono in build2");
             try {
                 server = new ServerInterface("localhost", 49152);
             } catch (ServerCommunicationException ex) {
+                System.out.println("no build");
                 server = null;
             }
             // controllo se l'oggetto è stato specificato
             Object obj = parserOutput.getObject();
-
+            System.out.println("edrfwet"+(obj instanceof Item pippo));
             boolean isRoomCurrent1 = false;
             boolean isRoomCurrent2 = false;
             if (obj == null) {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto <nome oggetto>')");
                 return msg.toString();
-            } else if (obj instanceof GeneralItem pippo) {
-                if (pippo.getName().equalsIgnoreCase("carta magica")) {
+            } else if (obj instanceof Item pippo) {
+                System.out.println(" debug\n"+(pippo.getName().equalsIgnoreCase("tessera magica")));
+                if (pippo.getName().equalsIgnoreCase("tessera magica")) {
+                    System.out.println("pippoo ");
                     if (GameUtils.getObjectFromInventory(description.getInventory(), 14) != null) {
                         msg.append("non puoi avere 200 mila tessere magiche, la vita sarebbe troppo bella. Hai già la tessera magica nell'inventario");
                     } else {
+                        System.out.println("sono in else");
                         boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
                         //Sint IdRoomCurrent = description.getCurrentRoom().getId();
@@ -69,9 +75,11 @@ public class BuildObserver implements GameObserver {
 
                                     description.getInventory().add(cartaMagica, 1);
                                 } else {
+                                    System.out.println("no build2");
                                     throw new ServerCommunicationException("connessione al server fallita");
                                 }
                             } catch (ServerCommunicationException ex) {
+                                System.out.println("no build3");
                                 msg.append(ex.getMessage());
 
                             }
@@ -99,6 +107,7 @@ public class BuildObserver implements GameObserver {
                     }
                 }
             } else {// se non è un oggetto allora da errore ( devo considerare il caso in cui abbia indicato i due oggetti che possono essere combinati che danno la magia
+                System.out.println((obj instanceof IteamCombinable pippo));
                 msg.append("non puoi fare ste magie");
             }
         }

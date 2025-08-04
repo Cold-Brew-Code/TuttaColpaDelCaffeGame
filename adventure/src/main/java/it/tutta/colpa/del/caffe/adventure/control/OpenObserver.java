@@ -43,6 +43,7 @@ public class OpenObserver implements GameObserver {
                                     .append(c.getName())
                                     .append(" è nella stanza, fai 'raccogli' per prenderlo.");
                         } else if (c.getId() == 15) { // armadietto
+                        System.out.println("sono qui in prendi");
                             c.setOpen(true);
                             msg.append("Hai aperto: ").append(c.getName());
                             if (!c.getList().isEmpty()) {

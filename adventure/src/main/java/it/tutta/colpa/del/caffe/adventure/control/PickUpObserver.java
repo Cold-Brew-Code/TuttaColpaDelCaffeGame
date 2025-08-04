@@ -39,6 +39,7 @@ public class PickUpObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
+        System.out.println("sono in predni ");
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.PICK_UP) {
             ServerInterface server;
@@ -55,11 +56,12 @@ public class PickUpObserver implements GameObserver {
                 return msg.toString();
 
             } else if (!description.getCurrentRoom().getObjects().isEmpty()) {
+                System.out.println("fmklmf");
                 GeneralItem isobjRoom = description.getCurrentRoom().getObjects().keySet().stream()
                         .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);
-                        System.out.println(isobjRoom.getName()+isobjRoom.getClass());
+                        //System.out.println("sono in predni 2\n"+isobjRoom.getName()+isobjRoom.getClass());
 
                 if (isobjRoom == null) {
                     if (description.getCurrentRoom().getObject(7) != null) {
@@ -79,6 +81,7 @@ public class PickUpObserver implements GameObserver {
                                     .append("chissà se al suo intero c'è qualcosa. (Usa il comando prendi nome oggetto");
                             // mentre se l'oggetto non può essere raccolto ma può essere aperto  
                         } else {
+                            System.out.println(isobjRoomC.getName()+isobjRoomC.isOpen());
                             if (isobjRoomC.isOpen()) {
                                 Map.Entry<GeneralItem, Integer> contenuto = isobjRoomC.getList().entrySet().stream()
                                         .filter(entry -> entry.getKey().getName().equals(parserOutput.getObject().getName())
@@ -115,42 +118,47 @@ public class PickUpObserver implements GameObserver {
                     }
                 } else { // oggetto trovato direttamente nella stanza
                     Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
-                    int quantity = objRoom.get(isobjRoom);
-                    try {
-                        description.getInventory().add(isobjRoom, quantity);
-                        msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
-                        objRoom.remove(isobjRoom, quantity);
-
-                        // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
+                    System.out.println(isobjRoom.getName()+ isobjRoom.isVisibile());
+                    //if(isobjRoom.isVisibile()){
+                        int quantity = objRoom.get(isobjRoom);
                         try {
-                            int roomId = description.getCurrentRoom().getId();
-                            if(server!= null){
-                                switch (roomId) {
-                                    case 16 -> // ha raccolto il bigliettino evento 3
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
-                                    case 30 -> // ha raccolto scheda madre evento 5
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
-                                    case 13 -> // ha raccolto il borsellino evento 7
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
-                                    case 7 -> // ha raccolto libro evento 1
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 1));
-                                    case 19 -> // ha raccolto la scatola evento 9
-                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
-                                    default -> {
-                                    }
-                                }
-                            }else{
-                                 throw new ServerCommunicationException ("connessione al server fallita");
-                            }
-                        } catch (ServerCommunicationException | NullPointerException e) {
-                            msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
-                        }
+                            description.getInventory().add(isobjRoom, quantity);
+                            msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
+                            objRoom.remove(isobjRoom, quantity);
 
-                    } catch (InventoryException e) {
-                        msg.append(" Non puoi aggiungere ").append(isobjRoom.getName()).append(" all'inventario: ").append(e.getMessage());
-                    } catch (IllegalArgumentException e) {
-                        msg.append(e.getMessage());
-                    }
+                            // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
+                            try {
+                                int roomId = description.getCurrentRoom().getId();
+                                if(server!= null){
+                                    switch (roomId) {
+                                        case 16 -> // ha raccolto il bigliettino evento 3
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
+                                        case 30 -> // ha raccolto scheda madre evento 5
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
+                                        case 13 -> // ha raccolto il borsellino evento 7
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
+                                        case 7 -> // ha raccolto libro evento 1
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 1));
+                                        case 19 -> // ha raccolto la scatola evento 9
+                                            description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
+                                        default -> {
+                                        }
+                                    }
+                                }else{
+                                    throw new ServerCommunicationException ("connessione al server fallita");
+                                }
+                            } catch (ServerCommunicationException | NullPointerException e) {
+                                msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
+                            }
+
+                        } catch (InventoryException e) {
+                            msg.append(" Non puoi aggiungere ").append(isobjRoom.getName()).append(" all'inventario: ").append(e.getMessage());
+                        } catch (IllegalArgumentException e) {
+                            msg.append(e.getMessage());
+                        }
+                    /*}else{
+                        msg.append("non c'è: ").append(isobjRoom.getName()).append(" nella stanza\n L'urgenza da alla testa.");
+                    }*/
                 }
 
                 // caso inventario     
