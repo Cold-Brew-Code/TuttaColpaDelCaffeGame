@@ -601,7 +601,7 @@ public class DataBaseManager {
                 "    i.uses             AS i_uses, " +
                 "    i.image_path       AS i_image_path " +
                 "FROM Items AS i " +
-                "WHERE i_id = ?;");
+                "WHERE i.id = ?;");
         pstm.setInt(1, itemID);
         ResultSet rs = pstm.executeQuery();
         if (rs.next()) {

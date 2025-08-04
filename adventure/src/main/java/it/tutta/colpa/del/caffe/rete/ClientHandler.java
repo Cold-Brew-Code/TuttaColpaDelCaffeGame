@@ -75,6 +75,7 @@ public class ClientHandler extends Thread {
                         String[] tk = richiesta.split("-");
                         out.writeObject(dataBase.askForItem(Integer.parseInt(tk[1])));
                     } catch (Exception e) {
+                        System.err.println("[server] " +e.getMessage()+" "+e.getStackTrace());
                         out.writeObject("Oops, qualcosa è andato storto!");
                     }
                 }else if (richiesta.equals("end")) {
