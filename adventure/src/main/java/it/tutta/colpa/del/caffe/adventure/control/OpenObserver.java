@@ -45,7 +45,6 @@ public class OpenObserver implements GameObserver {
                         } else if (c.getId() == 15) { // armadietto
                         System.out.println("sono qui in prendi");
                             c.setOpen(true);
-                            System.out.println(c.isOpen());
                             System.out.println("OPEN: armadietto aperto - hash: " + System.identityHashCode(c));
 
                             msg.append("Hai aperto: ").append(c.getName());

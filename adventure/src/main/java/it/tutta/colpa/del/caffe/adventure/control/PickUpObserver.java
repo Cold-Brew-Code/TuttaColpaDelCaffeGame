@@ -50,6 +50,7 @@ public class PickUpObserver implements GameObserver {
             }
 
             Object obj = parserOutput.getObject();
+            //GeneralItem obj1= (GeneralItem) obj; oggetto che voglio trovare
             boolean conteiner = false;
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da raccogliere. (scrivi 'raccogli nome oggetto')");
@@ -83,7 +84,7 @@ public class PickUpObserver implements GameObserver {
                         } else {
                             System.out.println(isobjRoomC.getName()+isobjRoomC.isOpen());
                             System.out.println("PICK_UP: armadietto - isOpen: " + isobjRoomC.isOpen() + " - hash: " + System.identityHashCode(isobjRoomC)+isobjRoom.getName());
-
+                            System.out.println("bastardo sei diverso\t"+isobjRoomC.equals(isobjRoom)+isobjRoom.getId()+isobjRoom.getName());
                             if (isobjRoomC.isOpen()) {
                                 Map.Entry<GeneralItem, Integer> contenuto = isobjRoomC.getList().entrySet().stream()
                                         .filter(entry -> entry.getKey().getName().equals(parserOutput.getObject().getName())
