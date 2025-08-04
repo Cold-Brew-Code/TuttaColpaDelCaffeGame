@@ -59,6 +59,7 @@ public class PickUpObserver implements GameObserver {
                         .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);
+                        System.out.println(isobjRoom.getName()+isobjRoom.getClass());
 
                 if (isobjRoom == null) {
                     if (description.getCurrentRoom().getObject(7) != null) {
@@ -131,6 +132,8 @@ public class PickUpObserver implements GameObserver {
                                         description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
                                     case 13 -> // ha raccolto il borsellino evento 7
                                         description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
+                                    case 7 -> // ha raccolto libro evento 1
+                                        description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 1));
                                     case 19 -> // ha raccolto la scatola evento 9
                                         description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
                                     default -> {
