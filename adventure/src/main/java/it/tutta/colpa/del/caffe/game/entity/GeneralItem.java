@@ -150,10 +150,7 @@ public  abstract class GeneralItem implements Serializable {
             return false;
         }
         final GeneralItem other = (GeneralItem) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
 }
