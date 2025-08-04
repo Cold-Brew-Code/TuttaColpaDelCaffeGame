@@ -1,14 +1,13 @@
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import java.util.Set;
+
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-
-import java.util.Set;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 public class MoveObserver implements GameObserver {
 
@@ -17,7 +16,8 @@ public class MoveObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         CommandType commandType = parserOutput.getCommand().getType();
         String commandName = parserOutput.getCommand().getName();
-        if (Set.of(CommandType.NORD, CommandType.SOUTH, CommandType.EAST, CommandType.WEST, CommandType.UP, CommandType.DOWN).contains(parserOutput.getCommand().getType())) {
+        System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
+        if (Set.of(CommandType.NORD, CommandType.SOUTH, CommandType.EAST, CommandType.WEST, CommandType.UP, CommandType.DOWN).contains(commandType)) {
             try {
 
                 if (commandType != null) {
@@ -40,28 +40,15 @@ public class MoveObserver implements GameObserver {
                                     description.getGameMap().getStanzaArrivo(Direzione.OVEST));
                             break;
                         case UP:
-                            int currentFloor = 1;
-                            Room currentRoom = description.getGameMap().getCurrentRoom();
-                            for (int floor = 1; floor <= 7; floor++) {
-                                if (description.getGameMap().getPiano(floor).equals(currentRoom)) {
-                                    currentFloor = floor;
-                                    break;
-                                }
-                            }
+                            System.out.println("Stanza corrente: " + description.getGameMap().getCurrentRoom().getName());
+                            description.getGameMap().debug();
                             description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().prendiAscensore(currentFloor + 1));
+                                    description.getGameMap().getStanzaArrivo(Direzione.SOPRA));
+
                             break;
                         case DOWN:
-                            currentFloor = 1;
-                            currentRoom = description.getGameMap().getCurrentRoom();
-                            for (int floor = 1; floor <= 7; floor++) {
-                                if (description.getGameMap().getPiano(floor).equals(currentRoom)) {
-                                    currentFloor = floor;
-                                    break;
-                                }
-                            }
                             description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().prendiAscensore(currentFloor - 1));
+                                    description.getGameMap().getStanzaArrivo(Direzione.SOTTO));
                             break;
                         default:
                             throw new Exception("Errore generico");
@@ -69,6 +56,7 @@ public class MoveObserver implements GameObserver {
                     msg.append("\n").append(description.getCurrentRoom().getDescription());
                 }
             } catch (GameMapException ex) {
+                msg.append(ex.getMessage());
                 msg.append(ex.getMessage());
             } catch (Exception ex) {
                 msg.append(ex.getMessage());

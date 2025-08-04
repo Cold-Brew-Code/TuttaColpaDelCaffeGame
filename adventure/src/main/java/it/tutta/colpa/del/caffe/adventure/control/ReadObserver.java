@@ -46,7 +46,8 @@ public class ReadObserver implements GameObserver {
                             pippo.decreaseUses();
                             msg.append(pippo.getContent());
                         } catch (ItemException ex) {
-                            System.err.append((CharSequence) ex);
+                           msg.append(ex.getMessage());
+
                         }
                     }else{
                         // sta leggendo nella stanza sbagliata 
@@ -55,7 +56,8 @@ public class ReadObserver implements GameObserver {
                             msg.append("Ti sembra il momento di leggere ora?? Ricordati che gli oggetti più vengono usati più si consumano nel tempo...");
                             msg.append("Il contenuto è: ").append(pippo.getContent());
                         } catch (ItemException ex) {
-                            System.err.append((CharSequence) ex);
+                            msg.append(ex.getMessage());
+
                         }
                     }
 
@@ -72,7 +74,8 @@ public class ReadObserver implements GameObserver {
                             pippo.decreaseUses();
                             msg.append(pippo.getContent());
                         } catch (ItemException ex) {
-                            System.err.append((CharSequence) ex);
+                            msg.append(ex.getMessage());
+
                         }
                     }else{
                         // sta leggendo nella stanza sbagliata 
@@ -81,7 +84,8 @@ public class ReadObserver implements GameObserver {
                             msg.append("Ti sembra il momento di leggere ora?? Ricordati che gli oggetti più vengono usati più si consumano nel tempo...");
                             msg.append("Il contenuto è: ").append(pippo.getContent());
                         } catch (ItemException ex) {
-                            System.err.append((CharSequence) ex);
+                            msg.append(ex.getMessage());
+
                         }
                     }
 
