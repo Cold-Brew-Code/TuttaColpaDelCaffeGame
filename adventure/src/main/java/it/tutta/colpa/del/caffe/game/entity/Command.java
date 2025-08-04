@@ -110,7 +110,7 @@ public class Command implements Serializable {
             return CommandType.WEST;
         }if(cmd.equals("sali")){
             return CommandType.UP;
-        }if(cmd.equals("sotto")){
+        }if(cmd.equals("scendi")){
             return CommandType.DOWN;
         }if(cmd.equals("osserva")){
             return CommandType.LOOK_AT;
