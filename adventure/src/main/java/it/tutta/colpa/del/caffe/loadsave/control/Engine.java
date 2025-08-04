@@ -2,7 +2,9 @@ package it.tutta.colpa.del.caffe.loadsave.control;
 
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage;
+import java.util.List;
 
 /**
  * @author giovav
@@ -11,26 +13,27 @@ import it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage;
 public class Engine implements LoadController {
     private Controller mainPageController;
     private GUI csp;
+    private final SaveManager saveManager = new SaveManager();
 
     public Engine(Controller mainPageController, GUI choseSavePage) {
-        this.mainPageController=mainPageController;
-        this.csp=choseSavePage;
+        this.mainPageController = mainPageController;
+        this.csp = choseSavePage;
         csp.open();
     }
 
     @Override
-    public void load(String save) {
-
+    public GameDescription load(String saveName) throws Exception {
+        return SaveLoad.loadGame(saveName);
     }
 
     @Override
-    public void deleteSaves() {
-
+    public boolean deleteSave(String saveName) {
+        return saveManager.deleteSave(saveName);
     }
 
     @Override
-    public void takeSaves() {
-
+    public List<String> getSaveList() throws Exception {
+        return saveManager.listSaves();
     }
 
     @Override

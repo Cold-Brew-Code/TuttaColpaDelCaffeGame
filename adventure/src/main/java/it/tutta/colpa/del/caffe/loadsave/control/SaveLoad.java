@@ -1,48 +1,42 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package it.tutta.colpa.del.caffe.loadsave.control;
 
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import it.tutta.colpa.del.caffe.game.entity.GameDescription;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 
-
-/**
- *
- * @author giova
- */
 public class SaveLoad {
-    
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static final String SAVES_DIR = System.getProperty("user.dir") + File.separator +
+            "resources" + File.separator + "saves";
 
-    public static void saveGame(GameDescription description) throws  IOException{
-
-
+    public static void saveGame(GameDescription description) throws IOException {
         String timestamp = LocalDateTime.now().format(FORMATTER);
-        String nameFile =  timestamp + ".save";
-        String path = System.getProperty("user.dir")+ File.separator + "resources"+ File.separator + "saves"
-                    + File.separator + nameFile;
+        String nameFile = timestamp + ".save";
+        String path = SAVES_DIR + File.separator + nameFile;
 
-
-        
-        FileOutputStream outFile= new FileOutputStream(path);
-        ObjectOutputStream objFile= new ObjectOutputStream(outFile);
-        try{
-            objFile.writeObject(description);
-            System.out.println("Salvataggio completato in: " + path);
-        }catch(IOException e){
-            e.getStackTrace();
+        File savesDir = new File(SAVES_DIR);
+        if (!savesDir.exists()) {
+            savesDir.mkdirs();
         }
-        outFile.close();
-        objFile.close();
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path))) {
+            oos.writeObject(description);
+        }
     }
 
-    
+    public static GameDescription loadGame(String saveName) throws IOException, ClassNotFoundException {
+        if (!saveName.endsWith(".save")) {
+            saveName += ".save";
+        }
+
+        File saveFile = new File(SAVES_DIR, saveName);
+        if (!saveFile.exists()) {
+            throw new FileNotFoundException("File di salvataggio non trovato: " + saveFile.getAbsolutePath());
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(saveFile))) {
+            return (GameDescription) ois.readObject();
+        }
+    }
 }

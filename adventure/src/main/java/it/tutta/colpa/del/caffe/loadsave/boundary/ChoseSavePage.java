@@ -1,20 +1,20 @@
 /*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+*Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+*Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+*/
 package it.tutta.colpa.del.caffe.loadsave.boundary;
 
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.loadsave.control.LoadController;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.io.IOException;
 
 /**
  * @author giovanni
@@ -23,20 +23,7 @@ public class ChoseSavePage extends JFrame implements GUI {
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger
             .getLogger(ChoseSavePage.class.getName());
-    private LoadController c;
-    private List<Save> saves;
-    private Save selectedSave;
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JButton deleteButton;
-    private JLabel indicationalLabel;
-    private javax.swing.JPanel insideScrollPanePanel;
-    private javax.swing.JPanel mainPanel;
-    private javax.swing.JButton saveButton;
-    private javax.swing.JScrollPane scrollPane;
-    private javax.swing.JPanel scrollPanePanel;
-    // End of variables declaration//GEN-END:variables
+    LoadController c;
 
     public ChoseSavePage() {
         try {
@@ -50,14 +37,18 @@ public class ChoseSavePage extends JFrame implements GUI {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
 
+        this.saves = new ArrayList<>(); // Inizializza sempre la lista
+
         try {
             setSaves();
         } catch (FileNotFoundException e) {
-            this.saves = null;
-            logger.log(Level.WARNING, "Cartella salvataggi non trovata", e);
+            JOptionPane.showMessageDialog(null,
+                    "Cartella salvataggi non trovata",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
         }
-
         initComponents();
+
     }
 
     @SuppressWarnings("unchecked")
@@ -215,9 +206,9 @@ public class ChoseSavePage extends JFrame implements GUI {
                         .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         this.setResizable(false);
-        setSize(800, 700);
+        setSize(800, 700); // o qualunque misura desideri
         setResizable(false);
-        scrollPanePanel.setPreferredSize(new Dimension(750, 500));
+        scrollPanePanel.setPreferredSize(new Dimension(750, 500)); // o la dimensione che vuoi
         scrollPanePanel.setMinimumSize(new Dimension(750, 500));
         scrollPanePanel.setMaximumSize(new Dimension(750, 500));
         scrollPane.setPreferredSize(new Dimension(750, 500));
@@ -244,22 +235,21 @@ public class ChoseSavePage extends JFrame implements GUI {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (selectedSave != null) {
             try {
                 c.load(selectedSave.getPath());
-                this.dispose();
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Errore durante il caricamento del salvataggio",
-                        "Errore",
-                        JOptionPane.ERROR_MESSAGE);
-                logger.log(Level.SEVERE, "Errore durante il caricamento", ex);
+                this.close();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Caricamento fallito", "Errore", JOptionPane.ERROR_MESSAGE);
             }
         }
     }// GEN-LAST:event_saveButtonActionPerformed
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_deleteButtonActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (selectedSave == null)
+            return;
+
         int scelta = JOptionPane.showConfirmDialog(
                 this,
                 "Vuoi davvero eliminare il salvataggio selezionato?",
@@ -268,31 +258,24 @@ public class ChoseSavePage extends JFrame implements GUI {
 
         if (scelta == JOptionPane.YES_OPTION) {
             try {
-                File saveFile = new File("./src/main/resources/saves/" + selectedSave.getPath());
-                if (saveFile.delete()) {
-                    selectedSave.delete();
+                if (c.deleteSave(selectedSave.getPath())) {
                     selectedSave.getLabel().setText(selectedSave.getLabel().getText() + "\t[Eliminato]");
                     selectedSave.getLabel().setOpaque(true);
                     selectedSave.getLabel().setBackground(new Color(255, 0, 0, 50));
                     saveButton.setEnabled(false);
                     deleteButton.setEnabled(false);
                     selectedSave = null;
-                } else {
-                    throw new IOException("Impossibile eliminare il file");
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this,
-                        "Errore durante l'eliminazione del salvataggio",
-                        "Errore",
+                JOptionPane.showMessageDialog(this, "Errore durante l'eliminazione", "Errore",
                         JOptionPane.ERROR_MESSAGE);
-                logger.log(Level.SEVERE, "Errore durante l'eliminazione", e);
             }
         }
     }// GEN-LAST:event_deleteButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
         c.cancelOperation();
-        this.dispose();
+
     }// GEN-LAST:event_cancelButtonActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowClosed
@@ -307,68 +290,126 @@ public class ChoseSavePage extends JFrame implements GUI {
          */
     }// GEN-LAST:event_formWindowClosed
 
+    private void deleteFileFromFileSystem() throws FileNotFoundException {
+        File dir = new File("./src/main/resources/saves");
+        if (!(dir.exists() && dir.isDirectory())) {
+            throw new FileNotFoundException("Cartella salvataggi non presente");
+        }
+        for (Save s : saves) {
+            if (s.isDeleted()) {
+                for (File f : dir.listFiles()) {
+                    if (f.getName().equals(s.getPath())) {
+                        f.delete();
+                    }
+                }
+            }
+        }
+    }
+
     private void setSaves() throws FileNotFoundException {
-        File savs = new File("./src/main/resources/saves");
+        File savs = new File(System.getProperty("user.dir") + "/resources/saves");
         if (!(savs.exists() && savs.isDirectory())) {
             throw new FileNotFoundException("Non è stato possibile trovare la cartella dei salvataggi");
         }
         this.saves = new java.util.ArrayList<>();
         for (File sa : savs.listFiles()) {
-            if (sa.getName().endsWith(".save")) {
-                this.saves.add(new Save(sa.getName()));
-            }
+            this.saves.add(new Save(sa.getName()));
         }
     }
 
     private void populateLabels() {
-        insideScrollPanePanel.removeAll();
         insideScrollPanePanel.setLayout(new BoxLayout(insideScrollPanePanel, BoxLayout.Y_AXIS));
+        insideScrollPanePanel.setPreferredSize(
+                new Dimension(scrollPane.getViewport().getWidth(), insideScrollPanePanel.getPreferredSize().height));
+        try {
+            if (this.saves.isEmpty()) {
+                JLabel label = new JLabel("<html><h3> Nessun salvataggio trovato</h3></html>");
+                label.setOpaque(false);
+                label.setBackground(new Color(255, 255, 255, 50));
+                insideScrollPanePanel.add(label);
+            } else {
+                for (Save save : saves) {
+                    JLabel label = new JLabel("Salvataggio del "
+                            + save.getPath().replace("-", "/").replace("_", " alle ore ").replace(".save", ""));
+                    save.setLabel(label);
+                    saves.set(saves.indexOf(save), save);
+                    label.setOpaque(false);
+                    label.setBackground(new Color(255, 255, 255, 50));
+                    label.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+                    label.setAlignmentX(java.awt.Component.CENTER_ALIGNMENT);
 
-        if (this.saves == null || this.saves.isEmpty()) {
+                    label.setMaximumSize(new Dimension(Integer.MAX_VALUE, label.getPreferredSize().height));
+                    label.setAlignmentX(Component.LEFT_ALIGNMENT);
+                    label.setFont(new Font("Arial", Font.PLAIN, 18));
+                    label.setBorder(BorderFactory.createCompoundBorder(
+                            BorderFactory.createLineBorder(Color.BLACK, 1), // bordo sottile
+                            BorderFactory.createEmptyBorder(10, 10, 10, 10) // padding interno
+                    ));
+                    label.setAlignmentX(Component.CENTER_ALIGNMENT);
+                    label.setMaximumSize(new Dimension(Integer.MAX_VALUE, label.getPreferredSize().height + 20)); // +20
+                                                                                                                  // per
+                                                                                                                  // compensare
+                                                                                                                  // margine
+                    label.setBorder(BorderFactory.createCompoundBorder(
+                            label.getBorder(),
+                            BorderFactory.createEmptyBorder(10, 0, 10, 0) // margine esterno sopra e sotto
+                    ));
+                    label.addMouseListener(new java.awt.event.MouseAdapter() {
+                        @Override
+                        public void mouseClicked(java.awt.event.MouseEvent e) {
+                            for (Save l : saves) {
+                                if (l.isDeleted() && l.getLabel() == label) {
+                                    return;
+                                }
+                            }
+                            selectedSave = save;
+                            for (Save l : saves) {
+                                if (!l.isDeleted()) {
+                                    l.getLabel().setOpaque(false);
+                                    l.getLabel().setBackground(new Color(0xFFFFFF));
+                                }
+                            }
+                            label.setOpaque(true);
+                            label.setBackground(new Color(0xABCDEF));
+                            saveButton.setEnabled(true);
+                            deleteButton.setEnabled(true);
+                        }
+                    });
+
+                    insideScrollPanePanel.add(label);
+                }
+            }
+        } catch (NullPointerException e) {
             JLabel label = new JLabel("<html><h3> Nessun salvataggio trovato</h3></html>");
             label.setOpaque(false);
             label.setBackground(new Color(255, 255, 255, 50));
             insideScrollPanePanel.add(label);
-        } else {
-            for (Save save : saves) {
-                JLabel label = new JLabel("Salvataggio del "
-                        + save.getPath().replace("-", "/").replace("_", " alle ore ").replace(".save", ""));
-                save.setLabel(label);
-
-                label.setOpaque(false);
-                label.setBackground(new Color(255, 255, 255, 50));
-                label.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createLineBorder(Color.BLACK, 1),
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-                label.setFont(new Font("Arial", Font.PLAIN, 18));
-                label.setAlignmentX(Component.CENTER_ALIGNMENT);
-                label.setMaximumSize(new Dimension(Integer.MAX_VALUE, label.getPreferredSize().height + 20));
-
-                label.addMouseListener(new java.awt.event.MouseAdapter() {
-                    @Override
-                    public void mouseClicked(java.awt.event.MouseEvent e) {
-                        if (save.isDeleted())
-                            return;
-
-                        selectedSave = save;
-                        for (Save s : saves) {
-                            JLabel l = s.getLabel();
-                            l.setOpaque(s.equals(selectedSave));
-                            l.setBackground(s.equals(selectedSave) ? new Color(0xABCDEF) : new Color(0xFFFFFF));
-                        }
-                        saveButton.setEnabled(true);
-                        deleteButton.setEnabled(true);
-                    }
-                });
-
-                insideScrollPanePanel.add(label);
-                insideScrollPanePanel.add(Box.createVerticalStrut(5));
-            }
         }
+        // Aggiorna il pannello
+        insideScrollPanePanel.revalidate();
+        insideScrollPanePanel.repaint();
 
+        int totalHeight = 0;
+        for (Component comp : insideScrollPanePanel.getComponents()) {
+            totalHeight += comp.getPreferredSize().height;
+        }
+        insideScrollPanePanel.setPreferredSize(new Dimension(scrollPane.getViewport().getWidth(), totalHeight + 20));
         insideScrollPanePanel.revalidate();
         insideScrollPanePanel.repaint();
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cancelButton;
+    private javax.swing.JButton deleteButton;
+    private JLabel indicationalLabel;
+    private javax.swing.JPanel insideScrollPanePanel;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JButton saveButton;
+    private javax.swing.JScrollPane scrollPane;
+    private javax.swing.JPanel scrollPanePanel;
+    // End of variables declaration//GEN-END:variables
+    private List<Save> saves;
+    private Save selectedSave;
 
     @Override
     public void open() {
@@ -385,17 +426,18 @@ public class ChoseSavePage extends JFrame implements GUI {
         try {
             this.c = (LoadController) c;
         } catch (Exception e) {
-            throw new RuntimeException("Il controller fornito non è adeguato per ChoseSavePage", e);
+            throw new RuntimeException("Il controller fornito non è adeguato per ChoseSavePage");
         }
     }
 
     private class Save {
         private JLabel saveLabel;
-        private final String path;
+        private String path;
         private boolean deleted;
 
         public Save(String path) {
             this.path = path;
+            this.saveLabel = null;
             this.deleted = false;
         }
 
@@ -408,6 +450,10 @@ public class ChoseSavePage extends JFrame implements GUI {
         }
 
         public JLabel getLabel() {
+            return saveLabel;
+        }
+
+        public JLabel getSaveLabel() {
             return saveLabel;
         }
 
