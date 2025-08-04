@@ -15,43 +15,12 @@ import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
-public class InventoryPage extends JDialog implements GUI{
+public class InventoryPage extends JDialog implements GUI {
     private GeneralItem[] it = new GeneralItem[4];
     private static final Logger logger = Logger.getLogger(InventoryPage.class.getName());
 
     public InventoryPage(Frame parent, Inventory inventory) {
         super(parent, "Inventario", true);
-
-        int i = 0;
-        for (GeneralItem iterator : inventory) {
-            try {
-                switch (i) {
-                    case 1:
-                        it[0] = iterator;
-                        setImage(firstItem, iterator.getImmagine());
-                        qtyFirstItem.setText(String.valueOf(inventory.getQuantity(iterator)));
-                        break;
-                    case 2:
-                        it[1] = iterator;
-                        setImage(secondItem, iterator.getImmagine());
-                        qtySecondItem.setText(String.valueOf(inventory.getQuantity(iterator)));
-                        break;
-                    case 3:
-                        it[2] = iterator;
-                        setImage(thirdItem, iterator.getImmagine());
-                        qtyThirdItem.setText(String.valueOf(inventory.getQuantity(iterator)));
-                        break;
-                    case 4:
-                        it[3] = iterator;
-                        setImage(fourthItem, iterator.getImmagine());
-                        qtyFourthItem.setText(String.valueOf(inventory.getQuantity(iterator)));
-                        break;
-                }
-            } catch (ImageNotFoundException e) {
-                System.err.println("[Image not found] " + iterator.getImmagine());
-            }
-            i++;
-        }
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -63,6 +32,38 @@ public class InventoryPage extends JDialog implements GUI{
             logger.log(Level.SEVERE, null, ex);
         }
         initComponents();
+        int i = 0;
+        for (GeneralItem iterator : inventory) {
+            try {
+                switch (i) {
+                    case 0:
+                        it[0] = iterator;
+                        System.out.println(it[0]);
+                        System.out.println(iterator);
+                        setImage(firstItem, iterator.getImmagine());
+                        qtyFirstItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 1:
+                        it[1] = iterator;
+                        setImage(secondItem, iterator.getImmagine());
+                        qtySecondItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 2:
+                        it[2] = iterator;
+                        setImage(thirdItem, iterator.getImmagine());
+                        qtyThirdItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                    case 3:
+                        it[3] = iterator;
+                        setImage(fourthItem, iterator.getImmagine());
+                        qtyFourthItem.setText(String.valueOf(inventory.getQuantity(iterator)));
+                        break;
+                }
+            } catch (ImageNotFoundException e) {
+                System.err.println("[Image not found] " + iterator.getImmagine());
+            }
+            i++;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -272,7 +273,14 @@ public class InventoryPage extends JDialog implements GUI{
                         .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         this.setResizable(false);
-
+        firstItem.setHorizontalAlignment(SwingConstants.CENTER);
+        firstItem.setVerticalAlignment(SwingConstants.CENTER);
+        secondItem.setHorizontalAlignment(SwingConstants.CENTER);
+        secondItem.setVerticalAlignment(SwingConstants.CENTER);
+        thirdItem.setHorizontalAlignment(SwingConstants.CENTER);
+        thirdItem.setVerticalAlignment(SwingConstants.CENTER);
+        fourthItem.setHorizontalAlignment(SwingConstants.CENTER);
+        fourthItem.setVerticalAlignment(SwingConstants.CENTER);
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>
@@ -337,11 +345,13 @@ public class InventoryPage extends JDialog implements GUI{
     private JLabel thirdItem;
 
     private void setImage(JLabel label, String path) throws ImageNotFoundException {
-        System.out.println(path);
         URL imgUrl = getClass().getResource(path);
         if (imgUrl != null) {
-            label.setIcon(new ImageIcon(
-                    new ImageIcon(imgUrl).getImage().getScaledInstance(label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH)));
+            int dimension = 77;
+            ImageIcon icon = new ImageIcon(imgUrl);
+            Image image = icon.getImage();
+            Image scaledImage = image.getScaledInstance(dimension, dimension, Image.SCALE_SMOOTH);
+            label.setIcon(new ImageIcon(scaledImage));
         } else {
             throw new ImageNotFoundException("Resource not found: " + path);
         }
@@ -353,7 +363,7 @@ public class InventoryPage extends JDialog implements GUI{
     }
 
     private void setDescription(int item) {
-        item = item-1;
+        item = item - 1;
         if (it[item] != null) {
             descriptionLabel.setText("");
             descriptionLabel.append("Nome: " + it[item].getName() + "\n");
@@ -371,7 +381,7 @@ public class InventoryPage extends JDialog implements GUI{
     }
 
     @Override
-    public void linkController(Controller c){
+    public void linkController(Controller c) {
         // controller non necessario per questa finestra
     }
 }

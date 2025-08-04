@@ -31,7 +31,7 @@ public  abstract class GeneralItem implements Serializable {
         this.name = name;
         this.description = description;
         this.alias = alias;
-        this.immagine = immagine;
+        this.immagine = "/images/"+immagine;
     }
     
     public GeneralItem(int id){
