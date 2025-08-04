@@ -24,7 +24,7 @@ public  abstract class GeneralItem implements Serializable {
     private Set<String> alias;
     private boolean visibile = false;
     private String immagine;
-    private boolean pickupable= false; 
+    private boolean pickupable = false;
 
     public GeneralItem(int id, String name, String description, Set<String> alias, String immagine) {
         this.id = id;
