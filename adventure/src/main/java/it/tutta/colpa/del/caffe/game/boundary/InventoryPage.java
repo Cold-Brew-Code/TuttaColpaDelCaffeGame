@@ -1,4 +1,3 @@
-
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import javax.swing.*;
@@ -258,7 +257,8 @@ public class InventoryPage extends JDialog implements GUI {
                                         .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                                //  MODIFICA QUI
+                                .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                                 .addContainerGap())
         );
 
