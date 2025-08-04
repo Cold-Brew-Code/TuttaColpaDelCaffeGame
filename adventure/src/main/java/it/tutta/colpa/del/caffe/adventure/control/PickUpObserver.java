@@ -82,6 +82,8 @@ public class PickUpObserver implements GameObserver {
                             // mentre se l'oggetto non può essere raccolto ma può essere aperto  
                         } else {
                             System.out.println(isobjRoomC.getName()+isobjRoomC.isOpen());
+                            System.out.println("PICK_UP: armadietto - isOpen: " + isobjRoomC.isOpen() + " - hash: " + System.identityHashCode(isobjRoomC)+isobjRoom.getName());
+
                             if (isobjRoomC.isOpen()) {
                                 Map.Entry<GeneralItem, Integer> contenuto = isobjRoomC.getList().entrySet().stream()
                                         .filter(entry -> entry.getKey().getName().equals(parserOutput.getObject().getName())
@@ -122,6 +124,8 @@ public class PickUpObserver implements GameObserver {
                     //if(isobjRoom.isVisibile()){
                         int quantity = objRoom.get(isobjRoom);
                         try {
+                            System.out.println("PICK_UP: armadietto - isOpen: "+ " - hash: " + System.identityHashCode(isobjRoom)+ isobjRoom.getName());
+
                             description.getInventory().add(isobjRoom, quantity);
                             msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
                             objRoom.remove(isobjRoom, quantity);
@@ -191,11 +195,19 @@ public class PickUpObserver implements GameObserver {
                                         msg.append(" ").append(quantity).append(" x ").append(objFinde.getName());
                                         container.remove(objFinde, quantity);
                                         trovato = true;
+                                        System.out.println("Contenuto del contenitore:");
+                                        for (GeneralItem gi : container.getList().keySet()) {
+                                            System.out.println("ID: " + gi.getId() + " Nome: " + gi.getName());
+                                        }
+
+                                        
                                         break;
                                     }
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
                                 } catch (IllegalArgumentException e) {
+                                    System.out.println("manaccia");
+                                    System.err.println(e);
                                     msg.append(e.getMessage());
                                 }
                             } else {

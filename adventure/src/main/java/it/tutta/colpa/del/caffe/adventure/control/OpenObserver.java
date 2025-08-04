@@ -45,6 +45,9 @@ public class OpenObserver implements GameObserver {
                         } else if (c.getId() == 15) { // armadietto
                         System.out.println("sono qui in prendi");
                             c.setOpen(true);
+                            System.out.println(c.isOpen());
+                            System.out.println("OPEN: armadietto aperto - hash: " + System.identityHashCode(c));
+
                             msg.append("Hai aperto: ").append(c.getName());
                             if (!c.getList().isEmpty()) {
                                 msg.append(". ").append(c.getName()).append(" contiene:");
@@ -68,6 +71,7 @@ public class OpenObserver implements GameObserver {
                 if (invObj.getId() == 11 || invObj.getId() == 7) {
                     ItemContainer c = (ItemContainer) invObj;
                     if (c.isOpen() == false) { // se non è aperto lo apro e stampo il suo contenuto
+                     System.out.println("OPEN: scatola aperto - hash: " + System.identityHashCode(c));
                         c.setOpen(true);
                         msg.append("Hai aperto: ").append(c.getName());
                         if (!c.getList().isEmpty()) {
