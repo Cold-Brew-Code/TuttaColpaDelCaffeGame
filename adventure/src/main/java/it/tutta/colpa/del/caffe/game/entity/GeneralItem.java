@@ -6,8 +6,6 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,7 +20,7 @@ public  abstract class GeneralItem implements Serializable {
     private String name;
     private String description;
     private Set<String> alias;
-    private boolean visibile = false;
+    private boolean visibile= false;
     private String immagine;
     private boolean pickupable= false; 
 

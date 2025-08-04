@@ -79,6 +79,7 @@ public class Parser {
                     return tentativo(p, token);
                 })
                 .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
+                System.out.println(findObj.get(0));
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
@@ -159,6 +160,7 @@ public class Parser {
                 String[] obj = findItem(tokens);
                 if (obj.length == 1) {
                     System.out.println("0");
+
                     // chiamo il construttore di parserOutput con solo un oggetto
                     return new ParserOutput(cd, items.stream().filter(item
                             -> item.getName().equals(obj[0])

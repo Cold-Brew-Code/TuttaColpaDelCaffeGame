@@ -1,10 +1,30 @@
 package it.tutta.colpa.del.caffe.rete;
 
-import it.tutta.colpa.del.caffe.game.entity.*;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
-import java.sql.*;
-import java.util.*;
+import it.tutta.colpa.del.caffe.game.entity.Command;
+import it.tutta.colpa.del.caffe.game.entity.Dialogo;
+import it.tutta.colpa.del.caffe.game.entity.GameMap;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
+import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.entity.ItemRead;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 /**
  * Classe che gestisce il database.

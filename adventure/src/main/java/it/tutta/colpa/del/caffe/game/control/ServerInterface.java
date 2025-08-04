@@ -1,5 +1,12 @@
 package it.tutta.colpa.del.caffe.game.control;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.rmi.ServerException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import it.tutta.colpa.del.caffe.game.entity.Command;
@@ -8,15 +15,6 @@ import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
-
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.rmi.ServerException;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -112,6 +110,7 @@ public class ServerInterface {
                 reCheck = false;
                 answer = (T) getRequestAction(rt, id).call();
             } catch (ServerCommunicationException e) {
+                System.err.println(e.getMessage());
                 throw e;
             } catch (Exception e) {
                 reCheck = true;
