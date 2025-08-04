@@ -5,13 +5,13 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.game.utility.CommandType;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import it.tutta.colpa.del.caffe.game.utility.CommandType;
 
 /**
  *
@@ -98,31 +98,33 @@ public class Command implements Serializable {
     }
 
     private static CommandType TypeStringToEnum(String command){
-        if(command.equals("nord")){
+
+        String cmd = command.toLowerCase().trim();
+        if(cmd.equals("nord")){
             return CommandType.NORD;
-        }if(command.equals("sud")){
+        }if(cmd.equals("sud")){
             return CommandType.SOUTH;
-        }if(command.equals("est")){
+        }if(cmd.equals("est")){
             return CommandType.EAST;
-        }if(command.equals("ovest")){
+        }if(cmd.equals("ovest")){
             return CommandType.WEST;
-        }if(command.equals("sopra")){
+        }if(cmd.equals("sali")){
             return CommandType.UP;
-        }if(command.equals("sotto")){
+        }if(cmd.equals("sotto")){
             return CommandType.DOWN;
-        }if(command.equals("osserva")){
+        }if(cmd.equals("osserva")){
             return CommandType.LOOK_AT;
-        }if(command.equals("raccogli")){
+        }if(cmd.equals("raccogli")){
             return CommandType.PICK_UP;
-        }if(command.equals("apri")){
+        }if(cmd.equals("apri")){
             return CommandType.OPEN;
-        }if(command.equals("premi")){
+        }if(cmd.equals("premi")){
             return CommandType.PUSH;
-        }if(command.equals("combina")){
+        }if(cmd.equals("combina")){
             return CommandType.MERGE;
-        }if(command.equals("leggi")){
+        }if(cmd.equals("leggi")){
             return CommandType.READ;
-        }if(command.equals("parla")){
+        }if(cmd.equals("parla")){
             return CommandType.TALK_TO;
         }
         return null;
