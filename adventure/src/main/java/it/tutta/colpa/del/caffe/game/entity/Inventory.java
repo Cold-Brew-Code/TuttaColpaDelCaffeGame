@@ -5,12 +5,12 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.game.exception.InventoryException;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import it.tutta.colpa.del.caffe.game.exception.InventoryException;
 
 public class Inventory  implements Serializable, Iterable<GeneralItem> {
 
@@ -97,4 +97,21 @@ public class Inventory  implements Serializable, Iterable<GeneralItem> {
         // Il set di chiavi (keySet) è già una collezione iterabile.
         return inventory.keySet().iterator();
     }
+
+    /**
+     * Restituisce l'istanza esatta dell'oggetto presente nell'inventario,
+     * se esiste una chiave uguale all'oggetto passato.
+     *
+     * @param item un oggetto GeneralItem da cercare
+     * @return l'istanza effettiva dell'oggetto presente nella mappa, altrimenti null 
+     */
+    public GeneralItem getItem(GeneralItem item) {
+        for (GeneralItem key : inventory.keySet()) {
+            if (key.equals(item)) {
+                return key; // restituisce la chiave effettiva presente nella mappa
+            }
+        }
+        return null;
+    }
+
 }
