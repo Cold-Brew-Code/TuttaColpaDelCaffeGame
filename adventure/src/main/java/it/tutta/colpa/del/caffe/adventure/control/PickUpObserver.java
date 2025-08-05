@@ -40,6 +40,12 @@ public class PickUpObserver implements GameObserver {
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
         System.out.println("sono in predni ");
+        for(GeneralItem it:description.getCurrentRoom().getObjects().keySet()){
+            System.err.println(it.getName()+it.hashCode());
+            if (it instanceof ItemContainer itC){
+                System.err.print(itC.isOpen());
+            }
+        }
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.PICK_UP) {
             ServerInterface server;
@@ -58,7 +64,10 @@ public class PickUpObserver implements GameObserver {
 
             } else if (!description.getCurrentRoom().getObjects().isEmpty()) {
                 System.out.println("fmklmf");
-                GeneralItem isobjRoom = description.getCurrentRoom().getObjects().keySet().stream()
+                GeneralItem isobjRoom = description.getCurrentRoom()
+                        .getObjects()
+                        .keySet()
+                        .stream()
                         .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);

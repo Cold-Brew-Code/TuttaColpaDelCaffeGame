@@ -33,7 +33,8 @@ public class OpenObserver implements GameObserver {
                 msg.append("Non hai specificato l'oggetto da aprire. (scrivi 'apri nome oggetto').");
                 return msg.toString();
             } else if (description.getCurrentRoom().hasObject(((GeneralItem) obj).getId())) { //oggetto nella stanza da aprire
-                if (obj instanceof ItemContainer c) {
+                GeneralItem item = description.getCurrentRoom().getObject(((GeneralItem) obj).getId());
+                if (item instanceof ItemContainer c) {
                     // id della stanza in cui mi trovo
                     int currentRoomId = description.getCurrentRoom().getId();
                     boolean isOpen = c.isOpen();
@@ -45,6 +46,12 @@ public class OpenObserver implements GameObserver {
                         } else if (c.getId() == 15) { // armadietto
                         System.out.println("sono qui in prendi");
                             c.setOpen(true);
+                            for(GeneralItem it:description.getCurrentRoom().getObjects().keySet()){
+                                System.err.println(it.getName()+it.hashCode());
+                                if (it instanceof ItemContainer itC){
+                                    System.err.print(itC.isOpen());
+                                }
+                            }
                             System.out.println("OPEN: armadietto aperto - hash: " + System.identityHashCode(c));
 
                             msg.append("Hai aperto: ").append(c.getName());
