@@ -584,7 +584,7 @@ public class DataBaseManager {
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     public String askForNewRoomLook(int eventID) throws SQLException {
-        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Evento where id=?");
+        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Event where id=?");
         pstm.setInt(1, eventID);
         ResultSet rs = pstm.executeQuery();
         if (rs.next()) {
