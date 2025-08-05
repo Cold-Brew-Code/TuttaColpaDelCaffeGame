@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.exception.ParserException;
 
 /**
  * La classe Parser è responsabile dell'analisi del testo di input dell'utente.
@@ -45,12 +46,14 @@ public class Parser {
      * @param token La stringa da verificare.
      * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
      */
-    private Command checkForCommand(String token) {
+    private Command checkForCommand(String token) throws ParserException{
         System.out.println("sono qui");
-        return commands.stream()
+        Command c = commands.stream()
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
                 .findFirst()
                 .orElse(null);
+        if(c==null) throw new ParserException("Il comando che hai inserito non è valido!");
+        return c;
     }
 
     /**
@@ -148,10 +151,12 @@ public class Parser {
      * Questo oggetto conterrà il comando identificato ed eventuali oggetti o NPC
      * associati. Se il comando non è valido, l'oggetto ParserOutput lo indicherà.
      */
-    public ParserOutput parse(String command) {
+    public ParserOutput parse(String command) throws ParserException {
         List<String> list = Utils.parseString(command, stopwords);
         String[] tokens = list.toArray(new String[0]);
-
+        if (tokens.length==0){
+            throw new ParserException("Il comando che hai inserito non è valido!");
+        }
         Command cd = checkForCommand(tokens[0]);// xkè il comando è sempre in prima posizione
         System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
         if (cd != null) {

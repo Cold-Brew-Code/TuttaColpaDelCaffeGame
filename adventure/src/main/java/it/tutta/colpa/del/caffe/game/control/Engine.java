@@ -8,6 +8,7 @@ import it.tutta.colpa.del.caffe.game.boundary.InventoryPage;
 import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+import it.tutta.colpa.del.caffe.game.exception.ParserException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
@@ -219,11 +220,14 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     public void executeNewCommand(String command) {
         if (!command.isEmpty()) {
             GUI.executedCommand();
-            notifyObservers(parser.parse(command));
+
             try {
+                notifyObservers(parser.parse(command));
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+            }catch (ParserException e){
+                description.getMessages().add(e.getMessage());
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
         }
