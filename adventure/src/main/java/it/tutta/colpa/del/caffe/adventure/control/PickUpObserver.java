@@ -200,13 +200,6 @@ public class PickUpObserver implements GameObserver {
                                         msg.append(" ").append(quantity).append(" x ").append(objFinde.getName());
                                         container.remove(objFinde, quantity);
                                         trovato = true;
-                                        System.out.println("Contenuto del contenitore:");
-                                        for (GeneralItem gi : container.getList().keySet()) {
-                                            System.out.println("ID: " + gi.getId() + " Nome: " + gi.getName());
-                                        }
-
-                                        
-                                        break;
                                     }
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
@@ -219,11 +212,14 @@ public class PickUpObserver implements GameObserver {
                                 // contenitore chiuso
                                 msg.append("Ops l'oggetto : ").append(container.getName())
                                         .append(" è chiuso. Dovresti prima aprirlo. (Usa il comando APRI nome oggetto");
-
                             }
                         }
                     }
-                    if (!trovato || listContainer.isEmpty()) {
+                    if (!listContainer.isEmpty()) {
+                        if(!trovato){
+                            msg.append("L'oggetto ").append(invObj.getName()).append(" non è nell'inventario");
+                        }
+                    }else{
                         msg.append("L'oggetto ").append(invObj.getName()).append(" non è nell'inventario");
                     }
                 } else {
@@ -233,7 +229,6 @@ public class PickUpObserver implements GameObserver {
 
                 msg.append("Impossibile, non hai oggetti nell'inventario.");
             } else {
-
                 msg.append("Nella stanza: ").append(description.getCurrentRoom().getName())
                         .append(" non è presente l'oggetto ").append(parserOutput.getObject().getName());
             }
