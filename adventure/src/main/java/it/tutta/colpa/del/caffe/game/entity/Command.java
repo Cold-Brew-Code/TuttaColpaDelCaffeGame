@@ -126,6 +126,8 @@ public class Command implements Serializable {
             return CommandType.READ;
         }if(cmd.equals("parla")){
             return CommandType.TALK_TO;
+        }if(cmd.equals("lascia")){
+            return CommandType.LEAVE;
         }
         return null;
     }
