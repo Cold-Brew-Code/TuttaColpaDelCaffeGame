@@ -47,7 +47,6 @@ public class Parser {
      * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
      */
     private Command checkForCommand(String token) throws ParserException{
-        System.out.println("sono qui");
         Command c = commands.stream()
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
                 .findFirst()
@@ -63,7 +62,7 @@ public class Parser {
      * @param token L'array di token derivato dall'input dell'utente.
      * @return Un array di stringhe contenente i nomi degli oggetti trovati.
      */
-    private String[] findItem(String[] token) {
+    private String[] findItem(String[] token) throws ParserException  {
         List<String> findObj = new ArrayList<>();
 
         this.items.stream()
@@ -82,7 +81,7 @@ public class Parser {
                     return tentativo(p, token);
                 })
                 .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
-                System.out.println(findObj.get(0));
+        if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
@@ -191,17 +190,14 @@ public class Parser {
                 } else if (npcP != null) {
                     // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
                     // chiama il costruttore con comando ed NPC
-                    System.out.println("2");
                     return new ParserOutput(cd, npcP);
                 } else {
-                    System.out.println("3");
                     // non esiste nessun npc nelle stanze errore
                     return new ParserOutput(cd, (NPC) null);
                 }
             } else {
                 // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer
                 // construttore di parserOutput con comadno e null
-                System.out.println("4"+cd.getName()+cd.getType());
                 return new ParserOutput(cd);
             }
         } else {
