@@ -54,32 +54,39 @@ public class BuildObserver implements GameObserver {
                     if (GameUtils.getObjectFromInventory(description.getInventory(), 14) != null) {
                         msg.append("non puoi avere 200 mila tessere magiche, la vita sarebbe troppo bella. Hai già la tessera magica nell'inventario");
                     } else {
-                        System.out.println("sono in else");
+                        //System.out.println("sono in else");
                         boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
                         //Sint IdRoomCurrent = description.getCurrentRoom().getId();
                         if (objInv1 && objInv2) {
-                            IteamCombinable cartaMagica;
                             try {
                                 if (server != null) {
-                                    cartaMagica = server.requestToServer(RequestType.ITEM, 14);
+                                    Item cartaM = server.requestToServer(RequestType.ITEM, 14);
+                                    if(cartaM instanceof IteamCombinable) {
 
-                                    GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
-                                    GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
+                                        IteamCombinable cartaMagica = (IteamCombinable) cartaM;
+                                        System.out.println("ho fatto richiesta");
+                                        GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
+                                        GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
+                                        //System.out.println("Tipo di oggetto inatteso: " + obj1.getClass()+ obj2.getClass());
+                                        Item objInvR1 = (Item) obj1;
+                                        Item objInvR2 = (Item) obj2;
 
-                                    Item objInvR1 = (Item) obj1;
-                                    Item objInvR2 = (Item) obj2;
+                                        description.getInventory().remove(objInvR1);
+                                        description.getInventory().remove(objInvR2);
 
-                                    description.getInventory().remove(objInvR1);
-                                    description.getInventory().remove(objInvR2);
-
-                                    description.getInventory().add(cartaMagica, 1);
+                                        description.getInventory().add(cartaMagica, 1);
+                                    }
+                                    else{
+                                        msg.append("Non puoi fare tutte le magie che vuoi.");//L'oggetto ricevuto non è combinabile
+                                    }
+                                    
                                 } else {
-                                    System.out.println("no build2");
+                                    //System.out.println("no build2");
                                     throw new ServerCommunicationException("connessione al server fallita");
                                 }
                             } catch (ServerCommunicationException ex) {
-                                System.out.println("no build3");
+                                //System.out.println("no build3");
                                 msg.append(ex.getMessage());
 
                             }
