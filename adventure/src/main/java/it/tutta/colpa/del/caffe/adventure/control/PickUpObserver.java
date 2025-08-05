@@ -40,12 +40,6 @@ public class PickUpObserver implements GameObserver {
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
         System.out.println("sono in predni ");
-        for(GeneralItem it:description.getCurrentRoom().getObjects().keySet()){
-            System.err.println(it.getName()+it.hashCode());
-            if (it instanceof ItemContainer itC){
-                System.err.print(itC.isOpen());
-            }
-        }
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.PICK_UP) {
             ServerInterface server;
@@ -128,13 +122,12 @@ public class PickUpObserver implements GameObserver {
                             }
                         }
                     }
-                } else { // oggetto trovato direttamente nella stanza
+                } else if(parserOutput.getObject().isPickupable()){ // oggetto trovato direttamente nella stanza
                     Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
-                    System.out.println(isobjRoom.getName()+ isobjRoom.isVisibile());
-                    //if(isobjRoom.isVisibile()){
+                    System.out.println(isobjRoom.getName()+ isobjRoom.isVisibile()+"visibile?");
+                    if(isobjRoom.isVisibile()){
                         int quantity = objRoom.get(isobjRoom);
                         try {
-                            System.out.println("PICK_UP: armadietto - isOpen: "+ " - hash: " + System.identityHashCode(isobjRoom)+ isobjRoom.getName());
 
                             description.getInventory().add(isobjRoom, quantity);
                             msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
@@ -170,9 +163,11 @@ public class PickUpObserver implements GameObserver {
                         } catch (IllegalArgumentException e) {
                             msg.append(e.getMessage());
                         }
-                    /*}else{
+                    }else{
                         msg.append("non c'è: ").append(isobjRoom.getName()).append(" nella stanza\n L'urgenza da alla testa.");
-                    }*/
+                    }
+                }else{
+                    msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");
                 }
 
                 // caso inventario     
