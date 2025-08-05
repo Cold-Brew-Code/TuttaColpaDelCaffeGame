@@ -123,7 +123,8 @@ CREATE TABLE IF NOT EXISTS ReadableContent(
 MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
 (6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
-(11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi');
+(11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi'),
+(16,'lascia');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
 (1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'),
@@ -134,7 +135,8 @@ MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
 (10, 'push'), (10, 'spingi'), (10,'attiva'),(10,'pressa'), (10,'schiacciare'),
 (11, 'crea'), (11, 'costruisci'), (11, 'inventa'), (11, 'utilizza'), (11,'usa'),
 (12, 'sfoglia'), (12, 'decifra'), (12, 'interpretra ') ,
-(13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera');
+(13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera'),
+(16,'butta');
 
 MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
 (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,-1, 'chiave.png', true),
