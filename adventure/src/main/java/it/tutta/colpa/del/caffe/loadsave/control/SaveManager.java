@@ -6,18 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SaveManager {
-    private static final String SAVES_DIR = System.getProperty("user.dir") + File.separator +
-            "resources" + File.separator + "saves";
-
     public List<String> listSaves() throws FileNotFoundException {
-        File dir = new File(SAVES_DIR);
+        File dir = new File(SaveLoad.SAVES_DIR); // usa la costante da SaveLoad (evito ridondanza)
         if (!dir.exists()) {
-            dir.mkdirs();
-            return new ArrayList<>();
+            throw new FileNotFoundException("Directory dei salvataggi non trovata: " + SaveLoad.SAVES_DIR);
         }
 
         if (!dir.isDirectory()) {
-            throw new FileNotFoundException("Path non è una directory: " + SAVES_DIR);
+            throw new FileNotFoundException("Path non è una directory: " + SaveLoad.SAVES_DIR);
         }
 
         List<String> saves = new ArrayList<>();
@@ -35,7 +31,7 @@ public class SaveManager {
         if (!saveName.endsWith(".save")) {
             saveName += ".save";
         }
-        File saveFile = new File(SAVES_DIR, saveName);
+        File saveFile = new File(SaveLoad.SAVES_DIR, saveName);
         return saveFile.exists() && saveFile.delete();
     }
 

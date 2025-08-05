@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.loadsave.boundary;
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.loadsave.control.LoadController;
+import it.tutta.colpa.del.caffe.loadsave.control.SaveLoad;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,6 +27,18 @@ public class ChoseSavePage extends JFrame implements GUI {
     LoadController c;
 
     public ChoseSavePage() {
+        // verifico l'esistenza della cartella prima di tutto
+        File savesDir = new File(SaveLoad.SAVES_DIR);
+        if (!savesDir.exists() || !savesDir.isDirectory()) {
+            JOptionPane.showMessageDialog(null,
+                    "Cartella salvataggi non trovata: " + SaveLoad.SAVES_DIR,
+                    "Errore Critico",
+                    JOptionPane.ERROR_MESSAGE);
+            // chiudi la finestra immediatamente
+            this.dispose();
+            return;
+        }
+
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -43,12 +56,13 @@ public class ChoseSavePage extends JFrame implements GUI {
             setSaves();
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null,
-                    "Cartella salvataggi non trovata",
+                    "Nessun salvataggio trovato nella cartella",
                     "Errore",
                     JOptionPane.ERROR_MESSAGE);
+            this.dispose(); // chiude la finestra se non ci sono salvataggi
+            return;
         }
         initComponents();
-
     }
 
     @SuppressWarnings("unchecked")
@@ -307,13 +321,20 @@ public class ChoseSavePage extends JFrame implements GUI {
     }
 
     private void setSaves() throws FileNotFoundException {
-        File savs = new File(System.getProperty("user.dir") + "/resources/saves");
+        File savs = new File(SaveLoad.SAVES_DIR);
         if (!(savs.exists() && savs.isDirectory())) {
-            throw new FileNotFoundException("Non è stato possibile trovare la cartella dei salvataggi");
+            throw new FileNotFoundException(
+                    "Non è stato possibile trovare la cartella dei salvataggi: " + SaveLoad.SAVES_DIR);
         }
-        this.saves = new java.util.ArrayList<>();
-        for (File sa : savs.listFiles()) {
-            this.saves.add(new Save(sa.getName()));
+        this.saves = new ArrayList<>();
+        File[] saveFiles = savs.listFiles((dir, name) -> name.endsWith(".save"));
+
+        if (saveFiles != null && saveFiles.length > 0) {
+            for (File sa : saveFiles) {
+                if (sa.isFile()) { // verifico che sia un file e non una directory
+                    this.saves.add(new Save(sa.getName()));
+                }
+            }
         }
     }
 
