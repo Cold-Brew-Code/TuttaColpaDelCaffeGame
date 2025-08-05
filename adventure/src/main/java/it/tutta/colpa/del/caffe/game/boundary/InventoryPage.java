@@ -339,8 +339,8 @@ public class InventoryPage extends JDialog implements GUI {
     private JPanel panel;
     private JLabel qtyFirstItem;
     private JLabel qtySecondItem;
-    private JLabel qtyThirdItem;
     private JLabel qtyFourthItem;
+    private JLabel qtyThirdItem;
     private JLabel secondItem;
     private JLabel thirdItem;
 
