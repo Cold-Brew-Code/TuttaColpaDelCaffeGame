@@ -370,6 +370,15 @@ public class DataBaseManager {
         } else {
             i = assembleItem(rsItem);
         }
+        //System.out.println(" VALORE visibile " +rsItem.getBoolean("i_is_visible")+ i.getName());
+        if(rsItem.getBoolean("i_is_visible")){
+            i.setVisibile(rsItem.getBoolean("i_is_visible"));
+        }
+
+        //System.out.println(" VALORE PRENDIBILE " +rsItem.getBoolean("i_is_pickable")+ i.getName());
+        if(rsItem.getBoolean("i_is_pickable")){
+            i.setPickupable(rsItem.getBoolean("i_is_pickable"));
+        }
         return i;
     }
 
@@ -491,17 +500,23 @@ public class DataBaseManager {
      * @return un nuovo oggetto ItemContainer.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
-        return new ItemContainer(
-                rsContainer.getInt("i_id"),
-                rsContainer.getString("i_name"),
-                rsContainer.getString("i_description"),
-                askForItemAlias(rsContainer.getInt("i_id")),
-                rsContainer.getString("i_image_path"),
-                askForContainedItems(rsContainer.getInt("i_id")),
-                false
-        );
-    }
+   private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
+    ItemContainer container = new ItemContainer(
+        rsContainer.getInt("i_id"),
+        rsContainer.getString("i_name"),
+        rsContainer.getString("i_description"),
+        askForItemAlias(rsContainer.getInt("i_id")),
+        rsContainer.getString("i_image_path"),
+        askForContainedItems(rsContainer.getInt("i_id")),
+        false // oppure metti un valore corretto per 'isOpen' se viene dal DB
+    );
+    //System.out.println("VALORE visibile: " + rsContainer.getBoolean("i_is_visible") + " " + container.getName());
+    container.setVisibile(rsContainer.getBoolean("i_is_visible"));
+    //System.out.println("VALORE prendibile: " + rsContainer.getBoolean("i_is_pickable") + " " + container.getName());
+    container.setPickupable(rsContainer.getBoolean("i_is_pickable"));
+    return container;
+}
+
 
     /**
      * Recupera gli oggetti contenuti all'interno di un contenitore.
