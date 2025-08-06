@@ -4,12 +4,15 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import java.util.List;
+
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -34,6 +37,7 @@ public class UseObserver implements GameObserver {
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
+        System.out.println("sono in use");
         if (parserOutput.getCommand().getType() == CommandType.USE) {
             GeneralItem objInv;
             GeneralItem objInv1;
@@ -72,18 +76,18 @@ public class UseObserver implements GameObserver {
                             }
                             
                         }
-                        
                         else if (magicCard) {
-
                             Item card= (Item) parserOutput.getObject();
                             if(card.getUses()>0){
                                 //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
-                                if (description.getCurrentRoom().isDeniedEntry() == false) {
+                                List<Room> listR= description.getGameMap().getStanzeRaggiungibiliDallaStanzaCorrente();
+                                Room room= listR.stream().filter(r-> r.isDeniedEntry()==false).findFirst().orElse(null);
+                                if (room== null) {
                                     msg.append("La porta è già aperta");
                                 }else{
-                                    description.getCurrentRoom().setDeniedEntry(false);
+                                    room.setDeniedEntry(true);
                                     card.setUses(card.getUses() - 1);
-                                    msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza.");
+                                    msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza: ").append(room.getName());
                                 }
                             
                             } else if (magicCard && card.getUses() <= 0 && description.getCurrentRoom().isDeniedEntry()) {

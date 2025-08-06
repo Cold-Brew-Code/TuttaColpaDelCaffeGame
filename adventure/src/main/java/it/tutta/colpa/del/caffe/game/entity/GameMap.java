@@ -4,7 +4,9 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -101,11 +103,12 @@ public class GameMap implements Serializable {
     public void debug(){
         // Stampa i nodi
         System.out.println("Vertici: " + this.grafo.vertexSet());
-
+        
         // Stampa gli archi
         System.out.println("Archi:");
         for (ArcoGrafo edge : this.grafo.edgeSet()) {
-            System.out.println(this.grafo.getEdgeSource(edge) + " -"+edge.getEtichetta().toString()+"- " + this.grafo.getEdgeTarget(edge));
+            System.out.println(this.grafo.getEdgeSource(edge) + " -"+edge.getEtichetta().toString()+"- " + this.grafo.getEdgeTarget(edge)
+            +"\n entrambiel?\t"+ this.grafo.getEdgeTarget(edge).isDeniedEntry());
         }
     }
 
@@ -149,5 +152,17 @@ public class GameMap implements Serializable {
             }
         } 
     }
+
+
+    public List<Room> getStanzeRaggiungibiliDallaStanzaCorrente() {
+        if (currentRoom == null) {
+            throw new GameMapException("Non puoi andare da nessuna parte!");         }
+
+        return grafo.outgoingEdgesOf(currentRoom)
+                    .stream()
+                    .map(grafo::getEdgeTarget)
+                    .collect(Collectors.toList());
+    }
+
 
 }
