@@ -128,6 +128,8 @@ public class Command implements Serializable {
             return CommandType.TALK_TO;
         }if(cmd.equals("lascia")){
             return CommandType.LEAVE;
+        }if(cmd.equals("usa")){
+            return CommandType.USE;
         }
         return null;
     }
