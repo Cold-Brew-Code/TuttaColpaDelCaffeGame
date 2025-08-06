@@ -17,27 +17,45 @@ public class MoveObserver implements GameObserver {
         CommandType commandType = parserOutput.getCommand().getType();
         String commandName = parserOutput.getCommand().getName();
         if (Set.of(CommandType.NORD, CommandType.SOUTH, CommandType.EAST, CommandType.WEST, CommandType.UP, CommandType.DOWN).contains(commandType)) {
+            boolean close=false;
             try {
                  System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
 
                 if (commandType != null) {
                     switch (commandType) {
                         case NORD:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.NORD)
-                            );
+                            if(description.getGameMap().getStanzaArrivo(Direzione.NORD).isDeniedEntry()){
+
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.NORD)
+                                );
+                            }else{
+                                close= true;
+                            }
                             break;
                         case SOUTH:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.SUD));
+                            if(description.getGameMap().getStanzaArrivo(Direzione.SUD).isDeniedEntry()){
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.SUD));
+                            }else{
+                                close= true;
+                            }
                             break;
                         case EAST:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.EST));
+                            if(description.getGameMap().getStanzaArrivo(Direzione.EST).isDeniedEntry()){
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.EST));
+                            }else{
+                                close= true;
+                            }
                             break;
                         case WEST:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.OVEST));
+                            if(description.getGameMap().getStanzaArrivo(Direzione.OVEST).isDeniedEntry()){
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.OVEST));
+                            }else{
+                                close=true;
+                            }
                             break;
                         case UP:
                             System.out.println("Stanza corrente: " + description.getGameMap().getCurrentRoom().getName());
@@ -57,9 +75,14 @@ public class MoveObserver implements GameObserver {
                 }
             } catch (GameMapException ex) {
                 msg.append(ex.getMessage());
-                msg.append(ex.getMessage());
+                //msg.append(ex.getMessage());
             } catch (Exception ex) {
                 msg.append(ex.getMessage());
+            }
+            if(close){
+                msg.append("Ops la stanza è chiusa");
+            }else{
+                msg.append("");
             }
         }
         return msg.toString();
