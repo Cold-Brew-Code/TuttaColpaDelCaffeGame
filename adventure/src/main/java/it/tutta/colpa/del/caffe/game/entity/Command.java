@@ -130,6 +130,8 @@ public class Command implements Serializable {
             return CommandType.LEAVE;
         }if(cmd.equals("usa")){
             return CommandType.USE;
+        }if(cmd.equals("ascensore")){
+            return CommandType.LIFT;
         }
         return null;
     }
