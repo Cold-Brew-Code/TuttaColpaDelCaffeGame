@@ -12,6 +12,7 @@ import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
@@ -36,14 +37,14 @@ public class LeaveObserver implements GameObserver {
             }
             else if(parserOutput.getObject() instanceof GeneralItem obj){
                 if(description.getInventory().contains(obj)){
-                    GeneralItem objLeave = description.getInventory().getItem(obj);
-                    int quantity= description.getInventory().getQuantity(objLeave);
-                    description.getInventory().remove(objLeave, quantity);
+                    GeneralItem objLeave1= GameUtils.getObjectFromInventory(description.getInventory(), obj.getId());
+                    int quantity= description.getInventory().getQuantity(objLeave1);
+                    description.getInventory().remove(objLeave1, quantity);
                     Room roomCurr= description.getCurrentRoom();
                     Map<GeneralItem, Integer> map=  roomCurr.getObjects();
-                    map.put(objLeave, quantity);
+                    map.put(objLeave1, quantity);
                     roomCurr.setObjects(map);
-                    msg.append("Hai laciato ").append(objLeave.getName()).append(" nella stanza");
+                    msg.append("Hai laciato ").append(objLeave1.getName()).append(" nella stanza");
                 }else{
                     msg.append("l'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                 }
