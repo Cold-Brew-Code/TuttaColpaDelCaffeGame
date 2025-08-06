@@ -36,12 +36,11 @@ public class BuildObserver implements GameObserver {
             try {
                 server = new ServerInterface("localhost", 49152);
             } catch (ServerCommunicationException ex) {
-                System.out.println("no build");
                 server = null;
             }
             // controllo se l'oggetto è stato specificato
             Object obj = parserOutput.getObject();
-            System.out.println("edrfwet"+(obj instanceof Item pippo));
+           // System.out.println("edrfwet"+(obj instanceof Item pippo));
             boolean isRoomCurrent1 = false;
             boolean isRoomCurrent2 = false;
             if (obj == null) {

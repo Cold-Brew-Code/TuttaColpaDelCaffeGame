@@ -39,7 +39,7 @@ public class PickUpObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException{
-        System.out.println("sono in predni ");
+        //System.out.println("sono in predni ");
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.PICK_UP) {
             ServerInterface server;
