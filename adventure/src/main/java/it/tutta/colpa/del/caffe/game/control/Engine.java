@@ -1,3 +1,4 @@
+
 package it.tutta.colpa.del.caffe.game.control;
 
 import it.tutta.colpa.del.caffe.adventure.control.*;
@@ -109,6 +110,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.attach(new ReadObserver());
         this.attach(new TalkObserver());
         this.attach(new UseObserver());
+        this.attach(new LeaveObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
