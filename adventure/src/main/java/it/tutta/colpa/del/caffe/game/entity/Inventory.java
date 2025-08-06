@@ -5,12 +5,12 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.game.exception.InventoryException;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import it.tutta.colpa.del.caffe.game.exception.InventoryException;
 
 public class Inventory  implements Serializable, Iterable<GeneralItem> {
 

@@ -1,5 +1,7 @@
+
 package it.tutta.colpa.del.caffe.game.control;
 
+import it.tutta.colpa.del.caffe.adventure.control.*;
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
 import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
@@ -7,12 +9,14 @@ import it.tutta.colpa.del.caffe.game.boundary.InventoryPage;
 import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+import it.tutta.colpa.del.caffe.game.exception.ParserException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 import java.awt.*;
 import java.io.File;
@@ -91,13 +95,22 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
             timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
-            GUI.out(description.getCurrentRoom().getDescription());
+            GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
+        this.attach(new BuildObserver());
+        this.attach(new LookAtObserver());
+        this.attach(new MoveObserver());
+        this.attach(new OpenObserver());
+        this.attach(new PickUpObserver());
+        this.attach(new ReadObserver());
+        this.attach(new TalkObserver());
+        this.attach(new UseObserver());
+        this.attach(new LeaveObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
@@ -106,10 +119,10 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         Parser p = new Parser(
                 stopwords,
                 description.getCommands(),
-                si.requestToServer(ServerInterface.RequestType.ITEMS),
-                si.requestToServer(ServerInterface.RequestType.NPCs)
+                si.requestToServer(RequestType.ITEMS),
+                si.requestToServer(RequestType.NPCs)
         );
-        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+        si.requestToServer(RequestType.CLOSE_CONNECTION);
         return p;
     }
 
@@ -123,12 +136,12 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
         ServerInterface si = new ServerInterface("localhost", 49152);
-        GameMap gm = si.requestToServer(ServerInterface.RequestType.GAME_MAP);
-        List<Command> c = si.requestToServer(ServerInterface.RequestType.COMMANDS);
+        GameMap gm = si.requestToServer(RequestType.GAME_MAP);
+        List<Command> c = si.requestToServer(RequestType.COMMANDS);
         GameDescription gd = new GameDescription(
-                si.requestToServer(ServerInterface.RequestType.GAME_MAP),
-                si.requestToServer(ServerInterface.RequestType.COMMANDS));
-        si.requestToServer(ServerInterface.RequestType.CLOSE_CONNECTION);
+                si.requestToServer(RequestType.GAME_MAP),
+                si.requestToServer(RequestType.COMMANDS));
+        si.requestToServer(RequestType.CLOSE_CONNECTION);
         return gd;
     }
 
@@ -208,13 +221,17 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     @Override
     public void executeNewCommand(String command) {
         if (!command.isEmpty()) {
-            notifyObservers(parser.parse(command));
+            GUI.executedCommand();
+
             try {
+                notifyObservers(parser.parse(command));
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+            }catch (ParserException e){
+                description.getMessages().add(e.getMessage());
             }
-            GUI.out(description.getMessages().getLast());
+            GUI.out(description.getMessages().getLast().translateEscapes());
         }
     }
 
@@ -222,7 +239,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     public void endGame() {
         if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
             this.GUI.close();
-            System.out.println(mpc);
             new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
     }
@@ -253,21 +269,26 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     @Override
     public void notifyObservers(ParserOutput po) {
         for (GameObserver o : observers) {
-            description.getMessages().add(o.update(description, po));
+            try {
+                String out = o.update(description, po);
+                if (!out.isEmpty()){
+                    description.getMessages().add(out);
+                }
+            } catch (ServerCommunicationException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public void finishGame() {
         GUI.out("Tempo esaurito! La partita è finita.");
-
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
     }
 
     @Override
     public void onTimeExpired() {
-        finishGame();  // chiama il metodo esistente
+        // chiama il metodo esistente
+        finishGame();
     }
-
-
 }

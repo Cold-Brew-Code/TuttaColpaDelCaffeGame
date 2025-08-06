@@ -1,6 +1,9 @@
 package it.tutta.colpa.del.caffe.rete;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.sql.SQLException;
 
@@ -75,6 +78,7 @@ public class ClientHandler extends Thread {
                         String[] tk = richiesta.split("-");
                         out.writeObject(dataBase.askForItem(Integer.parseInt(tk[1])));
                     } catch (Exception e) {
+                        System.err.println("[server] " +e.getMessage()+" "+e.getStackTrace());
                         out.writeObject("Oops, qualcosa è andato storto!");
                     }
                 }else if (richiesta.equals("end")) {

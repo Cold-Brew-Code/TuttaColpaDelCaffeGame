@@ -4,6 +4,7 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
@@ -18,6 +19,7 @@ public interface GameObserver {
      * @param parserOutput
      * @return
      */
-    public String update(GameDescription description, ParserOutput parserOutput);
+
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException;
 
 }

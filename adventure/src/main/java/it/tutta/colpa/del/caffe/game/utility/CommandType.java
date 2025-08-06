@@ -119,5 +119,10 @@ public enum CommandType {
      */
     TURN_OFF,
 
-    CREATE
+    CREATE,
+    /**
+     * 
+     */
+
+    LEAVE
 }
