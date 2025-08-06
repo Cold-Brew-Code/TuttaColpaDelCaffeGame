@@ -159,7 +159,7 @@ public class DataBaseManager {
                 room.getString("description"),
                 room.getString("look"),
                 room.getBoolean("is_visible"),
-                !room.getBoolean("allowed_entry"),
+                room.getBoolean("allowed_entry"),
                 room.getString("image_path"),
                 askForInRoomItems(room.getInt("id")),
                 askForNPCs(room.getInt("id"))
