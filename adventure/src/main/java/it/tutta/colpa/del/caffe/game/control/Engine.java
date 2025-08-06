@@ -1,41 +1,32 @@
+
 package it.tutta.colpa.del.caffe.game.control;
 
-import java.awt.Frame;
+import it.tutta.colpa.del.caffe.adventure.control.*;
+import it.tutta.colpa.del.caffe.game.boundary.GUI;
+import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
+import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
+import it.tutta.colpa.del.caffe.game.boundary.InventoryPage;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.exception.GameMapException;
+import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+import it.tutta.colpa.del.caffe.game.exception.ParserException;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.Parser;
+import it.tutta.colpa.del.caffe.game.utility.Utils;
+import it.tutta.colpa.del.caffe.start.control.MainPageController;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
+
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import it.tutta.colpa.del.caffe.adventure.control.BuildObserver;
-import it.tutta.colpa.del.caffe.adventure.control.LeaveObserver;
-import it.tutta.colpa.del.caffe.adventure.control.LookAtObserver;
-import it.tutta.colpa.del.caffe.adventure.control.MoveObserver;
-import it.tutta.colpa.del.caffe.adventure.control.OpenObserver;
-import it.tutta.colpa.del.caffe.adventure.control.PickUpObserver;
-import it.tutta.colpa.del.caffe.adventure.control.ReadObserver;
-import it.tutta.colpa.del.caffe.adventure.control.TalkObserver;
-import it.tutta.colpa.del.caffe.adventure.control.UseObserver;
 import it.tutta.colpa.del.caffe.adventure.other.Clock;
 import it.tutta.colpa.del.caffe.adventure.other.TimeObserver;
-import it.tutta.colpa.del.caffe.game.boundary.GUI;
-import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
-import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
-import it.tutta.colpa.del.caffe.game.boundary.InventoryPage;
-import it.tutta.colpa.del.caffe.game.entity.Command;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameMap;
-import it.tutta.colpa.del.caffe.game.entity.GameObservable;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
-import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import it.tutta.colpa.del.caffe.game.utility.Parser;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.game.utility.RequestType;
-import it.tutta.colpa.del.caffe.game.utility.Utils;
-import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 
 /**
@@ -119,7 +110,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.attach(new ReadObserver());
         this.attach(new TalkObserver());
         this.attach(new UseObserver());
-        this.attach(new  LeaveObserver());
+        this.attach(new LeaveObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
@@ -231,11 +222,14 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     public void executeNewCommand(String command) {
         if (!command.isEmpty()) {
             GUI.executedCommand();
-            notifyObservers(parser.parse(command));
+
             try {
+                notifyObservers(parser.parse(command));
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+            }catch (ParserException e){
+                description.getMessages().add(e.getMessage());
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
         }
