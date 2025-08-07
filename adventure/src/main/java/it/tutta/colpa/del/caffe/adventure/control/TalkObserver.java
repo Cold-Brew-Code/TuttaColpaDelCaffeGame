@@ -4,54 +4,102 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import it.tutta.colpa.del.caffe.game.entity.Dialogo;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
+import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
+import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+
 import java.util.List;
 
 /**
- *
  * @author giova
  */
 public class TalkObserver implements GameObserver {
-    
+
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) {
+        if (parserOutput.getCommand().getType() == CommandType.TALK_TO) {
+            StringBuilder msg = new StringBuilder();
+            NPC npc = parserOutput.getNpc();
+            if (npc != null) {
+                if (isNPCinCurrentRoom(npc, description.getCurrentRoom())) {
+                    if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
+
+                    } else {
+                        msg.append(this.runDialogue(npc));
+                    }
+                } else {
+                    msg.append("Hai le allucinazioni? " + npc.getNome() + " non è in questa stanza!");
+                }
+            } else {
+                msg.append("Con chi vuoi parlare? Non ho capito... scrivi parla con <nome NPC>");
+            }
+            return msg.toString();
+        }
+        return "";
+    }
+
+    private boolean isNPCinCurrentRoom(NPC npc, Room room) {
+        return room.getNPCs().contains(npc);
+    }
+
+    private String runDialogue(NPC npc) {
         StringBuilder msg = new StringBuilder();
-        // lista npc 1 e ha specificato con chi vuole paralre  ma non è necessari 
-        if (parserOutput.getCommand().getType() == CommandType.TALK_TO
-                && description.getCurrentRoom().getNPCs().size()==1 && parserOutput.getObject()!= null) {
-            msg.append("Per parlare con qualcuno scrivere 'Parla'! ");
-        }// lista npc 1 e non ha specificato con chi vuole paralre 
-        else if(parserOutput.getCommand().getType() == CommandType.TALK_TO
-                && description.getCurrentRoom().getNPCs().size()==1 && parserOutput.getObject()== null){
-            
-            NPC npcRoom= description.getCurrentRoom().getNPCs().get(0);
-            msg.append("Stai parlando con ").append(npcRoom.getNome()).append(". ");
-            Dialogo dialogo= npcRoom.getDialoghi().get(0);
-            msg.append(dialogo.getCurrentNode());
-            String currentNode = null;
-            dialogo.setCurrentNode(currentNode);
-            
+        try {
+            Dialogo dialogue = npc.getDialogoCorr();
+            new DialogueController(npc.getNome(), dialogue);
+        } catch (DialogueException e) {
+            msg.append(e.getMessage());
         }
-        // lista npc 2 e ha specificato con chi vuole paralre 
-        else if(parserOutput.getCommand().getType() == CommandType.TALK_TO
-                && description.getCurrentRoom().getNPCs().size()>1 && parserOutput.getObject()!= null ){
-            
-        }//lista npc 2 e  non ha specificato con chi vuole paralre
-        else if(parserOutput.getCommand().getType() == CommandType.TALK_TO
-                && description.getCurrentRoom().getNPCs().size()>1 && parserOutput.getObject()== null ){
-            
-        } // nessun npc
-        else{
-            msg.append("la cacca ti da alla testa, non c'è nessuno qui");
-            
+        return msg.toString();
+    }
+
+    private String runQuiz() {
+        StringBuilder msg = new StringBuilder();
+
+        return msg.toString();
+    }
+
+    private class DialogueController implements Controller {
+        private final DialogueGUI GUI;
+        private final String NPCName;
+        private final Dialogo dialogue;
+
+        public DialogueController(String NPCName, Dialogo dialogue) {
+            this.dialogue = dialogue;
+            this.NPCName = NPCName;
+            this.GUI = new DialoguePage(null, true);
+            GUI.linkController(this);
+            showCurrentDialogue();
+            openGUI();
         }
-            
-       
-     return msg.toString();
+
+        @Override
+        public void openGUI() {
+            this.GUI.open();
+        }
+
+        @Override
+        public void closeGUI() {
+            this.GUI.close();
+        }
+
+        public void answerChosen(String answer) throws DialogueException {
+            dialogue.setNextStatementFromAnswer(answer);
+            showCurrentDialogue();
+            if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
+                dialogue.setActivity(false);
+                closeGUI();
+            }
+        }
+
+        public void showCurrentDialogue(){
+            GUI.addNPCStatement(NPCName, dialogue.getCurrentNode());
+            GUI.addUserPossibleAnswers(dialogue.getCurrentAssociatedPossibleAnswers());
+        }
+
     }
 }
