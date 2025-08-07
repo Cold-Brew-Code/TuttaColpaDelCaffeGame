@@ -31,7 +31,7 @@ public class Dialogo implements Serializable {
 
     public void addDialogo(String dialogo, boolean corrente) {
         this.dialogo.addVertex(dialogo);
-        this.currentNode = dialogo;
+        if (corrente) this.currentNode = dialogo;
     }
 
     public void addRisposta(String domandaP, String domandaA, String risposta) {
