@@ -60,32 +60,15 @@ public class GameMap implements Serializable {
     public Room getPiano(int numeroP) throws GameMapException{
         final String piano;
         switch(numeroP){
-            case 0:
-                piano= "Dipartimento di Informtica";
-                break;
-            case 1:
-                piano="Primo";
-                break;
-            case 2:
-                piano= "Secondo";
-                break;
-            case 3:
-                piano= "Terzo";
-                break;
-            case 4: 
-                piano= "Quarto";
-                break;
-            case 5:
-                piano= "Quinto";
-                break;
-            case 6:
-                piano= "Sesto";
-                break;
-            case 7: 
-                piano= "Settimo";
-                break;
-            default: 
-                throw new GameMapException("Piano specificato inesistente.");
+            case 0 -> piano= "Dipartimento di Informtica";
+            case 1 -> piano="Primo";
+            case 2 -> piano= "Secondo";
+            case 3 -> piano= "Terzo";
+            case 4 -> piano= "Quarto";
+            case 5 -> piano= "Quinto";
+            case 6 -> piano= "Sesto";
+            case 7 -> piano= "Settimo";
+            default -> throw new GameMapException("Piano specificato inesistente.");
                     }
         return this.grafo.vertexSet()
                          .stream()
