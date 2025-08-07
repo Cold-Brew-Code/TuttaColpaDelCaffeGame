@@ -1,13 +1,5 @@
 package it.tutta.colpa.del.caffe.game.control;
 
-import java.util.concurrent.Callable;
-
-import it.tutta.colpa.del.caffe.game.entity.Command;
-import it.tutta.colpa.del.caffe.game.entity.GameMap;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.NPC;
-import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
@@ -15,6 +7,15 @@ import java.net.Socket;
 import java.rmi.ServerException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import it.tutta.colpa.del.caffe.game.entity.Command;
+import it.tutta.colpa.del.caffe.game.entity.GameMap;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
+
 
 /**
  * Gestisce la comunicazione di basso livello con il server di gioco.
@@ -109,6 +110,7 @@ public class ServerInterface {
                 reCheck = false;
                 answer = (T) getRequestAction(rt, id).call();
             } catch (ServerCommunicationException e) {
+                System.err.println(e.getMessage());
                 throw e;
             } catch (Exception e) {
                 reCheck = true;
@@ -309,19 +311,5 @@ public class ServerInterface {
         if (connection != null && !connection.isClosed()) {
             connection.close();
         }
-    }
-
-    /**
-     * Enumera i tipi di richieste che possono essere inviate dal client al server.
-     * L'uso di un enum garantisce type-safety e centralizza le azioni possibili.
-     */
-    enum RequestType {
-        GAME_MAP,
-        NPCs,
-        ITEMS,
-        CLOSE_CONNECTION,
-        COMMANDS,
-        UPDATED_LOOK,
-        ITEM
     }
 }

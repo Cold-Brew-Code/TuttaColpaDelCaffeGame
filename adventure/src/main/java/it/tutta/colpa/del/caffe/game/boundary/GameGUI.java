@@ -63,4 +63,6 @@ public interface GameGUI extends GUI{
     void setDisplayedClock(String time);
 
     void increaseProgressBar();
+
+    void executedCommand();
 }

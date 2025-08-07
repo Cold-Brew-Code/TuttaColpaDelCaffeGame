@@ -1,10 +1,30 @@
 package it.tutta.colpa.del.caffe.rete;
 
-import it.tutta.colpa.del.caffe.game.entity.*;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
-import java.sql.*;
-import java.util.*;
+import it.tutta.colpa.del.caffe.game.entity.Command;
+import it.tutta.colpa.del.caffe.game.entity.Dialogo;
+import it.tutta.colpa.del.caffe.game.entity.GameMap;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
+import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.entity.ItemRead;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 /**
  * Classe che gestisce il database.
@@ -350,6 +370,15 @@ public class DataBaseManager {
         } else {
             i = assembleItem(rsItem);
         }
+        //System.out.println(" VALORE visibile " +rsItem.getBoolean("i_is_visible")+ i.getName());
+        if(rsItem.getBoolean("i_is_visible")){
+            i.setVisibile(rsItem.getBoolean("i_is_visible"));
+        }
+
+        //System.out.println(" VALORE PRENDIBILE " +rsItem.getBoolean("i_is_pickable")+ i.getName());
+        if(rsItem.getBoolean("i_is_pickable")){
+            i.setPickupable(rsItem.getBoolean("i_is_pickable"));
+        }
         return i;
     }
 
@@ -471,17 +500,23 @@ public class DataBaseManager {
      * @return un nuovo oggetto ItemContainer.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
-        return new ItemContainer(
-                rsContainer.getInt("i_id"),
-                rsContainer.getString("i_name"),
-                rsContainer.getString("i_description"),
-                askForItemAlias(rsContainer.getInt("i_id")),
-                rsContainer.getString("i_image_path"),
-                askForContainedItems(rsContainer.getInt("i_id")),
-                false
-        );
-    }
+   private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
+    ItemContainer container = new ItemContainer(
+        rsContainer.getInt("i_id"),
+        rsContainer.getString("i_name"),
+        rsContainer.getString("i_description"),
+        askForItemAlias(rsContainer.getInt("i_id")),
+        rsContainer.getString("i_image_path"),
+        askForContainedItems(rsContainer.getInt("i_id")),
+        false // oppure metti un valore corretto per 'isOpen' se viene dal DB
+    );
+    //System.out.println("VALORE visibile: " + rsContainer.getBoolean("i_is_visible") + " " + container.getName());
+    container.setVisibile(rsContainer.getBoolean("i_is_visible"));
+    //System.out.println("VALORE prendibile: " + rsContainer.getBoolean("i_is_pickable") + " " + container.getName());
+    container.setPickupable(rsContainer.getBoolean("i_is_pickable"));
+    return container;
+}
+
 
     /**
      * Recupera gli oggetti contenuti all'interno di un contenitore.
@@ -549,7 +584,7 @@ public class DataBaseManager {
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     public String askForNewRoomLook(int eventID) throws SQLException {
-        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Evento where id=?");
+        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Event where id=?");
         pstm.setInt(1, eventID);
         ResultSet rs = pstm.executeQuery();
         if (rs.next()) {
@@ -581,7 +616,7 @@ public class DataBaseManager {
                 "    i.uses             AS i_uses, " +
                 "    i.image_path       AS i_image_path " +
                 "FROM Items AS i " +
-                "WHERE i_id = ?;");
+                "WHERE i.id = ?;");
         pstm.setInt(1, itemID);
         ResultSet rs = pstm.executeQuery();
         if (rs.next()) {

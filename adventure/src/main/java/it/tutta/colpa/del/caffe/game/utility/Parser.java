@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.exception.ParserException;
 
 /**
  * La classe Parser è responsabile dell'analisi del testo di input dell'utente.
@@ -45,11 +46,13 @@ public class Parser {
      * @param token La stringa da verificare.
      * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
      */
-    private Command checkForCommand(String token) {
-        return commands.stream()
+    private Command checkForCommand(String token) throws ParserException{
+        Command c = commands.stream()
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
                 .findFirst()
                 .orElse(null);
+        if(c==null) throw new ParserException("Il comando che hai inserito non è valido!");
+        return c;
     }
 
     /**
@@ -59,7 +62,7 @@ public class Parser {
      * @param token L'array di token derivato dall'input dell'utente.
      * @return Un array di stringhe contenente i nomi degli oggetti trovati.
      */
-    private String[] findItem(String[] token) {
+    private String[] findItem(String[] token) throws ParserException  {
         List<String> findObj = new ArrayList<>();
 
         this.items.stream()
@@ -78,7 +81,7 @@ public class Parser {
                     return tentativo(p, token);
                 })
                 .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
-
+        if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
@@ -147,22 +150,28 @@ public class Parser {
      * Questo oggetto conterrà il comando identificato ed eventuali oggetti o NPC
      * associati. Se il comando non è valido, l'oggetto ParserOutput lo indicherà.
      */
-    public ParserOutput parse(String command) {
+    public ParserOutput parse(String command) throws ParserException {
         List<String> list = Utils.parseString(command, stopwords);
         String[] tokens = list.toArray(new String[0]);
-
+        if (tokens.length==0){
+            throw new ParserException("Il comando che hai inserito non è valido!");
+        }
         Command cd = checkForCommand(tokens[0]);// xkè il comando è sempre in prima posizione
+        System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
         if (cd != null) {
             NPC npcP = findNpc(tokens);
-            if (tokens.length > 0) {
+            if (tokens.length > 1) {
                 String[] obj = findItem(tokens);
                 if (obj.length == 1) {
+                    System.out.println("0");
+
                     // chiamo il construttore di parserOutput con solo un oggetto
                     return new ParserOutput(cd, items.stream().filter(item
                             -> item.getName().equals(obj[0])
                     ).findFirst().orElse(null));
 
                 } else if (obj.length == 2) {
+                    System.out.println("1");
                     // chiamo il costruttore che ha 2 oggetti
 
                     // prendo il primo oggetto
@@ -194,6 +203,7 @@ public class Parser {
         } else {
             // bocciato comando inesistente
             // costruttore di parseOutput con tutto null o errore
+            System.err.println("Errore: comando non riconosciuto o input non valido.");
             return new ParserOutput(null, (GeneralItem) null);
         }
     }

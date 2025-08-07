@@ -4,84 +4,119 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
 import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 /**
- *
  * @author giova
  */
 public class BuildObserver implements GameObserver {
 
     /**
-     *
      * @param description
      * @param parserOutput
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
+        System.out.println("sono in build");
         StringBuilder msg = new StringBuilder();
-        // controllo se l'oggetto è stato specificato
-        Object obj = parserOutput.getObject();
-
-        if (parserOutput.getCommand().getType() == CommandType.CREATE) {
+        if (parserOutput.getCommand().getType() == CommandType.MERGE) {
+            ServerInterface server;
+            System.out.println("sono in build2");
+            try {
+                server = new ServerInterface("localhost", 49152);
+            } catch (ServerCommunicationException ex) {
+                System.out.println("no build");
+                server = null;
+            }
+            // controllo se l'oggetto è stato specificato
+            Object obj = parserOutput.getObject();
+            System.out.println("edrfwet"+(obj instanceof Item pippo));
             boolean isRoomCurrent1 = false;
             boolean isRoomCurrent2 = false;
             if (obj == null) {
-                msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
+                msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto <nome oggetto>')");
                 return msg.toString();
-            } else if (obj instanceof GeneralItem) {
-                GeneralItem pippo = (GeneralItem) obj;
-                boolean labda = pippo.getAlias().stream().anyMatch(alias -> alias.equalsIgnoreCase("carta magica"));
-                if (pippo.getName().equalsIgnoreCase("carta magica") || labda) {
-
+            } else if (obj instanceof Item pippo) {
+                System.out.println(" debug\n"+(pippo.getName().equalsIgnoreCase("tessera magica")));
+                if (pippo.getName().equalsIgnoreCase("tessera magica")) {
+                    System.out.println("pippoo ");
                     if (GameUtils.getObjectFromInventory(description.getInventory(), 14) != null) {
                         msg.append("non puoi avere 200 mila tessere magiche, la vita sarebbe troppo bella. Hai già la tessera magica nell'inventario");
                     } else {
-                        boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta 
+                        //System.out.println("sono in else");
+                        boolean objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 12) != null; // carta
                         boolean objInv2 = GameUtils.getObjectFromInventory(description.getInventory(), 6) != null; //scheda madre
-                        int IdRoomCurrent = description.getCurrentRoom().getId();
+                        //Sint IdRoomCurrent = description.getCurrentRoom().getId();
                         if (objInv1 && objInv2) {
-                            /**IteamCombinable cartaMagica= new IteamCombinable()
-                             * quantity= sarà 1;
-                             * description.getInventory().add(picartaMagicappo, quantity);
-                             * */
-                            GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
-                            GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
-                            Item objInvR1 = (Item) obj1;
-                            Item objInvR2 = (Item) obj2;
+                            try {
+                                if (server != null) {
+                                    Item cartaM = server.requestToServer(RequestType.ITEM, 14);
+                                    if(cartaM instanceof IteamCombinable) {
 
-                            description.getInventory().remove(objInvR1);
-                            description.getInventory().remove(objInvR2);
+                                        IteamCombinable cartaMagica = (IteamCombinable) cartaM;
+                                        System.out.println("ho fatto richiesta");
+                                        GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
+                                        GeneralItem obj2 = GameUtils.getObjectFromInventory(description.getInventory(), 6);
+                                        //System.out.println("Tipo di oggetto inatteso: " + obj1.getClass()+ obj2.getClass());
+                                        Item objInvR1 = (Item) obj1;
+                                        Item objInvR2 = (Item) obj2;
+
+                                        description.getInventory().remove(objInvR1);
+                                        description.getInventory().remove(objInvR2);
+
+                                        description.getInventory().add(cartaMagica, 1);
+                                    }
+                                    else{
+                                        msg.append("Non puoi fare tutte le magie che vuoi.");//L'oggetto ricevuto non è combinabile
+                                    }
+                                    
+                                } else {
+                                    //System.out.println("no build2");
+                                    throw new ServerCommunicationException("connessione al server fallita");
+                                }
+                            } catch (ServerCommunicationException ex) {
+                                //System.out.println("no build3");
+                                msg.append(ex.getMessage());
+
+                            }
+
                             msg.append("Fabbricatum Objectum!");
+                        } else if (objInv1 == false && objInv2 == false) {
+                            msg.append("non hai tutti gli oggetti a disposizione");
                         } else if (objInv1 == false && objInv2) {
                             isRoomCurrent1 = description.getCurrentRoom().getId() == 19;
                             if (isRoomCurrent1) {
-                                msg.append("devi prima raccogliere l'oggetto ").append(description.getCurrentRoom().getObject(12).getName()).append("prima di combinare i due oggetti");;
-                            }// non puoi costrurie
+                                msg.append("devi prima raccogliere l'oggetto ")
+                                        .append(description.getCurrentRoom()
+                                                .getObject(12).getName()).append("prima di combinare i due oggetti");
+                            } else {
+                                msg.append("non hai tutti gli oggetti a disposizione");
+                            }
                         } else if (objInv2 == false && objInv1) {
                             isRoomCurrent2 = description.getCurrentRoom().getId() == 30;
                             if (isRoomCurrent2) {
                                 msg.append("devi prima raccogliere l'oggetto ").append(description.getCurrentRoom().getObject(6).getName()).append("prima di combinare i due oggetti");
-                                // else non puoi costrurie   
-                            } else if (IdRoomCurrent != 19 || IdRoomCurrent != 30) {
-                                msg.append("Non hai gli oggetti necessari per scostruire la carta magica");
+                            } else {
+                                msg.append("non hai tutti gli oggetti a disposizione");
                             }
                         }
-
                     }
                 }
-
             } else {// se non è un oggetto allora da errore ( devo considerare il caso in cui abbia indicato i due oggetti che possono essere combinati che danno la magia
+                System.out.println((obj instanceof IteamCombinable pippo));
                 msg.append("non puoi fare ste magie");
             }
-
         }
         return msg.toString();
     }

@@ -6,8 +6,6 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,7 +20,7 @@ public  abstract class GeneralItem implements Serializable {
     private String name;
     private String description;
     private Set<String> alias;
-    private boolean visibile = false;
+    private boolean visibile= false;
     private String immagine;
     private boolean pickupable = false;
 
@@ -31,7 +29,7 @@ public  abstract class GeneralItem implements Serializable {
         this.name = name;
         this.description = description;
         this.alias = alias;
-        this.immagine = immagine;
+        this.immagine = "/images/"+immagine;
     }
     
     public GeneralItem(int id){
@@ -152,10 +150,7 @@ public  abstract class GeneralItem implements Serializable {
             return false;
         }
         final GeneralItem other = (GeneralItem) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
+        return this.id == other.id;
     }
 
 }

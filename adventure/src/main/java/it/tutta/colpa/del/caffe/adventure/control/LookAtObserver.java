@@ -5,13 +5,14 @@
 package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
+import it.tutta.colpa.del.caffe.game.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
  *
- * @author pierpaolo
+ * @author giovanni
  */
 public class LookAtObserver implements GameObserver {
 
@@ -22,7 +23,8 @@ public class LookAtObserver implements GameObserver {
      * @return
      */
     @Override
-    public String update(GameDescription description, ParserOutput parserOutput) {
+    public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
+        
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.LOOK_AT) {
             if (description.getCurrentRoom().getLook() != null) {
