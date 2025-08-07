@@ -55,7 +55,7 @@ public class TalkObserver implements GameObserver {
         } catch (DialogueException e) {
             msg.append(e.getMessage());
         }
-        return msg.toString();
+        return " ";
     }
 
     private String runQuiz() {
@@ -75,6 +75,7 @@ public class TalkObserver implements GameObserver {
             this.GUI = new DialoguePage(null, true);
             GUI.linkController(this);
             showCurrentDialogue();
+            this.GUI.setPageClosable(false);
             openGUI();
         }
 
@@ -98,7 +99,7 @@ public class TalkObserver implements GameObserver {
             showCurrentDialogue();
             if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                 dialogue.setActivity(false);
-                closeGUI();
+                this.GUI.setPageClosable(true);
             }
         }
 
