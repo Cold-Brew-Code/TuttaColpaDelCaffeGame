@@ -1,6 +1,7 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.control.DialogueController;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -67,7 +68,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     private JPanel mainContainer;
     private JScrollPane scrollPane;
 
-    private Controller controller;
+    private DialogueController controller;
 
     public DialoguePage(Frame owner, boolean modal) {
         super(owner, modal);
@@ -153,9 +154,9 @@ public class DialoguePage extends JDialog implements DialogueGUI {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    System.out.println("Scelta utente: " + statement);
                     dialogueContentPanel.remove(answersPanel);
                     addUserStatement("Tu", statement);
+                    controller.answerChosen(statement);
                 }
             });
             answersPanel.add(answerLabel);
@@ -253,7 +254,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     @Override
     public void linkController(Controller c) {
         try {
-            this.controller = c;
+            this.controller = (DialogueController) c;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

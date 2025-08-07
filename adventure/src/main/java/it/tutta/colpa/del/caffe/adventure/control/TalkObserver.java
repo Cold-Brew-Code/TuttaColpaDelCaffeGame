@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.adventure.control;
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
 import it.tutta.colpa.del.caffe.game.control.Controller;
+import it.tutta.colpa.del.caffe.game.control.DialogueController;
 import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
@@ -50,7 +51,7 @@ public class TalkObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         try {
             Dialogo dialogue = npc.getDialogoCorr();
-            new DialogueController(npc.getNome(), dialogue);
+            new DialogueHandler(npc.getNome(), dialogue);
         } catch (DialogueException e) {
             msg.append(e.getMessage());
         }
@@ -63,12 +64,12 @@ public class TalkObserver implements GameObserver {
         return msg.toString();
     }
 
-    private class DialogueController implements Controller {
+    private class DialogueHandler implements DialogueController {
         private final DialogueGUI GUI;
         private final String NPCName;
         private final Dialogo dialogue;
 
-        public DialogueController(String NPCName, Dialogo dialogue) {
+        public DialogueHandler(String NPCName, Dialogo dialogue) {
             this.dialogue = dialogue;
             this.NPCName = NPCName;
             this.GUI = new DialoguePage(null, true);
@@ -87,8 +88,13 @@ public class TalkObserver implements GameObserver {
             this.GUI.close();
         }
 
-        public void answerChosen(String answer) throws DialogueException {
-            dialogue.setNextStatementFromAnswer(answer);
+        @Override
+        public void answerChosen(String answer) {
+            try {
+                dialogue.setNextStatementFromAnswer(answer);
+            } catch (DialogueException e) {
+                System.err.println("DialogueException " + e.getMessage());
+            }
             showCurrentDialogue();
             if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                 dialogue.setActivity(false);

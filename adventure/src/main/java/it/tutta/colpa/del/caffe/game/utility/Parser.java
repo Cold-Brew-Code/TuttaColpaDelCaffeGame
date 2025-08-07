@@ -81,7 +81,7 @@ public class Parser {
                     return tentativo(p, token);
                 })
                 .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
-        if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
+        //if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
@@ -125,13 +125,15 @@ public class Parser {
             for (int start = 0; start < tokens.length; start++) {
                 StringBuilder sb = new StringBuilder();
                 for (int end = start; end < tokens.length; end++) {
+
                     if (!sb.isEmpty()) {
                         sb.append(" ");
                     }
                     sb.append(tokens[end].toLowerCase());
                     String current = sb.toString();
-
+                    System.err.println(sb.toString());
                     if (current.equals(npcName)) {
+                        System.out.println(npcName);
                         return npc; // trovato
                     }
                 }
