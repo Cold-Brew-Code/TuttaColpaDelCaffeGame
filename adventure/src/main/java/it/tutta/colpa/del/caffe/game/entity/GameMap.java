@@ -83,6 +83,7 @@ public class GameMap implements Serializable {
                 break;
             case 7: 
                 piano= "Settimo";
+                break;
             default: 
                 throw new GameMapException("Piano specificato inesistente.");
                     }
