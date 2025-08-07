@@ -2,6 +2,7 @@ package it.tutta.colpa.del.caffe.adventure.control;
 
 import java.util.Set;
 
+import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
@@ -22,6 +23,11 @@ public class MoveObserver implements GameObserver {
                  System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
 
                 if (commandType != null) {
+                    if(Set.of(CommandType.UP, CommandType.DOWN).contains(commandType) && parserOutput.getPiano()>=0){
+                        LiftObserver ob= new LiftObserver();
+                        parserOutput.setCommand(new Command("ascensore"));
+                        msg.append(ob.update(description, parserOutput));
+                    }
                     switch (commandType) {
                         case NORD:
                             if(description.getGameMap().getStanzaArrivo(Direzione.NORD).isDeniedEntry()){
