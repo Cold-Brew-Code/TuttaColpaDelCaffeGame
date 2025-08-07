@@ -21,7 +21,7 @@ public class ParserOutput {
     
     private GeneralItem object1;
     private NPC npc;
-    private int piano;
+    private int piano=-1;
 
     /**
      *

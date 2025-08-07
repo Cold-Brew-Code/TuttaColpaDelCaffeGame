@@ -10,6 +10,7 @@ import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
@@ -32,23 +33,26 @@ public class LiftObserver implements GameObserver {
         System.out.println("piano "+parserOutput.getPiano());
         int p=parserOutput.getPiano();
         if (parserOutput.getCommand().getType() == CommandType.LIFT) {
-            //bisogna aggiungere un controllo per l'ascensore
-            System.out.println("supero il primo if");
-            if(p <0){
-                msg.append("Non hai specificato il numero del piano in cui vuoi teletrasportarti\n").append("Scrivi sali a numero piano (1,2,...7)");
+            if(GameUtils.getObjectFromInventory(description.getInventory(), 9)!=null){
+                System.out.println("supero il primo if");
+                if(p <0){
+                    msg.append("Non hai specificato il numero del piano in cui vuoi teletrasportarti\n").append("Scrivi sali a numero piano (1,2,...7)");
+                }else{
+                    System.out.println("sono in asce2");
+                    try {
+                        Room room= description.getGameMap().prendiAscensore(p);
+                        System.out.println(room.getName());
+                        description.getGameMap().setCurrentRoom(room);
+                        msg.append("siamo arrivati al piano ").append(p).append("\n stanza: ").append(room.getName());    
+                    } catch (GameMapException ex) {
+                    msg.append(ex.getMessage());
+                } catch (Exception ex) {
+                    System.out.println(ex.getMessage());
+                    msg.append(ex.getMessage());
+                }
+                }
             }else{
-                System.out.println("sono in asce2");
-                try {
-                    Room room= description.getGameMap().prendiAscensore(p);
-                    System.out.println(room.getName());
-                    description.getGameMap().setCurrentRoom(room);
-                    msg.append("siamo arrivati al piano ").append(p).append("\n stanza: ").append(room.getName());    
-                } catch (GameMapException ex) {
-                msg.append(ex.getMessage());
-            } catch (Exception ex) {
-                System.out.println(ex.getMessage());
-                msg.append(ex.getMessage());
-            }
+                msg.append("non hai l'achiave nell'inventario");
             }
         }
         return msg.toString();
