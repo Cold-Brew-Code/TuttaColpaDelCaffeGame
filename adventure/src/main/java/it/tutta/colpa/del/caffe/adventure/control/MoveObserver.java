@@ -75,20 +75,18 @@ public class MoveObserver implements GameObserver {
                             default ->
                                 throw new Exception("Errore generico");
                         }
-                        msg.append("\n").append(description.getCurrentRoom().getDescription());
+                        if (close) {
+                            msg.append("Ops la stanza è chiusa");
+                        } else {
+                            msg.append("\n").append(description.getCurrentRoom().getDescription());
 
+                        }
                     }
                 }
             } catch (GameMapException ex) {
                 msg.append(ex.getMessage());
-                //msg.append(ex.getMessage());
             } catch (Exception ex) {
                 msg.append(ex.getMessage());
-            }
-            if (close) {
-                msg.append("Ops la stanza è chiusa");
-            } else {
-                msg.append("");
             }
         }
         return msg.toString();
