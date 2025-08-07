@@ -87,7 +87,12 @@ public class UseObserver implements GameObserver {
                                 }else{
                                     room.setDeniedEntry(true);
                                     card.setUses(card.getUses() - 1);
-                                    msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza: ").append(room.getName());
+                                    if(room.isVisible()==false){
+                                        room.setVisible(true);
+                                        msg.append("OMG!!! Hai trovato la leggenda ").append(room.getName()).append(" ora si che puoi soddisfare il tuo bisogno");
+                                    }else{
+                                        msg.append("Hai usato la carta magica per aprire la porta. Ora puoi entrare nella stanza: ").append(room.getName());
+                                    }
                                 }
                             } else if (magicCard && card.getUses() <= 0 && description.getCurrentRoom().isDeniedEntry()) {
                                 msg.append("Mi dipsice, ma non puoi più usare la carta magina. Hai finito gli utilizzi!");
