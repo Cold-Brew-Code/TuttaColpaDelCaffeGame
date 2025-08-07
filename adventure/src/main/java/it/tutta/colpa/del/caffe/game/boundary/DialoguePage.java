@@ -8,7 +8,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -16,24 +15,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 public class DialoguePage extends JDialog implements DialogueGUI {
@@ -69,6 +55,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     private JScrollPane scrollPane;
 
     private DialogueController controller;
+    private boolean closable;
 
     public DialoguePage(Frame owner, boolean modal) {
         super(owner, modal);
@@ -90,6 +77,29 @@ public class DialoguePage extends JDialog implements DialogueGUI {
 
         setResizable(false);
         setLocationRelativeTo(owner);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onWindowClosingActionPerformed();
+            }
+        });
+    }
+
+    /**
+     * Metodo eseguito dopo la chiusura della finestra.
+     * Termina l'applicazione.
+     */
+    private void onWindowClosingActionPerformed() {
+        if (closable) {
+            this.dispose();
+        } else {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "<html>Non potrai uscire dalla finestra <br> fino a quando il dialogo <br> non sarà terminato.</html>",
+                    "Attenzione!",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private JTextArea createBubbleTextArea(String text, Color bgColor, Color textColor, Border border) {
@@ -99,30 +109,57 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         textArea.setBackground(bgColor);
         textArea.setBorder(border);
         textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
+        textArea.setWrapStyleWord(false);
         textArea.setEditable(false);
         textArea.setFocusable(false);
         return textArea;
     }
 
+    private JTextArea createAnswerTextArea(String text) {
+        JTextArea textArea = new JTextArea(text);
+        textArea.setFont(ANSWER_FONT);
+        textArea.setForeground(ANSWER_TEXT_COLOR);
+        textArea.setBackground(ANSWER_BG_COLOR);
+        textArea.setBorder(ANSWER_BORDER);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setEditable(false);
+        textArea.setFocusable(false);
+        textArea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        textArea.setHighlighter(null);
+        return textArea;
+    }
 
     @Override
     public void addNPCStatement(String npcName, String statement) {
-        JTextArea bubble = createBubbleTextArea(npcName + ":\n" + statement, NPC_BUBBLE_COLOR, NPC_TEXT_COLOR, NPC_BUBBLE_BORDER);
+        JTextArea bubble = createBubbleTextArea(npcName + ":\n" + statement.translateEscapes(), NPC_BUBBLE_COLOR, NPC_TEXT_COLOR, NPC_BUBBLE_BORDER);
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setOpaque(false);
+        wrapper.add(bubble, BorderLayout.CENTER);
         gbc.gridy = gridY++;
         gbc.anchor = GridBagConstraints.LINE_START;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 10, 15, 80);
-        dialogueContentPanel.add(bubble, gbc);
+        dialogueContentPanel.add(wrapper, gbc);
         updateLayout();
     }
 
     @Override
+    public void setPageClosable(boolean intention) {
+        this.closable = intention;
+    }
+
+    @Override
     public void addUserStatement(String userName, String statement) {
-        JTextArea bubble = createBubbleTextArea(userName + ":\n" + statement, USER_BUBBLE_COLOR, USER_TEXT_COLOR, USER_BUBBLE_BORDER);
+        JTextArea bubble = createBubbleTextArea(userName + ":\n" + statement.translateEscapes(), USER_BUBBLE_COLOR, USER_TEXT_COLOR, USER_BUBBLE_BORDER);
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setOpaque(false);
+        wrapper.add(bubble, BorderLayout.CENTER);
         gbc.gridy = gridY++;
         gbc.anchor = GridBagConstraints.LINE_END;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 80, 15, 10);
-        dialogueContentPanel.add(bubble, gbc);
+        dialogueContentPanel.add(wrapper, gbc);
         updateLayout();
     }
 
@@ -133,38 +170,36 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         answersPanel.setOpaque(false);
 
         for (String statement : statements) {
-            JLabel answerLabel = new JLabel(statement, JLabel.CENTER);
-            answerLabel.setFont(ANSWER_FONT);
-            answerLabel.setForeground(ANSWER_TEXT_COLOR);
-            answerLabel.setBorder(ANSWER_BORDER);
-            answerLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            answerLabel.setOpaque(true);
-            answerLabel.setBackground(ANSWER_BG_COLOR);
-            answerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-            answerLabel.addMouseListener(new MouseAdapter() {
+            JTextArea answerArea = createAnswerTextArea(statement);
+            answerArea.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    answerLabel.setBackground(ANSWER_BG_HOVER_COLOR);
+                    answerArea.setBackground(ANSWER_BG_HOVER_COLOR);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    answerLabel.setBackground(ANSWER_BG_COLOR);
+                    answerArea.setBackground(ANSWER_BG_COLOR);
                 }
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    for (MouseListener ml : answerArea.getMouseListeners()) {
+                        answerArea.removeMouseListener(ml);
+                    }
                     dialogueContentPanel.remove(answersPanel);
                     addUserStatement("Tu", statement);
                     controller.answerChosen(statement);
                 }
             });
-            answersPanel.add(answerLabel);
+            answersPanel.add(answerArea);
             answersPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
+
         gbc.gridy = gridY++;
         gbc.anchor = GridBagConstraints.CENTER;
-        gbc.insets = new Insets(10, 0, 0, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 50, 10, 50);
         dialogueContentPanel.add(answersPanel, gbc);
         updateLayout();
     }
@@ -180,10 +215,8 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     private void initComponents() {
         mainContainer = new JPanel();
         scrollPane = new JScrollPane();
-
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setPreferredSize(new Dimension(800, 600));
-
         GroupLayout mainContainerLayout = new GroupLayout(mainContainer);
         mainContainer.setLayout(mainContainerLayout);
         mainContainerLayout.setHorizontalGroup(
@@ -204,43 +237,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         pack();
     }
 
-    public static void main(String args[]) {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(DialoguePage.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        EventQueue.invokeLater(() -> {
-            JFrame mainFrame = new JFrame("Applicazione Principale");
-            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            mainFrame.setSize(400, 300);
-            mainFrame.setLocationRelativeTo(null);
-
-            JButton openDialogueButton = new JButton("Apri Dialogo");
-            mainFrame.add(openDialogueButton);
-
-            openDialogueButton.addActionListener(e -> {
-                DialoguePage dialoguePage = new DialoguePage(mainFrame, true);
-
-                dialoguePage.addNPCStatement("Mastro Programmatore", "Ciao! Ora sono un dialogo modale. Non puoi interagire con la finestra principale finché non mi chiudi.");
-                List<String> possibleAnswers = new ArrayList<>();
-                possibleAnswers.add("Ho capito, grazie!");
-                possibleAnswers.add("Chiudi");
-                dialoguePage.addUserPossibleAnswers(possibleAnswers);
-
-                dialoguePage.setVisible(true);
-            });
-
-            mainFrame.setVisible(true);
-        });
-    }
-
     @Override
     public void open() {
         this.setVisible(true);
@@ -256,7 +252,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         try {
             this.controller = (DialogueController) c;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Controller non valido: richiesto DialogueController", e);
         }
     }
 }

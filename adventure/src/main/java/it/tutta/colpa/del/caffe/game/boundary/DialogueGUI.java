@@ -10,4 +10,5 @@ public interface DialogueGUI extends GUI{
     void addUserPossibleAnswers(List<String> statements);
     void addUserStatement(String userName, String statement);
     void addNPCStatement(String npcName, String statement);
+    void setPageClosable(boolean intention);
 }
