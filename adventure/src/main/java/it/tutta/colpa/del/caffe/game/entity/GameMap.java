@@ -60,6 +60,9 @@ public class GameMap implements Serializable {
     public Room getPiano(int numeroP) throws GameMapException{
         final String piano;
         switch(numeroP){
+            case 0:
+                piano= "Dipartimento di Informtica";
+                break;
             case 1:
                 piano="Primo";
                 break;
@@ -85,7 +88,8 @@ public class GameMap implements Serializable {
                     }
         return this.grafo.vertexSet()
                          .stream()
-                         .filter(r -> r.getName().equals(new StringBuilder(piano+" piano").toString()))
+                         .filter(r -> r.getName().equals(new StringBuilder(piano + " piano").toString()) || 
+                         r.getName().equals(piano))
                          .findFirst()
                          .orElse(null);
  

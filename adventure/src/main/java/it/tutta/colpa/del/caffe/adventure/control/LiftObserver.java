@@ -41,7 +41,7 @@ public class LiftObserver implements GameObserver {
                 try {
                     Room room= description.getGameMap().prendiAscensore(p);
                     description.getGameMap().setCurrentRoom(room);
-                    msg.append("siamo arrivati al piano ").append(p).append("stanza: ").append(room.getName());    
+                    msg.append("siamo arrivati al piano ").append(p).append("\n stanza: ").append(room.getName());    
                 } catch (GameMapException ex) {
                 msg.append(ex.getMessage());
             } catch (Exception ex) {
