@@ -118,14 +118,16 @@ public class Parser {
      * @return L'oggetto {@link NPC} trovato, o {@code null} se nessun NPC corrisponde.
      */
     private NPC findNpc(String[] tokens) {
+        StringBuilder regex=new StringBuilder("[\\s]+(");
+
+        regex.append(
+                stopwords.stream()
+                .reduce((a, b) -> a + "|" + b)
+                .orElse(""));
+
+        regex.append(")[\\s]+");
         for (NPC npc : this.NPCs) {
-            String regex = stopwords.stream()
-                    .map(s -> java.util.regex.Pattern.quote(s))  // per evitare problemi con caratteri speciali
-                    .reduce((a, b) -> a + "|" + b)
-                    .orElse("");
-
-            String npcName = npc.getNome().toLowerCase().replaceAll(regex,"");
-
+            String npcName = npc.getNome().toLowerCase().replaceAll(regex.toString()," ");
             // provo tutte le possibili sottosequenze di token
             for (int start = 0; start < tokens.length; start++) {
                 StringBuilder sb = new StringBuilder();
@@ -199,7 +201,7 @@ public class Parser {
                     return new ParserOutput(cd, npcP);
                 } else {
                     // non esiste nessun npc nelle stanze errore
-                    return new ParserOutput(cd, (NPC) null);
+                    return new ParserOutput(cd, new NPC(-1,null));
                 }
             } else {
                 // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer
