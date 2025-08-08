@@ -35,6 +35,17 @@ public class TalkObserver implements GameObserver {
                 } else {
                     msg.append("Hai le allucinazioni? " + npc.getNome() + " non è in questa stanza!");
                 }
+            } else if (npc == null && description.getCurrentRoom().getNPCs().size() == 1) {
+                npc = description.getCurrentRoom().getNPCs().get(0);
+                try {
+                    if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
+
+                    } else {
+                        msg.append(this.runDialogue(npc));
+                    }
+                } catch (NullPointerException e) {
+                    msg.append("Non c'è nessuno con cui parlare quì!");
+                }
             } else {
                 msg.append("Con chi vuoi parlare? Non ho capito... scrivi parla con <nome NPC>");
             }
@@ -103,7 +114,7 @@ public class TalkObserver implements GameObserver {
             }
         }
 
-        public void showCurrentDialogue(){
+        public void showCurrentDialogue() {
             GUI.addNPCStatement(NPCName, dialogue.getCurrentNode());
             GUI.addUserPossibleAnswers(dialogue.getCurrentAssociatedPossibleAnswers());
         }

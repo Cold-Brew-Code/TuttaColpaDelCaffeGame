@@ -119,7 +119,12 @@ public class Parser {
      */
     private NPC findNpc(String[] tokens) {
         for (NPC npc : this.NPCs) {
-            String npcName = npc.getNome().toLowerCase();
+            String regex = stopwords.stream()
+                    .map(s -> java.util.regex.Pattern.quote(s))  // per evitare problemi con caratteri speciali
+                    .reduce((a, b) -> a + "|" + b)
+                    .orElse("");
+
+            String npcName = npc.getNome().toLowerCase().replaceAll(regex,"");
 
             // provo tutte le possibili sottosequenze di token
             for (int start = 0; start < tokens.length; start++) {
@@ -131,7 +136,6 @@ public class Parser {
                     }
                     sb.append(tokens[end].toLowerCase());
                     String current = sb.toString();
-                    System.err.println(sb.toString());
                     if (current.equals(npcName)) {
                         System.out.println(npcName);
                         return npc; // trovato

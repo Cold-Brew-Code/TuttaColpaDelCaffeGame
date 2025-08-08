@@ -295,14 +295,14 @@ MERGE INTO InRoomObjects(room_id, object_id, quantity) KEY(room_id,object_id) VA
 
 -----------------------------
 MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
-(7, 'Studente storia',2),
-(1, 'Bruno portinaio',4 ),
+(7, 'Studente di storia',2),
+(1, 'Bruno il portinaio',4 ),
 (2, 'Ernesto Sapientoni', 12), -- bagno primo piano
 (3,'Dario Tremolanti', 15),
 (4, 'Javanna Garbage', 10), -- studente in fila
 (5,'Ivano Ipoclorito (Inserviente)',10),
 (6, 'Dottor Cravattone', 20),
-(8, 'Professore MAP', 29);
+(8, 'Professor MAP', 29);
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
