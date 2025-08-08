@@ -51,7 +51,6 @@ public class Parser {
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
                 .findFirst()
                 .orElse(null);
-        if(c==null) throw new ParserException("Il comando che hai inserito non è valido!");
         return c;
     }
 
@@ -81,7 +80,7 @@ public class Parser {
                     return tentativo(p, token);
                 })
                 .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista 
-        if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
+        //if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
         return findObj.toArray(new String[0]); // converto la lista array di 
     }
 
@@ -142,6 +141,30 @@ public class Parser {
     }
 
     /**
+     * Cerca un numero compreso tra 1 e 7 nei token.
+     * Se il numero è fuori dal range, lancia una ParserException.
+     *
+     * @param tokens Array di parole (token) da analizzare.
+     * @return Il numero del piano (1–7) se presente, altrimenti -1.
+     * @throws ParserException se il numero trovato è fuori dal range 1–7
+     */
+    private int findPiano(String[] tokens) throws ParserException {
+        for (String token : tokens) {
+            try {
+                int numero = Integer.parseInt(token);
+                if (numero >= 0 && numero <= 7) {
+                    return numero;
+                } else {
+                    throw new ParserException("Piano non valido: " + numero + ". I piani validi sono da 1 a 7.");
+                }
+            } catch (NumberFormatException ignored) {
+                // poichè se ci sono caratteri non numerici parseInt lancia subito eccezione in questo modo lo evitiamo
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Analizza una stringa di comando dell'utente, la suddivide in token e identifica
      * il comando principale, gli oggetti e/o gli NPC a cui si riferisce.
      *
@@ -156,56 +179,51 @@ public class Parser {
         if (tokens.length==0){
             throw new ParserException("Il comando che hai inserito non è valido!");
         }
-        Command cd = checkForCommand(tokens[0]);// xkè il comando è sempre in prima posizione
-        System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
-        if (cd != null) {
-            NPC npcP = findNpc(tokens);
-            if (tokens.length > 1) {
-                String[] obj = findItem(tokens);
-                if (obj.length == 1) {
-                    System.out.println("0");
+        Command cd = checkForCommand(tokens[0]);
+        //System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
+        if (cd == null) {
+            throw new ParserException("Errore: comando non riconosciuto o input non valido.");
+        }
+        NPC npcP = findNpc(tokens);
+        int piano= findPiano(tokens);
+        if (tokens.length > 1) {
+            String[] obj = findItem(tokens);
+            if (obj.length == 1) {
+                // chiamo il construttore di parserOutput con solo un oggetto
+                return new ParserOutput(cd, items.stream().filter(item
+                        -> item.getName().equals(obj[0])
+                ).findFirst().orElse(null));
 
-                    // chiamo il construttore di parserOutput con solo un oggetto
-                    return new ParserOutput(cd, items.stream().filter(item
-                            -> item.getName().equals(obj[0])
-                    ).findFirst().orElse(null));
+            } else if (obj.length == 2) {
+                // chiamo il costruttore che ha 2 oggetti
+                // prendo il primo oggetto
+                GeneralItem findItem1 = items.stream().filter(item
+                        -> item.getName().equals(obj[0])
+                ).findFirst().orElse(null);
 
-                } else if (obj.length == 2) {
-                    System.out.println("1");
-                    // chiamo il costruttore che ha 2 oggetti
+                // prendo il secondo oggetto
+                GeneralItem findItem2 = items.stream().filter(item
+                        -> item.getName().equals(obj[1])
+                ).findFirst().orElse(null);
 
-                    // prendo il primo oggetto
-                    GeneralItem findItem1 = items.stream().filter(item
-                            -> item.getName().equals(obj[0])
-                    ).findFirst().orElse(null);
-
-                    // prendo il secondo oggetto
-                    GeneralItem findItem2 = items.stream().filter(item
-                            -> item.getName().equals(obj[1])
-                    ).findFirst().orElse(null);
-
-                    return new ParserOutput(cd, findItem1, findItem2);
+                return new ParserOutput(cd, findItem1, findItem2);
 
 
-                } else if (npcP != null) {
-                    // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
-                    // chiama il costruttore con comando ed NPC
-                    return new ParserOutput(cd, npcP);
-                } else {
-                    // non esiste nessun npc nelle stanze errore
-                    return new ParserOutput(cd, (NPC) null);
-                }
+            } else if (npcP != null) {
+                // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
+                // chiama il costruttore con comando ed NPC
+                return new ParserOutput(cd, npcP);
+            } else if(piano!=-1) {
+                // non esiste nessun npc nelle stanze errore
+                System.out.println("in parser"+piano);
+                return new ParserOutput(cd, piano);
             } else {
-                // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer
-                // construttore di parserOutput con comadno e null
-                return new ParserOutput(cd);
+                throw new ParserException("Oggetti o NPC non riconosciuti.");
             }
         } else {
-            // bocciato comando inesistente
-            // costruttore di parseOutput con tutto null o errore
-            System.err.println("Errore: comando non riconosciuto o input non valido.");
-            return new ParserOutput(null, (GeneralItem) null);
-        }
+            // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer
+            // construttore di parserOutput con comadno e null
+            return new ParserOutput(cd);
+            }
     }
-
 }

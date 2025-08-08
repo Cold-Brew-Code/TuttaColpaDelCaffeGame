@@ -124,5 +124,6 @@ public enum CommandType {
      * 
      */
 
-    LEAVE
+    LEAVE,
+    LIFT
 }

@@ -21,6 +21,7 @@ public class ParserOutput {
     
     private GeneralItem object1;
     private NPC npc;
+    private int piano=-1;
 
     /**
      *
@@ -53,6 +54,24 @@ public class ParserOutput {
         this.command = command;
         this.npc = npc;
     }
+
+    public ParserOutput(Command command, int piano) {
+        this.command = command;
+        this.piano = piano;
+    }
+
+    public int getPiano() {
+        return this.piano;
+    }
+
+    /**
+     *
+     * @param piano
+     */
+    public void setPiano(int piano) {
+        this.piano = piano;
+    }
+
 
     /**
      *
