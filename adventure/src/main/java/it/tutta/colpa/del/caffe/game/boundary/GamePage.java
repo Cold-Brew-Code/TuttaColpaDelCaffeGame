@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.game.boundary;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+import it.tutta.colpa.del.caffe.game.utility.AudioManager;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -35,6 +36,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         } // </editor-fold>>
         initComponents();
+
+        AudioManager.getInstance().loadAudio("game_theme", "game_theme.wav");
+        AudioManager.getInstance().fadeIn("game_theme", true, 1000);
 
         typeWriterEffect = new TypeWriterEffect(DialogTextArea, 50);
 
@@ -451,15 +455,24 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Aumenta volume cliccato");
+        float currentVol = AudioManager.getInstance().getVolume();
+        AudioManager.getInstance().setVolume(Math.min(1.0f, currentVol + 0.1f));
     }
 
     private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Abbassa volume cliccato");
+        float currentVol = AudioManager.getInstance().getVolume();
+        AudioManager.getInstance().setVolume(Math.max(0.0f, currentVol - 0.1f));
     }
 
     private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Attiva/Disattiva audio cliccato");
+        AudioManager audioManager = AudioManager.getInstance();
+        if (audioManager.isPaused("game_theme")) {
+            audioManager.resume("game_theme");
+            toggleMuteMenuItem.setText("Disattiva Audio");
+        } else {
+            audioManager.pause("game_theme");
+            toggleMuteMenuItem.setText("Attiva Audio");
+        }
     }
     // </editor-fold>
 
@@ -539,6 +552,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void close() {
+        AudioManager.getInstance().fadeOut("game_theme", 500);
         this.dispose();
     }
 
@@ -564,7 +578,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void executedCommand() {
         typeWriterEffect.skip();
-        this.DialogTextArea.append("\n > "+inputField.getText());
+        this.DialogTextArea.append("\n > " + inputField.getText());
         this.inputField.setText("");
     }
 }
