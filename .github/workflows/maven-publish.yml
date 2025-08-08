@@ -1,34 +1,43 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+# Nome del workflow
+name: Create Release and Publish Package
 
-name: Maven Package
-
+# Si attiva solo alla creazione di una nuova release su GitHub
 on:
   release:
     types: [created]
 
 jobs:
-  build:
-
+  build-and-publish:
+    # Sistema operativo del runner
     runs-on: ubuntu-latest
+
+    # Permessi necessari per clonare la repo privata e pubblicare il pacchetto
     permissions:
       contents: read
       packages: write
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 11
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+      # 1. Clona il codice del repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      # 2. Configura l'ambiente con Java 21 (come richiesto dal pom.xml)
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          # Questo ID è la chiave per l'autenticazione. Deve corrispondere a quello nel pom.xml
+          server-id: github
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
+      # 3. Compila il progetto, specificando il percorso del pom.xml
+      - name: Build with Maven
+        run: mvn -B package --file ./adventure/pom.xml
+
+      # 4. Pubblica il pacchetto su GitHub Packages
+      - name: Publish to GitHub Packages
+        run: mvn deploy --file ./adventure/pom.xml
+        env:
+          # Usa il token automatico, che ha i permessi per pubblicare
+          # nel package registry dell'organizzazione
+          GITHUB_TOKEN: ${{ github.token }}
