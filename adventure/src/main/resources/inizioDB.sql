@@ -47,6 +47,13 @@ CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS NpcAlias (
+    id INT,
+    npc_alias VARCHAR(30),
+    FOREIGN KEY (id) REFERENCES NonPlayerCharacters(id),
+    PRIMARY KEY (id, npc_alias)
+);
+
 CREATE TABLE IF NOT EXISTS Dialogues(
     id INTEGER,
     NPC INTEGER REFERENCES NonPlayerCharacters(id),
@@ -122,18 +129,16 @@ CREATE TABLE IF NOT EXISTS ReadableContent(
 
 MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
-(6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
+(7, 'osserva'), (8, 'raccogli'),(9,'apri'),
 (11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi'),
 (16,'lascia'),(17,'usa'),
 (18,'ascensore');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
-(1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'),
-(6,'caccati'), (6, 'cacca'), (6, 'basta'), (6, 'exit'), (6,'end'), (6,'bocciato'),
+(1, 'n'), (2,'s'), (3,'e'), (4,'o'),
 (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
 (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
 (9, 'open'), (9,'accedere'),
-(10, 'push'), (10, 'spingi'), (10,'attiva'),(10,'pressa'), (10,'schiacciare'),
 (11, 'crea'), (11, 'costruisci'), (11, 'inventa'),
 (12, 'sfoglia'), (12, 'decifra'), (12, 'interpretra ') ,
 (13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera'),
@@ -203,7 +208,7 @@ MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
 (8,'moneta'), (8, 'soldo'), (8,'metallo'), (8,'denaro'),
 (10, 'penna'), (10,'null'),
 (11, 'contenitore'), (11, 'box'), (11, 'cassa'),
-(12, 'tessera'), (12, 'scheda'),
+(12, 'tessera s'),
 (13, 'carta'), (13, 'rotolo'), (13, 'igienica'),
 (14, 'magica'), (14,'pass'),
 (16, 'macchinetta'), (16,'distributore');
@@ -305,6 +310,15 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (4, 'Javanna Garbage', 10), -- studente in fila
 (5,'Ivano Ipoclorito (Inserviente)',10),
 (6, 'Dottor Cravattone', 20);
+
+MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
+(7,'studente'), (7, 'sudente sto'),
+(1, 'bruno'), (1, 'portinaio'),
+(2, 'Ernesto'), (2, 'Sapientoni' ),
+(3, 'Dario'), (3, 'Tremolanti'),
+(4, 'Javanna'), (4, 'Garbage'),
+(5, 'Ivano'), (5, 'Inserviente'),
+(6, 'Dottor C'), (6, 'Cravattone');
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
