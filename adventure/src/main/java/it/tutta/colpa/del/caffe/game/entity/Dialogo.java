@@ -45,8 +45,8 @@ public class Dialogo implements Serializable {
 
     public List<String> getCurrentAssociatedPossibleAnswers() {
         return getCurrentLabels().stream()
-                                 .map(answer->answer.toString())
-                                 .collect(Collectors.toList());
+                .map(answer->answer.toString())
+                .collect(Collectors.toList());
     }
 
     private List<StringArcoGrafo> getCurrentLabels() {
@@ -59,10 +59,10 @@ public class Dialogo implements Serializable {
 
     public void setNextStatementFromAnswer(String answerChosen) throws DialogueException {
         this.setCurrentNode(this.dialogo.getEdgeTarget(getCurrentLabels().stream()
-                                                                         .filter(answer->answer.getEtichetta()
-                                                                                 .equals(answerChosen))
-                                                                         .findFirst()
-                                                                         .orElseThrow(() -> new DialogueException("Risposta non valida!")))) ;
+                .filter(answer->answer.getEtichetta()
+                        .equals(answerChosen))
+                .findFirst()
+                .orElseThrow(() -> new DialogueException("Risposta non valida!")))) ;
     }
 
     /**

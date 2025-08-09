@@ -47,6 +47,13 @@ CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS NpcAlias (
+    id INT,
+    npc_alias VARCHAR(30),
+    FOREIGN KEY (id) REFERENCES NonPlayerCharacters(id),
+    PRIMARY KEY (id, npc_alias)
+);
+
 CREATE TABLE IF NOT EXISTS Dialogues(
     id INTEGER,
     NPC INTEGER REFERENCES NonPlayerCharacters(id),
@@ -122,21 +129,22 @@ CREATE TABLE IF NOT EXISTS ReadableContent(
 
 MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
-(6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
+(7, 'osserva'), (8, 'raccogli'),(9,'apri'),
 (11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi'),
-(16,'lascia');
+(16,'lascia'),(17,'usa'),
+(18,'ascensore');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
-(1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'),
-(6,'caccati'), (6, 'cacca'), (6, 'basta'), (6, 'exit'), (6,'end'), (6,'bocciato'),
+(1, 'n'), (2,'s'), (3,'e'), (4,'o'),
 (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
 (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
 (9, 'open'), (9,'accedere'),
-(10, 'push'), (10, 'spingi'), (10,'attiva'),(10,'pressa'), (10,'schiacciare'),
-(11, 'crea'), (11, 'costruisci'), (11, 'inventa'), (11, 'utilizza'), (11,'usa'),
+(11, 'crea'), (11, 'costruisci'), (11, 'inventa'),
 (12, 'sfoglia'), (12, 'decifra'), (12, 'interpretra ') ,
 (13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera'),
-(16,'butta');
+(16,'butta'),
+(17, 'utilizza'),
+(18, 'ascen');
 
 MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
 (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,-1, 'chiave.png', true),
@@ -147,7 +155,7 @@ MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, i
 -- SECONDO PIANO
 (4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… un po'' come gli esami facili al primo appello.',false, false,true, false,-1,'candeggina.png', true),
 (15, 'ARMADIETTO','Classico armadietto di metallo',true,false,true,false,-1,'armadietto.png', false),
-(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il
+(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il 
 punto di equilibrio perfetto tra altezza e distanza. Nessuno sa davvero a cosa serva, ma pare abbia qualcosa a che fare con il lanciare cose molto lontano (e con sorprendente precisione).',false,true,true,false,3,'bigliettino.png', true),
 -- TERZO PIANO
 (6, 'SCHEDA MADRE', 'Un''antica reliquia elettronica, corrosa dal tempo e da qualche improvvida fuoriuscita di caffè.Le piste appaiono screpolate, i condensatori gonfi come se stessero per esplodere, e i vecchi slot di memoria sembrano trattenere a fatica i ricordi di sistemi mai più avviati. Rinvenuta per terra, impolverata e dimenticata in un angolo del museo di informatica, come se persino il tempo avesse deciso di voltarle le spalle.' , false,false,true,false,-1,'scheda_madre.png', true),
@@ -168,7 +176,7 @@ MERGE INTO ReadableContent( readable_item_id , content) KEY(readable_item_id) VA
 (5,'Se vuoi che il tuo oggetto voli come un campione,non sparare a caso!\n Troppo in alto? Finisce prima.\n
 Troppo basso? Nemmeno un metro.\n
 L''angolo magico è 45° , la formula segreta per la gittata massima!\n Ricordalo, o la tua palla farà solo brutte figure.\n"
- Appunti segreti del Prof. Newton (quasi)'),
+ Appunti segreti del Prof. Newton (quasi)'), 
  -- libro di cc
  (3, 'Teorema: La Grande Sfida!\n Se P è uguale a NP? Ancora un mistero.\n
 Sarebbe come risolvere un rompicapo tanto facilmente quanto controllarne la soluzione \n— tipo cucinare una torta senza sporcarsi le mani!.
@@ -200,14 +208,14 @@ MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
 (8,'moneta'), (8, 'soldo'), (8,'metallo'), (8,'denaro'),
 (10, 'penna'), (10,'null'),
 (11, 'contenitore'), (11, 'box'), (11, 'cassa'),
-(12, 'tessera'), (12, 'scheda'),
+(12, 'tessera s'),
 (13, 'carta'), (13, 'rotolo'), (13, 'igienica'),
 (14, 'magica'), (14,'pass'),
 (16, 'macchinetta'), (16,'distributore');
 
 MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_path) KEY(id) VALUES
     (1, 'Ingresso del Campus', 'Davanti a te si apre il cancello del campus universitario, imponente ma familiare. Oltre il cancello si vede un viale lungo, da grandi palazzi e piccioni prepotenti, pronti a colpirti. A pochi passi dall''ingresso, un piccolo bar brulica di studenti già assonnati e inservienti carichi di pacchi. Il dipartimento di informatica si staglia più avanti, grigio e severo, come un labirinto di vetro e cemento che sembra nascondere più segreti che aule.\n TUTORIAL \n Muoviti tramite i comandi Nord (N), Est (E), Ovest (O), Sud (S), ed arrivare il prima possibile al bagno.\n Guarda attentamente ciò che ti circonda, può sempre essere utile!','',true, true, 'ingresso.png'),
-    (2, 'Bar', 'Un locale stretto ma accogliente, con il profumo persistente di caffè bruciato e cornetti caldi. Alle pareti, volantini scoloriti pubblicizzano vecchi eventi universitari. Un orologio sopra la macchina del caffè segna sempre le 8:15, bloccato da anni. Dietro il bancone, il barista prepara distrattamente cappuccini, mentre un gruppetto di studenti chiacchiera a voce troppo alta. ', ' Vicino alla cassa, in alto al centro , un piccolo cartello con scritto: “Chi cerca… trova.”\n Ci sono molti studenti , è un buon posto per raccogliere voci di corridoio o chiedere informazioni....',true, true, 'bar-gioco.png'),
+    (2, 'Bar', 'Un locale stretto ma accogliente, con il profumo persistente di caffè bruciato e cornetti caldi. Alle pareti, volantini scoloriti pubblicizzano vecchi eventi universitari. Un orologio sopra la macchina del caffè segna sempre le 8:15, bloccato da anni. Dietro il bancone, il barista prepara distrattamente cappuccini, mentre un gruppetto di studenti chiacchiera a voce troppo alta. ', ' Vicino alla cassa, in ato al centro , un piccolo cartello con scritto: “Chi cerca… trova.”\n Ci sono molti studenti , è un buon posto per raccogliere voci di corridoio o chiedere informazioni....',true, true, 'bar-gioco.png'),
     (3, 'Viale verso il dipartimento', 'Stai andando a verso Est. \nUn viale lungo, quasi interminabile, che conduce al cortile interno del dipartimento. Le foglie secche si raccolgono agli angoli, mosse dal vento. Sui lati del percorso, vecchie bacheche arrugginite espongono orari, comunicati e qualche annuncio misterioso. In fondo, le porte a vetri del dipartimento invitano a entrare… o forse a perdersi.', 'Sul lato destro, una bacheca ha una mappa del campus, ma è strappata proprio dove c''è segnato il dipartimento di informatica.',true, true, 'viale.png'),
     (4, 'Dipartimento di Informtica', 'Un atrio ampio ma freddo, pavimento in marmo consumato e neon tremolanti. Dietro un vetro spesso, il portinaio osserva chi entra e chi esce, sfogliando distrattamente un giornale. Alla sua sinistra, un vecchio ascensore con porte rumorose e delle scala che portano verso i piani superiori.', ' Ti ritrovi di nuovo al piano terra. Il portinaio, mezzo addormentato, armeggia con un mazzo di chiavi che sembra non finire mai, mentre si trascina verso l''ultima pagina del giornale',true, true, 'corridoio_piano_terra.png'),
 --piano terra
@@ -226,7 +234,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (30, 'Museo di informatica', ' Sei in una stanza piena di vecchi computer, di fronte a te, un monitor a tubo catodico grande quanto un forno a microonde, schede madri imbalsamate e sulle pareti manuali ingialliti che giurano di spiegare come installare Windows 95, ma solo se sai leggere il sanscrito.',  ' Osservando la stanza noti una scheda madre rovinata e l''uscita verso EST!', true, true, 'museo_di_informatica_terzo_piano.png'),-- se fa raccogli prende la scheda madre rovinata che sarà utile per costruire la scheda magica
 -- quarto piano
     (10, 'Quarto piano','Corridorio stretto e affollato, con una fila interminabile che si snoda fuori dal bagno. L''aria è un misto di ansia ed esausta rassegnazione. Tra la fila, studenti leggono libri di algoritmi o ripassano appunti. Potresti parlare con qualcuno... magari capiscono la tua urgenza e ti lasciano passare.', 'La solita fila Kilometrica di studenti ansiosi, e un inserviente arrabbiato per via del bagno sporco. È alla ricerca di CANDEGGINA ',true, true, 'corridoio_quarto_piano.png'),
-    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',false, true, 'bagno_quarto_piano.png'),
+    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',true, true, 'bagno_quarto_piano.png'),
     (13, 'Laboratorio Boole', 'Nascosto dalla lunga fila di studenti di fronte a te (NORD) si intravede un laboratorio di informatica , dove all''interno ci sono studenti fuori corso cercano di crare la macchina di turing universale che risolva il problema della fermata.', 'I soliti tre studenti che vogliono rislvere il problema della fermata... Opsss stavi inciampato su qualcosa. Un borsellino chissa che sta dentro.',true, true, 'laboratorio_boole_quarto_piano.png'),-- se lo raccoglie al suo interno ci sono 5 monete e varie penne (il suo contenuto è noto solo se lo apre)
 -- quinto piano
     (17, 'Quinto piano', 'Un corridoio silenzioso con porte chiuse e targhette in ottone.', 'Sei di nuovo al quinto piano, non noti niente di nuovo , a sinistra(OVEST) e a destra (EST) ci sono gli uffici dei professori. Potrebbero nascondere qualcosa di utile. Chissà se questi oggetti sono davvero indipendenti.... o se dietro le quinte hanno implementato un composite pattern!',true, true,'corridoio_quinto_piano.png'),
@@ -241,7 +249,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (26, 'Ufficio del direttore', 'Vieni accolto da un ambiente elegante e curato nei minimi dettagli. Le pareti sono rivestite da pannelli di legno scuro, su cui sono appesi diplomi, riconoscimenti e fotografie di momenti importanti del dipartimento. Al centro domina una grande scrivania in mogano sulla destra una libreria di legno raffinato con fascicoli e libri.', 'Noti qualcosa di strano nella libreria. Forse stai solo svarionando , l''urgenza al bagno ti sta dando alla testa',true, true,'ufficio_direttore_settimo_piano.png'),
     (27, 'Sala Consiglio','Ti trovi nella sala consiglio: al centro campeggia un grande tavolo rotondo di quercia massiccia, circondato dalle migliori sedie ergonomiche sul mercato, eleganti e rivestite in pelle scura. Sul tavolo sono poggiate numerose cartelle, alcune lasciate aperte con fogli sparsi che raccontano frammenti di discussioni accese. Alle pareti spiccano diversi quadri: alcuni ritraggono professori intenti a festeggiare eventi importanti del dipartimento, altri immortalano celebri vincitori del premio Turing, simboli di eccellenza e prestigio. Di fronte, una grande LIM cattura subito lo sguardo: sullo schermo troneggia l''immagine surreale di un WATER DIAMANTATO, enigmatico e quasi provocatorio, come se fosse un messaggio in codice nascosto tra le formalità accademiche.' , 'Se osservi con attenzione tra i tanti quadri, uno di questi raffigura una libreria con sopra un rotolo di carta igienica. La libreria non è un semplice mobile: è in realtà una porta segreta, leggermente socchiusa, dalla quale filtra una luce accecante.',false, true,'sala_consiglio_settimo_piano.png'),--chiusa
 -- stanza segreta settimo piano
-    (28, 'Il bagno Diamantato','Sei finalemte arrivato a un bagno e non un bagno qualsiasi...IL BAGNO. Water diamantato con  accanto un rotolo di carta igienica d''oro zecchino il quale brilla in tutta il sua sfarzo. E poi, l''oggetto più raro e prezioso di tutti: una saponetta appoggiata sul lavandino. L’aria profuma di fiori esotici, e persino il getto del rubinetto sembra scorrere più elegante qui dentro. È il trionfo, la meta, la fine del viaggio: il bagno segreto del settimo piano. ' , '',false, false,'bagno_segreto_settimo_piano.png'),
+    (28, 'Il bagno Diamantato','Sei finalemte arrivato a un bagno e non un bagno qualsiasi...IL BAGNO. Water diamantato con  accanto un rotolo di carta igienica d''oro zecchino il quale brilla in tutta il sua sfarzo. E poi, l''oggetto più raro e prezioso di tutti: una saponetta appoggiata sul lavandino. L''aria profuma di fiori esotici, e persino il getto del rubinetto sembra scorrere più elegante qui dentro. È il trionfo, la meta, la fine del viaggio: il bagno segreto del settimo piano. ' , '',false, false,'bagno_segreto_settimo_piano.png'),
     (29, 'Aula d''esame', 'Qui si tiene l''esame più temuto dell''anno. Una grande aula con sette righe per lato di banchi ognuna da sei posti. Più del 50% dei posti sono occupati da alunni pronti a sostenere il loro esame orale.L''aria è densa di tensione e speranza: l''arrivo in tempo dipende da ogni scelta fatta lungo il percorso.','',true, true, 'aula_esame_pianoT.png');
 
 MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
@@ -285,7 +293,7 @@ MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial
 --sesto piano
 (20,21,'e'), (20,22,'n'), (21,20,'o'),(22,20,'s'),
 --settimo piano
-(25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'o'),(28,26,'e'),
+(25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'s'),(28,26,'n'),
 --sopra/sotto
 (4,6,'sopra'),(6,8,'sopra'), (8,14, 'sopra'), (14,10,'sopra'),(10,17,'sopra'),(17,20,'sopra'), (20,25,'sopra'),
 (25,20,'sotto'), (20,17,'sotto'),(17,10,'sotto'),(10,14,'sotto'),(14,8,'sotto'),(8,6,'sotto'),(6,4,'sotto');
@@ -301,8 +309,16 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (3,'Dario Tremolanti', 15),
 (4, 'Javanna Garbage', 10), -- studente in fila
 (5,'Ivano Ipoclorito (Inserviente)',10),
-(6, 'Dottor Cravattone', 20),
-(8, 'Professor MAP', 29);
+(6, 'Dottor Cravattone', 20);
+
+MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
+(7,'studente'), (7, 'sudente sto'),
+(1, 'bruno'), (1, 'portinaio'),
+(2, 'Ernesto'), (2, 'Sapientoni'),
+(3, 'Dario'), (3, 'Tremolanti'),
+(4, 'Javanna'), (4, 'Garbage'),
+(5, 'Ivano'), (5, 'Inserviente'),
+(6, 'Dottor C'), (6, 'Cravattone');
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
@@ -333,7 +349,13 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 --2--
 (3,9,'Va bene, va bene… al quarto piano c''è un bagno quasi sempre libero. Nessuno ci va perché dicono sia infestato da uno studente fuori corso, ma è solo leggenda.'),
 --3--
-(3,10,'Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
+(3,10,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
+
+(3,41,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no 
+(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
+Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
+La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
+
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
 (4,11,'Guarda chi torna... Hai la faccia di chi ha capito che le scale non sono sempre l''opzione migliore, eh? Purtroppo, per sbloccare l''ascensore serve rispondere a una domanda che tormenta anche i più bravi. Se sbagli, mi dispiace, niente corsa verso l''alto. Allora, senti qua:\n“In Java, quale tra queste forme di ereditarietà non è permessa?”'),
@@ -367,7 +389,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (7,24,'Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.'),
 --IN-FILA---2--INDOVINELLO
 --1--
-(8,25,'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a questa domanda facile facile ,  roba del primo semestre e potrai saltare la fila. Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?'),
+(8,25,'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a quesata domanda facile facile ,  roba del primo semestre e potrai saltare la fila. Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?'),
 --2--
 (8,26,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2)\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!'),
 --3--
@@ -388,13 +410,19 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (10,33,'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.'),
 --4--
 (10,34,'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.'),
+
+(10,43, 'Ragazzo ultima scance , hai la candeggina??'),
+(10, 44 ,'Niente da fare, hia perso una possibilità preziosa...'),
+(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
+ Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
+
 --QUARTO--PIANO--INSERVIENTE----IL--SALVATORE--
 --1--
 (11,35,'Mi sa che la ricerca non è andata bene vero?'),
 --2--
 (11,36,'Calma, ragazzo. Ricorda: nessuna corsa può essere vinta se prima non si respira.Persino il bisogno più urgente va affrontato con dignità… e carta igienica.Tieni, giovane guerriero. Non è molto… ma nelle mani giuste, può fare miracoli.'),
 --3--
-(11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene…ma chi arriva in tempo!'),
+(11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene……ma chi arriva in tempo!'),
 --SESTO--PIANO--IL--NOBILE------
 --1--
 (12,38,'STO PER ESPLODERE...'),
@@ -416,6 +444,11 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --secondo--indovinello--RISPOSTA--1----
 ('Lei si sta divertendo, ma io rischio di esplodere. Aiuti uno studente in difficoltà!',8,9,3),
 ('Conosce scorciatoie o bagni ''non ufficiali''?',8,10,3),
+--risposte del se ho il caffe
+
+('No', 10,41 ,3),
+('Si', 10, 42 ,3 ), 
+
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),
 --terzo--indovinello-RISPOSTA--2--ERRATA--
@@ -452,6 +485,12 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 ('Ecco la varechina. L''ho trovata nel laboratorio di robotica.',32,33,10),
 --3--NON--HO--LA--CANDEGGINA--
 ('Mi dispiace, non ho la candeggina con me.',32,34,10),
+--4--HO--RISPOSTO--NO--CANDEGGINA--PARLO--DI--NUOVO--SECONDA--SCANCE
+('Ciao Ivano, sono tornato',34, 43 ,10),
+--NO--CANDEGGINA
+('No', 43,44,10),
+--SI-CANDEGGINA
+('Si', 43,45,10),
 -----RISPOSTE----QUARTO--PIANO-----INSERVIENTE---IL--SALVATORE----
 --1--
 ('Mi scusi… io… non ce la faccio più… non so dove andare… mi sa che… mi scappa…',35,36,11),

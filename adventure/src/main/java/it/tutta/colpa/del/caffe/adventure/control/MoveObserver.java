@@ -2,6 +2,7 @@ package it.tutta.colpa.del.caffe.adventure.control;
 
 import java.util.Set;
 
+import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
@@ -16,47 +17,73 @@ public class MoveObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         CommandType commandType = parserOutput.getCommand().getType();
         String commandName = parserOutput.getCommand().getName();
+        System.out.println(parserOutput.getPiano());
         if (Set.of(CommandType.NORD, CommandType.SOUTH, CommandType.EAST, CommandType.WEST, CommandType.UP, CommandType.DOWN).contains(commandType)) {
+            boolean close = false;
             try {
-                 System.out.println("Comando: " + commandType+"\n"+commandName +"\n proca1"+ parserOutput.getCommand().getType());
-
+                System.out.println("Comando: " + commandType + "\n" + commandName + "\n proca1" + parserOutput.getCommand().getType());
                 if (commandType != null) {
-                    switch (commandType) {
-                        case NORD:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.NORD)
-                            );
-                            break;
-                        case SOUTH:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.SUD));
-                            break;
-                        case EAST:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.EST));
-                            break;
-                        case WEST:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.OVEST));
-                            break;
-                        case UP:
-                            System.out.println("Stanza corrente: " + description.getGameMap().getCurrentRoom().getName());
-                            description.getGameMap().debug();
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.SOPRA));
+                    if (Set.of(CommandType.UP, CommandType.DOWN).contains(commandType) && parserOutput.getPiano() >= 0) {
+                        LiftObserver ob = new LiftObserver();
+                        parserOutput.setCommand(new Command("ascensore"));
+                        msg.append(ob.update(description, parserOutput));
+                    } else {
+                        switch (commandType) {
+                            case NORD -> {
+                                if (description.getGameMap().getStanzaArrivo(Direzione.NORD).isDeniedEntry()) {
 
-                            break;
-                        case DOWN:
-                            description.getGameMap().setCurrentRoom(
-                                    description.getGameMap().getStanzaArrivo(Direzione.SOTTO));
-                            break;
-                        default:
-                            throw new Exception("Errore generico");
+                                    description.getGameMap().setCurrentRoom(
+                                            description.getGameMap().getStanzaArrivo(Direzione.NORD)
+                                    );
+                                } else {
+                                    close = true;
+                                }
+                            }
+                            case SOUTH -> {
+                                if (description.getGameMap().getStanzaArrivo(Direzione.SUD).isDeniedEntry()) {
+                                    description.getGameMap().setCurrentRoom(
+                                            description.getGameMap().getStanzaArrivo(Direzione.SUD));
+                                } else {
+                                    close = true;
+                                }
+                            }
+                            case EAST -> {
+                                if (description.getGameMap().getStanzaArrivo(Direzione.EST).isDeniedEntry()) {
+                                    description.getGameMap().setCurrentRoom(
+                                            description.getGameMap().getStanzaArrivo(Direzione.EST));
+                                } else {
+                                    close = true;
+                                }
+                            }
+                            case WEST -> {
+                                if (description.getGameMap().getStanzaArrivo(Direzione.OVEST).isDeniedEntry()) {
+                                    description.getGameMap().setCurrentRoom(
+                                            description.getGameMap().getStanzaArrivo(Direzione.OVEST));
+                                } else {
+                                    close = true;
+                                }
+                            }
+                            case UP -> {
+                                System.out.println("Stanza corrente: " + description.getGameMap().getCurrentRoom().getName());
+                                description.getGameMap().debug();
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.SOPRA));
+                            }
+                            case DOWN ->
+                                description.getGameMap().setCurrentRoom(
+                                        description.getGameMap().getStanzaArrivo(Direzione.SOTTO));
+                            default ->
+                                throw new Exception("Errore generico");
+                        }
+                        if (close) {
+                            msg.append("Ops la stanza è chiusa");
+                        } else {
+                            msg.append("\n").append(description.getCurrentRoom().getDescription());
+
+                        }
                     }
-                    msg.append("\n").append(description.getCurrentRoom().getDescription());
                 }
             } catch (GameMapException ex) {
-                msg.append(ex.getMessage());
                 msg.append(ex.getMessage());
             } catch (Exception ex) {
                 msg.append(ex.getMessage());
@@ -64,6 +91,5 @@ public class MoveObserver implements GameObserver {
         }
         return msg.toString();
     }
-
 
 }
