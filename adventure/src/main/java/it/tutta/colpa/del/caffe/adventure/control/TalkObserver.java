@@ -17,6 +17,7 @@ import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author giova
@@ -129,6 +130,7 @@ public class TalkObserver implements GameObserver {
             showCurrentDialogue();
             if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                 dialogue.setActivity(false);
+                this.dialogueEndedEvent(this.dialogue.getId(), null); // !!!!!!!!!!!!!!
                 this.GUI.setPageClosable(true);
             }
         }
@@ -138,16 +140,44 @@ public class TalkObserver implements GameObserver {
             GUI.addUserPossibleAnswers(dialogue.getCurrentAssociatedPossibleAnswers());
         }
 
-        private void dialogueEndedEvent(int dialogueID, GameDescription description) {
+        private void dialogueEndedEvent(int dialogueID, String lastProducedStatement) {
             try {
                 switch (dialogueID) {
+                    case 1:
+                        // dialogo con studente di storia
+                        lookEvent(13, description.getCurrentRoom(), lastProducedStatement);
+                        break;
                     case 4:
-                        description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
+                        // Bruno mostra la chiave
+                        // da verificare se ha passato l'indovinello !!!!!!!!!!!!!!!!!!!!!
+                        if (lastProducedStatement.equals("")) {
+                            this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
+                        }
+                        break;
+                    case 5:
+                        // indovinello studente bagno primo piano, mostra la mappa !!!!
+                        lookEvent(11, description.getCurrentRoom(), lastProducedStatement);
+                        break;
+                    case 6:
+                        // dialogo con Dario Tremolanti
+                        lookEvent(4, description.getCurrentRoom(), lastProducedStatement);
                         break;
                     case 7:
                     case 8:
                     case 9:
-                        // description.getGameMap().
+                        if (Set.of("Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.",
+                                "Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un'intera riga e colonna: O(n^2)\\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!",
+                                "Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta. Dai, passa… corri! Che la forza sia con te (e col tuo intestino).").contains(lastProducedStatement)) {
+                            this.description.getGameMap().getRoom(11).setDeniedEntry(false);
+                        }
+                        break;
+                    case 10:
+                        // dialogo con inserviente
+                        lookEvent(10, description.getCurrentRoom(), lastProducedStatement);
+                        break;
+                    case 12:
+                        // dialogo con dottor cravattone
+                        lookEvent(12, description.getCurrentRoom(), lastProducedStatement);
                         break;
                 }
             } catch (Exception ignored) {
