@@ -1,6 +1,7 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -118,7 +119,9 @@ public class Parser {
      */
     private NPC findNpc(String[] tokens) {
         for (NPC npc : this.NPCs) {
-            String npcName = npc.getNome().toLowerCase();
+            //String npcName = npc.getNome().toLowerCase();
+            Set<String> aliasList = new HashSet<>(npc.getAlias());
+            aliasList.add(npc.getNome().toLowerCase());
 
             // provo tutte le possibili sottosequenze di token
             for (int start = 0; start < tokens.length; start++) {
@@ -130,7 +133,7 @@ public class Parser {
                     sb.append(tokens[end].toLowerCase());
                     String current = sb.toString();
 
-                    if (current.equals(npcName)) {
+                    if (aliasList.contains(current)) {
                         return npc; // trovato
                     }
                 }

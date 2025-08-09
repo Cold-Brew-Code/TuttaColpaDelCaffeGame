@@ -47,6 +47,13 @@ CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
     PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS NpcAlias (
+    id INT,
+    npc_alias VARCHAR(30),
+    FOREIGN KEY (id) REFERENCES NonPlayerCharacters(id),
+    PRIMARY KEY (id, npc_alias)
+);
+
 CREATE TABLE IF NOT EXISTS Dialogues(
     id INTEGER,
     NPC INTEGER REFERENCES NonPlayerCharacters(id),
@@ -122,18 +129,16 @@ CREATE TABLE IF NOT EXISTS ReadableContent(
 
 MERGE INTO Commands(id,name) KEY(id) VALUES
 (1,'nord'),(2, 'sud'),(3,'est'),(4, 'ovest'),
-(6,'fine'),(7, 'osserva'), (8, 'raccogli'),(9,'apri'),(10, 'premi'),
+(7, 'osserva'), (8, 'raccogli'),(9,'apri'),
 (11, 'combina'),(12, 'leggi'), (13, 'parla'), (14,'sali'), (15,'scendi'),
 (16,'lascia'),(17,'usa'),
 (18,'ascensore');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
-(1, 'n'), (2,'s'), (3,'e'), (4,'o'),(6,'f'), (6,'esci'),
-(6,'caccati'), (6, 'cacca'), (6, 'basta'), (6, 'exit'), (6,'end'), (6,'bocciato'),
+(1, 'n'), (2,'s'), (3,'e'), (4,'o'),
 (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
 (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
 (9, 'open'), (9,'accedere'),
-(10, 'push'), (10, 'spingi'), (10,'attiva'),(10,'pressa'), (10,'schiacciare'),
 (11, 'crea'), (11, 'costruisci'), (11, 'inventa'),
 (12, 'sfoglia'), (12, 'decifra'), (12, 'interpretra ') ,
 (13, 'iteragisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchera'),
@@ -203,7 +208,7 @@ MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
 (8,'moneta'), (8, 'soldo'), (8,'metallo'), (8,'denaro'),
 (10, 'penna'), (10,'null'),
 (11, 'contenitore'), (11, 'box'), (11, 'cassa'),
-(12, 'tessera'), (12, 'scheda'),
+(12, 'tessera s'),
 (13, 'carta'), (13, 'rotolo'), (13, 'igienica'),
 (14, 'magica'), (14,'pass'),
 (16, 'macchinetta'), (16,'distributore');
@@ -306,6 +311,15 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (5,'Ivano Ipoclorito (Inserviente)',10),
 (6, 'Dottor Cravattone', 20);
 
+MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
+(7,'studente'), (7, 'sudente sto'),
+(1, 'bruno'), (1, 'portinaio'),
+(2, 'Ernesto'), (2, 'Sapientoni'),
+(3, 'Dario'), (3, 'Tremolanti'),
+(4, 'Javanna'), (4, 'Garbage'),
+(5, 'Ivano'), (5, 'Inserviente'),
+(6, 'Dottor C'), (6, 'Cravattone');
+
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
 (5,2), (6,3), (7,4), (8,4),
@@ -336,6 +350,12 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (3,9,'Va bene, va bene… al quarto piano c''è un bagno quasi sempre libero. Nessuno ci va perché dicono sia infestato da uno studente fuori corso, ma è solo leggenda.'),
 --3--
 (3,10,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
+
+(3,41,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no 
+(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
+Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
+La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
+
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
 (4,11,'Guarda chi torna... Hai la faccia di chi ha capito che le scale non sono sempre l''opzione migliore, eh? Purtroppo, per sbloccare l''ascensore serve rispondere a una domanda che tormenta anche i più bravi. Se sbagli, mi dispiace, niente corsa verso l''alto. Allora, senti qua:\n“In Java, quale tra queste forme di ereditarietà non è permessa?”'),
@@ -390,6 +410,12 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (10,33,'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.'),
 --4--
 (10,34,'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.'),
+
+(10,43, 'Ragazzo ultima scance , hai la candeggina??'),
+(10, 44 ,'Niente da fare, hia perso una possibilità preziosa...'),
+(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
+ Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
+
 --QUARTO--PIANO--INSERVIENTE----IL--SALVATORE--
 --1--
 (11,35,'Mi sa che la ricerca non è andata bene vero?'),
@@ -418,6 +444,11 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --secondo--indovinello--RISPOSTA--1----
 ('Lei si sta divertendo, ma io rischio di esplodere. Aiuti uno studente in difficoltà!',8,9,3),
 ('Conosce scorciatoie o bagni ''non ufficiali''?',8,10,3),
+--risposte del se ho il caffe
+
+('No', 10,41 ,3),
+('Si', 10, 42 ,3 ), 
+
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),
 --terzo--indovinello-RISPOSTA--2--ERRATA--
@@ -454,6 +485,12 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 ('Ecco la varechina. L''ho trovata nel laboratorio di robotica.',32,33,10),
 --3--NON--HO--LA--CANDEGGINA--
 ('Mi dispiace, non ho la candeggina con me.',32,34,10),
+--4--HO--RISPOSTO--NO--CANDEGGINA--PARLO--DI--NUOVO--SECONDA--SCANCE
+('Ciao Ivano, sono tornato',34, 43 ,10),
+--NO--CANDEGGINA
+('No', 43,44,10),
+--SI-CANDEGGINA
+('Si', 43,45,10),
 -----RISPOSTE----QUARTO--PIANO-----INSERVIENTE---IL--SALVATORE----
 --1--
 ('Mi scusi… io… non ce la faccio più… non so dove andare… mi sa che… mi scappa…',35,36,11),

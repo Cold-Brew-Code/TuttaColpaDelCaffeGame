@@ -8,6 +8,7 @@ package it.tutta.colpa.del.caffe.game.entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
@@ -19,21 +20,39 @@ public class NPC implements Serializable {
     private String nome;
     private int dialogoCor;
     private final List<Dialogo> dialoghi;
+    private Set<String> alias;
     
     
     
-    public NPC(int id, String nome) {
+    public NPC(int id, String nome, Set<String> alias) {
         this.id = id;
         this.nome = nome;
         this.dialogoCor=1;
         this.dialoghi= new ArrayList<>();
+        this.alias = alias;
     }
 
-    public NPC(int id, String nome, List<Dialogo> dialoghi) {
+    public NPC(int id, String nome, List<Dialogo> dialoghi, Set<String> alias) {
         this.id = id;
         this.nome = nome;
         this.dialogoCor = 1;
         this.dialoghi = dialoghi;
+        this.alias = alias;
+    }
+
+
+    /**
+     * @return
+     */
+    public Set<String> getAlias() {
+        return alias;
+    }
+
+    /**
+     * @param alias
+     */
+    public void setAlias(Set<String> alias) {
+        this.alias = alias;
     }
 
     public void setNome(String nome) {
