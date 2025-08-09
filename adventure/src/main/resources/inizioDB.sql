@@ -314,7 +314,7 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
 (7,'studente'), (7, 'sudente sto'),
 (1, 'bruno'), (1, 'portinaio'),
-(2, 'Ernesto'), (2, 'Sapientoni' ),
+(2, 'Ernesto'), (2, 'Sapientoni'),
 (3, 'Dario'), (3, 'Tremolanti'),
 (4, 'Javanna'), (4, 'Garbage'),
 (5, 'Ivano'), (5, 'Inserviente'),
@@ -351,10 +351,10 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 --3--
 (3,10,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
 
-(3,42,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no 
-(3,43, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
-Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
-La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
+--(3,42,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no 
+--(3,43, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
+--Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
+--La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
 
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
@@ -411,10 +411,10 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 --4--
 (10,34,'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.'),
 
-(10,44, 'Ultima scance , hai la candeggina??')
-(10, 45 ,'Niente da fare, hia perso una possibilità preziosa...'),
-(10,46, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
- Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
+--(10,44, 'Ultima scance , hai la candeggina??'),
+--(10, 45 ,'Niente da fare, hia perso una possibilità preziosa...'),
+--(10,46, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
+-- Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
 --QUARTO--PIANO--INSERVIENTE----IL--SALVATORE--
 --1--
 (11,35,'Mi sa che la ricerca non è andata bene vero?'),
@@ -445,8 +445,8 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 ('Conosce scorciatoie o bagni ''non ufficiali''?',8,10,3),
 --risposte del se ho il caffe
 
-('No', 10,42 ,3),--dubbio
-('Si', 10, 43 ,3 ), --dubbio
+--('No', 10,42 ,3),--dubbio
+--('Si', 10, 43 ,3 ), --dubbio
 
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),
@@ -487,9 +487,9 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --4--HO--RISPOSTO--NO--CANDEGGINA--PARLO--DI--NUOVO--SECONDA--SCANCE
 
 --NO--CANDEGGINA
-('No', 44,45,10),
+--('No', 44,45,10),
 --SI-CANDEGGINA
-('Si', 44,46,10),
+--('Si', 44,46,10),
 -----RISPOSTE----QUARTO--PIANO-----INSERVIENTE---IL--SALVATORE----
 --1--
 ('Mi scusi… io… non ce la faccio più… non so dove andare… mi sa che… mi scappa…',35,36,11),
