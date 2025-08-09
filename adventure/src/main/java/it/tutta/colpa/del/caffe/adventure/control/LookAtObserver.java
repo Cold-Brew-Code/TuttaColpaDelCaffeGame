@@ -43,6 +43,8 @@ public class LookAtObserver implements GameObserver {
                         switch (roomId) {
                             case 18 -> // ho fatto osserva nella stanza che ha l'indizzio della cartigenica in possesso dell'inservientre
                                 description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 8));
+                            case 11-> // ho fatto osserva nel bagno 4 piano 
+                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 6));
                             default -> {
                             }
                         }
