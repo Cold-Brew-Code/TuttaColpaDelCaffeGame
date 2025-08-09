@@ -31,11 +31,11 @@ public class TalkObserver implements GameObserver {
             if (parserOutputNpc != null) {
                 if (isNPCinCurrentRoom(parserOutputNpc, description.getCurrentRoom())) {
                     NPC npc = description.getCurrentRoom()
-                                         .getNPCs()
-                                         .stream()
-                                         .filter(npc1 ->(npc1.getId()==parserOutputNpc.getId()))
-                                         .findFirst()
-                                         .get();
+                            .getNPCs()
+                            .stream()
+                            .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
+                            .findFirst()
+                            .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
 
                     } else {
@@ -138,47 +138,32 @@ public class TalkObserver implements GameObserver {
             GUI.addUserPossibleAnswers(dialogue.getCurrentAssociatedPossibleAnswers());
         }
 
-        private void eventHandler(int eventID, Room currentRoom, String lastProducedStatement) {
+        private void dialogueEndedEvent(int dialogueID, GameDescription description) {
+            try {
+                switch (dialogueID) {
+                    case 4:
+                        description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
+                        break;
+                    case 7:
+                    case 8:
+                    case 9:
+                        // description.getGameMap().
+                        break;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        private void lookEvent(int eventID, Room currentRoom, String lastProducedStatement) {
             try {
                 ServerInterface serverInterface = new ServerInterface("localhost", 49152);
                 String updatedLook = serverInterface.requestToServer(RequestType.UPDATED_LOOK, eventID);
-                switch (eventID) {
-                    case 4:
-                        if (lastProducedStatement.equals("La gittata è massima quando 𝜃=45")) {
-                            currentRoom.setLook(updatedLook);
-
-                        } else {
-                            currentRoom.setLook("");
-                        }
-                        break;
-                    case 10:
-                        if (lastProducedStatement.equals("")) {
-                            currentRoom.setLook(updatedLook);
-                        } else {
-                            currentRoom.setLook("");
-                        }
-                        break;
-                    case 11:
-                        if (lastProducedStatement.equals("La gittata è massima quando 𝜃=45")) {
-                            currentRoom.setLook(updatedLook);
-                        } else {
-                            currentRoom.setLook("");
-                        }
-                        break;
-                    case 12:
-                        if (lastProducedStatement.equals("La gittata è massima quando 𝜃=45")) {
-                            currentRoom.setLook(updatedLook);
-                        } else {
-                            currentRoom.setLook("");
-                        }
-                        break;
-                    case 13:
-                        if (lastProducedStatement.equals("La gittata è massima quando 𝜃=45")) {
-                            currentRoom.setLook(updatedLook);
-                        } else {
-                            currentRoom.setLook("");
-                        }
-                        break;
+                if (lastProducedStatement.equals("La gittata è massima quando 𝜃=45") && eventID == 4) {
+                    currentRoom.setLook(updatedLook);
+                } else if (eventID == 4) {
+                    currentRoom.setLook("");
+                } else {
+                    currentRoom.setLook(updatedLook);
                 }
             } catch (ServerCommunicationException e) {
                 System.err.println("Modifiche non effettuate, richiesta al server non pervenuta: " + e.getMessage());

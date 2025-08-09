@@ -207,7 +207,7 @@ MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
 
 MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_path) KEY(id) VALUES
     (1, 'Ingresso del Campus', 'Davanti a te si apre il cancello del campus universitario, imponente ma familiare. Oltre il cancello si vede un viale lungo, da grandi palazzi e piccioni prepotenti, pronti a colpirti. A pochi passi dall''ingresso, un piccolo bar brulica di studenti già assonnati e inservienti carichi di pacchi. Il dipartimento di informatica si staglia più avanti, grigio e severo, come un labirinto di vetro e cemento che sembra nascondere più segreti che aule.\n TUTORIAL \n Muoviti tramite i comandi Nord (N), Est (E), Ovest (O), Sud (S), ed arrivare il prima possibile al bagno.\n Guarda attentamente ciò che ti circonda, può sempre essere utile!','',true, true, 'ingresso.png'),
-    (2, 'Bar', 'Un locale stretto ma accogliente, con il profumo persistente di caffè bruciato e cornetti caldi. Alle pareti, volantini scoloriti pubblicizzano vecchi eventi universitari. Un orologio sopra la macchina del caffè segna sempre le 8:15, bloccato da anni. Dietro il bancone, il barista prepara distrattamente cappuccini, mentre un gruppetto di studenti chiacchiera a voce troppo alta. ', ' Vicino alla cassa, in ato al centro , un piccolo cartello con scritto: “Chi cerca… trova.”\n Ci sono molti studenti , è un buon posto per raccogliere voci di corridoio o chiedere informazioni....',true, true, 'bar-gioco.png'),
+    (2, 'Bar', 'Un locale stretto ma accogliente, con il profumo persistente di caffè bruciato e cornetti caldi. Alle pareti, volantini scoloriti pubblicizzano vecchi eventi universitari. Un orologio sopra la macchina del caffè segna sempre le 8:15, bloccato da anni. Dietro il bancone, il barista prepara distrattamente cappuccini, mentre un gruppetto di studenti chiacchiera a voce troppo alta. ', ' Vicino alla cassa, in alto al centro , un piccolo cartello con scritto: “Chi cerca… trova.”\n Ci sono molti studenti , è un buon posto per raccogliere voci di corridoio o chiedere informazioni....',true, true, 'bar-gioco.png'),
     (3, 'Viale verso il dipartimento', 'Stai andando a verso Est. \nUn viale lungo, quasi interminabile, che conduce al cortile interno del dipartimento. Le foglie secche si raccolgono agli angoli, mosse dal vento. Sui lati del percorso, vecchie bacheche arrugginite espongono orari, comunicati e qualche annuncio misterioso. In fondo, le porte a vetri del dipartimento invitano a entrare… o forse a perdersi.', 'Sul lato destro, una bacheca ha una mappa del campus, ma è strappata proprio dove c''è segnato il dipartimento di informatica.',true, true, 'viale.png'),
     (4, 'Dipartimento di Informtica', 'Un atrio ampio ma freddo, pavimento in marmo consumato e neon tremolanti. Dietro un vetro spesso, il portinaio osserva chi entra e chi esce, sfogliando distrattamente un giornale. Alla sua sinistra, un vecchio ascensore con porte rumorose e delle scala che portano verso i piani superiori.', ' Ti ritrovi di nuovo al piano terra. Il portinaio, mezzo addormentato, armeggia con un mazzo di chiavi che sembra non finire mai, mentre si trascina verso l''ultima pagina del giornale',true, true, 'corridoio_piano_terra.png'),
 --piano terra
@@ -333,7 +333,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 --2--
 (3,9,'Va bene, va bene… al quarto piano c''è un bagno quasi sempre libero. Nessuno ci va perché dicono sia infestato da uno studente fuori corso, ma è solo leggenda.'),
 --3--
-(3,10,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
+(3,10,'Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
 (4,11,'Guarda chi torna... Hai la faccia di chi ha capito che le scale non sono sempre l''opzione migliore, eh? Purtroppo, per sbloccare l''ascensore serve rispondere a una domanda che tormenta anche i più bravi. Se sbagli, mi dispiace, niente corsa verso l''alto. Allora, senti qua:\n“In Java, quale tra queste forme di ereditarietà non è permessa?”'),
@@ -367,7 +367,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (7,24,'Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.'),
 --IN-FILA---2--INDOVINELLO
 --1--
-(8,25,'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a quesata domanda facile facile ,  roba del primo semestre e potrai saltare la fila. Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?'),
+(8,25,'Oh, bentornato! spero che questa volta ti vada meglio, rispondi a questa domanda facile facile ,  roba del primo semestre e potrai saltare la fila. Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?'),
 --2--
 (8,26,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2)\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!'),
 --3--
@@ -394,7 +394,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 --2--
 (11,36,'Calma, ragazzo. Ricorda: nessuna corsa può essere vinta se prima non si respira.Persino il bisogno più urgente va affrontato con dignità… e carta igienica.Tieni, giovane guerriero. Non è molto… ma nelle mani giuste, può fare miracoli.'),
 --3--
-(11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene……ma chi arriva in tempo!'),
+(11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene…ma chi arriva in tempo!'),
 --SESTO--PIANO--IL--NOBILE------
 --1--
 (12,38,'STO PER ESPLODERE...'),
