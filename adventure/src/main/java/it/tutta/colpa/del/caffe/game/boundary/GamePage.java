@@ -440,7 +440,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip(); // Mostra tutto il testo immediatamente
+            typeWriterEffect.skip();
         }
     }
 
@@ -513,9 +513,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void out(String message) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip(); // Completa l'animazione corrente
+            typeWriterEffect.skip();
         }
-        typeWriterEffect.start("\n" + message); // Avvia la nuova animazione
+        typeWriterEffect.start("\n" + message);
     }
 
     @Override

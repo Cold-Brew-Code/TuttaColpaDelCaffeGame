@@ -1,7 +1,11 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
 import javax.sound.sampled.*;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +13,7 @@ import java.util.Map;
 public class AudioManager {
     private static AudioManager instance;
     private final Map<String, Clip> audioClips;
-    private float volume = 0.5f; // default
+    private float volume = 0.4f; // default
     private String currentTrack;
 
     private AudioManager() {
@@ -25,18 +29,20 @@ public class AudioManager {
 
     public void loadAudio(String name, String path) {
         try {
-            URL url = getClass().getResource("/sounds/" + path);
-            if (url == null) {
-                System.err.println("File audio non trovato: " + path);
+            URL audioUrl = getClass().getResource("/sounds/" + path);
+            if (audioUrl == null) {
+                System.err.println("File audio non trovato: /sounds/" + path);
                 return;
             }
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(url);
+
+            AudioInputStream audioIn = AudioSystem.getAudioInputStream(audioUrl);
             Clip clip = AudioSystem.getClip();
             clip.open(audioIn);
             audioClips.put(name, clip);
-            setVolume(volume);
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            System.err.println("Errore di caricamento dell'audio: " + e.getMessage());
+            System.out.println("[SUCCESS] Audio caricato: " + name);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Caricamento fallito per '" + name + "':");
+            e.printStackTrace();
         }
     }
 

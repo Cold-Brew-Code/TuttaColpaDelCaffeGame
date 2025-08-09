@@ -7,12 +7,13 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.net.URL;
 
 public class MainPage extends JFrame implements GUI {
     MainPageController c;
     private boolean isAudioPaused = false;
-    private boolean isAudioEnabled = true; // Aggiunto stato globale audio
+    private boolean isAudioEnabled = true;
 
     JPanel wallpaper = new JPanel() {
         private final Image wp;
@@ -36,10 +37,10 @@ public class MainPage extends JFrame implements GUI {
         }
     };
 
-    JButton start = createStyledButton("INIZIA");
-    JButton load = createStyledButton("CARICA PARTITA");
-    JButton exit = createStyledButton("ESCI");
-    JButton audioControlButton = createStyledButton("CONTROLLO AUDIO");
+    JButton start = new PButton("INIZIA");
+    JButton load = new PButton("CARICA PARTITA");
+    JButton exit = new PButton("ESCI");
+    JButton audioControlButton = new PButton("AUDIO");
 
     JPopupMenu audioMenu = new JPopupMenu();
     JMenuItem togglePauseItem = new JMenuItem("Pausa/Riprendi");
@@ -48,24 +49,27 @@ public class MainPage extends JFrame implements GUI {
     JMenuItem toggleAudioItem = new JMenuItem("Disattiva Audio");
 
     public MainPage() {
-        // Inizializzazione audio
+        System.out.println("=== VERIFICA RISORSE ===");
+        checkResource("/images/button.png", "Immagine pulsante");
+        checkResource("/sounds/menu_theme.wav", "Audio menu");
+        checkResource("/sounds/game_theme.wav", "Audio gioco");
+        checkResource("/sounds/victory.wav", "Audio vittoria");
+        checkResource("/sounds/defeat.wav", "Audio sconfitta");
+
         AudioManager audioManager = AudioManager.getInstance();
         audioManager.loadAudio("menu_theme", "menu_theme.wav");
         audioManager.setVolume(0.7f);
 
-        // Configurazione finestra
         this.setResizable(false);
         this.setPreferredSize(new Dimension(960, 540));
         this.setTitle("Tutta colpa del Caffè!");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Icona applicazione
         URL gameIcon = getClass().getResource("/images/icon.png");
         if (gameIcon != null) {
             this.setIconImage(new ImageIcon(gameIcon).getImage());
         }
 
-        // Menu audio
         audioMenu.add(togglePauseItem);
         audioMenu.add(volumeUpItem);
         audioMenu.add(volumeDownItem);
@@ -79,70 +83,54 @@ public class MainPage extends JFrame implements GUI {
         audioControlButton
                 .addActionListener(e -> audioMenu.show(audioControlButton, 0, audioControlButton.getHeight()));
 
-        // Layout pulsanti
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new GridLayout(4, 1, 0, 10));
         buttonPanel.setOpaque(false);
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        addButtonWithSpacing(buttonPanel, start);
-        addButtonWithSpacing(buttonPanel, load);
-        addButtonWithSpacing(buttonPanel, exit);
-        addButtonWithSpacing(buttonPanel, audioControlButton);
+        buttonPanel.add(start);
+        buttonPanel.add(load);
+        buttonPanel.add(exit);
+        buttonPanel.add(audioControlButton);
 
-        // Posizionamento
-        int panelWidth = 260;
-        int panelHeight = 300;
-        int xPos = (960 - panelWidth) / 2 + 325;
-        int yPos = 540 - panelHeight - 20;
-        buttonPanel.setBounds(xPos, yPos, panelWidth, panelHeight);
+        buttonPanel.setBounds(((960 - 260) / 2) + 325,
+                540 - 300 - 50,
+                260, 300);
 
-        // Controllo volume
-        JSlider volumeSlider = new JSlider(0, 100, 70);
-        volumeSlider.setPreferredSize(new Dimension(100, 20));
-        volumeSlider.addChangeListener(e -> {
-            if (isAudioEnabled) { // Solo se l'audio è abilitato
-                float volume = volumeSlider.getValue() / 100f;
-                AudioManager.getInstance().setVolume(volume);
-            }
-        });
-
-        JPanel volumePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        volumePanel.setOpaque(false);
-        volumePanel.add(new JLabel("Volume:"));
-        volumePanel.add(volumeSlider);
-        volumePanel.setBounds(20, 20, 200, 30);
-
-        // Aggiunta componenti
         wallpaper.setLayout(null);
         wallpaper.add(buttonPanel);
-        wallpaper.add(volumePanel);
         this.add(wallpaper);
 
         this.pack();
         setLocationRelativeTo(null);
         this.setVisible(true);
 
-        // Avvio musica
         if (isAudioEnabled) {
             SwingUtilities.invokeLater(() -> {
                 audioManager.fadeIn("menu_theme", true, 800);
             });
         }
 
-        // Listener pulsanti
+        // ====================================================
+        // = BUTTON's LISTENERS =
+        // ====================================================
         start.addActionListener(e -> {
             if (isAudioEnabled) {
-                audioManager.fadeOut("menu_theme", 500);
+                AudioManager.getInstance().stop("menu_theme");
             }
             new Thread(() -> {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(300);
                     c.startGame();
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
             }).start();
+        });
+
+        load.addActionListener(e -> {
+            if (isAudioEnabled) {
+                AudioManager.getInstance().stop("menu_theme");
+            }
+            c.loadGame();
         });
 
         load.addActionListener(e -> {
@@ -160,34 +148,27 @@ public class MainPage extends JFrame implements GUI {
         });
     }
 
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
-        button.setContentAreaFilled(false);
-        button.setBorderPainted(false);
-        button.setFocusPainted(false);
-        button.setOpaque(false);
-        button.setForeground(Color.WHITE);
-        button.setPreferredSize(new Dimension(250, 75));
-        button.setMaximumSize(new Dimension(250, 75));
-        button.setFont(new Font("Arial", Font.BOLD, 24));
+    // Classe PButton mantenuta identica all'originale
+    private class PButton extends JButton {
+        private final Image backgroundImage = new ImageIcon(getClass().getResource("/images/button.png"))
+                .getImage();
 
-        try {
-            URL buttonImageUrl = getClass().getResource("/images/button.png");
-            if (buttonImageUrl != null) {
-                ImageIcon icon = new ImageIcon(buttonImageUrl);
-                button.setIcon(new ImageIcon(icon.getImage().getScaledInstance(250, 75, Image.SCALE_SMOOTH)));
-            }
-        } catch (Exception e) {
-            System.err.println("Immagine del pulsante non trovata");
+        public PButton(String text) {
+            super(text);
+            setContentAreaFilled(false);
+            setBorderPainted(false);
+            setFocusPainted(false);
+            setOpaque(false);
+            setForeground(new Color(0xFFFFFF));
+            setPreferredSize(new Dimension(250, 75));
+            setFont(new Font("Arial", Font.BOLD, 24));
         }
 
-        return button;
-    }
-
-    private void addButtonWithSpacing(JPanel panel, JButton button) {
-        button.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(button);
-        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+        @Override
+        protected void paintComponent(Graphics g) {
+            g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+            super.paintComponent(g);
+        }
     }
 
     private void toggleAudio() {
@@ -238,6 +219,8 @@ public class MainPage extends JFrame implements GUI {
     public void linkController(Controller c) {
         if (c instanceof MainPageController) {
             this.c = (MainPageController) c;
+        } else {
+            throw new RuntimeException("Il controller c non è un controller valido per MainPage");
         }
     }
 
@@ -248,6 +231,16 @@ public class MainPage extends JFrame implements GUI {
             SwingUtilities.invokeLater(() -> {
                 AudioManager.getInstance().fadeIn("menu_theme", true, 800);
             });
+        }
+    }
+
+    private void checkResource(String path, String descrizione) {
+        URL url = getClass().getResource(path);
+        if (url != null) {
+            System.out.println("[OK] " + descrizione + " trovato: " + path);
+        } else {
+            System.err.println("[ERR] " + descrizione + " NON trovato: " + path);
+            System.err.println("Percorso assoluto tentato: " + new File("src/main/resources" + path).getAbsolutePath());
         }
     }
 }
