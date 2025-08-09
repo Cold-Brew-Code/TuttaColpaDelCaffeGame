@@ -5,11 +5,13 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import it.tutta.colpa.del.caffe.game.utility.StringArcoGrafo;
-import org.jgrapht.graph.DefaultDirectedGraph;
-import org.jgrapht.Graph;
-
 import java.io.Serializable;
+import java.util.Set;
+
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+
+import it.tutta.colpa.del.caffe.game.utility.StringArcoGrafo;
 
 /**
  *
@@ -53,5 +55,21 @@ public class Dialogo  implements Serializable {
     public void setCurrentNode(String currentNode) {
         this.currentNode = currentNode;
     }
+
+    public void stampaDialogo() {
+        for (String nodo : dialogo.vertexSet()) {
+            System.out.println("Nodo: " + nodo);
+            Set<StringArcoGrafo> archiUscenti = dialogo.outgoingEdgesOf(nodo);
+            if (archiUscenti.isEmpty()) {
+                System.out.println("  Nessuna risposta disponibile.");
+            } else {
+                for (StringArcoGrafo arco : archiUscenti) {
+                    String nodoDestinazione = dialogo.getEdgeTarget(arco);
+                    System.out.println(arco.getEtichetta() + "\" porta a: " + "  Risposta: \"" + nodoDestinazione);
+                }
+            }
+        }
+    }
+
 
 }

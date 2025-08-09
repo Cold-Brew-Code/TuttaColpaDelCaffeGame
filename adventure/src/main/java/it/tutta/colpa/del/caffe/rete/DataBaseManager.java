@@ -283,7 +283,7 @@ public class DataBaseManager {
                         "INNER JOIN Dialogues AS d " +
                         "ON d.id=ds.dialogue_id " +
                         "WHERE d.NPC=? " +
-                        "ORDER BY ds.id;");
+                        "ORDER BY d.id, ds.id;");
         pstm.setInt(1, npcID);
         ResultSet rsDialoghi = pstm.executeQuery();
 
