@@ -351,8 +351,8 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 --3--
 (3,10,'Hmm... forse.potrebbe esistere un bango segreto. ma non diffondo segreti mistci in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
 
---(3,42,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no 
---(3,43, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
+(3,41,'ah capisco allora chiamero il barista. \nMi dispace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no
+(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta,
 --Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
 --La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
 
@@ -445,8 +445,8 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 ('Conosce scorciatoie o bagni ''non ufficiali''?',8,10,3),
 --risposte del se ho il caffe
 
---('No', 10,42 ,3),--dubbio
---('Si', 10, 43 ,3 ), --dubbio
+('No', 10,41 ,3),--dubbio
+('Si', 10, 42 ,3 ), --dubbio
 
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),

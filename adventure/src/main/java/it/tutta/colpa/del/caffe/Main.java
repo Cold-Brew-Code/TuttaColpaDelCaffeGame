@@ -22,7 +22,7 @@ public class Main {
                 System.out.println("alias " + item.getAlias());
                 for (Dialogo dialogo : item.getDialoghi()) {
                     System.out.println(" Dialogo ID: " + dialogo.getId());
-                    dialogo.stampaDialogo();
+                    //wdialogo.stampaDialogo();
                 }
 
 /*
