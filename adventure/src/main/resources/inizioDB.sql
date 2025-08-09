@@ -446,8 +446,8 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 ('Conosce scorciatoie o bagni ''non ufficiali''?',8,10,3),
 --risposte del se ho il caffe
 
-('No', 10,41 ,3),--dubbio
-('Si', 10,42,3), --dubbio
+('No', 10,41 ,3),
+('Si', 10, 42 ,3 ), 
 
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),
