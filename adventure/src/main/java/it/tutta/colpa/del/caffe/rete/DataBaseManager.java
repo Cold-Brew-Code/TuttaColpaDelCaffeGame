@@ -242,8 +242,29 @@ public class DataBaseManager {
         return new NPC(
                 rsNPC.getInt("id"),
                 rsNPC.getString("name"),
-                askForDialogues(rsNPC.getInt("id"))
+                askForDialogues(rsNPC.getInt("id")),
+                askForNpcAlias(rsNPC.getInt("id"))
         );
+    }
+
+    /**
+     * Recupera gli alias di un npc specifico dal database.
+     *
+     * @param npcID l'ID dell'npc.
+     * @return un insieme di stringhe contenente gli alias dell'npc.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    private Set<String> askForNpcAlias(int npcID) throws SQLException {
+        Set<String> alias = new HashSet<>();
+        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM NpcAlias WHERE id = ?");
+        pstm.setInt(1, npcID);
+        ResultSet rs = pstm.executeQuery();
+        while (rs.next()) {
+            alias.add(rs.getString("npc_alias"));
+        }
+        rs.close();
+        pstm.close();
+        return alias;
     }
 
     /**
