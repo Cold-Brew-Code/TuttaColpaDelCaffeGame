@@ -411,7 +411,7 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 --4--
 (10,34,'Io non lavoro per aria fritta. Torna con qualcosa che disinfetti, o resta nel tuo sudore.'),
 
-(10,43, 'Ultima scance , hai la candeggina??'),
+(10,43, 'Ragazzo ultima scance , hai la candeggina??'),
 (10, 44 ,'Niente da fare, hia perso una possibilità preziosa...'),
 (10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
  Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
@@ -486,7 +486,7 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --3--NON--HO--LA--CANDEGGINA--
 ('Mi dispiace, non ho la candeggina con me.',32,34,10),
 --4--HO--RISPOSTO--NO--CANDEGGINA--PARLO--DI--NUOVO--SECONDA--SCANCE
-
+('Ciao Ivano, sono tornato',34, 43 ,10),
 --NO--CANDEGGINA
 ('No', 43,44,10),
 --SI-CANDEGGINA
