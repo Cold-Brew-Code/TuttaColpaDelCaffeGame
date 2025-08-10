@@ -82,7 +82,6 @@ public class PickUpObserver implements GameObserver {
                         isobjRoom = description.getCurrentRoom().getObject(15);
                         conteiner = true;
                     }
-                    System.out.println("conteiner: " + conteiner);
                     if (conteiner) {
                         if (isobjRoom instanceof ItemContainer isobjRoomC) {
                             if (conteiner && isobjRoom.getId() != 15) {
@@ -105,6 +104,7 @@ public class PickUpObserver implements GameObserver {
                                             description.getInventory().add(objCont, quantity);
                                             msg.append(" ").append(quantity).append(" x ").append(objCont.getName());
                                             isobjRoomC.remove(objCont, quantity);
+
                                             // ho raccolto la candeggina quindi cambio la descrizione della stanza 9
                                             if (server != null) {
                                                 description.getCurrentRoom().setLook((String) server.requestToServer(UPDATED_LOOK, 2));
@@ -187,7 +187,10 @@ public class PickUpObserver implements GameObserver {
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
                                 } catch (IllegalArgumentException e) {
+                                    msg.append(e.getMessage());
                                 }
+                            } else {
+                                msg.append("ndfkjnsdjokfnoj");
                             }
 
                         } else {
@@ -207,6 +210,7 @@ public class PickUpObserver implements GameObserver {
                                 description.getInventory().add(isobjRoom, quantity);
                                 msg.append(" ").append(quantity).append(" x ").append(isobjRoom.getName());
                                 objRoom.remove(isobjRoom, quantity);
+                                description.getCurrentRoom().setObjects(objRoom);
                                 // oggetto trovato nella stanza quindi è stato raccolto e aggiorno la descrizione della stanza
                                 try {
                                     int roomId = description.getCurrentRoom().getId();
@@ -243,6 +247,8 @@ public class PickUpObserver implements GameObserver {
                         msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");
                     }
 
+                } else {
+                    msg.append("merda");
                 }
 
             } else {
@@ -254,6 +260,10 @@ public class PickUpObserver implements GameObserver {
 
     private boolean findObjectInventory(GameDescription description, ServerInterface server, StringBuilder msg, GeneralItem obj) {
         boolean c = false;
+        Map<GeneralItem, Integer> map = description.getCurrentRoom().getObjects();
+        for (GeneralItem item : map.keySet()) {
+            System.out.println(" oggetti :\n " + item.getName());
+        }
         try {
             if (server == null) {
                 throw new ServerCommunicationException("connessione al server fallita");
@@ -267,10 +277,15 @@ public class PickUpObserver implements GameObserver {
                     if (item instanceof ItemContainer container) {
                         System.out.println(container.getName() + container.containsObject(obj));
 
-                        if (description.getInventory().contains(container) && container.containsObject(obj)) {
-                            msg.append("folletto\n");
-                            c = true;
-                            break;
+                        if (description.getInventory().contains(container)) {
+                            ItemContainer cont = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), container.getId());
+                            if (cont.containsObject(obj)) {
+                                msg.append("folletto\n");
+                                c = true;
+                                break;
+
+                            }
+
                         }
                     }
                 }
