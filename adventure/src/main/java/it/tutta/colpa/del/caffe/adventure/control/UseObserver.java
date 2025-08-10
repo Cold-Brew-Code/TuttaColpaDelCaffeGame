@@ -123,7 +123,7 @@ public class UseObserver implements GameObserver {
                                     if(c instanceof IteamCombinable){
                                         IteamCombinable caffe = (IteamCombinable) c;
                                         description.getInventory().add(caffe, 1);
-                                        msg.append(" hai preso un caffè, ora sei più energico");
+                                        msg.append(" Hai preso l'oggetto: ").append(caffe.getName());
                                         System.out.println(caffe.getName());
                                     }else{
                                         msg.append("errore");

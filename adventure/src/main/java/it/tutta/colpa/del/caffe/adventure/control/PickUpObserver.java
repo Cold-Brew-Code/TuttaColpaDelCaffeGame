@@ -189,10 +189,7 @@ public class PickUpObserver implements GameObserver {
                                 } catch (IllegalArgumentException e) {
                                     msg.append(e.getMessage());
                                 }
-                            } else {
-                                msg.append("ndfkjnsdjokfnoj");
-                            }
-
+                            } 
                         } else {
                             msg.append("L'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                         }
@@ -247,8 +244,6 @@ public class PickUpObserver implements GameObserver {
                         msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");
                     }
 
-                } else {
-                    msg.append("merda");
                 }
 
             } else {
@@ -260,10 +255,6 @@ public class PickUpObserver implements GameObserver {
 
     private boolean findObjectInventory(GameDescription description, ServerInterface server, StringBuilder msg, GeneralItem obj) {
         boolean c = false;
-        Map<GeneralItem, Integer> map = description.getCurrentRoom().getObjects();
-        for (GeneralItem item : map.keySet()) {
-            System.out.println(" oggetti :\n " + item.getName());
-        }
         try {
             if (server == null) {
                 throw new ServerCommunicationException("connessione al server fallita");
@@ -280,7 +271,6 @@ public class PickUpObserver implements GameObserver {
                         if (description.getInventory().contains(container)) {
                             ItemContainer cont = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), container.getId());
                             if (cont.containsObject(obj)) {
-                                msg.append("folletto\n");
                                 c = true;
                                 break;
 
