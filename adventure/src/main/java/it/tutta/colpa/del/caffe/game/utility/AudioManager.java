@@ -1,14 +1,13 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
-import javax.sound.sampled.*;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 
 public class AudioManager {
     private static AudioManager instance;
@@ -76,7 +75,10 @@ public class AudioManager {
         }
 
         FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        gainControl.setValue(-80.0f); // imposta volume minimo
+        float min = gainControl.getMinimum();
+        float max = gainControl.getMaximum();
+
+        gainControl.setValue(min); // volume minimo
 
         clip.setFramePosition(0);
         if (loop) {
@@ -88,10 +90,17 @@ public class AudioManager {
 
         new Thread(() -> {
             try {
-                float targetVolume = (float) (Math.log10(volume) * 20);
-                float increment = (targetVolume + 80f) / (durationMillis / 30f);
+                float targetVolume;
+                if (volume <= 0f) {
+                    targetVolume = min;
+                } else {
+                    targetVolume = (float) (Math.log10(volume) * 20);
+                    targetVolume = Math.min(max, Math.max(min, targetVolume));
+                }
 
-                for (float vol = -80f; vol < targetVolume; vol += increment) {
+                float increment = (targetVolume - min) / (durationMillis / 30f);
+
+                for (float vol = min; vol < targetVolume; vol += increment) {
                     gainControl.setValue(vol);
                     Thread.sleep(30);
                 }
@@ -118,7 +127,17 @@ public class AudioManager {
         for (Clip clip : audioClips.values()) {
             if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-                float dB = (float) (Math.log10(volume) * 20);
+                float min = gainControl.getMinimum();
+                float max = gainControl.getMaximum();
+
+                float dB;
+                if (this.volume <= 0f) {
+                    dB = min;
+                } else {
+                    dB = (float) (Math.log10(this.volume) * 20);
+                    dB = Math.min(max, Math.max(min, dB));
+                }
+
                 gainControl.setValue(dB);
             }
         }
@@ -130,14 +149,21 @@ public class AudioManager {
 
     public void fadeOut(String name, int durationMillis) {
         Clip clip = audioClips.get(name);
-        if (clip != null && clip.isRunning()) {
+        if (clip != null && clip.isRunning() && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            float min = gainControl.getMinimum();
+            float max = gainControl.getMaximum();
+
             float initialVolume = gainControl.getValue();
-            float delta = initialVolume / (durationMillis / 50f);
+            // assicurati che delta sia positivo
+            float delta = (initialVolume - min) / (durationMillis / 50f);
 
             new Thread(() -> {
-                for (float v = initialVolume; v > -80f; v -= delta) {
-                    gainControl.setValue(Math.max(-80f, v));
+                float v = initialVolume;
+                while (v > min) {
+                    gainControl.setValue(v);
+                    v -= delta;
+                    if (v < min) v = min;
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
