@@ -69,26 +69,7 @@ public class PickUpObserver implements GameObserver {
                         .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);
-                /*controllo se è nell'inventario 
-                try {
-                    if (server == null) {
-                        throw new ServerCommunicationException("connessione al server fallita");
-                    }
-                    List<GeneralItem> list = server.requestToServer(ITEMS);
-                    for (GeneralItem item : list) {
-                        if (item.getId() == obj.getId() && description.getInventory().getInventory().containsKey(item)) {
-                            c = true;
-                            break;
-                        } else {
-                            if (item instanceof ItemContainer container && description.getInventory().contains(container)) {
-                                c = true;
-                                break;
-                            }
-                        }
-                    }
-                } catch (ServerCommunicationException | NullPointerException e) {
-                    msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
-                }*/
+                //controllo se è nell'inventario 
                 if (isobjRoom == null && c == false) {
                     msg.append("oggetto contenit\n");
                     if (description.getCurrentRoom().getObject(7) != null) {
@@ -153,7 +134,6 @@ public class PickUpObserver implements GameObserver {
                 } else if (isobjRoom == null && c != false) {
                     msg.append("invent");
                     List<GeneralItem> listContainer = new ArrayList<>();
-                    boolean trovato = false;
                     if (!description.getInventory().getInventory().containsKey(obj)) {
                         Inventory inventario = description.getInventory();
                         if (GameUtils.getObjectFromInventory(inventario, 7) != null) {
@@ -168,56 +148,58 @@ public class PickUpObserver implements GameObserver {
 
                         if (!listContainer.isEmpty()) {
                             ItemContainer container = null;
+                            boolean isOpen = false;
+
                             for (GeneralItem objCont : listContainer) {
                                 container = (ItemContainer) objCont;
-                                if (container.containsObject(obj)) {
-                                    break; // esco dal ciclo se ho trovato l'oggetto\  
+                                if (container.isOpen()) {
+
+                                    if (container.containsObject(obj)) {
+                                        isOpen = true;
+                                        break; // esco dal ciclo se ho trovato l'oggetto\  
+                                    }
                                 }
                             }
-                            if(container==null){
-                                msg.append(" non c'è l'oggetto nell'inventario");
+                            if (!isOpen) {
+                                for (GeneralItem co : listContainer) {
+                                    ItemContainer con = (ItemContainer) co;
+                                    if (!con.isOpen()) {
+                                        msg.append("\nOps l'oggetto : ").append(co.getName())
+                                                .append(" è chiuso.");
+                                    }
+                                }
+                                msg.append("Prova ad aprire un oggetto, potrebbero contentere").append(obj.getName()).
+                                        append("Usa il comando APRI nome oggetto");
                             }
-                            else if (container.isOpen()) {
+                            if (container == null) {
+                                msg.append(" non c'è l'oggetto nell'inventario");
+                            } else if (container.isOpen()) {
                                 try {
                                     Map<GeneralItem, Integer> pippo = container.getObject(obj);
                                     if (pippo != null && !pippo.isEmpty()) {// se il container ha l'oggetto indicato
-                                        System.out.println("ho trovato l'oggetto nell'inventario");
                                         GeneralItem objFinde = pippo.keySet().iterator().next();
                                         int quantity = pippo.get(objFinde);
                                         description.getInventory().add(objFinde, quantity);
                                         msg.append(" ").append(quantity).append(" x ").append(objFinde.getName());
                                         container.remove(objFinde, quantity);
-                                        trovato = true;
                                     }
 
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
                                 } catch (IllegalArgumentException e) {
-                                    System.out.println("manaccia");
-                                    System.err.println(e);
-                                    //msg.append(e.getMessage());
                                 }
-                            } else {
-                                // contenitore chiuso
-                                msg.append("\nOps l'oggetto : ").append(container.getName())
-                                        .append(" è chiuso. Dovresti prima aprirlo. (Usa il comando APRI nome oggetto");
                             }
 
-                        } else if (!listContainer.isEmpty()) {
-                            if (!trovato) {
-                                msg.append("L'oggetto ").append(obj.getName()).append(" non è nell'inventario");
-                            }
                         } else {
                             msg.append("L'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                         }
                     } else {
-                        msg.append("oggetto già nell'inventario");
+                        msg.append("L'oggetto inidcato è già nell'inventario");
                     }
                 } else if (isobjRoom != null && c == false) {// oggetto nella stanza
                     msg.append("nella stanza");
                     if (parserOutput.getObject().isPickupable()) {
                         Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
-                        System.out.println(isobjRoom.getName() + isobjRoom.isVisibile() + "visibile?");
                         if (isobjRoom.isVisibile()) {
                             int quantity = objRoom.get(isobjRoom);
                             try {
@@ -296,7 +278,6 @@ public class PickUpObserver implements GameObserver {
         } catch (ServerCommunicationException | NullPointerException e) {
             msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
         }
-        System.out.println("c: " + c);
         return c;
     }
 
