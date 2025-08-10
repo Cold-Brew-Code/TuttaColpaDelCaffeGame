@@ -149,7 +149,7 @@ MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
 MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
 (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale,  consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata', false,false,false,false,-1, 'chiave.png', true),
 (1, 'LA MAPPA DEL FUORICORSO', ' Questa mappa costruita da studenti che vaga da anni nel dipartimento, rileva segreti e stanze nascoste all''interno del dipartiemnto.',false,true,false,false, -1,'mappa.png', true),
-(2, 'CAFFÈ RIGENERANTE', 'Un piccolo calice fumante colmo di liquido scuro e amaro, capace di ridare vigore anche allo studente più esausto. Si dice che chi beve il CAFFÈ RIGENERANTE possa restare vigile abbastanza da affrontare persino le lezioni del mattino e le infinite code in segreteria.',false, false, true, false, -1, 'caffè.png', true),
+(2, 'CAFFÈ RIGENERANTE', 'Un piccolo calice fumante colmo di liquido scuro e amaro, capace di ridare vigore anche allo studente più esausto. Si dice che chi beve il CAFFÈ RIGENERANTE possa restare vigile abbastanza da affrontare persino le lezioni del mattino e le infinite code in segreteria.',false, false, true, true, -1, 'caffè.png', true),
 --PRIMO PIANO
 (3, 'LIBRO DI CALCOLABILITÀ E COMPLESSITÀ','Un voluminoso manoscritto rilegato in pelle consumata, intriso di formule antiche che raccontano le meraviglie (e i tormenti) degli algoritmi. Custodisce segreti sulla Macchina di Turing Universale, diagrammi misteriosi e dimostrazioni che si avvolgono su loro stesse come un serpente che non trova la propria coda. Si narra che nelle sue pagine sia celata una verità tanto semplice quanto impossibile da dimostrare… e che chi osa cercarla finisca per perdersi in un labirinto di problemi apparentemente “facili”',false,true,true,false, 3,'libro_cc.png', true),
 -- SECONDO PIANO
@@ -315,10 +315,10 @@ MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
 (7,'studente'), (7, 'sudente sto'),
 (1, 'bruno'), (1, 'portinaio'),
 (2, 'Ernesto'), (2, 'Sapientoni'),
-(3, 'Dario'), (3, 'Tremolanti'),
-(4, 'Javanna'), (4, 'Garbage'),
-(5, 'Ivano'), (5, 'Inserviente'),
-(6, 'Dottor C'), (6, 'Cravattone');
+(3, 'Dario'), (3, 'tremolanti'),
+(4, 'javanna'), (4, 'Garbage'),
+(5, 'ivano'), (5, 'inserviente'),
+(6, 'dottor c'), (6, 'cravattone');
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
