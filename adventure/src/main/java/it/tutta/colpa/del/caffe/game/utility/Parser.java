@@ -183,7 +183,6 @@ public class Parser {
             throw new ParserException("Il comando che hai inserito non è valido!");
         }
         Command cd = checkForCommand(tokens[0]);
-        //System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
         if (cd == null) {
             throw new ParserException("Errore: comando non riconosciuto o input non valido.");
         }
