@@ -7,11 +7,12 @@
 package it.tutta.colpa.del.caffe.game.entity;
 
 
-import it.tutta.colpa.del.caffe.game.exception.InventoryException;
-
 import java.io.Serializable;
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import it.tutta.colpa.del.caffe.game.exception.InventoryException;
 
 /**
  * classe degli oggetti contenitori
@@ -130,6 +131,10 @@ public class ItemContainer extends GeneralItem implements Serializable {
     
     public void setOpen(boolean open) {
         this.open = open;
+    }
+
+    public boolean containsObject(GeneralItem item) {
+        return containedItems.containsKey(item);
     }
 
 }
