@@ -315,10 +315,10 @@ MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
 (7,'studente'), (7, 'sudente sto'),
 (1, 'bruno'), (1, 'portinaio'),
 (2, 'Ernesto'), (2, 'Sapientoni'),
-(3, 'Dario'), (3, 'Tremolanti'),
-(4, 'Javanna'), (4, 'Garbage'),
-(5, 'Ivano'), (5, 'Inserviente'),
-(6, 'Dottor C'), (6, 'Cravattone');
+(3, 'Dario'), (3, 'tremolanti'),
+(4, 'javanna'), (4, 'Garbage'),
+(5, 'ivano'), (5, 'inserviente'),
+(6, 'dottor c'), (6, 'cravattone');
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
