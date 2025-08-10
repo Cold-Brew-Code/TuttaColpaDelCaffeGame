@@ -131,7 +131,7 @@ public class TalkObserver implements GameObserver {
             showCurrentDialogue();
             if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                 dialogue.setActivity(false);
-                this.dialogueEndedEvent(this.dialogue.getId(), null); // !!!!!!!!!!!!!!
+                this.dialogueEndedEvent(this.dialogue.getId(), dialogue.getCurrentNode()); // !!!!!!!!!!!!!!
                 this.GUI.setPageClosable(true);
             }
         }
@@ -195,8 +195,10 @@ public class TalkObserver implements GameObserver {
                     case 4:
                         // Bruno mostra la chiave
                         // da verificare se ha passato l'indovinello !!!!!!!!!!!!!!!!!!!!!
-                        if (lastProducedStatement.equals("")) {
+                        if (lastProducedStatement.equals("Bravo! L'ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono. Va bene, prendi questa chiave: ti apre l'ascensore fino al settimo piano.Ma occhio: più sali, più i misteri si complicano.")) {
+                            System.err.println("entra");
                             this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
+                            System.out.println((this.description.getGameMap().getRoom(4).getObject(9)));
                         }
                         break;
                     case 5:

@@ -69,7 +69,7 @@ public class Parser {
                 .filter(item -> {
                     // Copio la lista di alias + nome (senza modificare l'originale)
                     List<String> aliasList = new ArrayList<>(item.getAlias());
-                    aliasList.add(item.getName());
+                    aliasList.add(item.getName().toLowerCase());
 
                     // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri speciali)
                     String regex = aliasList.stream()

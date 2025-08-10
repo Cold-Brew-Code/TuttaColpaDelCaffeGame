@@ -60,7 +60,7 @@ public class GameMap implements Serializable {
     public Room getPiano(int numeroP) throws GameMapException{
         final String piano;
         switch(numeroP){
-            case 0 -> piano= "Dipartimento di Informtica";
+            case 0 -> piano= "Dipartimento di Informatica";
             case 1 -> piano="Primo";
             case 2 -> piano= "Secondo";
             case 3 -> piano= "Terzo";
