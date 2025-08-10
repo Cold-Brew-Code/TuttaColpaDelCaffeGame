@@ -192,19 +192,19 @@ public class InventoryPage extends JDialog implements GUI {
         qtySecondItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
         qtySecondItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-        qtyThirdItem.setHorizontalAlignment(SwingConstants.CENTER);
-        qtyThirdItem.setOpaque(true);
-        qtyThirdItem.setBackground(new Color(0xF3E28B));
-        qtyThirdItem.setText("0");
-        qtyThirdItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
-        qtyThirdItem.setHorizontalTextPosition(SwingConstants.CENTER);
-
         qtyFourthItem.setHorizontalAlignment(SwingConstants.CENTER);
         qtyFourthItem.setOpaque(true);
         qtyFourthItem.setBackground(new Color(0xF3E28B));
         qtyFourthItem.setText("0");
         qtyFourthItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
         qtyFourthItem.setHorizontalTextPosition(SwingConstants.CENTER);
+
+        qtyThirdItem.setHorizontalAlignment(SwingConstants.CENTER);
+        qtyThirdItem.setOpaque(true);
+        qtyThirdItem.setBackground(new Color(0xF3E28B));
+        qtyThirdItem.setText("0");
+        qtyThirdItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        qtyThirdItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
         GroupLayout panelLayout = new GroupLayout(panel);
         panel.setLayout(panelLayout);
@@ -218,9 +218,9 @@ public class InventoryPage extends JDialog implements GUI {
                                 .addGap(87, 87, 87))
                         .addGroup(GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                                 .addGap(90, 90, 90)
-                                .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                                 .addGap(88, 88, 88))
                         .addGroup(panelLayout.createSequentialGroup()
                                 .addGap(60, 60, 60)
@@ -254,8 +254,8 @@ public class InventoryPage extends JDialog implements GUI {
                                         .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                                 //  MODIFICA QUI
                                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
@@ -339,8 +339,8 @@ public class InventoryPage extends JDialog implements GUI {
     private JPanel panel;
     private JLabel qtyFirstItem;
     private JLabel qtySecondItem;
-    private JLabel qtyFourthItem;
     private JLabel qtyThirdItem;
+    private JLabel qtyFourthItem;
     private JLabel secondItem;
     private JLabel thirdItem;
 
