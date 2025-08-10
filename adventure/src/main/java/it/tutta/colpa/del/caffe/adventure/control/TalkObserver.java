@@ -6,7 +6,6 @@ package it.tutta.colpa.del.caffe.adventure.control;
 
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
-import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.DialogueController;
 import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.*;
@@ -16,8 +15,10 @@ import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author giova
@@ -137,7 +138,59 @@ public class TalkObserver implements GameObserver {
 
         public void showCurrentDialogue() {
             GUI.addNPCStatement(NPCName, dialogue.getCurrentNode());
-            GUI.addUserPossibleAnswers(dialogue.getCurrentAssociatedPossibleAnswers());
+            List<DialogueGUI.PossibleAnswer> answers = new ArrayList<>();
+            switch (dialogue.getId()) {
+
+                case 3:
+                    System.err.println("CASO 3");
+                    if (dialogue.getCurrentNode().equals("Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?")
+                            && !description.getInventory().contains(new GeneralItem(2))) {
+                        System.err.println("NON HA IL COFFEEE");
+                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
+                            if(answer.equals("Si")){
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
+                            } else {
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
+                            }
+                        }
+                    } else {
+                        answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
+                                .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
+                                .collect(Collectors.toList());
+                    }
+                    break;
+                case 10:
+                    if (dialogue.getCurrentNode().equals("Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l'hai?")
+                            && !description.getInventory().contains(new GeneralItem(4))) {
+                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
+                            if(answer.equals("Ecco la candeggina. L'ho trovata nel laboratorio di robotica.")){
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
+                            } else {
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
+                            }
+                        }
+                    } else if (dialogue.getCurrentNode().equals("Ragazzo ultima chance , hai la candeggina??")
+                            && !description.getInventory().contains(new GeneralItem(4))) {
+                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
+                            if(answer.equals("Si")){
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
+                            } else {
+                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
+                            }
+                        }
+                    }else{
+                        answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
+                                .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
+                                .collect(Collectors.toList());
+                    }
+                    break;
+                default:
+                    answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
+                            .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
+                            .collect(Collectors.toList());
+            }
+
+            GUI.addUserPossibleAnswers(answers);
         }
 
         private void dialogueEndedEvent(int dialogueID, String lastProducedStatement) {

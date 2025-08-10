@@ -14,13 +14,13 @@ import java.util.Set;
 /**
  * @author giovanni
  */
-public  abstract class GeneralItem implements Serializable {
+public class GeneralItem implements Serializable {
 
     private final int id;
     private String name;
     private String description;
     private Set<String> alias;
-    private boolean visibile= false;
+    private boolean visibile = false;
     private String immagine;
     private boolean pickupable = false;
 
@@ -29,26 +29,24 @@ public  abstract class GeneralItem implements Serializable {
         this.name = name;
         this.description = description;
         this.alias = alias;
-        this.immagine = "/images/"+immagine;
+        this.immagine = "/images/" + immagine;
     }
-    
-    public GeneralItem(int id){
-    this.id = id;
-    
-    }
-    
 
-    
-    
+    public GeneralItem(int id) {
+        this.id = id;
+
+    }
+
+
     public boolean isPickupable() {
         return pickupable;
     }
-    
+
 
     public void setPickupable(boolean pickupable) {
         this.pickupable = pickupable;
     }
-    
+
 
     public boolean isVisibile() {
         return visibile;
@@ -62,7 +60,7 @@ public  abstract class GeneralItem implements Serializable {
         return immagine;
     }
 
-    
+
     public void setImmagine(String immagine) {
         this.immagine = immagine;
     }
@@ -140,17 +138,10 @@ public  abstract class GeneralItem implements Serializable {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
+        if (obj instanceof GeneralItem other) {
+            return this.id == other.id;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final GeneralItem other = (GeneralItem) obj;
-        return this.id == other.id;
+        return false;
     }
 
 }

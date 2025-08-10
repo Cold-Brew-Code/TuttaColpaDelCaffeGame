@@ -46,6 +46,11 @@ public class DialoguePage extends JDialog implements DialogueGUI {
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
     );
 
+    // --- NUOVE COSTANTI PER LE RISPOSTE DISABILITATE ---
+    private static final Color ANSWER_DISABLED_BG_COLOR = new Color(55, 55, 55);
+    private static final Color ANSWER_DISABLED_TEXT_COLOR = new Color(160, 160, 160);
+    // --------------------------------------------------
+
     private final JPanel dialogueContentPanel;
     private final GridBagConstraints gbc;
     private int gridY = 0;
@@ -117,17 +122,15 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     private JTextArea createAnswerTextArea(String text) {
         JTextArea textArea = new JTextArea(text);
         textArea.setFont(ANSWER_FONT);
-        textArea.setForeground(ANSWER_TEXT_COLOR);
-        textArea.setBackground(ANSWER_BG_COLOR);
-        textArea.setBorder(ANSWER_BORDER);
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
         textArea.setEditable(false);
         textArea.setFocusable(false);
-        textArea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         textArea.setHighlighter(null);
+        textArea.setBorder(ANSWER_BORDER); // Imposta il bordo di base qui
         return textArea;
     }
+
 
     @Override
     public void addNPCStatement(String npcName, String statement) {
@@ -162,35 +165,53 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         updateLayout();
     }
 
+    // --- METODO MODIFICATO ---
     @Override
-    public void addUserPossibleAnswers(List<String> statements) {
+    public void addUserPossibleAnswers(List<PossibleAnswer> statements) {
         JPanel answersPanel = new JPanel();
         answersPanel.setLayout(new BoxLayout(answersPanel, BoxLayout.Y_AXIS));
         answersPanel.setOpaque(false);
 
-        for (String statement : statements) {
-            JTextArea answerArea = createAnswerTextArea(statement);
-            answerArea.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    answerArea.setBackground(ANSWER_BG_HOVER_COLOR);
-                }
+        for (PossibleAnswer answer : statements) {
+            final String statementText = answer.text();
+            JTextArea answerArea = createAnswerTextArea(statementText);
 
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    answerArea.setBackground(ANSWER_BG_COLOR);
-                }
-
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    for (MouseListener ml : answerArea.getMouseListeners()) {
-                        answerArea.removeMouseListener(ml);
+            if (answer.isEnabled()) {
+                // Imposta lo stile e il comportamento per una risposta ABILITATA
+                answerArea.setForeground(ANSWER_TEXT_COLOR);
+                answerArea.setBackground(ANSWER_BG_COLOR);
+                answerArea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                answerArea.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        answerArea.setBackground(ANSWER_BG_HOVER_COLOR);
                     }
-                    dialogueContentPanel.remove(answersPanel);
-                    addUserStatement("Tu", statement);
-                    controller.answerChosen(statement);
-                }
-            });
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        answerArea.setBackground(ANSWER_BG_COLOR);
+                    }
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        // Rimuovi i listener per evitare click multipli
+                        for (MouseListener ml : answerArea.getMouseListeners()) {
+                            answerArea.removeMouseListener(ml);
+                        }
+                        // Rimuovi il pannello delle risposte, aggiungi la scelta e notifica il controller
+                        dialogueContentPanel.remove(answersPanel);
+                        addUserStatement("Tu", statementText);
+                        controller.answerChosen(statementText);
+                    }
+                });
+            } else {
+                // Imposta lo stile per una risposta DISABILITATA
+                answerArea.setForeground(ANSWER_DISABLED_TEXT_COLOR);
+                answerArea.setBackground(ANSWER_DISABLED_BG_COLOR);
+                answerArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                // Nessun MouseListener viene aggiunto, rendendola non cliccabile
+            }
+
             answersPanel.add(answerArea);
             answersPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
