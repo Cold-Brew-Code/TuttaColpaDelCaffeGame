@@ -3,23 +3,11 @@ package it.tutta.colpa.del.caffe.game.boundary;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.DialogueController;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.List;
 
 public class DialoguePage extends JDialog implements DialogueGUI {
 
@@ -46,10 +34,8 @@ public class DialoguePage extends JDialog implements DialogueGUI {
             BorderFactory.createEmptyBorder(10, 15, 10, 15)
     );
 
-    // --- NUOVE COSTANTI PER LE RISPOSTE DISABILITATE ---
     private static final Color ANSWER_DISABLED_BG_COLOR = new Color(55, 55, 55);
     private static final Color ANSWER_DISABLED_TEXT_COLOR = new Color(160, 160, 160);
-    // --------------------------------------------------
 
     private final JPanel dialogueContentPanel;
     private final GridBagConstraints gbc;
@@ -67,10 +53,12 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         setTitle("Tutta Colpa del Caffè - Dialogo");
 
         mainContainer.setBackground(BACKGROUND_COLOR);
+
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
+        scrollPane.setViewportBorder(null);
 
-        dialogueContentPanel = new JPanel(new GridBagLayout());
+        dialogueContentPanel = new ScrollablePanel(new GridBagLayout());
         dialogueContentPanel.setOpaque(false);
         scrollPane.setViewportView(dialogueContentPanel);
 
@@ -90,10 +78,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         });
     }
 
-    /**
-     * Metodo eseguito dopo la chiusura della finestra.
-     * Termina l'applicazione.
-     */
     private void onWindowClosingActionPerformed() {
         if (closable) {
             this.dispose();
@@ -113,7 +97,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         textArea.setBackground(bgColor);
         textArea.setBorder(border);
         textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(false);
+        textArea.setWrapStyleWord(true);
         textArea.setEditable(false);
         textArea.setFocusable(false);
         return textArea;
@@ -127,10 +111,9 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         textArea.setEditable(false);
         textArea.setFocusable(false);
         textArea.setHighlighter(null);
-        textArea.setBorder(ANSWER_BORDER); // Imposta il bordo di base qui
+        textArea.setBorder(ANSWER_BORDER);
         return textArea;
     }
-
 
     @Override
     public void addNPCStatement(String npcName, String statement) {
@@ -165,7 +148,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         updateLayout();
     }
 
-    // --- METODO MODIFICATO ---
     @Override
     public void addUserPossibleAnswers(List<PossibleAnswer> statements) {
         JPanel answersPanel = new JPanel();
@@ -177,7 +159,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
             JTextArea answerArea = createAnswerTextArea(statementText);
 
             if (answer.isEnabled()) {
-                // Imposta lo stile e il comportamento per una risposta ABILITATA
                 answerArea.setForeground(ANSWER_TEXT_COLOR);
                 answerArea.setBackground(ANSWER_BG_COLOR);
                 answerArea.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -194,22 +175,18 @@ public class DialoguePage extends JDialog implements DialogueGUI {
 
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        // Rimuovi i listener per evitare click multipli
                         for (MouseListener ml : answerArea.getMouseListeners()) {
                             answerArea.removeMouseListener(ml);
                         }
-                        // Rimuovi il pannello delle risposte, aggiungi la scelta e notifica il controller
                         dialogueContentPanel.remove(answersPanel);
                         addUserStatement("Tu", statementText);
                         controller.answerChosen(statementText);
                     }
                 });
             } else {
-                // Imposta lo stile per una risposta DISABILITATA
                 answerArea.setForeground(ANSWER_DISABLED_TEXT_COLOR);
                 answerArea.setBackground(ANSWER_DISABLED_BG_COLOR);
                 answerArea.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-                // Nessun MouseListener viene aggiunto, rendendola non cliccabile
             }
 
             answersPanel.add(answerArea);
@@ -273,6 +250,38 @@ public class DialoguePage extends JDialog implements DialogueGUI {
             this.controller = (DialogueController) c;
         } catch (Exception e) {
             throw new RuntimeException("Controller non valido: richiesto DialogueController", e);
+        }
+    }
+
+    private static class ScrollablePanel extends JPanel implements Scrollable {
+
+        public ScrollablePanel(LayoutManager layout) {
+            super(layout);
+        }
+
+        @Override
+        public Dimension getPreferredScrollableViewportSize() {
+            return getPreferredSize();
+        }
+
+        @Override
+        public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 16;
+        }
+
+        @Override
+        public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+            return 160;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportWidth() {
+            return true;
+        }
+
+        @Override
+        public boolean getScrollableTracksViewportHeight() {
+            return false;
         }
     }
 }

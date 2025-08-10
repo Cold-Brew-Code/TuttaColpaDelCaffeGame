@@ -138,59 +138,51 @@ public class TalkObserver implements GameObserver {
 
         public void showCurrentDialogue() {
             GUI.addNPCStatement(NPCName, dialogue.getCurrentNode());
-            List<DialogueGUI.PossibleAnswer> answers = new ArrayList<>();
-            switch (dialogue.getId()) {
+            List<DialogueGUI.PossibleAnswer> answers = buildConditionalAnswers();
+            GUI.addUserPossibleAnswers(answers);
+        }
 
+        private List<DialogueGUI.PossibleAnswer> buildConditionalAnswers() {
+            String textToDisable = null;
+            int requiredItemId = -1;
+
+            switch (dialogue.getId()) {
                 case 3:
-                    System.err.println("CASO 3");
-                    if (dialogue.getCurrentNode().equals("Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?")
-                            && !description.getInventory().contains(new GeneralItem(2))) {
-                        System.err.println("NON HA IL COFFEEE");
-                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
-                            if(answer.equals("Si")){
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
-                            } else {
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
-                            }
-                        }
-                    } else {
-                        answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
-                                .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
-                                .collect(Collectors.toList());
+                    if (dialogue.getCurrentNode().equals("Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?")) {
+                        textToDisable = "Si";
+                        requiredItemId = 2;
                     }
                     break;
                 case 10:
-                    if (dialogue.getCurrentNode().equals("Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l'hai?")
-                            && !description.getInventory().contains(new GeneralItem(4))) {
-                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
-                            if(answer.equals("Ecco la candeggina. L'ho trovata nel laboratorio di robotica.")){
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
-                            } else {
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
-                            }
-                        }
-                    } else if (dialogue.getCurrentNode().equals("Ragazzo ultima chance , hai la candeggina??")
-                            && !description.getInventory().contains(new GeneralItem(4))) {
-                        for(String answer :  dialogue.getCurrentAssociatedPossibleAnswers()){
-                            if(answer.equals("Si")){
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,false));
-                            } else {
-                                answers.add(new DialogueGUI.PossibleAnswer(answer,true));
-                            }
-                        }
-                    }else{
-                        answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
-                                .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
-                                .collect(Collectors.toList());
+                    if (dialogue.getCurrentNode().equals("Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l'hai?")) {
+                        textToDisable = "Ecco la candeggina. L'ho trovata nel laboratorio di robotica.";
+                        requiredItemId = 4;
+                    } else if (dialogue.getCurrentNode().equals("Ragazzo ultima chance , hai la candeggina??")) {
+                        textToDisable = "Si";
+                        requiredItemId = 4;
                     }
                     break;
-                default:
-                    answers = dialogue.getCurrentAssociatedPossibleAnswers().stream()
-                            .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
-                            .collect(Collectors.toList());
             }
 
-            GUI.addUserPossibleAnswers(answers);
+            if (textToDisable == null) {
+                return dialogue.getCurrentAssociatedPossibleAnswers().stream()
+                        .map(answer -> new DialogueGUI.PossibleAnswer(answer, true))
+                        .collect(Collectors.toList());
+            }
+
+            // Creiamo delle costanti "final" con i valori determinati dallo switch.
+            // Queste possono essere usate tranquillamente dalla lambda.
+            final String final_textToDisable = textToDisable;
+            final int final_requiredItemId = requiredItemId;
+
+            boolean playerHasItem = description.getInventory().contains(new GeneralItem(final_requiredItemId));
+
+            return dialogue.getCurrentAssociatedPossibleAnswers().stream()
+                    .map(answer -> {
+                        boolean isEnabled = playerHasItem || !answer.equals(final_textToDisable);
+                        return new DialogueGUI.PossibleAnswer(answer, isEnabled);
+                    })
+                    .collect(Collectors.toList());
         }
 
         private void dialogueEndedEvent(int dialogueID, String lastProducedStatement) {
