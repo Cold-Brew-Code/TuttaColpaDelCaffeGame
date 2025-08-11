@@ -24,9 +24,25 @@ public class MoveObserver implements GameObserver {
                 System.out.println("Comando: " + commandType + "\n" + commandName + "\n proca1" + parserOutput.getCommand().getType());
                 if (commandType != null) {
                     if (Set.of(CommandType.UP, CommandType.DOWN).contains(commandType) && parserOutput.getPiano() >= 0) {
-                        LiftObserver ob = new LiftObserver();
-                        parserOutput.setCommand(new Command("ascensore"));
-                        msg.append(ob.update(description, parserOutput));
+                        int currPiano= description.getGameMap().getPianoCorrente();
+                        int targetFloor = parserOutput.getPiano();
+                        boolean validMove = false;
+                        if (commandType == CommandType.UP && targetFloor > currPiano) {
+                            validMove = true;
+                            
+                        }else if(commandType == CommandType.DOWN && targetFloor < currPiano) {
+                            validMove = true;
+
+                        }
+                        if(!validMove){
+                            msg.append("Errore: impossibile eseguire il comando, piano non coerente con la posizione attuale.\n");
+
+                        }else{
+                            LiftObserver ob = new LiftObserver();
+                            parserOutput.setCommand(new Command("ascensore"));
+                            msg.append(ob.update(description, parserOutput));
+                        }
+            
                     } else {
                         switch (commandType) {
                             case NORD -> {
