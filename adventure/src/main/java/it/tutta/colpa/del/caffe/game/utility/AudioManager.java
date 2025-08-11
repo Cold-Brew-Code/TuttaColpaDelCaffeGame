@@ -5,10 +5,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -127,7 +123,7 @@ public class AudioManager {
     }
 
     public void setVolume(float volume) {
-        this.volume = Math.max(0.0f, Math.min(1.0f, volume));
+        this.volume = Math.max(0.1f, Math.min(1.0f, volume));
         for (Clip clip : audioClips.values()) {
             if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
                 FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
