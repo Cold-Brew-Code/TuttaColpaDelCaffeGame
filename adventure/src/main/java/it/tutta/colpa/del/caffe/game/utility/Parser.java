@@ -76,12 +76,10 @@ public class Parser {
                             .reduce((a, b) -> a + "|" + b)
                             .orElse("");
                     Pattern p = Pattern.compile(regex);
-
                     // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
                     return tentativo(p, token);
                 })
-                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista
-        //if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla list
         return findObj.toArray(new String[0]); // converto la lista array di
     }
 
@@ -205,6 +203,7 @@ public class Parser {
             }
             if (obj.length == 1) {
                 // chiamo il construttore di parserOutput con solo un oggetto
+
                 return new ParserOutput(cd, items.stream().filter(item
                         -> item.getName().equals(obj[0])
                 ).findFirst().orElse(null));
