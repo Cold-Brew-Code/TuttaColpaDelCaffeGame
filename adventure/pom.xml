@@ -3,18 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.tutta.colpa.del.caffe</groupId>
     <artifactId>adventure</artifactId>
-
-    <version>0.1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>ColdBrewCode - Packages</name>
-            <url>https://maven.pkg.github.com/Cold-Brew-Code/TuttaColpaDelCaffeGame</url>
-        </repository>
-    </distributionManagement>
-
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
@@ -29,6 +20,7 @@
     </repositories>
 
     <dependencies>
+        <!-- Le tue dipendenze esistenti rimangono invariate -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -64,9 +56,39 @@
             <artifactId>jersey-hk2</artifactId>
             <version>2.30.1</version>
         </dependency>
+        <dependency>
+            <groupId>javazoom</groupId>
+            <artifactId>jlayer</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <resources>
+            <!-- Aggiunto: Include i file audio dalla cartella personalizzata -->
+            <resource>
+                <directory>adventure/resources</directory>
+                <includes>
+                    <include>sounds/*.wav</include>
+                </includes>
+                <targetPath>sounds</targetPath>
+            </resource>
+            <!-- Include anche le risorse standard se presenti -->
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                    <includes>
+                        <include>**/*.wav</include>
+                        <include>**/*.png</include>
+                        <include>**/*.jpg</include>
+                        <include>**/*.sql</include>
+                        <include>**/stopwords</include>
+                    </includes>
+        </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -78,7 +100,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>it.tutta.colpa.del.caffe.TuttaColpaDelCaffe</mainClass>
+                            <mainClass>${exec.mainClass}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -92,6 +114,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -112,6 +135,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
