@@ -7,6 +7,7 @@ package it.tutta.colpa.del.caffe.game.boundary;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
+import it.tutta.colpa.del.caffe.game.utility.AudioManager;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -35,6 +36,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         } // </editor-fold>>
         initComponents();
+
+        AudioManager.getInstance().loadAudio("game_theme", "game_theme.wav");
+        AudioManager.getInstance().fadeIn("game_theme", true, 1000);
 
         typeWriterEffect = new TypeWriterEffect(DialogTextArea, 50);
 
@@ -94,7 +98,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JMenuItem fastEffectMenuItem;
     private javax.swing.JMenuItem disabledEffectMenuItem;
     private TypeWriterEffect typeWriterEffect;
-    private javax.swing.JLabel timerLabel;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
@@ -152,7 +155,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         mediumEffectMenuItem = new javax.swing.JMenuItem("Medio");
         fastEffectMenuItem = new javax.swing.JMenuItem("Veloce");
         disabledEffectMenuItem = new javax.swing.JMenuItem("Disattivo");
-        timerLabel = new javax.swing.JLabel();
 
         HeaderPanel.setOpaque(false);
         ImagePanel.setOpaque(false);
@@ -172,14 +174,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         });
         setTitle("Tutta Colpa del Caffè!");
         setResizable(false);
-
-        // --- STILE LABEL TIMER ---
-        timerLabel.setFont(new java.awt.Font("Arial", 1, 24));
-        timerLabel.setForeground(new java.awt.Color(255, 255, 255));
-        timerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        timerLabel.setText("00:00");
-        timerLabel.setOpaque(false);
-
 
         // --- STILE BOTTONI MENU ---
         audioButton.setText("Audio \u25BC");
@@ -233,26 +227,27 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(saveButton)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                                .addGroup(HeaderPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
+                                                Short.MAX_VALUE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
+                                                Short.MAX_VALUE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE,
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
@@ -445,7 +440,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip(); // Mostra tutto il testo immediatamente
+            typeWriterEffect.skip();
         }
     }
 
@@ -460,15 +455,24 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Aumenta volume cliccato");
+        float currentVol = AudioManager.getInstance().getVolume();
+        AudioManager.getInstance().setVolume(Math.min(1.0f, currentVol + 0.1f));
     }
 
     private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Abbassa volume cliccato");
+        float currentVol = AudioManager.getInstance().getVolume();
+        AudioManager.getInstance().setVolume(Math.max(0.0f, currentVol - 0.1f));
     }
 
     private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Attiva/Disattiva audio cliccato");
+        AudioManager audioManager = AudioManager.getInstance();
+        if (audioManager.isPaused("game_theme")) {
+            audioManager.resume("game_theme");
+            toggleMuteMenuItem.setText("Disattiva Audio");
+        } else {
+            audioManager.pause("game_theme");
+            toggleMuteMenuItem.setText("Attiva Audio");
+        }
     }
     // </editor-fold>
 
@@ -509,9 +513,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void out(String message) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip(); // Completa l'animazione corrente
+            typeWriterEffect.skip();
         }
-        typeWriterEffect.start("\n" + message); // Avvia la nuova animazione
+        typeWriterEffect.start("\n" + message);
     }
 
     @Override
@@ -548,6 +552,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void close() {
+        AudioManager.getInstance().fadeOut("game_theme", 500);
         this.dispose();
     }
 
@@ -562,9 +567,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void setDisplayedClock(String time) {
-        if (this.timerLabel != null) {
-            this.timerLabel.setText(time);
-        }
+
     }
 
     @Override
@@ -575,7 +578,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void executedCommand() {
         typeWriterEffect.skip();
-        this.DialogTextArea.append("\n > "+inputField.getText());
+        this.DialogTextArea.append("\n > " + inputField.getText());
         this.inputField.setText("");
     }
 }
