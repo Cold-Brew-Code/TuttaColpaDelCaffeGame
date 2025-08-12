@@ -196,7 +196,7 @@ public class PickUpObserver implements GameObserver {
                         msg.append("L'oggetto inidcato è già nell'inventario");
                     }
                 } else if (isobjRoom != null && c == false) {// oggetto nella stanza
-                    msg.append("nella stanza");
+                    msg.append("nella stanza prova ");
                     if (parserOutput.getObject().isPickupable()) {
                         Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
                         if (isobjRoom.isVisibile()) {
@@ -237,7 +237,7 @@ public class PickUpObserver implements GameObserver {
                                 msg.append(e.getMessage());
                             }
                         } else {
-                            msg.append("non c'è: ").append(isobjRoom.getName()).append(" nella stanza L'urgenza da alla testa.");
+                            msg.append(" non c'è: ").append(isobjRoom.getName()).append(" nella stanza. L'urgenza da alla testa.");
                         }
                     } else {
                         msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");
