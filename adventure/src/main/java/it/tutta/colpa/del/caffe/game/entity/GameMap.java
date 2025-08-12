@@ -133,22 +133,24 @@ public class GameMap implements Serializable {
      * Corridoio
      * </pre>
      */
-    public void stampaDirezioniPerStanza() {
+    public String stampaDirezioniPerStanza() {
+        StringBuilder msg = new StringBuilder();
         for (Room room : this.grafo.vertexSet()) {
-            System.out.print("Dalla stanza " + room.getName() + " puoi andare in: \n");
+            msg.append("Dalla stanza ").append (room.getName() ).append(" puoi andare in: \n");
 
             // prendo tutti gli archi uscenti dal nodo i-esimo
             Set<ArcoGrafo> uscenti = this.grafo.outgoingEdgesOf(room);
             if (uscenti.isEmpty()) {
-                System.out.println("nessuna direzione.");
+                msg.append("nessuna direzione.");
             } else {
                 for (ArcoGrafo arco : uscenti) {
                     Direzione direzione = arco.getEtichetta(); // mi prendo l'etichetta
                     Room destinazione = grafo.getEdgeTarget(arco); // mi prendo la stanza in cui arrivo da quella direzione
-                    System.out.println("  -> " + direzione + " verso \n" + destinazione.getName() + "\n");
+                    msg.append("  -> ").append( direzione).append(" verso \n").append(destinazione.getName()).append("\n");
                 }
             }
         }
+        return msg.toString();
     }
 
     public List<Room> getStanzeRaggiungibiliDallaStanzaCorrente() {

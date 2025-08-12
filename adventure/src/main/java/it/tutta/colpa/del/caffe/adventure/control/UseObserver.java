@@ -125,7 +125,7 @@ public class UseObserver implements GameObserver {
                         } else if (isVisibleMap == false && GameUtils.getObjectFromInventory(description.getInventory(), 1) != null) {
                             //la mappa può essere aperta ovunque
                             // stampa il contenuto 
-                            description.getGameMap().stampaDirezioniPerStanza();
+                            msg.append(description.getGameMap().stampaDirezioniPerStanza());
                         }
                     }
 
