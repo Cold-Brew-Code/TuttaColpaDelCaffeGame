@@ -164,12 +164,11 @@ public class PickUpObserver implements GameObserver {
                                 for (GeneralItem co : listContainer) {
                                     ItemContainer con = (ItemContainer) co;
                                     if (!con.isOpen()) {
-                                        msg.append("\nOps l'oggetto : ").append(co.getName())
-                                                .append(" è chiuso.");
+                                        msg.append("\nOps  hai l'oggetto : ").append(co.getName());
                                     }
                                 }
-                                msg.append("Prova ad aprire un oggetto, potrebbero contentere").append(obj.getName()).
-                                        append("Usa il comando APRI nome oggetto");
+                                msg.append(" chiuso").append(" Prova ad aprire un oggetto, potrebbero contentere ").append(obj.getName()).
+                                        append("\nUsa il comando APRI nome oggetto");
                             }
                             if (container == null) {
                                 msg.append(" non c'è l'oggetto nell'inventario");
@@ -187,7 +186,7 @@ public class PickUpObserver implements GameObserver {
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
                                 } catch (IllegalArgumentException e) {
-                                    msg.append(e.getMessage());
+                                    //msg.append(e.getMessage());
                                 }
                             }
                         } else {
