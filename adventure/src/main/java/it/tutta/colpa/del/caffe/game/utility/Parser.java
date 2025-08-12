@@ -76,12 +76,10 @@ public class Parser {
                             .reduce((a, b) -> a + "|" + b)
                             .orElse("");
                     Pattern p = Pattern.compile(regex);
-
                     // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
                     return tentativo(p, token);
                 })
-                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista
-        //if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla list
         return findObj.toArray(new String[0]); // converto la lista array di
     }
 
@@ -197,37 +195,25 @@ public class Parser {
             throw new ParserException("Errore: comando non riconosciuto o input non valido.");
         }
         NPC npcP = findNpc(tokens);
-        int piano= findPiano(tokens);
+        int piano=-1;
         if (tokens.length > 1) {
             String[] obj = findItem(tokens);
+            if (obj.length==0 && npcP== null) {
+                piano= findPiano(tokens); 
+            }
             if (obj.length == 1) {
                 // chiamo il construttore di parserOutput con solo un oggetto
+
                 return new ParserOutput(cd, items.stream().filter(item
                         -> item.getName().equals(obj[0])
                 ).findFirst().orElse(null));
 
-            } else if (obj.length == 2) {
-                // chiamo il costruttore che ha 2 oggetti
-                // prendo il primo oggetto
-                GeneralItem findItem1 = items.stream().filter(item
-                        -> item.getName().equals(obj[0])
-                ).findFirst().orElse(null);
-
-                // prendo il secondo oggetto
-                GeneralItem findItem2 = items.stream().filter(item
-                        -> item.getName().equals(obj[1])
-                ).findFirst().orElse(null);
-
-                return new ParserOutput(cd, findItem1, findItem2);
-
-
-            } else if (npcP != null) {
+            }  else if (npcP != null) {
                 // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
                 // chiama il costruttore con comando ed NPC
                 return new ParserOutput(cd, npcP);
             } else if(piano!=-1) {
                 // non esiste nessun npc nelle stanze errore
-                System.out.println("in parser"+piano);
                 return new ParserOutput(cd, piano);
             } else {
                 throw new ParserException("Oggetti o NPC non riconosciuti.");
