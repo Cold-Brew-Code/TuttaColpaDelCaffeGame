@@ -10,7 +10,6 @@ import java.util.Set;
 
 import it.tutta.colpa.del.caffe.adventure.control.BuildObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LeaveObserver;
-import it.tutta.colpa.del.caffe.adventure.control.LiftObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LookAtObserver;
 import it.tutta.colpa.del.caffe.adventure.control.MoveObserver;
 import it.tutta.colpa.del.caffe.adventure.control.OpenObserver;
@@ -123,7 +122,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.attach(new TalkObserver());
         this.attach(new UseObserver());
         this.attach(new LeaveObserver());
-        this.attach(new LiftObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
