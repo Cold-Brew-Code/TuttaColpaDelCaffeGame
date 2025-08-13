@@ -234,7 +234,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (30, 'Museo di informatica', ' Sei in una stanza piena di vecchi computer, di fronte a te, un monitor a tubo catodico grande quanto un forno a microonde, schede madri imbalsamate e sulle pareti manuali ingialliti che giurano di spiegare come installare Windows 95, ma solo se sai leggere il sanscrito.',  ' Osservando la stanza noti una scheda madre rovinata e l''uscita verso EST!', true, true, 'museo_di_informatica_terzo_piano.png'),-- se fa raccogli prende la scheda madre rovinata che sarà utile per costruire la scheda magica
 -- quarto piano
     (10, 'Quarto piano','Corridoio stretto e affollato, con una fila interminabile che si snoda fuori dal bagno. L''aria è un misto di ansia ed esausta rassegnazione. Tra la fila, studenti leggono libri di algoritmi o ripassano appunti. Potresti parlare con qualcuno... magari capiscono la tua urgenza e ti lasciano passare.', 'La solita fila Chilometrica di studenti ansiosi, e un inserviente arrabbiato per via del bagno sporco. È alla ricerca di CANDEGGINA ',true, true, 'corridoio_quarto_piano.png'),
-    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',true, true, 'bagno_quarto_piano.png'),
+    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',false, true, 'bagno_quarto_piano.png'),
     (13, 'Laboratorio Boole', 'Nascosto dalla lunga fila di studenti di fronte a te (NORD) si intravede un laboratorio di informatica , dove all''interno ci sono studenti fuori corso cercano di crare la macchina di turing universale che risolva il problema della fermata.', 'I soliti tre studenti che vogliono risolvere il problema della fermata... Opsss stavi inciampato su qualcosa. Un borsellino chissà che sta dentro.',true, true, 'laboratorio_boole_quarto_piano.png'),-- se lo raccoglie al suo interno ci sono 5 monete e varie penne (il suo contenuto è noto solo se lo apre)
 -- quinto piano
     (17, 'Quinto piano', 'Un corridoio silenzioso con porte chiuse e targhette in ottone.', 'Sei di nuovo al quinto piano, non noti niente di nuovo , a sinistra(OVEST) e a destra (EST) ci sono gli uffici dei professori. Potrebbero nascondere qualcosa di utile. Chissà se questi oggetti sono davvero indipendenti.... o se dietro le quinte hanno implementato un composite pattern!',true, true,'corridoio_quinto_piano.png'),
@@ -312,7 +312,7 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (6, 'Dottor Cravattone', 20);
 
 MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
-(7,'studente'), (7, 'sudente sto'),
+(7,'studente'), (7, 'studente sto'),
 (1, 'bruno'), (1, 'portinaio'),
 (2, 'Ernesto'), (2, 'Sapientoni'),
 (3, 'Dario'), (3, 'Tremolanti'),
@@ -413,8 +413,7 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 
 (10,43, 'Ragazzo ultima chance , hai la candeggina??'),
 (10, 44 ,'Niente da fare, hia perso una possibilità preziosa...'),
-(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
- Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
+(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
 
 --QUARTO--PIANO--INSERVIENTE----IL--SALVATORE--
 --1--
