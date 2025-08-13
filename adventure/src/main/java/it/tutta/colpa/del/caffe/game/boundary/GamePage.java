@@ -12,9 +12,11 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.net.URL;
 
+import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
@@ -107,6 +109,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JMenuItem fastEffectMenuItem;
     private javax.swing.JMenuItem disabledEffectMenuItem;
     private TypeWriterEffect typeWriterEffect;
+    private javax.swing.JLabel timerLabel;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
@@ -164,6 +167,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         mediumEffectMenuItem = new javax.swing.JMenuItem("Medio");
         fastEffectMenuItem = new javax.swing.JMenuItem("Veloce");
         disabledEffectMenuItem = new javax.swing.JMenuItem("Disattivo");
+        timerLabel = new javax.swing.JLabel();
 
         HeaderPanel.setOpaque(false);
         ImagePanel.setOpaque(false);
@@ -184,6 +188,13 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         setTitle("Tutta Colpa del Caffè!");
         setResizable(false);
 
+        // --- STILE LABEL TIMER ---
+        timerLabel.setFont(new java.awt.Font("Arial", 1, 24));
+        timerLabel.setForeground(new java.awt.Color(255, 255, 255));
+        timerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        timerLabel.setText("00:00");
+        timerLabel.setOpaque(false);
+
         // --- STILE BOTTONI MENU ---
         audioButton.setText("Audio \u25BC");
         audioButton.setBackground(Color.WHITE);
@@ -194,8 +205,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         Dimension menuItemSize = new Dimension(150, 35);
         Color itemBorderColor = new Color(220, 220, 220);
         JMenuItem[] allMenuItems = {
-                increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
-                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+            increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
+            slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
         };
 
         for (JMenuItem item : allMenuItems) {
@@ -240,6 +251,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
+                                .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
                                         javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(saveButton)
@@ -255,7 +267,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                         .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
                                                 Short.MAX_VALUE)
                                         .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
@@ -576,12 +589,55 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void setDisplayedClock(String time) {
+        if (this.timerLabel != null) {
+            this.timerLabel.setText(time);
 
+        }
     }
 
+    /**
+     *
+     * <p>
+     * Il metodo esegue l'aggiornamento della {@code progressBar} all'interno
+     * Thread (EDT) che si occupa di gestire tutti gli eventi GUI, utilizzando
+     * {@link SwingUtilities#invokeLater(Runnable)}, garantendo che le modifiche
+     * alla GUI siano sicure e corrette.invokeLater assicura che l'aggiornamente
+     * della barra venga fatto dal thread corretto indipendentemente dal thread
+     * dell'oggetto timer. Assicurandoci un corretto aggiornamento e garantendo
+     * la corretta visualizzazione. Incrementa il valore corrente della barra di
+     * progresso di 1 unità in modo thread-safe.
+     * </p>
+     *
+     *
+     * In base al valore aggiornato della barra, cambia il colore e il testo
+     * visualizzato:</p>
+     * <ul>
+     * <li>Valore < 6000: testo "FORZA IL DOVERE CHIAMA" con colore di
+     * default</li> <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol lare"
+     * con colore arancione</li>
+     * <li>Valore > 9000: testo "Sto quasi per mollare" con colore rosso</li>
+     * </ul>
+     */
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue() + 1);
+        // Incrementa di 1 secondo
+        int newValue = progressBar.getValue() + 1;
+        progressBar.setValue(newValue);
+
+        SwingUtilities.invokeLater(() -> {
+            progressBar.setStringPainted(true);
+
+            if (newValue < 600) { // primi 10 minuti
+                progressBar.setForeground(Color.GREEN);
+                progressBar.setString("FORZA IL DOVERE CHIAMA");
+            } else if (newValue < 900) { // da 10 a 15 minuti
+                progressBar.setForeground(Color.ORANGE);
+                progressBar.setString("ahi ho paura di mollare");
+            } else { // ultimi 5 minuti
+                progressBar.setForeground(Color.RED);
+                progressBar.setString("Sto quasi per mollare");
+            }
+        });
     }
 
     @Override
