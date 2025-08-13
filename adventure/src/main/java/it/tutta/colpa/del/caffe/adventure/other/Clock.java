@@ -5,6 +5,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
+
 public class Clock implements Serializable {
 
     private final int initialTimeInSeconds;
@@ -12,16 +14,19 @@ public class Clock implements Serializable {
     private boolean isRunning;
     private transient ScheduledExecutorService scheduler;
     private final TimeObserver observer;
+    private final GameGUI gui;
 
     /**
      * Costruttore: inizializza il timer con il tempo iniziale desiderato.
      * @param minutes tempo iniziale in minuti
      */
-    public Clock(int minutes, TimeObserver observer) {
+    public Clock(int minutes, TimeObserver observer, GameGUI gui) {
         this.initialTimeInSeconds = minutes * 60;
         this.remainingTimeInSeconds = initialTimeInSeconds;
         this.isRunning = false;
         this.observer = observer;
+        this.gui= gui;
+
     }
     /**
      * Avvia il timer se non è già in esecuzione e c'è tempo residuo.
@@ -39,9 +44,11 @@ public class Clock implements Serializable {
             scheduler.scheduleAtFixedRate(() -> {
                 if (remainingTimeInSeconds > 0) {
                     remainingTimeInSeconds--;
+                    observer.onTimeUpdate(getTimeFormatted()); // notifico l'engine per aggiornare il tempo
+                    gui.increaseProgressBar();
                 } else {
                     stop();
-                    observer.onTimeExpired();  // Notifica l'osservatore
+                    observer.onTimeExpired();  // Notifica Engine che ha finito
                 }
             }, 1, 1, TimeUnit.SECONDS);
         }
