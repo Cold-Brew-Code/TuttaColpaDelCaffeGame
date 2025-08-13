@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -14,7 +15,6 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
@@ -194,8 +194,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         Dimension menuItemSize = new Dimension(150, 35);
         Color itemBorderColor = new Color(220, 220, 220);
         JMenuItem[] allMenuItems = {
-            increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
-            slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+                increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
+                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
         };
 
         for (JMenuItem item : allMenuItems) {
@@ -579,45 +579,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     }
 
-    /**
-     *
-     * <p>
-     * Il metodo esegue l'aggiornamento della {@code progressBar} all'interno
-     * Thread (EDT) che si occupa di gestire tutti gli eventi GUI, utilizzando
-     * {@link SwingUtilities#invokeLater(Runnable)}, garantendo che le modifiche
-     * alla GUI siano sicure e corrette.invokeLater assicura che l'aggiornamente
-     * della barra venga fatto dal thread corretto indipendentemente dal thread
-     * dell'oggetto timer. Assicurandoci un corretto aggiornamento e garantendo
-     * la corretta visualizzazione. Incrementa il valore corrente della barra di
-     * progresso di 1 unità in modo thread-safe.
-     * </p>
-     *
-     *
-     * In base al valore aggiornato della barra, cambia il colore e il testo
-     * visualizzato:</p>
-     * <ul>
-     * <li>Valore < 6000: testo "FORZA IL DOVERE CHIAMA" con colore di
-     * default</li> <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol lare"
-     * con colore arancione</li>
-     * <li>Valore > 9000: testo "Sto quasi per mollare" con colore rosso</li>
-     * </ul>
-     */
     @Override
     public void increaseProgressBar() {
         this.progressBar.setValue(this.progressBar.getValue() + 1);
-        SwingUtilities.invokeLater(() -> {
-            progressBar.setValue(progressBar.getValue() + 1);
-            if (progressBar.getValue() < 6000) {
-                progressBar.setStringPainted(true);
-                progressBar.setString("FORZA IL DOVERE CHIAMA");
-            } else if (progressBar.getValue() <= 9000) {
-                progressBar.setForeground(Color.ORANGE);
-                progressBar.setString("ahi ho paura di mollare");
-            } else {
-                progressBar.setForeground(Color.RED);
-                progressBar.setString("Sto quasi per mollare");
-            }
-        });
     }
 
     @Override
