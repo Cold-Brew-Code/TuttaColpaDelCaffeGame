@@ -29,29 +29,29 @@ public class LeaveObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
-        
+
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.LEAVE) {
-            if(parserOutput.getObject()==null){
+            if (parserOutput.getObject() == null) {
                 msg.append("Non hai specificato il nome dell'oggetto da lasciare\n").append("Scrivi lascia nome oggetto");
-            }
-            else if(parserOutput.getObject() instanceof GeneralItem obj){
-                if(description.getInventory().contains(obj)){
-                    GeneralItem objLeave1= GameUtils.getObjectFromInventory(description.getInventory(), obj.getId());
-                    int quantity= description.getInventory().getQuantity(objLeave1);
+            } else if (parserOutput.getObject() instanceof GeneralItem obj) {
+                if (description.getInventory().contains(obj)) {
+                    GeneralItem objLeave1 = GameUtils.getObjectFromInventory(description.getInventory(), obj.getId());
+                    int quantity = description.getInventory().getQuantity(objLeave1);
                     description.getInventory().remove(objLeave1, quantity);
-                    Room roomCurr= description.getCurrentRoom();
-                    Map<GeneralItem, Integer> map=  roomCurr.getObjects();
+                    Room roomCurr = description.getCurrentRoom();
+                    Map<GeneralItem, Integer> map = roomCurr.getObjects();
                     map.put(objLeave1, quantity);
                     roomCurr.setObjects(map);
+
                     msg.append("Hai laciato ").append(objLeave1.getName()).append(" nella stanza");
-                }else{
+                } else {
                     msg.append("l'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                 }
-            }else{
+            } else {
                 msg.append(" hai indicato qualcosa che non è un oggetto.");
             }
-          
+
         }
         return msg.toString();
     }

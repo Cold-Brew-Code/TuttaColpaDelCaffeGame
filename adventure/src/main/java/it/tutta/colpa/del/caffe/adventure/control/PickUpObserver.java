@@ -69,7 +69,7 @@ public class PickUpObserver implements GameObserver {
                         .filter(o -> o.getName().equals(parserOutput.getObject().getName()))
                         .findFirst()
                         .orElse(null);
-                //controllo se è nell'inventario
+                //controllo se è nell'inventario 
                 if (isobjRoom == null && c == false) {
                     msg.append("oggetto contenit\n");
                     if (description.getCurrentRoom().getObject(7) != null) {
@@ -87,13 +87,13 @@ public class PickUpObserver implements GameObserver {
                             if (conteiner && isobjRoom.getId() != 15) {
                                 msg.append("l'oggetto non trovato. C'è l'oggetto: ").append(isobjRoomC.getName())
                                         .append("chissà se al suo intero c'è qualcosa. (Usa il comando prendi nome oggetto");
-                                // mentre se l'oggetto non può essere raccolto ma può essere aperto
+                                // mentre se l'oggetto non può essere raccolto ma può essere aperto  
                             } else {
                                 if (isobjRoomC.isOpen()) {
 
                                     Map.Entry<GeneralItem, Integer> contenuto = isobjRoomC.getList().entrySet().stream()
                                             .filter(entry -> entry.getKey().getName().equals(parserOutput.getObject().getName())
-                                                    || entry.getKey().getAlias().contains(parserOutput.getObject().getName()))
+                                            || entry.getKey().getAlias().contains(parserOutput.getObject().getName()))
                                             .findFirst()
                                             .orElse(null);
                                     if (contenuto != null) {
@@ -156,7 +156,7 @@ public class PickUpObserver implements GameObserver {
 
                                     if (container.containsObject(obj)) {
                                         isOpen = true;
-                                        break; // esco dal ciclo se ho trovato l'oggetto\
+                                        break; // esco dal ciclo se ho trovato l'oggetto\  
                                     }
                                 }
                             }
@@ -164,11 +164,12 @@ public class PickUpObserver implements GameObserver {
                                 for (GeneralItem co : listContainer) {
                                     ItemContainer con = (ItemContainer) co;
                                     if (!con.isOpen()) {
-                                        msg.append("\nOps  hai l'oggetto : ").append(co.getName());
+                                        msg.append("\nOps l'oggetto : ").append(co.getName())
+                                                .append(" è chiuso.");
                                     }
                                 }
-                                msg.append(" chiuso").append(" Prova ad aprire un oggetto, potrebbero contentere ").append(obj.getName()).
-                                        append("\nUsa il comando APRI nome oggetto");
+                                msg.append("Prova ad aprire un oggetto, potrebbero contentere").append(obj.getName()).
+                                        append("Usa il comando APRI nome oggetto");
                             }
                             if (container == null) {
                                 msg.append(" non c'è l'oggetto nell'inventario");
@@ -186,9 +187,9 @@ public class PickUpObserver implements GameObserver {
                                 } catch (InventoryException e) {
                                     msg.append(" Non puoi aggiungere l'oggetto all'inventario. ").append(e.getMessage());
                                 } catch (IllegalArgumentException e) {
-                                    //msg.append(e.getMessage());
+                                    msg.append(e.getMessage());
                                 }
-                            }
+                            } 
                         } else {
                             msg.append("L'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                         }
@@ -196,7 +197,7 @@ public class PickUpObserver implements GameObserver {
                         msg.append("L'oggetto inidcato è già nell'inventario");
                     }
                 } else if (isobjRoom != null && c == false) {// oggetto nella stanza
-                    msg.append("nella stanza prova ");
+                    msg.append("nella stanza");
                     if (parserOutput.getObject().isPickupable()) {
                         Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
                         if (isobjRoom.isVisibile()) {
@@ -213,15 +214,15 @@ public class PickUpObserver implements GameObserver {
                                     if (server != null) {
                                         switch (roomId) {
                                             case 16 -> // ha raccolto il bigliettino evento 3
-                                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
+                                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 3));
                                             case 30 -> // ha raccolto scheda madre evento 5
-                                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
+                                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 5));
                                             case 13 -> // ha raccolto il borsellino evento 7
-                                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
+                                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 7));
                                             case 7 -> // ha raccolto libro evento 1
-                                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 1));
+                                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 1));
                                             case 19 -> // ha raccolto la scatola evento 9
-                                                    description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
+                                                description.getCurrentRoom().setLook(server.requestToServer(UPDATED_LOOK, 9));
                                             default -> {
                                             }
                                         }
@@ -237,7 +238,7 @@ public class PickUpObserver implements GameObserver {
                                 msg.append(e.getMessage());
                             }
                         } else {
-                            msg.append(" non c'è: ").append(isobjRoom.getName()).append(" nella stanza. L'urgenza da alla testa.");
+                            msg.append("non c'è: ").append(isobjRoom.getName()).append(" nella stanza L'urgenza da alla testa.");
                         }
                     } else {
                         msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");
