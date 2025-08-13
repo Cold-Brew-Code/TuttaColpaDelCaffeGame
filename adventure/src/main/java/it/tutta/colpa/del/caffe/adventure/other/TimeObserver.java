@@ -6,4 +6,6 @@ package it.tutta.colpa.del.caffe.adventure.other;
  */
 public interface TimeObserver {
     void onTimeExpired();
+    void onTimeUpdate(String timeFormatted);
+
 }

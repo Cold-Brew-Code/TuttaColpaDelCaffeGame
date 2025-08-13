@@ -6,11 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.swing.SwingUtilities;
 
 import it.tutta.colpa.del.caffe.adventure.control.BuildObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LeaveObserver;
@@ -109,17 +104,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
-            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
+            this.timer = new Clock(20, this, GUI);// passo il tempo e l'engine corrente 
             timer.start();// starto l'orologio 
-            // Aggiorna graficamente il timer ogni secondo
-            ScheduledExecutorService guiTimerUpdater = Executors.newSingleThreadScheduledExecutor();
-            guiTimerUpdater.scheduleAtFixedRate(() -> {
-                if (timer.isRunning()) {
-                    String time = timer.getTimeFormatted();
-                    SwingUtilities.invokeLater(() -> GUI.setDisplayedClock(time));
-                }
-            }, 0, 1, TimeUnit.SECONDS);
-
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
@@ -310,6 +296,21 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         GUI.out("Tempo esaurito! La partita è finita.");
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
+    }
+
+    /**
+     * Notifica all'interfaccia grafica l'aggiornamento del tempo residuo.
+     * <p>
+     * Questo metodo viene chiamato ad ogni tick del {@link Clock} e aggiorna il
+     * display dell'orologio nella GUI con il tempo formattato.
+     *
+     * @param timeFormatted il tempo residuo formattato come stringa, ad esempio
+     * "mm:ss" o "HH:mm:ss"
+     */
+
+    @Override
+    public void onTimeUpdate(String timeFormatted) {
+        GUI.setDisplayedClock(timeFormatted);
     }
 
     @Override
