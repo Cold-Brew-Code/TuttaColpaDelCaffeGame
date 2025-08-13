@@ -80,7 +80,10 @@ public class TalkObserver implements GameObserver {
         try {
             Dialogo dialogue = npc.getDialogoCorr();
             msg.append((new DialogueHandler(npc.getNome(), dialogue, description)).getReturnStatement());
-            if(msg.isEmpty()||msg.toString()==""){
+            if (!dialogue.isActive()) {
+                npc.consumedDialogue();
+            }
+            if (msg.isEmpty() || msg.toString() == "") {
                 msg.append("Hai appena parlato con " + npc.getNome() + ", ogni secondo è di vitale importanza!");
             }
         } catch (DialogueException e) {
@@ -117,9 +120,7 @@ public class TalkObserver implements GameObserver {
         private final static String NODE_EVT_CORRECT_ANSWER_DIALOGUE_4 = "La gittata è massima quando 𝜃=45";
 
         private final static String NODE_EVT_DROP_BLECH = "Questa sì che profuma di dedizione.\\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.";
-        private final static String NODE_EVT_DROP_COFFEE = "Okay ora si che mi sento meglio. Allora ragazzo ascolta, \\n" +
-                "Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. \\n" +
-                "La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla";
+        private final static String NODE_EVT_DROP_COFFEE = "Okay ora si che mi sento meglio. Allora ragazzo ascolta, si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla.";
 
         public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             this.dialogue = dialogue;
@@ -127,9 +128,23 @@ public class TalkObserver implements GameObserver {
             this.GUI = new DialoguePage(null, true);
             this.description = description;
             GUI.linkController(this);
+            if (!this.dialogue.getCurrentNode().equals(this.dialogue.getMainNode())) {
+                printPreviewsStatements();
+            }
             showCurrentDialogue();
-            this.GUI.setPageClosable(false);
             openGUI();
+        }
+
+
+        void printPreviewsStatements() {
+            List<String> dialogue = this.dialogue.getPreviewsStatement();
+            for (int i = 0; i < dialogue.size(); i++) {
+                if (i % 2 == 0) {
+                    GUI.addNPCStatement(this.NPCName, dialogue.get(i));
+                } else {
+                    GUI.addUserStatement("Tu", dialogue.get(i));
+                }
+            }
         }
 
         @Override
@@ -149,19 +164,15 @@ public class TalkObserver implements GameObserver {
             } catch (DialogueException e) {
                 System.err.println("DialogueException " + e.getMessage());
             }
-            System.err.println(dialogue.getId() + "\n" + dialogue.getCurrentNode() + "\n" + NODE_EVT_DROP_BLECH);
-            if (3 == dialogue.getId() && NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode())){
-                System.err.println("drop coffee");
-                this.description.getInventory().remove(new GeneralItem(2),1);
-            } else if (10 == dialogue.getId() && NODE_EVT_DROP_BLECH.equals(dialogue.getCurrentNode())){
-                System.err.println("drop blech");
-                this.description.getInventory().remove(new GeneralItem(4),1);
+            if (3 == dialogue.getId() && NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode())) {
+                this.description.getInventory().remove(new GeneralItem(2), 1);
+            } else if (10 == dialogue.getId() && NODE_EVT_DROP_BLECH.equals(dialogue.getCurrentNode())) {
+                this.description.getInventory().remove(new GeneralItem(4), 1);
             }
             showCurrentDialogue();
             if (dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                 dialogue.setActivity(false);
                 this.dialogueEndedEvent(this.dialogue.getId(), dialogue.getCurrentNode());
-                this.GUI.setPageClosable(true);
             }
         }
 

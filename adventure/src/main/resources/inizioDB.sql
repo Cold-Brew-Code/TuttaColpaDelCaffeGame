@@ -155,7 +155,7 @@ MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, i
 -- SECONDO PIANO
 (4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… un po'' come gli esami facili al primo appello.',false, false,true, false,-1,'candeggina.png', true),
 (15, 'ARMADIETTO','Classico armadietto di metallo',true,false,true,false,-1,'armadietto.png', false),
-(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il 
+(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il
 punto di equilibrio perfetto tra altezza e distanza. Nessuno sa davvero a cosa serva, ma pare abbia qualcosa a che fare con il lanciare cose molto lontano (e con sorprendente precisione).',false,true,true,false,3,'bigliettino.png', true),
 -- TERZO PIANO
 (6, 'SCHEDA MADRE', 'Un''antica reliquia elettronica, corrosa dal tempo e da qualche improvvida fuoriuscita di caffè.Le piste appaiono screpolate, i condensatori gonfi come se stessero per esplodere, e i vecchi slot di memoria sembrano trattenere a fatica i ricordi di sistemi mai più avviati. Rinvenuta per terra, impolverata e dimenticata in un angolo del museo di informatica, come se persino il tempo avesse deciso di voltarle le spalle.' , false,false,true,false,-1,'scheda_madre.png', true),
@@ -176,7 +176,7 @@ MERGE INTO ReadableContent( readable_item_id , content) KEY(readable_item_id) VA
 (5,'Se vuoi che il tuo oggetto voli come un campione,non sparare a caso!\n Troppo in alto? Finisce prima.\n
 Troppo basso? Nemmeno un metro.\n
 L''angolo magico è 45° , la formula segreta per la gittata massima!\n Ricordalo, o la tua palla farà solo brutte figure.\n"
- Appunti segreti del Prof. Newton (quasi)'), 
+ Appunti segreti del Prof. Newton (quasi)'),
  -- libro di cc
  (3, 'Teorema: La Grande Sfida!\n Se P è uguale a NP? Ancora un mistero.\n
 Sarebbe come risolvere un rompicapo tanto facilmente quanto controllarne la soluzione \n— tipo cucinare una torta senza sporcarsi le mani!.
@@ -352,9 +352,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (3,10,'Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
 
 (3,41,'ah capisco allora chiamerò il barista. \nMi dispiace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no
-(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
-Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
-La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
+(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla.'), -- se dice si
 
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
@@ -446,7 +444,7 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --risposte del se ho il caffe
 
 ('No', 10,41 ,3),
-('Si', 10, 42 ,3 ), 
+('Si', 10, 42 ,3 ),
 
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),

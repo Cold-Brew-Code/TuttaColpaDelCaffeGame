@@ -45,7 +45,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     private JScrollPane scrollPane;
 
     private DialogueController controller;
-    private boolean closable;
 
     public DialoguePage(Frame owner, boolean modal) {
         super(owner, modal);
@@ -79,15 +78,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     }
 
     private void onWindowClosingActionPerformed() {
-        if (closable) {
-            this.dispose();
-        } else {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "<html>Non potrai uscire dalla finestra <br> fino a quando il dialogo <br> non sarà terminato.</html>",
-                    "Attenzione!",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        this.dispose();
     }
 
     private JTextArea createBubbleTextArea(String text, Color bgColor, Color textColor, Border border) {
@@ -127,11 +118,6 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         gbc.insets = new Insets(0, 10, 15, 80);
         dialogueContentPanel.add(wrapper, gbc);
         updateLayout();
-    }
-
-    @Override
-    public void setPageClosable(boolean intention) {
-        this.closable = intention;
     }
 
     @Override

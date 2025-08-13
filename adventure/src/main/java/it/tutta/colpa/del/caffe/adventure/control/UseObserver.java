@@ -119,12 +119,11 @@ public class UseObserver implements GameObserver {
                             description.getInventory().remove(objInv); // c'è l'oggetto e tolgo una moneta.
                             try {
                                 if(server!= null){
-                                    IteamCombinable c= server.requestToServer(RequestType.ITEM, 2);
-                                    if(c instanceof IteamCombinable){
-                                        IteamCombinable caffe = (IteamCombinable) c;
-                                        description.getInventory().add(caffe, 1);
-                                        msg.append(" Hai preso l'oggetto: ").append(caffe.getName());
-                                        System.out.println(caffe.getName());
+                                    GeneralItem c= server.requestToServer(RequestType.ITEM, 2);
+                                    if(c instanceof Item i){
+                                        description.getInventory().add(i, 1);
+                                        msg.append(" Hai preso l'oggetto: ").append(i.getName());
+                                        System.out.println(i.getName());
                                     }else{
                                         msg.append("errore");
                                     }
