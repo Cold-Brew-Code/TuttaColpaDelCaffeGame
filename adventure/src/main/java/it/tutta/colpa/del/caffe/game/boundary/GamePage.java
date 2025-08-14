@@ -15,6 +15,7 @@ import javax.swing.GroupLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JSlider;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
@@ -97,8 +98,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JButton skipButton;
     private javax.swing.JButton audioButton;
     private javax.swing.JPopupMenu audioPopupMenu;
-    private javax.swing.JMenuItem increaseVolumeMenuItem;
-    private javax.swing.JMenuItem decreaseVolumeMenuItem;
+    private javax.swing.JMenuItem abbassa_alza;
+    //private javax.swing.JMenuItem decreaseVolumeMenuItem;
     private javax.swing.JMenuItem toggleMuteMenuItem;
     // --- NUOVI COMPONENTI EFFETTI VISIVI ---
     private javax.swing.JButton visualEffectButton;
@@ -155,8 +156,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         audioButton = new javax.swing.JButton();
         audioPopupMenu = new javax.swing.JPopupMenu();
-        increaseVolumeMenuItem = new javax.swing.JMenuItem("Aumenta Volume");
-        decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
+        abbassa_alza = new javax.swing.JMenuItem("Aumenta/Abbassa Volume");
+        //decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
         toggleMuteMenuItem = new javax.swing.JMenuItem("Disattiva/Attiva Audio");
 
         // --- INIZIALIZZAZIONE NUOVI COMPONENTI ---
@@ -201,10 +202,10 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         visualEffectButton.setBackground(Color.WHITE);
 
         // --- STILE DEGLI ELEMENTI DI TUTTI I MENU ---
-        Dimension menuItemSize = new Dimension(150, 35);
+        Dimension menuItemSize = new Dimension(170, 35);
         Color itemBorderColor = new Color(220, 220, 220);
         JMenuItem[] allMenuItems = {
-            increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
+            abbassa_alza, toggleMuteMenuItem,
             slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
         };
 
@@ -218,12 +219,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         // --- SETUP MENU AUDIO ---
         audioPopupMenu.setBorder(new LineBorder(Color.GRAY));
-        audioPopupMenu.add(increaseVolumeMenuItem);
-        audioPopupMenu.add(decreaseVolumeMenuItem);
+        audioPopupMenu.add(abbassa_alza);
+        //audioPopupMenu.add(decreaseVolumeMenuItem);
         audioPopupMenu.add(toggleMuteMenuItem);
         audioButton.addActionListener(this::audioButtonActionPerformed);
-        increaseVolumeMenuItem.addActionListener(this::increaseVolumeMenuItemActionPerformed);
-        decreaseVolumeMenuItem.addActionListener(this::decreaseVolumeMenuItemActionPerformed);
+        abbassa_alza.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
         toggleMuteMenuItem.addActionListener(this::toggleMuteMenuItemActionPerformed);
 
         // --- SETUP MENU EFFETTI VISIVI ---
@@ -472,16 +472,34 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         audioPopupMenu.show(audioButton, 0, audioButton.getHeight());
     }
 
-    private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+    private void increaseDecreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         System.out.println("Aumenta volume cliccato");
-        float currentVol = AudioManager.getInstance().getVolume();
-        AudioManager.getInstance().setVolume(Math.min(1.0f, currentVol + 0.1f));
+        int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
+        if (volumePercent >= 0) {
+            float volume = volumePercent / 100f; 
+            AudioManager.getInstance().setVolume(volume);
+        }
     }
 
-    private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        System.out.println("Abbassa volume cliccato");
-        float currentVol = AudioManager.getInstance().getVolume();
-        AudioManager.getInstance().setVolume(Math.max(0.0f, currentVol - 0.1f));
+    private int askVolumeSlider(String title, String message) {
+        JSlider slider = new JSlider(0, 100, (int) (AudioManager.getInstance().getVolume() * 100));
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                new Object[]{message, slider},
+                title,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.CLOSED_OPTION
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            return slider.getValue();
+        }
+        return -1; //ha premuto annulla
     }
 
     private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
