@@ -1,4 +1,3 @@
-
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -247,29 +246,26 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
-                                .addContainerGap()));
+                                .addContainerGap())
+        );
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(HeaderPanelLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
-                                                Short.MAX_VALUE)
-                                        .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
-                                                Short.MAX_VALUE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
@@ -462,7 +458,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip();
+            typeWriterEffect.skip(); // Mostra tutto il testo immediatamente
         }
     }
 
@@ -477,11 +473,13 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Aumenta volume cliccato");
         float currentVol = AudioManager.getInstance().getVolume();
         AudioManager.getInstance().setVolume(Math.min(1.0f, currentVol + 0.1f));
     }
 
     private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Abbassa volume cliccato");
         float currentVol = AudioManager.getInstance().getVolume();
         AudioManager.getInstance().setVolume(Math.max(0.0f, currentVol - 0.1f));
     }
@@ -535,9 +533,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void out(String message) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip();
+            typeWriterEffect.skip(); // Completa l'animazione corrente
         }
-        typeWriterEffect.start("\n" + message);
+        typeWriterEffect.start("\n" + message); // Avvia la nuova animazione
     }
 
     @Override
@@ -626,10 +624,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         SwingUtilities.invokeLater(() -> {
             progressBar.setStringPainted(true);
-
+            progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
             if (newValue < 600) { // primi 10 minuti
-                progressBar.setForeground(Color.GREEN);
+                progressBar.setForeground(Color.black);
                 progressBar.setString("FORZA IL DOVERE CHIAMA");
+
             } else if (newValue < 900) { // da 10 a 15 minuti
                 progressBar.setForeground(Color.ORANGE);
                 progressBar.setString("ahi ho paura di mollare");
