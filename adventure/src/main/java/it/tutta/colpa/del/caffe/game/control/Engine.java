@@ -1,4 +1,3 @@
-
 package it.tutta.colpa.del.caffe.game.control;
 
 import java.awt.Frame;
@@ -40,11 +39,10 @@ import it.tutta.colpa.del.caffe.game.utility.RequestType;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
-
 /**
- * Classe principale che gestisce la logica di gioco.
- * Comunica con il server per inizializzare lo stato del gioco,
- * consente il movimento tra stanze e l'uso dell'ascensore.
+ * Classe principale che gestisce la logica di gioco. Comunica con il server per
+ * inizializzare lo stato del gioco, consente il movimento tra stanze e l'uso
+ * dell'ascensore.
  * <p>
  * Implementa Serializable per supportare il salvataggio dello stato.
  *
@@ -54,12 +52,14 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
 public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
-     * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
+     * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia
+     * utente.
      */
     private GameGUI GUI;
 
     /**
-     * Descrizione dello stato attuale della partita, contenente mappa e comandi.
+     * Descrizione dello stato attuale della partita, contenente mappa e
+     * comandi.
      */
     private final GameDescription description;
 
@@ -69,10 +69,10 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     private Clock timer;
 
     /**
-     * Costruttore predefinito.
-     * Tenta di inizializzare una nuova partita comunicando con il server.
-     * In caso di errore di comunicazione, dovrebbe gestire l’eccezione mostrando
-     * un dialogo informativo all’utente (da implementare).
+     * Costruttore predefinito. Tenta di inizializzare una nuova partita
+     * comunicando con il server. In caso di errore di comunicazione, dovrebbe
+     * gestire l’eccezione mostrando un dialogo informativo all’utente (da
+     * implementare).
      */
     public Engine(MainPageController mpc, GameGUI GUI) {
         this.GUI = GUI;
@@ -104,7 +104,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
-            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
+            this.timer = new Clock(20, this, GUI);// passo il tempo e l'engine corrente 
             timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
@@ -140,13 +140,13 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     }
 
     /**
-     * Inizializza una nuova partita contattando il server locale.
-     * Recupera la mappa e l'elenco dei comandi, verificandone la correttezza.
+     * Inizializza una nuova partita contattando il server locale. Recupera la
+     * mappa e l'elenco dei comandi, verificandone la correttezza.
      *
      * @return una GameDescription contenente la mappa e i comandi
-     * @throws ServerCommunicationException se la comunicazione fallisce o i dati sono incompleti
+     * @throws ServerCommunicationException se la comunicazione fallisce o i
+     * dati sono incompleti
      */
-
     private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
         ServerInterface si = new ServerInterface("localhost", 49152);
         GameMap gm = si.requestToServer(RequestType.GAME_MAP);
@@ -158,10 +158,9 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         return gd;
     }
 
-
     /**
-     * Costruttore per l'inizializzazione da file di salvataggio.
-     * Deve essere implementato.
+     * Costruttore per l'inizializzazione da file di salvataggio. Deve essere
+     * implementato.
      *
      * @param filePath percorso del file di salvataggio
      */
@@ -173,10 +172,9 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.mpc = mpc;
     }
 
-
     /**
-     * Inizializza una partita a partire da un file di salvataggio.
-     * Metodo da implementare.
+     * Inizializza una partita a partire da un file di salvataggio. Metodo da
+     * implementare.
      *
      * @param savePath percorso del file di salvataggio
      */
@@ -186,7 +184,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     }
 
     /**
-     * Tenta di muoversi nella direzione specificata a partire dalla posizione corrente.
+     * Tenta di muoversi nella direzione specificata a partire dalla posizione
+     * corrente.
      *
      * @param direction la direzione in cui muoversi
      * @return true se il movimento è valido, false in caso contrario
@@ -241,7 +240,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
-            }catch (ParserException e){
+            } catch (ParserException e) {
                 description.getMessages().add(e.getMessage());
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
@@ -267,11 +266,11 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         inventory.open();
     }
 
-
     @Override
     public void attach(GameObserver o) {
-        if (!observers.contains(o))
+        if (!observers.contains(o)) {
             observers.add(o);
+        }
     }
 
     @Override
@@ -284,7 +283,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         for (GameObserver o : observers) {
             try {
                 String out = o.update(description, po);
-                if (!out.isEmpty()){
+                if (!out.isEmpty()) {
                     description.getMessages().add(out);
                 }
             } catch (ServerCommunicationException e) {
@@ -297,6 +296,21 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         GUI.out("Tempo esaurito! La partita è finita.");
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
+    }
+
+    /**
+     * Notifica all'interfaccia grafica l'aggiornamento del tempo residuo.
+     * <p>
+     * Questo metodo viene chiamato ad ogni tick del {@link Clock} e aggiorna il
+     * display dell'orologio nella GUI con il tempo formattato.
+     *
+     * @param timeFormatted il tempo residuo formattato come stringa, ad esempio
+     * "mm:ss" o "HH:mm:ss"
+     */
+
+    @Override
+    public void onTimeUpdate(String timeFormatted) {
+        GUI.setDisplayedClock(timeFormatted);
     }
 
     @Override
