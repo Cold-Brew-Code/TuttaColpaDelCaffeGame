@@ -448,7 +448,7 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --RISPOSTE--AL--PROFESSORE
 
 --RISPOSTE--AL--PROFESSORE--SE--ARRIVA--IN--ORARIO
-('Io. Buongiono Prof.'46,47,13),
+('Io. Buongiono Prof.',46,47,13),
 
 --RISPOSTE--AL--PROFESSORE--SE--NON--ARRIVA--IN--ORARIO
 ('Mi scusi del ritardo prof, ho avuto degli imprevisti naturali. Mi faccia sostenre le same la prego',48,49,14),
