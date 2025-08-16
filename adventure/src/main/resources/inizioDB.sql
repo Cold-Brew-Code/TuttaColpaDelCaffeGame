@@ -309,7 +309,8 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (3,'Dario Tremolanti', 15),
 (4, 'Javanna Garbage', 10), -- studente in fila
 (5,'Ivano Ipoclorito (Inserviente)',10),
-(6, 'Dottor Cravattone', 20);
+(6, 'Dottor Cravattone', 20),
+(8,'Professore Map',29);
 
 MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
 (7,'studente'), (7, 'sudente sto'),
@@ -318,12 +319,14 @@ MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
 (3, 'Dario'), (3, 'tremolanti'),
 (4, 'javanna'), (4, 'Garbage'),
 (5, 'ivano'), (5, 'inserviente'),
-(6, 'dottor c'), (6, 'cravattone');
+(6, 'dottor c'), (6, 'cravattone'),
+(8, 'Map'), (8, 'Professore');
 
 MERGE INTO Dialogues (id, NPC) KEY(id) VALUES
 (1,7), (2,1), (3,1), (4,1),
 (5,2), (6,3), (7,4), (8,4),
-(9,4), (10,5),(11,5), (12,6);
+(9,4), (10,5),(11,5), (12,6),
+(13,8),(14,8); -- professore
 
 MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 -- domande bar :
@@ -425,13 +428,31 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 (11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene……ma chi arriva in tempo!'),
 --SESTO--PIANO--IL--NOBILE------
 --1--
-(12,38,'STO PER ESPLODERE...'),
+(12,38,'DEVO FARE QUELLA CALL ALTRIMETNI ESPLODO... '),
 --2--
-(12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove sia un bagno qui vicino?'),
+(12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove possa trovare un posto tranquillo per fare una call in America?'),
 --3--
 (12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!');
 
+--ESAME--
+
+--ARRIVA--IN--ORARIO
+(13,46, 'Chi è il prossimo??'),
+(13,47, 'Buon giorno anche a lei , possiamo iniziare'),
+--NON--ARRIVA--IN--ORARIO
+(14,48,'Ehi , che  ci fa lei qui ? Stiamo sostenendo un esame!'),
+(14,49, 'Mi dispiace , ma lei è in estremo ritardo. Ci vediamo al PROSSIMO APPELLO');
+
+
 MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_statement,dialogue_id) KEY(answer, first_statement, related_answer_statement) VALUES
+--RISPOSTE--AL--PROFESSORE
+
+--RISPOSTE--AL--PROFESSORE--SE--ARRIVA--IN--ORARIO
+('Io. Buongiono Prof.'13,47,46),
+
+--RISPOSTE--AL--PROFESSORE--SE--NON--ARRIVA--IN--ORARIO
+('Mi scusi del ritardo prof, ho avuto degli imprevisti naturali. Mi faccia sostenre le same la prego',14,49,48),
+
 -- risposte bar---------------
 ('Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!',1,2,1),
 ('…No, intendo un bagno vero. Qui. Adesso. Nel campus!',2,3,1),
