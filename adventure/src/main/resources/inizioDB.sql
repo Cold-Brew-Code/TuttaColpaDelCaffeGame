@@ -432,7 +432,7 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 --2--
 (12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove possa trovare un posto tranquillo per fare una call in America?'),
 --3--
-(12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!');
+(12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!'),
 
 --ESAME--
 
@@ -448,10 +448,10 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --RISPOSTE--AL--PROFESSORE
 
 --RISPOSTE--AL--PROFESSORE--SE--ARRIVA--IN--ORARIO
-('Io. Buongiono Prof.'13,47,46),
+('Io. Buongiono Prof.'46,47,13),
 
 --RISPOSTE--AL--PROFESSORE--SE--NON--ARRIVA--IN--ORARIO
-('Mi scusi del ritardo prof, ho avuto degli imprevisti naturali. Mi faccia sostenre le same la prego',14,49,48),
+('Mi scusi del ritardo prof, ho avuto degli imprevisti naturali. Mi faccia sostenre le same la prego',48,49,14),
 
 -- risposte bar---------------
 ('Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!',1,2,1),
