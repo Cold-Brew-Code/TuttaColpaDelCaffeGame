@@ -4,21 +4,25 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
 import it.tutta.colpa.del.caffe.game.control.DialogueController;
 import it.tutta.colpa.del.caffe.game.control.ServerInterface;
-import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.Dialogo;
+import it.tutta.colpa.del.caffe.game.entity.GameDescription;
+import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author giova
@@ -244,7 +248,7 @@ public class TalkObserver implements GameObserver {
                         // indovinello studente bagno primo piano, mostra la mappa !!!!
                         if (lastProducedStatement.equals(NODE_EVT_SHOW_MAP)) {
                             this.returnStatement.append("Cerca la mappa, è dietro un quadro di una delle aule studio!");
-                            this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
+                            this.description.getGameMap().getRoom(5).getObject(1).setVisibile(true);
                         }
                         lookEvent(11, description.getCurrentRoom(), lastProducedStatement);
                         break;
