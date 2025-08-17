@@ -76,7 +76,11 @@ public class NPC implements Serializable {
     public Dialogo getDialogoCorr() throws DialogueException {
         if (this.dialoghi.size() - 1 < this.dialogoCor)
             throw new DialogueException("Non puoi parlare con " + this.nome);
-        return this.dialoghi.get(this.dialogoCor++);
+        return this.dialoghi.get(this.dialogoCor);
+    }
+
+    public void consumedDialogue(){
+        dialogoCor++;
     }
 
     @Override

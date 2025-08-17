@@ -299,7 +299,7 @@ public class DataBaseManager {
                 firstNode = true;
             }
             nodes.put(rsDialoghi.getInt("ds_id"), rsDialoghi.getString("ds_dialog_statement"));
-            dialogue.addDialogo(rsDialoghi.getString("ds_dialog_statement"), firstNode);
+            dialogue.addStatement(rsDialoghi.getString("ds_dialog_statement"), firstNode);
             firstNode = false;
         }
         if (di != -1) dialogues.add(generateDialogue(dialogue, nodes));

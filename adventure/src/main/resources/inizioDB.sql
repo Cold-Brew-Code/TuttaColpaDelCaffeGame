@@ -155,7 +155,7 @@ MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, i
 -- SECONDO PIANO
 (4,'CANDEGGINATOR 3000', 'Rarissima reliquia chimica, introvabile all''interno del dipartimento. Talmente potente da non limitarsi a cancellare le macchie visibili: il suo effetto si propaga nel tempo, dissolvendo anche le macchie che potrebbero comparire nelle ,prossime 48 ore.talmente raro che alcuni dubitano perfino della sua reale esistenza… un po'' come gli esami facili al primo appello.',false, false,true, false,-1,'candeggina.png', true),
 (15, 'ARMADIETTO','Classico armadietto di metallo',true,false,true,false,-1,'armadietto.png', false),
-(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il 
+(5, 'BIGLIETTINO MISTERIOSO', 'Un piccolo rettangolo di carta spiegazzato, ritrovato sotto una sedia. Vi sono annotate strane frasi, frecce e simboli arcani… tra cui spicca, in mezzo a scarabocchi incomprensibili, un angolo particolare indicato con un valore che sembra segnare il
 punto di equilibrio perfetto tra altezza e distanza. Nessuno sa davvero a cosa serva, ma pare abbia qualcosa a che fare con il lanciare cose molto lontano (e con sorprendente precisione).',false,true,true,false,3,'bigliettino.png', true),
 -- TERZO PIANO
 (6, 'SCHEDA MADRE', 'Un''antica reliquia elettronica, corrosa dal tempo e da qualche improvvida fuoriuscita di caffè.Le piste appaiono screpolate, i condensatori gonfi come se stessero per esplodere, e i vecchi slot di memoria sembrano trattenere a fatica i ricordi di sistemi mai più avviati. Rinvenuta per terra, impolverata e dimenticata in un angolo del museo di informatica, come se persino il tempo avesse deciso di voltarle le spalle.' , false,false,true,false,-1,'scheda_madre.png', true),
@@ -176,7 +176,7 @@ MERGE INTO ReadableContent( readable_item_id , content) KEY(readable_item_id) VA
 (5,'Se vuoi che il tuo oggetto voli come un campione,non sparare a caso!\n Troppo in alto? Finisce prima.\n
 Troppo basso? Nemmeno un metro.\n
 L''angolo magico è 45° , la formula segreta per la gittata massima!\n Ricordalo, o la tua palla farà solo brutte figure.\n"
- Appunti segreti del Prof. Newton (quasi)'), 
+ Appunti segreti del Prof. Newton (quasi)'),
  -- libro di cc
  (3, 'Teorema: La Grande Sfida!\n Se P è uguale a NP? Ancora un mistero.\n
 Sarebbe come risolvere un rompicapo tanto facilmente quanto controllarne la soluzione \n— tipo cucinare una torta senza sporcarsi le mani!.
@@ -234,7 +234,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (30, 'Museo di informatica', ' Sei in una stanza piena di vecchi computer, di fronte a te, un monitor a tubo catodico grande quanto un forno a microonde, schede madri imbalsamate e sulle pareti manuali ingialliti che giurano di spiegare come installare Windows 95, ma solo se sai leggere il sanscrito.',  ' Osservando la stanza noti una scheda madre rovinata e l''uscita verso EST!', true, true, 'museo_di_informatica_terzo_piano.png'),-- se fa raccogli prende la scheda madre rovinata che sarà utile per costruire la scheda magica
 -- quarto piano
     (10, 'Quarto piano','Corridoio stretto e affollato, con una fila interminabile che si snoda fuori dal bagno. L''aria è un misto di ansia ed esausta rassegnazione. Tra la fila, studenti leggono libri di algoritmi o ripassano appunti. Potresti parlare con qualcuno... magari capiscono la tua urgenza e ti lasciano passare.', 'La solita fila Chilometrica di studenti ansiosi, e un inserviente arrabbiato per via del bagno sporco. È alla ricerca di CANDEGGINA ',true, true, 'corridoio_quarto_piano.png'),
-    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',true, true, 'bagno_quarto_piano.png'),
+    (11, ' Bagno quarto piano', 'Un''altro bagno! Può essere la volta buona. All''interno, l''odore forte di disinfettante si mescola a quello più pungente dell''ansia collettiva\n. Specchi graffiati riflettono volti stanchi, e le porte cigolano ad ogni movimento.', 'Maledizione , manca la carta igienica.\nTra i muri, qualcuno ha disegnato un piccolo graffito, un palazzo con un punto interrogativo all''ultimo piano Chissà......',false, true, 'bagno_quarto_piano.png'),
     (13, 'Laboratorio Boole', 'Nascosto dalla lunga fila di studenti di fronte a te (NORD) si intravede un laboratorio di informatica , dove all''interno ci sono studenti fuori corso cercano di crare la macchina di turing universale che risolva il problema della fermata.', 'I soliti tre studenti che vogliono risolvere il problema della fermata... Opsss stavi inciampato su qualcosa. Un borsellino chissà che sta dentro.',true, true, 'laboratorio_boole_quarto_piano.png'),-- se lo raccoglie al suo interno ci sono 5 monete e varie penne (il suo contenuto è noto solo se lo apre)
 -- quinto piano
     (17, 'Quinto piano', 'Un corridoio silenzioso con porte chiuse e targhette in ottone.', 'Sei di nuovo al quinto piano, non noti niente di nuovo , a sinistra(OVEST) e a destra (EST) ci sono gli uffici dei professori. Potrebbero nascondere qualcosa di utile. Chissà se questi oggetti sono davvero indipendenti.... o se dietro le quinte hanno implementato un composite pattern!',true, true,'corridoio_quinto_piano.png'),
@@ -312,7 +312,7 @@ MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
 (6, 'Dottor Cravattone', 20);
 
 MERGE INTO NpcAlias(id,npc_alias) KEY(id, npc_alias) VALUES
-(7,'studente'), (7, 'sudente sto'),
+(7,'studente'), (7, 'studente sto'),
 (1, 'bruno'), (1, 'portinaio'),
 (2, 'Ernesto'), (2, 'Sapientoni'),
 (3, 'Dario'), (3, 'Tremolanti'),
@@ -352,9 +352,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
 (3,10,'Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?'),
 
 (3,41,'ah capisco allora chiamerò il barista. \nMi dispiace ragazzo, avrei potuto svelarti dei segreti molto utili.'), --se dice no
-(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, 
-Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. 
-La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla'), -- se dice si 
+(3,42, 'Okay ora si che mi sento meglio. Allora ragazzo ascolta, si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla.'), -- se dice si
 
 --PORTINAIO--TERZO--INDOVINELLO-------
 --1---
@@ -413,8 +411,7 @@ La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa ogg
 
 (10,43, 'Ragazzo ultima chance , hai la candeggina??'),
 (10, 44 ,'Niente da fare, hia perso una possibilità preziosa...'),
-(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero.
- Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
+(10,45, 'Questa sì che profuma di dedizione.\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.' ),
 
 --QUARTO--PIANO--INSERVIENTE----IL--SALVATORE--
 --1--
@@ -447,7 +444,7 @@ MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_stat
 --risposte del se ho il caffe
 
 ('No', 10,41 ,3),
-('Si', 10, 42 ,3 ), 
+('Si', 10, 42 ,3 ),
 
 --terzo--indovinello--RISPOSTA--1---CORRETTA-----
 ('L''ereditarietà multipla (una classe con più super-classi dirette).',11,12,4),

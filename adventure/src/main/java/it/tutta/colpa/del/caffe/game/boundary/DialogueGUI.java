@@ -19,8 +19,6 @@ public interface DialogueGUI {
 
     void addUserPossibleAnswers(List<PossibleAnswer> statements);
 
-    void setPageClosable(boolean intention);
-
     void open();
 
     void close();

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
@@ -47,7 +48,7 @@ public class Parser {
      * @param token La stringa da verificare.
      * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
      */
-    private Command checkForCommand(String token) throws ParserException{
+    private Command checkForCommand(String token) throws ParserException {
         Command c = commands.stream()
                 .filter(cmd -> cmd.getName().equals(token) || cmd.getAlias().contains(token))
                 .findFirst()
@@ -62,13 +63,13 @@ public class Parser {
      * @param token L'array di token derivato dall'input dell'utente.
      * @return Un array di stringhe contenente i nomi degli oggetti trovati.
      */
-    private String[] findItem(String[] token) throws ParserException  {
+    private String[] findItem(String[] token) throws ParserException {
         List<String> findObj = new ArrayList<>();
 
         this.items.stream()
                 .filter(item -> {
                     // Copio la lista di alias + nome (senza modificare l'originale)
-                    List<String> aliasList = new ArrayList<>(item.getAlias());
+                    List<String> aliasList = new ArrayList<>(item.getAlias().stream().map(alias->alias.toLowerCase()).collect(Collectors.toList()));
                     aliasList.add(item.getName().toLowerCase());
 
                     // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri speciali)
@@ -76,12 +77,10 @@ public class Parser {
                             .reduce((a, b) -> a + "|" + b)
                             .orElse("");
                     Pattern p = Pattern.compile(regex);
-
                     // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
                     return tentativo(p, token);
                 })
-                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla lista
-        //if(findObj.isEmpty()) throw new ParserException("nome oggetto non valido!");
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla list
         return findObj.toArray(new String[0]); // converto la lista array di
     }
 
@@ -118,7 +117,7 @@ public class Parser {
      * @return L'oggetto {@link NPC} trovato, o {@code null} se nessun NPC corrisponde.
      */
     private NPC findNpc(String[] tokens) {
-        StringBuilder regex=new StringBuilder("[\\s]+(");
+        StringBuilder regex = new StringBuilder("[\\s]+(");
 
         regex.append(
                 stopwords.stream()
@@ -127,9 +126,9 @@ public class Parser {
 
         regex.append(")[\\s]+");
         for (NPC npc : this.NPCs) {
-            String npcName = npc.getNome().toLowerCase().replaceAll(regex.toString()," ");
+            String npcName = npc.getNome().toLowerCase().replaceAll(regex.toString(), " ");
 
-            Set<String> aliasList = new HashSet<>(npc.getAlias());
+            Set<String> aliasList = new HashSet<>(npc.getAlias().stream().map(alias->alias.toLowerCase()).collect(Collectors.toSet()));
             aliasList.add(npc.getNome().toLowerCase());
 
             // provo tutte le possibili sottosequenze di token
@@ -188,7 +187,7 @@ public class Parser {
     public ParserOutput parse(String command) throws ParserException {
         List<String> list = Utils.parseString(command, stopwords);
         String[] tokens = list.toArray(new String[0]);
-        if (tokens.length==0){
+        if (tokens.length == 0) {
             throw new ParserException("Il comando che hai inserito non è valido!");
         }
         Command cd = checkForCommand(tokens[0]);
@@ -197,37 +196,25 @@ public class Parser {
             throw new ParserException("Errore: comando non riconosciuto o input non valido.");
         }
         NPC npcP = findNpc(tokens);
-        int piano= findPiano(tokens);
+        int piano = -1;
         if (tokens.length > 1) {
             String[] obj = findItem(tokens);
+            if (obj.length == 0 && npcP == null) {
+                piano = findPiano(tokens);
+            }
             if (obj.length == 1) {
                 // chiamo il construttore di parserOutput con solo un oggetto
+
                 return new ParserOutput(cd, items.stream().filter(item
                         -> item.getName().equals(obj[0])
                 ).findFirst().orElse(null));
-
-            } else if (obj.length == 2) {
-                // chiamo il costruttore che ha 2 oggetti
-                // prendo il primo oggetto
-                GeneralItem findItem1 = items.stream().filter(item
-                        -> item.getName().equals(obj[0])
-                ).findFirst().orElse(null);
-
-                // prendo il secondo oggetto
-                GeneralItem findItem2 = items.stream().filter(item
-                        -> item.getName().equals(obj[1])
-                ).findFirst().orElse(null);
-
-                return new ParserOutput(cd, findItem1, findItem2);
-
 
             } else if (npcP != null) {
                 // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
                 // chiama il costruttore con comando ed NPC
                 return new ParserOutput(cd, npcP);
-            } else if(piano!=-1) {
+            } else if (piano != -1) {
                 // non esiste nessun npc nelle stanze errore
-                System.out.println("in parser"+piano);
                 return new ParserOutput(cd, piano);
             } else {
                 throw new ParserException("Oggetti o NPC non riconosciuti.");

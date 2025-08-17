@@ -137,4 +137,15 @@ public class ItemContainer extends GeneralItem implements Serializable {
         return containedItems.containsKey(item);
     }
 
+    public GeneralItem containsObjectById(int id) {
+    for (GeneralItem gi : containedItems.keySet()) {
+        if (gi.getId() == id) {
+            return gi;
+        }
+    }
+    return null;
+}
+
+
+
 }

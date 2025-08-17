@@ -7,6 +7,8 @@ package it.tutta.colpa.del.caffe.game.entity;
 
 import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.utility.StringArcoGrafo;
+import org.jgrapht.GraphPath;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.Graph;
 
@@ -22,6 +24,7 @@ public class Dialogo implements Serializable {
     private final int id;
     private final Graph<String, StringArcoGrafo> dialogo;
     private String currentNode;
+    private String main;
     private boolean activeDialogue = true;
 
     public Dialogo(int id) {
@@ -29,9 +32,12 @@ public class Dialogo implements Serializable {
         dialogo = new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }
 
-    public void addDialogo(String dialogo, boolean corrente) {
+    public void addStatement(String dialogo, boolean main) {
         this.dialogo.addVertex(dialogo);
-        if (corrente) this.currentNode = dialogo;
+        if (main) {
+            this.main = dialogo;
+            this.currentNode = dialogo;
+        }
     }
 
     public void addRisposta(String domandaP, String domandaA, String risposta) {
@@ -45,7 +51,7 @@ public class Dialogo implements Serializable {
 
     public List<String> getCurrentAssociatedPossibleAnswers() {
         return getCurrentLabels().stream()
-                .map(answer->answer.toString())
+                .map(answer -> answer.toString())
                 .collect(Collectors.toList());
     }
 
@@ -59,10 +65,10 @@ public class Dialogo implements Serializable {
 
     public void setNextStatementFromAnswer(String answerChosen) throws DialogueException {
         this.setCurrentNode(this.dialogo.getEdgeTarget(getCurrentLabels().stream()
-                .filter(answer->answer.getEtichetta()
+                .filter(answer -> answer.getEtichetta()
                         .equals(answerChosen))
                 .findFirst()
-                .orElseThrow(() -> new DialogueException("Risposta non valida!")))) ;
+                .orElseThrow(() -> new DialogueException("Risposta non valida!"))));
     }
 
     /**
@@ -77,12 +83,26 @@ public class Dialogo implements Serializable {
     }
 
 
-
     public boolean isActive() {
         return activeDialogue;
     }
 
     public void setActivity(boolean activeDialogue) {
         this.activeDialogue = activeDialogue;
+    }
+
+    public String getMainNode() {
+        return main;
+    }
+
+    public List<String> getPreviewsStatement() {
+        DijkstraShortestPath<String, StringArcoGrafo> dsp = new DijkstraShortestPath<>(this.dialogo);
+        GraphPath<String, StringArcoGrafo> path = dsp.getPath(main, currentNode);
+        List<String> ps = new ArrayList<>();
+        for (int i = 0; i < path.getVertexList().size()-1; i++) {
+            ps.add(path.getVertexList().get(i));
+            ps.add(path.getEdgeList().get(i).getEtichetta());
+        }
+        return ps;
     }
 }

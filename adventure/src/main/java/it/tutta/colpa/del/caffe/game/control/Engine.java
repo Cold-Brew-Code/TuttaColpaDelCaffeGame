@@ -110,7 +110,12 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
-                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+                try {
+                    System.err.println("entrfa");
+                    GUI.setImage("images/resource_not_found.png");
+                } catch (ImageNotFoundException e2) {
+                    GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+                }
             }
         }
         this.attach(new BuildObserver());
@@ -238,8 +243,12 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 notifyObservers(parser.parse(command));
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
-                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
-            }catch (ParserException e){
+                try {
+                    GUI.setImage("/images/resource_not_found.png");
+                } catch (ImageNotFoundException e2) {
+                    GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+                }
+            } catch (ParserException e) {
                 description.getMessages().add(e.getMessage());
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
@@ -282,7 +291,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         for (GameObserver o : observers) {
             try {
                 String out = o.update(description, po);
-                if (!out.isEmpty()){
+                if (!out.isEmpty()) {
                     description.getMessages().add(out);
                 }
             } catch (ServerCommunicationException e) {

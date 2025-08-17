@@ -6,10 +6,12 @@ package it.tutta.colpa.del.caffe.adventure.control;
 
 import java.util.List;
 
+import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
+import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
 import it.tutta.colpa.del.caffe.game.entity.Room;
@@ -17,6 +19,7 @@ import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
 /**
  *
@@ -37,8 +40,14 @@ public class UseObserver implements GameObserver {
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
-        System.out.println("sono in use");
+        System.out.println("sono in use cazp");
         if (parserOutput.getCommand().getType() == CommandType.USE) {
+            ServerInterface server;
+            try {
+                server = new ServerInterface("localhost",49152 );
+            } catch (ServerCommunicationException ex) {
+                server= null;
+            }
             GeneralItem objInv;
             GeneralItem objInv1;
             if (obj == null) {
@@ -103,10 +112,29 @@ public class UseObserver implements GameObserver {
                     case 16 -> {
                         // il caffè è l'oggetto 16
                         boolean isInRoom = description.getCurrentRoom().getObject(16) != null;
+                        System.out.println("isInRoom: " + isInRoom);
                         if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(), 8) != null) {
                             objInv = GameUtils.getObjectFromInventory(description.getInventory(), 8);
-                            msg.append("You can take a caffè");
+                            msg.append(" caffè");
                             description.getInventory().remove(objInv); // c'è l'oggetto e tolgo una moneta.
+                            try {
+                                if(server!= null){
+                                    GeneralItem c= server.requestToServer(RequestType.ITEM, 2);
+                                    if(c instanceof Item i){
+                                        description.getInventory().add(i, 1);
+                                        msg.append(" Hai preso l'oggetto: ").append(i.getName());
+                                        System.out.println(i.getName());
+                                    }else{
+                                        msg.append("errore");
+                                    }
+                                    
+                                }else{
+                                    throw new ServerCommunicationException ("connessione al server fallita");
+                                }
+                            } catch (ServerCommunicationException | NullPointerException e) {
+                                msg.append(" Errore nella comunicazione col server: ").append(e.getMessage());
+                            }
+                            
                             
                         } else if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(), 8) == null) {
                             msg.append("you can not take a caffè , because you have not a maney into inventory  you are poor");
@@ -125,7 +153,7 @@ public class UseObserver implements GameObserver {
                         } else if (isVisibleMap == false && GameUtils.getObjectFromInventory(description.getInventory(), 1) != null) {
                             //la mappa può essere aperta ovunque
                             // stampa il contenuto 
-                            description.getGameMap().stampaDirezioniPerStanza();
+                            msg.append(description.getGameMap().stampaDirezioniPerStanza());
                         }
                     }
 

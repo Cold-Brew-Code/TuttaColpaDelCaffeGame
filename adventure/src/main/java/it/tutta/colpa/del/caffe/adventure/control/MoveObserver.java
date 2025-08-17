@@ -24,9 +24,25 @@ public class MoveObserver implements GameObserver {
                 System.out.println("Comando: " + commandType + "\n" + commandName + "\n proca1" + parserOutput.getCommand().getType());
                 if (commandType != null) {
                     if (Set.of(CommandType.UP, CommandType.DOWN).contains(commandType) && parserOutput.getPiano() >= 0) {
-                        LiftObserver ob = new LiftObserver();
-                        parserOutput.setCommand(new Command("ascensore"));
-                        msg.append(ob.update(description, parserOutput));
+                        int currPiano = description.getGameMap().getPianoCorrente();
+                        int targetFloor = parserOutput.getPiano();
+                        boolean validMove = false;
+                        if (commandType == CommandType.UP && targetFloor > currPiano) {
+                            validMove = true;
+
+                        } else if (commandType == CommandType.DOWN && targetFloor < currPiano) {
+                            validMove = true;
+
+                        }
+                        if (!validMove) {
+                            msg.append("Errore: impossibile eseguire il comando, piano non coerente con la posizione attuale.\n");
+
+                        } else {
+                            LiftObserver ob = new LiftObserver();
+                            parserOutput.setCommand(new Command("ascensore"));
+                            msg.append(ob.update(description, parserOutput));
+                        }
+
                     } else {
                         switch (commandType) {
                             case NORD -> {
@@ -69,14 +85,16 @@ public class MoveObserver implements GameObserver {
                                 description.getGameMap().setCurrentRoom(
                                         description.getGameMap().getStanzaArrivo(Direzione.SOPRA));
                             }
-                            case DOWN ->
-                                description.getGameMap().setCurrentRoom(
-                                        description.getGameMap().getStanzaArrivo(Direzione.SOTTO));
-                            default ->
-                                throw new Exception("Errore generico");
+                            case DOWN -> description.getGameMap().setCurrentRoom(
+                                    description.getGameMap().getStanzaArrivo(Direzione.SOTTO));
+                            default -> throw new Exception("Errore generico");
                         }
                         if (close) {
-                            msg.append("Ops la stanza è chiusa");
+                            if (description.getGameMap().getStanzaArrivo(Direzione.OVEST).getId() == 11 && commandType == CommandType.WEST) {
+                                msg.append("C'è la fila! non puoi passare...");
+                            } else {
+                                msg.append("Ops la stanza è chiusa");
+                            }
                         } else {
                             msg.append("\n").append(description.getCurrentRoom().getDescription());
 
