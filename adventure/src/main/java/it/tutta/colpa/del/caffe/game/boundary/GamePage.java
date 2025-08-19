@@ -4,15 +4,26 @@
  */
 package it.tutta.colpa.del.caffe.game.boundary;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.net.URL;
+
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+import javax.swing.border.LineBorder;
+
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
-
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-import java.awt.*;
-import java.net.URL;
 
 /**
  * @author giovav
@@ -87,8 +98,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JButton skipButton;
     private javax.swing.JButton audioButton;
     private javax.swing.JPopupMenu audioPopupMenu;
-    private javax.swing.JMenuItem increaseVolumeMenuItem;
-    private javax.swing.JMenuItem decreaseVolumeMenuItem;
+    private javax.swing.JMenuItem abbassa_alza;
+    //private javax.swing.JMenuItem decreaseVolumeMenuItem;
     private javax.swing.JMenuItem toggleMuteMenuItem;
     // --- NUOVI COMPONENTI EFFETTI VISIVI ---
     private javax.swing.JButton visualEffectButton;
@@ -98,6 +109,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JMenuItem fastEffectMenuItem;
     private javax.swing.JMenuItem disabledEffectMenuItem;
     private TypeWriterEffect typeWriterEffect;
+    private javax.swing.JLabel timerLabel;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
@@ -144,8 +156,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         audioButton = new javax.swing.JButton();
         audioPopupMenu = new javax.swing.JPopupMenu();
-        increaseVolumeMenuItem = new javax.swing.JMenuItem("Aumenta Volume");
-        decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
+        abbassa_alza = new javax.swing.JMenuItem("Aumenta/Abbassa Volume");
+        //decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
         toggleMuteMenuItem = new javax.swing.JMenuItem("Disattiva/Attiva Audio");
 
         // --- INIZIALIZZAZIONE NUOVI COMPONENTI ---
@@ -155,6 +167,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         mediumEffectMenuItem = new javax.swing.JMenuItem("Medio");
         fastEffectMenuItem = new javax.swing.JMenuItem("Veloce");
         disabledEffectMenuItem = new javax.swing.JMenuItem("Disattivo");
+        timerLabel = new javax.swing.JLabel();
 
         HeaderPanel.setOpaque(false);
         ImagePanel.setOpaque(false);
@@ -175,6 +188,13 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         setTitle("Tutta Colpa del Caffè!");
         setResizable(false);
 
+        // --- STILE LABEL TIMER ---
+        timerLabel.setFont(new java.awt.Font("Arial", 1, 24));
+        timerLabel.setForeground(new java.awt.Color(255, 255, 255));
+        timerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        timerLabel.setText("00:00");
+        timerLabel.setOpaque(false);
+
         // --- STILE BOTTONI MENU ---
         audioButton.setText("Audio \u25BC");
         audioButton.setBackground(Color.WHITE);
@@ -182,11 +202,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         visualEffectButton.setBackground(Color.WHITE);
 
         // --- STILE DEGLI ELEMENTI DI TUTTI I MENU ---
-        Dimension menuItemSize = new Dimension(150, 35);
+        Dimension menuItemSize = new Dimension(170, 35);
         Color itemBorderColor = new Color(220, 220, 220);
         JMenuItem[] allMenuItems = {
-                increaseVolumeMenuItem, decreaseVolumeMenuItem, toggleMuteMenuItem,
-                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+            abbassa_alza, toggleMuteMenuItem,
+            slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
         };
 
         for (JMenuItem item : allMenuItems) {
@@ -199,12 +219,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         // --- SETUP MENU AUDIO ---
         audioPopupMenu.setBorder(new LineBorder(Color.GRAY));
-        audioPopupMenu.add(increaseVolumeMenuItem);
-        audioPopupMenu.add(decreaseVolumeMenuItem);
+        audioPopupMenu.add(abbassa_alza);
+        //audioPopupMenu.add(decreaseVolumeMenuItem);
         audioPopupMenu.add(toggleMuteMenuItem);
         audioButton.addActionListener(this::audioButtonActionPerformed);
-        increaseVolumeMenuItem.addActionListener(this::increaseVolumeMenuItemActionPerformed);
-        decreaseVolumeMenuItem.addActionListener(this::decreaseVolumeMenuItemActionPerformed);
+        abbassa_alza.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
         toggleMuteMenuItem.addActionListener(this::toggleMuteMenuItemActionPerformed);
 
         // --- SETUP MENU EFFETTI VISIVI ---
@@ -227,27 +246,26 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
-                                .addContainerGap()));
+                                .addContainerGap())
+        );
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(HeaderPanelLayout
-                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
-                                                Short.MAX_VALUE)
-                                        .addComponent(audioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 38,
-                                                Short.MAX_VALUE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE,
-                                                javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
@@ -440,7 +458,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip();
+            typeWriterEffect.skip(); // Mostra tutto il testo immediatamente
         }
     }
 
@@ -454,14 +472,34 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         audioPopupMenu.show(audioButton, 0, audioButton.getHeight());
     }
 
-    private void increaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        float currentVol = AudioManager.getInstance().getVolume();
-        AudioManager.getInstance().setVolume(Math.min(1.0f, currentVol + 0.1f));
+    private void increaseDecreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Aumenta volume cliccato");
+        int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
+        if (volumePercent >= 0) {
+            float volume = volumePercent / 100f; 
+            AudioManager.getInstance().setVolume(volume);
+        }
     }
 
-    private void decreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
-        float currentVol = AudioManager.getInstance().getVolume();
-        AudioManager.getInstance().setVolume(Math.max(0.0f, currentVol - 0.1f));
+    private int askVolumeSlider(String title, String message) {
+        JSlider slider = new JSlider(0, 100, (int) (AudioManager.getInstance().getVolume() * 100));
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                new Object[]{message, slider},
+                title,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.CLOSED_OPTION
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            return slider.getValue();
+        }
+        return -1; //ha premuto annulla
     }
 
     private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -513,9 +551,9 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     @Override
     public void out(String message) {
         if (typeWriterEffect != null && typeWriterEffect.isRunning()) {
-            typeWriterEffect.skip();
+            typeWriterEffect.skip(); // Completa l'animazione corrente
         }
-        typeWriterEffect.start("\n" + message);
+        typeWriterEffect.start("\n" + message); // Avvia la nuova animazione
     }
 
     @Override
@@ -567,12 +605,56 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void setDisplayedClock(String time) {
+        if (this.timerLabel != null) {
+            this.timerLabel.setText(time);
 
+        }
     }
 
+    /**
+     *
+     * <p>
+     * Il metodo esegue l'aggiornamento della {@code progressBar} all'interno
+     * Thread (EDT) che si occupa di gestire tutti gli eventi GUI, utilizzando
+     * {@link SwingUtilities#invokeLater(Runnable)}, garantendo che le modifiche
+     * alla GUI siano sicure e corrette.invokeLater assicura che l'aggiornamente
+     * della barra venga fatto dal thread corretto indipendentemente dal thread
+     * dell'oggetto timer. Assicurandoci un corretto aggiornamento e garantendo
+     * la corretta visualizzazione. Incrementa il valore corrente della barra di
+     * progresso di 1 unità in modo thread-safe.
+     * </p>
+     *
+     *
+     * In base al valore aggiornato della barra, cambia il colore e il testo
+     * visualizzato:</p>
+     * <ul>
+     * <li>Valore < 6000: testo "FORZA IL DOVERE CHIAMA" con colore di
+     * default</li> <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol lare"
+     * con colore arancione</li>
+     * <li>Valore > 9000: testo "Sto quasi per mollare" con colore rosso</li>
+     * </ul>
+     */
     @Override
     public void increaseProgressBar() {
-        this.progressBar.setValue(this.progressBar.getValue() + 1);
+        // Incrementa di 1 secondo
+        int newValue = progressBar.getValue() + 1;
+        progressBar.setValue(newValue);
+
+        SwingUtilities.invokeLater(() -> {
+            progressBar.setStringPainted(true);
+            progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
+            if (newValue < 600) { // primi 10 minuti
+                progressBar.setForeground(Color.black);
+                progressBar.setString("FORZA IL DOVERE CHIAMA");
+
+            } else if (newValue < 900) { // da 10 a 15 minuti
+                progressBar.setForeground(Color.ORANGE);
+                progressBar.setString("ahi ho paura di mollare");
+            } else { // ultimi 5 minuti
+                progressBar.setForeground(Color.RED);
+                progressBar.setString("Sto quasi per mollare");
+            }
+        });
     }
 
     @Override

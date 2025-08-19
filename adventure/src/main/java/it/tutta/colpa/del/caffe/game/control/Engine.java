@@ -10,6 +10,7 @@ import java.util.Set;
 
 import it.tutta.colpa.del.caffe.adventure.control.BuildObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LeaveObserver;
+import it.tutta.colpa.del.caffe.adventure.control.LiftObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LookAtObserver;
 import it.tutta.colpa.del.caffe.adventure.control.MoveObserver;
 import it.tutta.colpa.del.caffe.adventure.control.OpenObserver;
@@ -103,19 +104,14 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.notifyError("Errore", err.toString());
         } else {
             //init first scenario
-            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
+            this.timer = new Clock(20, this, this.GUI);// passo il tempo e l'engine corrente
             timer.start();// starto l'orologio 
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
-                try {
-                    System.err.println("entrfa");
-                    GUI.setImage("images/resource_not_found.png");
-                } catch (ImageNotFoundException e2) {
-                    GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
-                }
+                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
         this.attach(new BuildObserver());
@@ -127,6 +123,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.attach(new TalkObserver());
         this.attach(new UseObserver());
         this.attach(new LeaveObserver());
+        this.attach(new LiftObserver());
     }
 
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
@@ -291,7 +288,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         for (GameObserver o : observers) {
             try {
                 String out = o.update(description, po);
-                if (!out.isEmpty()) {
+                if (!out.isEmpty()){
                     description.getMessages().add(out);
                 }
             } catch (ServerCommunicationException e) {
@@ -304,6 +301,21 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         GUI.out("Tempo esaurito! La partita è finita.");
         GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
         GUI.close();
+    }
+
+    /**
+     * Notifica all'interfaccia grafica l'aggiornamento del tempo residuo.
+     * <p>
+     * Questo metodo viene chiamato ad ogni tick del {@link Clock} e aggiorna il
+     * display dell'orologio nella GUI con il tempo formattato.
+     *
+     * @param timeFormatted il tempo residuo formattato come stringa, ad esempio
+     * "mm:ss" o "HH:mm:ss"
+     */
+
+    @Override
+    public void onTimeUpdate(String timeFormatted) {
+        GUI.setDisplayedClock(timeFormatted);
     }
 
     @Override

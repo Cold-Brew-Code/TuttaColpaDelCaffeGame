@@ -1,14 +1,28 @@
 package it.tutta.colpa.del.caffe.start.boundary;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.io.File;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
-import java.net.URL;
 
 public class MainPage extends JFrame implements GUI {
     MainPageController c;
@@ -44,8 +58,8 @@ public class MainPage extends JFrame implements GUI {
 
     JPopupMenu audioMenu = new JPopupMenu();
     JMenuItem togglePauseItem = new JMenuItem("Pausa/Riprendi");
-    JMenuItem volumeUpItem = new JMenuItem("Aumenta Volume");
-    JMenuItem volumeDownItem = new JMenuItem("Diminuisci Volume");
+    //JMenuItem volumeUpItem = new JMenuItem("Aumenta Volume");
+    JMenuItem volumeDownItem = new JMenuItem("Aumenta/Abbassa Volume");
     JMenuItem toggleAudioItem = new JMenuItem("Disattiva Audio");
 
     public MainPage() {
@@ -71,14 +85,14 @@ public class MainPage extends JFrame implements GUI {
         }
 
         audioMenu.add(togglePauseItem);
-        audioMenu.add(volumeUpItem);
+        //audioMenu.add(volumeUpItem);
         audioMenu.add(volumeDownItem);
         audioMenu.addSeparator();
         audioMenu.add(toggleAudioItem);
 
         togglePauseItem.addActionListener(e -> toggleAudioPause());
-        volumeUpItem.addActionListener(e -> adjustVolume(0.1f));
-        volumeDownItem.addActionListener(e -> adjustVolume(-0.1f));
+        //volumeUpItem.addActionListener(e -> adjustVolume(0.1f));
+        volumeDownItem.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
         toggleAudioItem.addActionListener(e -> toggleAudio());
         audioControlButton
                 .addActionListener(e -> audioMenu.show(audioControlButton, 0, audioControlButton.getHeight()));
@@ -176,7 +190,7 @@ public class MainPage extends JFrame implements GUI {
 
         toggleAudioItem.setText(isAudioEnabled ? "Disattiva Audio" : "Attiva Audio");
         togglePauseItem.setEnabled(isAudioEnabled);
-        volumeUpItem.setEnabled(isAudioEnabled);
+       // volumeUpItem.setEnabled(isAudioEnabled);
         volumeDownItem.setEnabled(isAudioEnabled);
 
         if (isAudioEnabled) {
@@ -198,12 +212,34 @@ public class MainPage extends JFrame implements GUI {
         isAudioPaused = !isAudioPaused;
     }
 
-    private void adjustVolume(float delta) {
-        if (isAudioEnabled) {
-            AudioManager audioManager = AudioManager.getInstance();
-            float newVolume = Math.max(0, Math.min(1, audioManager.getVolume() + delta));
-            audioManager.setVolume(newVolume);
+    private void increaseDecreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
+        System.out.println("Aumenta volume cliccato");
+        int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
+        if (volumePercent >= 0) {
+            float volume = volumePercent / 100f; // converti in float 0.0 - 1.0
+            AudioManager.getInstance().setVolume(volume);
         }
+    }
+
+    private int askVolumeSlider(String title, String message) {
+        JSlider slider = new JSlider(0, 100, (int) (AudioManager.getInstance().getVolume() * 100));
+        slider.setMajorTickSpacing(10);
+        slider.setMinorTickSpacing(1);
+        slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+
+        int option = JOptionPane.showConfirmDialog(
+                this,
+                new Object[]{message, slider},
+                title,
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.CLOSED_OPTION
+        );
+
+        if (option == JOptionPane.OK_OPTION) {
+            return slider.getValue();
+        }
+        return -1; //ha premuto annulla
     }
 
     @Override
