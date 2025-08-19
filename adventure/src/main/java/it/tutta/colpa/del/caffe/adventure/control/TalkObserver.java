@@ -14,13 +14,14 @@ import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.rest.QuizNpc;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
+import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
 
-import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author giova
@@ -35,13 +36,17 @@ public class TalkObserver implements GameObserver {
             if (parserOutputNpc != null) {
                 if (isNPCinCurrentRoom(parserOutputNpc, description.getCurrentRoom())) {
                     NPC npc = description.getCurrentRoom()
-                              .getNPCs()
-                              .stream()
-                              .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
-                              .findFirst()
-                              .get();
+                            .getNPCs()
+                            .stream()
+                            .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
+                            .findFirst()
+                            .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        msg.append(this.runQuiz(npc, description));
+                        if(description.getStatus()== GameStatus.BAGNO_USATO ){
+                            msg.append(this.runQuiz(npc, description));
+                        }else {
+                            msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
+                        }
                     } else {
                         msg.append(this.runDialogue(npc, description));
                     }
@@ -52,7 +57,11 @@ public class TalkObserver implements GameObserver {
                 NPC npc = description.getCurrentRoom().getNPCs().get(0);
                 try {
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        msg.append(this.runQuiz(npc, description));
+                        if(description.getStatus()== GameStatus.BAGNO_USATO ){
+                            msg.append(this.runQuiz(npc, description));
+                        }else {
+                            msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
+                        }
                     } else {
                         msg.append(this.runDialogue(npc, description));
                     }
@@ -299,20 +308,51 @@ public class TalkObserver implements GameObserver {
     }
 
     private class QuizHandler extends DialogueHandler {
+        private boolean isQuizRunning = false;
+        private DialogoQuiz currentQuiz;
         private int quizScore = 0;
-        private DialogoQuiz[] quiz;
-        private int currentQuiz = 0;
+        private int attemptedQuiz = 0;
+        private static final int MAX_DOMANDE = 5;
+
         public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             super(NPCName, dialogue, description);
         }
 
         @Override
         public void answerChosen(final String answer) {
-            if (quiz != null) { //means that quiz has started
-                if(answer.equals(this.quiz[currentQuiz].getRisposte().get(this.quiz[currentQuiz].getIdCorretta()))){
+            if (isQuizRunning) { //means that quiz has started
+                if (answer.equals(currentQuiz.getRisposte().get(this.currentQuiz.getIdCorretta()))) {
                     this.quizScore++;
+                    GUI.addNPCStatement(super.NPCName, currentQuiz.getMessaggioCorret());
+                } else {
+                    GUI.addNPCStatement(super.NPCName, currentQuiz.getMessaggioErrato());
                 }
-                currentQuiz++;
+                attemptedQuiz++;
+                if (attemptedQuiz < MAX_DOMANDE) {
+                    try {
+                        currentQuiz = QuizNpc.getQuiz();
+                    } catch (ConnectionError e) {
+
+                    }
+                    super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
+                    super.GUI.addUserPossibleAnswers(currentQuiz.getRisposte().stream()
+                            .map((ans) -> new DialogueGUI.PossibleAnswer(ans, true))
+                            .collect(Collectors.toList()));
+                } else {
+                    StringBuilder sb = new StringBuilder("L'esame è terminato, il punteggio che ha ottenuto è di " + (quizScore * 30) / 5 + "/30esimi pertanto lei è... ");
+                    if ((quizScore * 30) / 5 >= 18) {
+                        sb.append("PROMOSSO!!! complimenti.");
+                    } else {
+                        sb.append("BOCCIATO!!!!");
+                    }
+                    super.GUI.addNPCStatement(super.NPCName, sb.toString());
+                    super.GUI.addNPCStatement(super.NPCName, "L'esame è terminato, se ne vada!");
+                    if((quizScore * 30) / 5 >= 18){
+                        this.description.setStatus(GameStatus.VINTA);
+                    }else{
+                        this.description.setStatus(GameStatus.PERSA);
+                    }
+                }
             } else {
                 try {
                     super.dialogue.setNextStatementFromAnswer(answer);
@@ -328,27 +368,23 @@ public class TalkObserver implements GameObserver {
                 if (super.dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                     super.dialogue.setActivity(false);
                     super.dialogueEndedEvent(super.dialogue.getId(), super.dialogue.getCurrentNode());
-                    System.err.println("entra");
+                    this.isQuizRunning = true;
+                    super.GUI.addNPCStatement(super.NPCName, "Mi faccia pensare alla prima domanda...");
                     this.runQuiz();
                 }
             }
         }
 
         private void runQuiz() {
-            DialogoQuiz[] quiz = new DialogoQuiz[5];
             try {
-
-                for (int i = 0; i < 5; i++) {
-                    DialogoQuiz d = QuizNpc.getQuiz();
-                    quiz[i] = d;
-                }
+                this.currentQuiz = QuizNpc.getQuiz();
             } catch (ConnectionError e) {
                 // domande pacche
                 System.err.println("errore");
             }
 
-            super.GUI.addNPCStatement(super.NPCName, quiz[0].getDomanda());
-            super.GUI.addUserPossibleAnswers(quiz[0].getRisposte().stream()
+            super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
+            super.GUI.addUserPossibleAnswers(currentQuiz.getRisposte().stream()
                     .map((answer) -> new DialogueGUI.PossibleAnswer(answer, true))
                     .collect(Collectors.toList()));
         }
