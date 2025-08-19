@@ -4,25 +4,23 @@
  */
 package it.tutta.colpa.del.caffe.adventure.control;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
 import it.tutta.colpa.del.caffe.game.control.DialogueController;
 import it.tutta.colpa.del.caffe.game.control.ServerInterface;
-import it.tutta.colpa.del.caffe.game.entity.Dialogo;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.NPC;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
+import it.tutta.colpa.del.caffe.game.rest.QuizNpc;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author giova
@@ -43,7 +41,7 @@ public class TalkObserver implements GameObserver {
                             .findFirst()
                             .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-
+                        msg.append(this.runQuiz());
                     } else {
                         msg.append(this.runDialogue(npc, description));
                     }
@@ -99,14 +97,15 @@ public class TalkObserver implements GameObserver {
 
     private String runQuiz() {
         StringBuilder msg = new StringBuilder();
+
         return msg.toString();
     }
 
     private class DialogueHandler implements DialogueController {
-        private final DialogueGUI GUI;
-        private final String NPCName;
+        protected final DialogueGUI GUI;
+        protected final String NPCName;
         private final Dialogo dialogue;
-        private final GameDescription description;
+        protected final GameDescription description;
         private final StringBuilder returnStatement = new StringBuilder();
 
         private final static String TO_DISABLE_ANSWER_DIALOGUE_3_STATEMENT = "Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?";
@@ -214,8 +213,6 @@ public class TalkObserver implements GameObserver {
                         .collect(Collectors.toList());
             }
 
-            // Creiamo delle costanti "final" con i valori determinati dallo switch.
-            // Queste possono essere usate tranquillamente dalla lambda.
             final String final_textToDisable = textToDisable;
             final int final_requiredItemId = requiredItemId;
 
@@ -248,7 +245,7 @@ public class TalkObserver implements GameObserver {
                         // indovinello studente bagno primo piano, mostra la mappa !!!!
                         if (lastProducedStatement.equals(NODE_EVT_SHOW_MAP)) {
                             this.returnStatement.append("Cerca la mappa, è dietro un quadro di una delle aule studio!");
-                            this.description.getGameMap().getRoom(5).getObject(1).setVisibile(true);
+                            this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
                         }
                         lookEvent(11, description.getCurrentRoom(), lastProducedStatement);
                         break;
@@ -294,6 +291,53 @@ public class TalkObserver implements GameObserver {
 
         public String getReturnStatement() {
             return returnStatement.toString();
+        }
+    }
+
+    private class QuizHandler extends DialogueHandler {
+        private int quizScore = 0;
+        private DialogoQuiz[] quiz;
+
+        public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
+            super(NPCName, dialogue, description);
+        }
+
+        @Override
+        public void answerChosen(final String answer) {
+            if (quiz != null) { //means that quiz has started
+
+            } else {
+                try {
+                    super.dialogue.setNextStatementFromAnswer(answer);
+                } catch (DialogueException e) {
+                    System.err.println("DialogueException " + e.getMessage());
+                }
+                if (3 == super.dialogue.getId() && super.NODE_EVT_DROP_COFFEE.equals(super.dialogue.getCurrentNode())) {
+                    super.description.getInventory().remove(new GeneralItem(2), 1);
+                } else if (10 == super.dialogue.getId() && super.NODE_EVT_DROP_BLECH.equals(super.dialogue.getCurrentNode())) {
+                    super.description.getInventory().remove(new GeneralItem(4), 1);
+                }
+                showCurrentDialogue();
+                if (super.dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
+                    super.dialogue.setActivity(false);
+                    super.dialogueEndedEvent(super.dialogue.getId(), super.dialogue.getCurrentNode());
+                    this.runQuiz();
+                }
+            }
+        }
+
+        private void runQuiz() {
+            DialogoQuiz[] quiz = new DialogoQuiz[5];
+            try {
+                for (int i = 0; i < 5; i++) {
+                    quiz[i] = QuizNpc.getQuiz();
+                }
+            } catch (ConnectionError e) {
+                // domande pacche
+            }
+
+            super.GUI.addNPCStatement(super.NPCName, quiz[0].getDomanda());
+            super.GUI.addUserPossibleAnswers(quiz[0].getRisposte().stream().map((answer) -> new DialogueGUI.PossibleAnswer(answer, true)).collect(Collectors.toList()));
         }
     }
 }
