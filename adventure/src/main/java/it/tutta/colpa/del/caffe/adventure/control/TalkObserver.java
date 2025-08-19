@@ -35,13 +35,13 @@ public class TalkObserver implements GameObserver {
             if (parserOutputNpc != null) {
                 if (isNPCinCurrentRoom(parserOutputNpc, description.getCurrentRoom())) {
                     NPC npc = description.getCurrentRoom()
-                            .getNPCs()
-                            .stream()
-                            .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
-                            .findFirst()
-                            .get();
+                              .getNPCs()
+                              .stream()
+                              .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
+                              .findFirst()
+                              .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        msg.append(this.runQuiz());
+                        msg.append(this.runQuiz(npc, description));
                     } else {
                         msg.append(this.runDialogue(npc, description));
                     }
@@ -52,7 +52,7 @@ public class TalkObserver implements GameObserver {
                 NPC npc = description.getCurrentRoom().getNPCs().get(0);
                 try {
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-
+                        msg.append(this.runQuiz(npc, description));
                     } else {
                         msg.append(this.runDialogue(npc, description));
                     }
@@ -95,9 +95,13 @@ public class TalkObserver implements GameObserver {
     }
 
 
-    private String runQuiz() {
+    private String runQuiz(NPC npc, GameDescription description) {
         StringBuilder msg = new StringBuilder();
-
+        try {
+            new QuizHandler(npc.getNome(), npc.getDialogoCorr(), description);
+        } catch (DialogueException e) {
+            throw new RuntimeException(e);
+        }
         return msg.toString();
     }
 
@@ -297,7 +301,7 @@ public class TalkObserver implements GameObserver {
     private class QuizHandler extends DialogueHandler {
         private int quizScore = 0;
         private DialogoQuiz[] quiz;
-
+        private int currentQuiz = 0;
         public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             super(NPCName, dialogue, description);
         }
@@ -305,7 +309,10 @@ public class TalkObserver implements GameObserver {
         @Override
         public void answerChosen(final String answer) {
             if (quiz != null) { //means that quiz has started
-
+                if(answer.equals(this.quiz[currentQuiz].getRisposte().get(this.quiz[currentQuiz].getIdCorretta()))){
+                    this.quizScore++;
+                }
+                currentQuiz++;
             } else {
                 try {
                     super.dialogue.setNextStatementFromAnswer(answer);
@@ -321,6 +328,7 @@ public class TalkObserver implements GameObserver {
                 if (super.dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                     super.dialogue.setActivity(false);
                     super.dialogueEndedEvent(super.dialogue.getId(), super.dialogue.getCurrentNode());
+                    System.err.println("entra");
                     this.runQuiz();
                 }
             }
@@ -329,15 +337,20 @@ public class TalkObserver implements GameObserver {
         private void runQuiz() {
             DialogoQuiz[] quiz = new DialogoQuiz[5];
             try {
+
                 for (int i = 0; i < 5; i++) {
-                    quiz[i] = QuizNpc.getQuiz();
+                    DialogoQuiz d = QuizNpc.getQuiz();
+                    quiz[i] = d;
                 }
             } catch (ConnectionError e) {
                 // domande pacche
+                System.err.println("errore");
             }
 
             super.GUI.addNPCStatement(super.NPCName, quiz[0].getDomanda());
-            super.GUI.addUserPossibleAnswers(quiz[0].getRisposte().stream().map((answer) -> new DialogueGUI.PossibleAnswer(answer, true)).collect(Collectors.toList()));
+            super.GUI.addUserPossibleAnswers(quiz[0].getRisposte().stream()
+                    .map((answer) -> new DialogueGUI.PossibleAnswer(answer, true))
+                    .collect(Collectors.toList()));
         }
     }
 }

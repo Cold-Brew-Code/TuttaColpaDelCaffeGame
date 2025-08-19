@@ -11,13 +11,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.net.URL;
 
-import javax.swing.GroupLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JSlider;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
@@ -636,27 +630,41 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
      */
     @Override
     public void increaseProgressBar() {
-        // Incrementa di 1 secondo
         int newValue = progressBar.getValue() + 1;
         progressBar.setValue(newValue);
 
         SwingUtilities.invokeLater(() -> {
             progressBar.setStringPainted(true);
             progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
+
             if (newValue < 600) { // primi 10 minuti
-                progressBar.setForeground(Color.black);
+                UIManager.put("ProgressBar[Enabled].foregroundPainter",
+                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
+                            g.setColor(Color.GREEN);
+                            g.fillRect(0, 0, w, h);
+                        });
                 progressBar.setString("FORZA IL DOVERE CHIAMA");
 
             } else if (newValue < 900) { // da 10 a 15 minuti
-                progressBar.setForeground(Color.ORANGE);
+                UIManager.put("ProgressBar[Enabled].foregroundPainter",
+                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
+                            g.setColor(Color.ORANGE);
+                            g.fillRect(0, 0, w, h);
+                        });
                 progressBar.setString("ahi ho paura di mollare");
+
             } else { // ultimi 5 minuti
-                progressBar.setForeground(Color.RED);
+                UIManager.put("ProgressBar[Enabled].foregroundPainter",
+                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
+                            g.setColor(Color.RED);
+                            g.fillRect(0, 0, w, h);
+                        });
                 progressBar.setString("Sto quasi per mollare");
             }
+
+            SwingUtilities.updateComponentTreeUI(progressBar);
         });
     }
-
     @Override
     public void executedCommand() {
         typeWriterEffect.skip();
