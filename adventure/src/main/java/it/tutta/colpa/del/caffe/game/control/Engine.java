@@ -1,4 +1,3 @@
-
 package it.tutta.colpa.del.caffe.game.control;
 
 import java.awt.Frame;
@@ -6,7 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
 
 import it.tutta.colpa.del.caffe.adventure.control.BuildObserver;
 import it.tutta.colpa.del.caffe.adventure.control.LeaveObserver;
@@ -38,8 +40,9 @@ import it.tutta.colpa.del.caffe.game.utility.Parser;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
 import it.tutta.colpa.del.caffe.game.utility.Utils;
+import it.tutta.colpa.del.caffe.loadsave.ChoseSaveHandler;
+import it.tutta.colpa.del.caffe.loadsave.control.SaveLoad;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
-
 
 /**
  * Classe principale che gestisce la logica di gioco.
@@ -54,7 +57,8 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
 public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
-     * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia utente.
+     * Riferimento alla GUI, utile per eventuali interazioni con l'interfaccia
+     * utente.
      */
     private GameGUI GUI;
 
@@ -76,6 +80,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      */
     public Engine(MainPageController mpc, GameGUI GUI) {
         this.GUI = GUI;
+        this.GUI.linkController(this);
         this.mpc = mpc;
         Parser tmpParser = null;
         GameDescription tmpDescription = null;
@@ -83,7 +88,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         try {
             tmpDescription = initDescriptionFromServer();
             tmpParser = initParserFromServer(tmpDescription);
-            //timer
+            // timer
         } catch (ServerCommunicationException e) {
             err.append("<p><b>Errore di comunicazione con il server</b>:</p><p>").append(e.getMessage()).append("</p>");
         } catch (IOException e) {
@@ -103,9 +108,9 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
-            //init first scenario
-            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente 
-            timer.start();// starto l'orologio 
+            // init first scenario
+            this.timer = new Clock(20, this);// passo il tempo e l'engine corrente
+            timer.start();// starto l'orologio
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
@@ -126,6 +131,32 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.attach(new LiftObserver());
     }
 
+    /**
+     * Costruttore per caricare una partita esistente
+     */
+    public Engine(GameDescription loadedDescription, MainPageController mpc, GameGUI gui) {
+        this.mpc = Objects.requireNonNull(mpc, "MainPageController non può essere null");
+        this.GUI = Objects.requireNonNull(gui, "GameGUI non può essere null");
+        this.description = loadedDescription;
+
+        try {
+            this.parser = initParserFromServer(this.description);
+            this.timer = new Clock(20, this);
+
+            this.GUI.linkController(this);
+            this.GUI.out("Partita caricata: " + loadedDescription.getCurrentRoom().getName());
+            this.GUI.out(loadedDescription.getCurrentRoom().getDescription());
+            this.GUI.setImage(loadedDescription.getCurrentRoom().getImagePath());
+
+            attachDefaultObservers();
+            this.timer.start();
+
+        } catch (Exception e) {
+            this.GUI.close();
+            throw new IllegalStateException("Caricamento fallito: " + e.getMessage(), e);
+        }
+    }
+
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
         Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
         ServerInterface si = new ServerInterface("localhost", 49152);
@@ -133,8 +164,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 stopwords,
                 description.getCommands(),
                 si.requestToServer(RequestType.ITEMS),
-                si.requestToServer(RequestType.NPCs)
-        );
+                si.requestToServer(RequestType.NPCs));
         si.requestToServer(RequestType.CLOSE_CONNECTION);
         return p;
     }
@@ -144,7 +174,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      * Recupera la mappa e l'elenco dei comandi, verificandone la correttezza.
      *
      * @return una GameDescription contenente la mappa e i comandi
-     * @throws ServerCommunicationException se la comunicazione fallisce o i dati sono incompleti
+     * @throws ServerCommunicationException se la comunicazione fallisce o i dati
+     *                                      sono incompleti
      */
 
     private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
@@ -157,7 +188,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         si.requestToServer(RequestType.CLOSE_CONNECTION);
         return gd;
     }
-
 
     /**
      * Costruttore per l'inizializzazione da file di salvataggio.
@@ -173,6 +203,51 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         this.mpc = mpc;
     }
 
+    /**
+     * Costruttore per caricare una partita da file.
+     * 
+     * @param filePath Percorso del file di salvataggio
+     * @param mpc      Riferimento al controller principale
+     * @param gui      Riferimento all'interfaccia grafica
+     * @throws IllegalStateException Se il caricamento fallisce
+     */
+    public Engine(String filePath, MainPageController mpc, GameGUI gui) throws IllegalStateException {
+        this.mpc = Objects.requireNonNull(mpc, "MainPageController non può essere null");
+        this.GUI = Objects.requireNonNull(gui, "GameGUI non può essere null");
+
+        try {
+            this.description = SaveLoad.loadGame(filePath);
+
+            this.parser = initParserFromServer(this.description);
+            this.timer = new Clock(20, this);
+
+            this.GUI.linkController(this);
+            this.GUI.out(this.description.getWelcomeMsg());
+            this.GUI.out(this.description.getCurrentRoom().getDescription());
+            this.GUI.setImage(this.description.getCurrentRoom().getImagePath());
+
+            attachDefaultObservers();
+
+            this.timer.start();
+
+        } catch (Exception e) {
+            this.GUI.close();
+            throw new IllegalStateException("Caricamento fallito: " + e.getMessage(), e);
+        }
+    }
+
+    private void attachDefaultObservers() {
+        this.attach(new BuildObserver());
+        this.attach(new LookAtObserver());
+        this.attach(new MoveObserver());
+        this.attach(new OpenObserver());
+        this.attach(new PickUpObserver());
+        this.attach(new ReadObserver());
+        this.attach(new TalkObserver());
+        this.attach(new UseObserver());
+        this.attach(new LeaveObserver());
+        this.attach(new LiftObserver());
+    }
 
     /**
      * Inizializza una partita a partire da un file di salvataggio.
@@ -186,7 +261,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     }
 
     /**
-     * Tenta di muoversi nella direzione specificata a partire dalla posizione corrente.
+     * Tenta di muoversi nella direzione specificata a partire dalla posizione
+     * corrente.
      *
      * @param direction la direzione in cui muoversi
      * @return true se il movimento è valido, false in caso contrario
@@ -241,7 +317,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 GUI.setImage(description.getCurrentRoom().getImagePath());
             } catch (ImageNotFoundException e) {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
-            }catch (ParserException e){
+            } catch (ParserException e) {
                 description.getMessages().add(e.getMessage());
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
@@ -258,7 +334,21 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     @Override
     public void saveGame() {
-        //chiamare LoadSave.save();
+        try {
+            String savePath = SaveLoad.saveGame(this.description);
+
+            new ChoseSaveHandler(this);
+
+            JOptionPane.showMessageDialog(null,
+                    "Salvataggio creato: " + new File(savePath).getName(),
+                    "Successo",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (IOException e) {
+            GUI.notifyError("Errore", "Salvataggio fallito: " + e.getMessage());
+        } catch (Exception e) {
+            GUI.notifyError("Errore", "Errore imprevisto: " + e.getMessage());
+        }
     }
 
     @Override
@@ -266,7 +356,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         GUI inventory = new InventoryPage((Frame) this.GUI, this.description.getInventory());
         inventory.open();
     }
-
 
     @Override
     public void attach(GameObserver o) {
@@ -284,7 +373,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         for (GameObserver o : observers) {
             try {
                 String out = o.update(description, po);
-                if (!out.isEmpty()){
+                if (!out.isEmpty()) {
                     description.getMessages().add(out);
                 }
             } catch (ServerCommunicationException e) {
@@ -301,7 +390,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     @Override
     public void onTimeExpired() {
-        // chiama il metodo esistente
         finishGame();
     }
 }

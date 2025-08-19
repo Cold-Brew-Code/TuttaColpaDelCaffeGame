@@ -8,6 +8,7 @@ import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.loadsave.control.LoadController;
 import it.tutta.colpa.del.caffe.loadsave.control.SaveLoad;
+import it.tutta.colpa.del.caffe.loadsave.control.SaveManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,16 @@ public class ChoseSavePage extends JFrame implements GUI {
     private static final java.util.logging.Logger logger = java.util.logging.Logger
             .getLogger(ChoseSavePage.class.getName());
     LoadController c;
+
+    static {
+        File savesDir = new File(SaveLoad.SAVES_DIR);
+        if (!savesDir.exists()) {
+            System.out.println("[INFO] Creazione cartella salvataggi: " + savesDir.getAbsolutePath());
+            if (!savesDir.mkdirs()) {
+                System.err.println("[ERR] Impossibile creare la cartella salvataggi: " + savesDir.getAbsolutePath());
+            }
+        }
+    }
 
     public ChoseSavePage() {
         // verifico l'esistenza della cartella prima di tutto
@@ -254,14 +265,14 @@ public class ChoseSavePage extends JFrame implements GUI {
         if (selectedSave != null) {
             try {
                 c.load(selectedSave.getPath());
-                this.close();
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Caricamento fallito", "Errore", JOptionPane.ERROR_MESSAGE);
+                this.close();
             }
         }
     }// GEN-LAST:event_saveButtonActionPerformed
 
-    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         int scelta = javax.swing.JOptionPane.showConfirmDialog(
                 null,
                 "Vuoi davvero eliminare il salvataggio selezionato?",
@@ -271,12 +282,15 @@ public class ChoseSavePage extends JFrame implements GUI {
         if (scelta == JOptionPane.YES_OPTION) {
             try {
                 if (c.deleteSave(selectedSave.getPath())) {
-                    selectedSave.getLabel().setText(selectedSave.getLabel().getText() + "\t[Eliminato]");
-                    selectedSave.getLabel().setOpaque(true);
-                    selectedSave.getLabel().setBackground(new Color(255, 0, 0, 50));
+                    refreshSaveList();
                     saveButton.setEnabled(false);
                     deleteButton.setEnabled(false);
                     selectedSave = null;
+
+                    JOptionPane.showMessageDialog(this,
+                            "Salvataggio eliminato con successo",
+                            "Successo",
+                            JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Errore durante l'eliminazione", "Errore",
@@ -317,20 +331,23 @@ public class ChoseSavePage extends JFrame implements GUI {
     }
 
     private void setSaves() throws FileNotFoundException {
-        File savs = new File(SaveLoad.SAVES_DIR);
-        if (!(savs.exists() && savs.isDirectory())) {
-            throw new FileNotFoundException(
-                    "Non è stato possibile trovare la cartella dei salvataggi: " + SaveLoad.SAVES_DIR);
+        File savesDir = new File(SaveLoad.SAVES_DIR);
+        System.out.println("Caricamento salvataggi da: " + savesDir.getAbsolutePath());
+
+        if (!savesDir.exists()) {
+            throw new FileNotFoundException("Cartella salvataggi non trovata: " + savesDir.getAbsolutePath());
         }
+
         this.saves = new ArrayList<>();
-        File[] saveFiles = savs.listFiles((dir, name) -> name.endsWith(".save"));
+        File[] saveFiles = savesDir.listFiles((dir, name) -> name.endsWith(".save"));
 
         if (saveFiles != null && saveFiles.length > 0) {
-            for (File sa : saveFiles) {
-                if (sa.isFile()) { // verifico che sia un file e non una directory
-                    this.saves.add(new Save(sa.getName()));
-                }
+            for (File file : saveFiles) {
+                this.saves.add(new Save(file.getName()));
+                System.out.println("Trovato salvataggio: " + file.getName());
             }
+        } else {
+            System.out.println("Nessun salvataggio trovato nella directory");
         }
     }
 
@@ -338,6 +355,8 @@ public class ChoseSavePage extends JFrame implements GUI {
         insideScrollPanePanel.setLayout(new BoxLayout(insideScrollPanePanel, BoxLayout.Y_AXIS));
         insideScrollPanePanel.setPreferredSize(
                 new Dimension(scrollPane.getViewport().getWidth(), insideScrollPanePanel.getPreferredSize().height));
+
+        SaveManager saveManager = new SaveManager();
         try {
             if (this.saves.isEmpty()) {
                 JLabel label = new JLabel("<html><h3> Nessun salvataggio trovato</h3></html>");
@@ -346,8 +365,7 @@ public class ChoseSavePage extends JFrame implements GUI {
                 insideScrollPanePanel.add(label);
             } else {
                 for (Save save : saves) {
-                    JLabel label = new JLabel("Salvataggio del "
-                            + save.getPath().replace("-", "/").replace("_", " alle ore ").replace(".save", ""));
+                    JLabel label = new JLabel(saveManager.formatDisplayName(save.getPath()));
                     save.setLabel(label);
                     saves.set(saves.indexOf(save), save);
                     label.setOpaque(false);
@@ -481,5 +499,20 @@ public class ChoseSavePage extends JFrame implements GUI {
         public boolean isDeleted() {
             return deleted;
         }
+    }
+
+    public void refreshSaveList() {
+        SwingUtilities.invokeLater(() -> {
+            insideScrollPanePanel.removeAll();
+            try {
+                setSaves();
+                populateLabels();
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(this,
+                        "Errore nel caricamento dei salvataggi",
+                        "Errore",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 }

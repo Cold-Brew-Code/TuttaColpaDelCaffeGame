@@ -231,8 +231,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100,
+                                        Short.MAX_VALUE)
                                 .addComponent(saveButton)
                                 .addContainerGap()));
         HeaderPanelLayout.setVerticalGroup(
@@ -429,7 +429,23 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        controller.saveGame();
+        if (controller == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Errore: Controller non inizializzato",
+                    "Errore Grave",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try {
+            controller.saveGame();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                    "Errore durante il salvataggio: " + e.getMessage(),
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -560,8 +576,10 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     public void linkController(Controller controller) {
         if (controller instanceof GameController) {
             this.controller = (GameController) controller;
+            System.out.println("Controller collegato correttamente"); // Debug
         } else {
-            throw new RuntimeException("Il controller per GamePage non è un GameController");
+            throw new RuntimeException("Tipo di controller non valido: " +
+                    (controller != null ? controller.getClass() : "null"));
         }
     }
 

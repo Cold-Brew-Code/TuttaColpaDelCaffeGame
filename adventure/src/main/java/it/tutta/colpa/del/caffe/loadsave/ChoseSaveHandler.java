@@ -10,9 +10,9 @@ import it.tutta.colpa.del.caffe.loadsave.control.Engine;
  * @since 19/07/25
  */
 public class ChoseSaveHandler {
-    public ChoseSaveHandler(Controller mpc){
+    public ChoseSaveHandler(Controller controller) {
         GUI choseSavePage = new ChoseSavePage();
-        Controller lc = new Engine(mpc,choseSavePage);
-        choseSavePage.linkController(lc);
+        Controller loadController = new Engine(controller, choseSavePage);
+        choseSavePage.linkController(loadController);
     }
 }

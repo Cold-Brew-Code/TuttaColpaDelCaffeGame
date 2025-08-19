@@ -15,6 +15,7 @@ import java.util.List;
  * @author pierpaolo
  */
 public class GameDescription implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final GameMap gameMap;
     private final List<Command> commands;
@@ -29,7 +30,6 @@ public class GameDescription implements Serializable {
         this.status = GameStatus.IN_CORSO;
         this.messages = new ArrayList<>();
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="< Get & Set >">
     public String getWelcomeMsg() {

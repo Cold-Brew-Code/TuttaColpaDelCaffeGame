@@ -11,5 +11,6 @@ package it.tutta.colpa.del.caffe.game.control;
 public interface Controller {
 
     void openGUI();
+
     void closeGUI();
 }

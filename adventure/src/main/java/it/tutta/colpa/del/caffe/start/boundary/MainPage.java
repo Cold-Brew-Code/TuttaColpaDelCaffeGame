@@ -137,7 +137,7 @@ public class MainPage extends JFrame implements GUI {
             if (isAudioEnabled) {
                 audioManager.fadeOut("menu_theme", 300);
             }
-            c.loadGame();
+            new it.tutta.colpa.del.caffe.loadsave.LoadGameHandler(c);
         });
 
         exit.addActionListener(e -> {
