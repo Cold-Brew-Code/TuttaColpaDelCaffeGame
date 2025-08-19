@@ -119,16 +119,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
-        this.attach(new BuildObserver());
-        this.attach(new LookAtObserver());
-        this.attach(new MoveObserver());
-        this.attach(new OpenObserver());
-        this.attach(new PickUpObserver());
-        this.attach(new ReadObserver());
-        this.attach(new TalkObserver());
-        this.attach(new UseObserver());
-        this.attach(new LeaveObserver());
-        this.attach(new LiftObserver());
+        attachDefaultObservers();
     }
 
     /**
