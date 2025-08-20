@@ -355,7 +355,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
     (7,23,'Troppo sicuro di te. Se bastasse affermarlo così, saremmo tutti a casa a scrivere algoritmi perfetti. Torna in coda.'),
     (7,24,'Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.'),
     (8,25,'Oh, bentornato! Spero che questa volta ti vada meglio. Rispondi a questa domanda facile facile, roba del primo semestre, e potrai saltare la fila. Se rappresenti un grafo con una matrice di adiacenza, qual è la complessità dell''aggiunta o rimozione di un nodo?'),
-    (8,26,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2)\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!'),
+    (8,26,'Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un''intera riga e colonna: O(n^2). Come promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!'),
     (8,27,'Eh no… per una lista di adiacenza sarebbe O(n), ma con una matrice è più pesante: O(n^2). Mi dispiace, resta in coda come tutti gli altri!'),
     (9,28,'Ok, va bene… ti vedo proprio sull''orlo.\nPer pietà, ti faccio un''ultima domanda. Se rispondi giusto, giuro che ti lascio passare subito! Allora, senti bene:\n Cos''è una classe astratta?'),
     (9,29,'Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta, poiché ha metodi non implementati. Dai, passa… corri! Che la forza sia con te (e col tuo intestino).'),

@@ -133,15 +133,15 @@ public class TalkObserver implements GameObserver {
         private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_2 = "Ragazzo, ultima chance, hai la candeggina??";
         private final static String DIALOGUE_10_STATEMENT_ANSWER_TO_DISABLE_2 = "Sì";
 
-        private final static String NODE_EVT_SHOW_KEY = "Bravo! L''ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono. Va bene, prendi questa chiave: ti apre l''ascensore fino al settimo piano. Ma occhio: più sali, più i misteri si complicano.";
+        private final static String NODE_EVT_SHOW_KEY = "Bravo! L'ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono. Va bene, prendi questa chiave: ti apre l'ascensore fino al settimo piano. Ma occhio: più sali, più i misteri si complicano.";
         private final static String NODE_EVT_SHOW_MAP = "Bravo. Hai fiuto per l'orientamento, oltre che per l'urgenza. C'è una mappa del dipartimento appesa nell'aula studio al piano terra, ma è coperta da un cartellone pubblicitario. Trovala e saprai dove andare.";
         private final static Set<String> EVT_UNLOCK_RESTROOM = Set.of("Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.",
-                "Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un'intera riga e colonna: O(n^2)\\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!",
-                "Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta. Dai, passa… corri! Che la forza sia con te (e col tuo intestino).");
+                "Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un'intera riga e colonna: O(n^2). Come promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!",
+                "Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta, poiché ha metodi non implementati. Dai, passa… corri! Che la forza sia con te (e col tuo intestino).");
         private final static String NODE_EVT_CORRECT_ANSWER_DIALOGUE_4 = "La gittata è massima quando \uD835\uDF03=45 gradi.";
 
         private final static String NODE_EVT_DROP_BLECH = "Questa sì che profuma di dedizione. Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.";
-        private final static String NODE_EVT_DROP_COFFEE = "Okay ora sì che mi sento meglio. Allora ragazzo, ascolta: si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede un misterioso oggetto magico e la follia di usarla.";
+        private final static String NODE_EVT_DROP_COFFEE = "Okay, ora sì che mi sento meglio. Allora ragazzo, ascolta: Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede un misterioso oggetto magico e la follia di usarlo.";
 
         public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             this.dialogue = dialogue;
@@ -185,6 +185,7 @@ public class TalkObserver implements GameObserver {
             } catch (DialogueException e) {
                 System.err.println("DialogueException " + e.getMessage());
             }
+            System.err.println(NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode()));
             if (3 == dialogue.getId() && NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode())) {
                 this.description.getInventory().remove(new GeneralItem(2), 1);
             } else if (10 == dialogue.getId() && NODE_EVT_DROP_BLECH.equals(dialogue.getCurrentNode())) {
