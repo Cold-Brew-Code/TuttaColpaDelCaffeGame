@@ -47,9 +47,9 @@ public class TalkObserver implements GameObserver {
                             .findFirst()
                             .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        if(description.getStatus()== GameStatus.BAGNO_USATO ){
+                        if (description.getStatus() == GameStatus.BAGNO_USATO) {
                             msg.append(this.runQuiz(npc, description));
-                        }else {
+                        } else {
                             msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
                         }
                     } else {
@@ -62,9 +62,9 @@ public class TalkObserver implements GameObserver {
                 NPC npc = description.getCurrentRoom().getNPCs().get(0);
                 try {
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        if(description.getStatus()== GameStatus.BAGNO_USATO ){
+                        if (description.getStatus() == GameStatus.BAGNO_USATO) {
                             msg.append(this.runQuiz(npc, description));
-                        }else {
+                        } else {
                             msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
                         }
                     } else {
@@ -126,22 +126,22 @@ public class TalkObserver implements GameObserver {
         protected final GameDescription description;
         private final StringBuilder returnStatement = new StringBuilder();
 
-        private final static String TO_DISABLE_ANSWER_DIALOGUE_3_STATEMENT = "Hmm... forse.potrebbe esistere un bagno segreto. ma non diffondo segreti mistici in maniera gratuita.  Hai per caso un caffè per un povero portinaio stanco?";
-        private final static String DIALOGUE_3_ANSWER_TO_DISABLE = "Si";
-        private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_1 = "Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con varechina. Tu ce l'hai?";
-        private final static String DIALOGUE_10_STATEMENT_ANSWER_TO_DISABLE_1 = "Ecco la candeggina. L'ho trovata nel laboratorio di robotica.";
-        private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_2 = "Ragazzo ultima chance , hai la candeggina??";
-        private final static String DIALOGUE_10_STATEMENT_ANSWER_TO_DISABLE_2 = "Si";
+        private final static String TO_DISABLE_ANSWER_DIALOGUE_3_STATEMENT = "Hmm... forse potrebbe esistere un bagno segreto. Ma non diffondo segreti mistici in maniera gratuita. Hai per caso un caffè per un povero portinaio stanco?";
+        private final static String DIALOGUE_3_ANSWER_TO_DISABLE = "Sì";
+        private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_1 = "Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con candeggina. Tu ce l'hai?";
+        private final static String DIALOGUE_10_STATEMENT_ANSWER_TO_DISABLE_1 = "Ecco la varechina. L'ho trovata nel laboratorio di robotica.";
+        private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_2 = "Ragazzo, ultima chance, hai la candeggina??";
+        private final static String DIALOGUE_10_STATEMENT_ANSWER_TO_DISABLE_2 = "Sì";
 
-        private final static String NODE_EVT_SHOW_KEY = "Bravo! L'ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono. Va bene, prendi questa chiave: ti apre l'ascensore fino al settimo piano.Ma occhio: più sali, più i misteri si complicano.";
+        private final static String NODE_EVT_SHOW_KEY = "Bravo! L''ereditarietà multipla è bandita in Java: troppi casini col diamante, dicono. Va bene, prendi questa chiave: ti apre l''ascensore fino al settimo piano. Ma occhio: più sali, più i misteri si complicano.";
         private final static String NODE_EVT_SHOW_MAP = "Bravo. Hai fiuto per l'orientamento, oltre che per l'urgenza. C'è una mappa del dipartimento appesa nell'aula studio al piano terra, ma è coperta da un cartellone pubblicitario. Trovala e saprai dove andare.";
         private final static Set<String> EVT_UNLOCK_RESTROOM = Set.of("Giusto. P potrebbe essere NP… o forse no. Finché non lo dimostriamo, rimane il più grande enigma della nostra epoca. Vai pure, ti sei guadagnato il diritto di passare.",
                 "Bravo! In una matrice di adiacenza devi aggiungere o rimuovere un'intera riga e colonna: O(n^2)\\nCome promesso, vieni: facciamo saltare la fila… ma non dirlo in giro!",
                 "Bravo! Esatto: non puoi creare oggetti direttamente da una classe astratta. Dai, passa… corri! Che la forza sia con te (e col tuo intestino).");
-        private final static String NODE_EVT_CORRECT_ANSWER_DIALOGUE_4 = "La gittata è massima quando 𝜃=45";
+        private final static String NODE_EVT_CORRECT_ANSWER_DIALOGUE_4 = "La gittata è massima quando \uD835\uDF03=45 gradi.";
 
-        private final static String NODE_EVT_DROP_BLECH = "Questa sì che profuma di dedizione.\\n Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.";
-        private final static String NODE_EVT_DROP_COFFEE = "Okay ora si che mi sento meglio. Allora ragazzo ascolta, si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe, evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede una misteriosa oggetto magico e la follia di usarla.";
+        private final static String NODE_EVT_DROP_BLECH = "Questa sì che profuma di dedizione. Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.";
+        private final static String NODE_EVT_DROP_COFFEE = "Okay ora sì che mi sento meglio. Allora ragazzo, ascolta: si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede un misterioso oggetto magico e la follia di usarla.";
 
         public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             this.dialogue = dialogue;
@@ -235,7 +235,6 @@ public class TalkObserver implements GameObserver {
             final int final_requiredItemId = requiredItemId;
 
             boolean playerHasItem = description.getInventory().contains(new GeneralItem(final_requiredItemId));
-
             return dialogue.getCurrentAssociatedPossibleAnswers().stream()
                     .map(answer -> {
                         boolean isEnabled = playerHasItem || !answer.equals(final_textToDisable);
@@ -352,9 +351,9 @@ public class TalkObserver implements GameObserver {
                     }
                     super.GUI.addNPCStatement(super.NPCName, sb.toString());
                     super.GUI.addNPCStatement(super.NPCName, "L'esame è terminato, se ne vada!");
-                    if((quizScore * 30) / 5 >= 18){
+                    if ((quizScore * 30) / 5 >= 18) {
                         this.description.setStatus(GameStatus.VINTA);
-                    }else{
+                    } else {
                         this.description.setStatus(GameStatus.PERSA);
                     }
                 }
