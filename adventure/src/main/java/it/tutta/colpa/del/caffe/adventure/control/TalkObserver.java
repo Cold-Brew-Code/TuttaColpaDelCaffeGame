@@ -185,7 +185,6 @@ public class TalkObserver implements GameObserver {
             } catch (DialogueException e) {
                 System.err.println("DialogueException " + e.getMessage());
             }
-            System.err.println(NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode()));
             if (3 == dialogue.getId() && NODE_EVT_DROP_COFFEE.equals(dialogue.getCurrentNode())) {
                 this.description.getInventory().remove(new GeneralItem(2), 1);
             } else if (10 == dialogue.getId() && NODE_EVT_DROP_BLECH.equals(dialogue.getCurrentNode())) {
@@ -254,6 +253,8 @@ public class TalkObserver implements GameObserver {
                     case 4:
                         // Bruno mostra la chiave
                         // da verificare se ha passato l'indovinello !!!!!!!!!!!!!!!!!!!!!
+                        System.err.println(NODE_EVT_SHOW_KEY);
+                        System.err.println(lastProducedStatement);
                         if (lastProducedStatement.equals(NODE_EVT_SHOW_KEY)) {
                             this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
                             this.returnStatement.append("Nella stanza c'è una chiave, raccoglila.");
@@ -287,7 +288,8 @@ public class TalkObserver implements GameObserver {
                         lookEvent(12, description.getCurrentRoom(), lastProducedStatement);
                         break;
                 }
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
             }
         }
 
