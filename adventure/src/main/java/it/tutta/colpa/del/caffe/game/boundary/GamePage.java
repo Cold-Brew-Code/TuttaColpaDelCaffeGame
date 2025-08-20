@@ -9,9 +9,16 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.net.URL;
 
-import javax.swing.*;
+import javax.swing.GroupLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
@@ -470,7 +477,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         System.out.println("Aumenta volume cliccato");
         int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
         if (volumePercent >= 0) {
-            float volume = volumePercent / 100f; 
+            float volume = volumePercent / 100f;
             AudioManager.getInstance().setVolume(volume);
         }
     }
@@ -630,6 +637,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
      */
     @Override
     public void increaseProgressBar() {
+        // Incrementa di 1 secondo
         int newValue = progressBar.getValue() + 1;
         progressBar.setValue(newValue);
 
@@ -637,34 +645,36 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
             progressBar.setStringPainted(true);
             progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
 
-            if (newValue < 600) { // primi 10 minuti
-                UIManager.put("ProgressBar[Enabled].foregroundPainter",
-                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
-                            g.setColor(Color.GREEN);
-                            g.fillRect(0, 0, w, h);
-                        });
+            // Cambia solo il colore del riempimento in base al tempo
+            if (newValue < 600) {
+                progressBar.setForeground(Color.GREEN);  // riempimento
+                progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                 progressBar.setString("FORZA IL DOVERE CHIAMA");
 
-            } else if (newValue < 900) { // da 10 a 15 minuti
-                UIManager.put("ProgressBar[Enabled].foregroundPainter",
-                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
-                            g.setColor(Color.ORANGE);
-                            g.fillRect(0, 0, w, h);
-                        });
-                progressBar.setString("ahi ho paura di mollare");
+            } else if (newValue < 900) {
+                progressBar.setForeground(Color.ORANGE);
+                progressBar.setBackground(Color.LIGHT_GRAY);
+                progressBar.setString("AHI HO PAURA DI MOLLARE");
 
-            } else { // ultimi 5 minuti
-                UIManager.put("ProgressBar[Enabled].foregroundPainter",
-                        (javax.swing.Painter<JComponent>) (g, c, w, h) -> {
-                            g.setColor(Color.RED);
-                            g.fillRect(0, 0, w, h);
-                        });
-                progressBar.setString("Sto quasi per mollare");
+            } else {
+                progressBar.setForeground(Color.RED);
+                progressBar.setBackground(Color.LIGHT_GRAY);
+                progressBar.setString("STO QUASI PER MOLLARE");
             }
 
-            SwingUtilities.updateComponentTreeUI(progressBar);
+            // Scritta sempre nera
+            progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+                @Override
+                protected void paintString(Graphics g, int x, int y,
+                        int width, int height,
+                        int amountFull, Insets b) {
+                    g.setColor(Color.BLACK);
+                    super.paintString(g, x, y, width, height, amountFull, b);
+                }
+            });
         });
     }
+
     @Override
     public void executedCommand() {
         typeWriterEffect.skip();
