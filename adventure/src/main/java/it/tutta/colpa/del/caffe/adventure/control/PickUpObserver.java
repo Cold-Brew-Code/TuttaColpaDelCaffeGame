@@ -51,13 +51,15 @@ public class PickUpObserver implements GameObserver {
 
             GeneralItem obj = parserOutput.getObject();
             boolean conteiner = false;
-            boolean c = findObjectInventory(description, server, msg, obj);
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da raccogliere. (scrivi 'raccogli nome oggetto')");
                 return msg.toString();
 
-            } else if (!description.getCurrentRoom().getObjects().isEmpty() || c) {
+            } 
+            boolean c= findObjectInventory(description, server, msg, obj);
+            if (!description.getCurrentRoom().getObjects().isEmpty() || c) {
                 //controllo se è nella stazna
+
                 System.out.println("sono dentro");
                 GeneralItem isobjRoom = description.getCurrentRoom()
                         .getObjects()
