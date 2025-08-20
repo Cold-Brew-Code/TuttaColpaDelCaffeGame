@@ -298,7 +298,7 @@ MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial
     (25,20,'sotto'), (20,17,'sotto'),(17,10,'sotto'),(10,14,'sotto'),(14,8,'sotto'),(8,6,'sotto'),(6,4,'sotto');
 
 MERGE INTO InRoomObjects(room_id, object_id, quantity) KEY(room_id,object_id) VALUES
-    (5,1,1), (7,3,1), (9,15,1), (16,5,1),(30,6,1), (13,7,1), (19,11,1), (25,16,1);
+  (4,9,1),  (5,1,1), (7,3,1), (9,15,1), (16,5,1),(30,6,1), (13,7,1), (19,11,1), (25,16,1);
 
 -----------------------------
 MERGE INTO NonPlayerCharacters(id, name, room_id) KEY(id) VALUES
