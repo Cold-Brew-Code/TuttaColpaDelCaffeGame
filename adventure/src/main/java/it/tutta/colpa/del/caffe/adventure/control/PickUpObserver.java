@@ -50,9 +50,6 @@ public class PickUpObserver implements GameObserver {
             }
 
             GeneralItem obj = parserOutput.getObject();
-            System.out.println("sono in predni ");
-            GeneralItem obj2 = (GeneralItem) obj;
-            System.out.println(obj2.getName());
             boolean conteiner = false;
             boolean c = findObjectInventory(description, server, msg, obj);
             if (obj == null) {
