@@ -42,7 +42,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
     /**
      * @return
      */
-    
+
     public Map<GeneralItem, Integer> getList() {
         return containedItems;
     }
@@ -50,7 +50,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
     /**
      * @param containedItems
      */
-    
+
     public void setMap(Map<GeneralItem, Integer> containedItems) {
         this.containedItems = containedItems;
     }
@@ -59,7 +59,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
      * @param o
      * @param quantity
      */
-    
+
     public void add(GeneralItem o, int quantity) {
         containedItems.put(o, quantity);
     }
@@ -68,7 +68,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
      * @param o
      * @param quantity
      */
-    
+
     public void remove(GeneralItem o, int quantity) {
         if (!containedItems.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
@@ -85,7 +85,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
     /**
      * @param o
      */
-    
+
     public void remove(GeneralItem o) {
         if (!containedItems.containsKey(o)) {
             throw new InventoryException("Attenzione: l'oggetto non è presente nell'inventario");
@@ -96,39 +96,39 @@ public class ItemContainer extends GeneralItem implements Serializable {
             containedItems.replace(o, containedItems.get(o) - 1);
         }
     }
-    
-    /**
-    * Restituisce un dizionario con l'oggetto specificato e la sua quantità.
-    * Se l'oggetto non è presente, lancia un'eccezione.
-    *
-    * @param o oggetto da cercare
-    * @return mappa contenente solo l'oggetto cercato e la sua quantità
-    */
-    public Map<GeneralItem, Integer> getObject(GeneralItem o) {
-       if (!containedItems.containsKey(o)) {
-           throw new IllegalArgumentException("L'oggetto '" + o.getName() + "' non è presente nel contenitore.");
-       }
 
-       int quantity = containedItems.get(o);
-       Map<GeneralItem, Integer> result = new HashMap<>();
-       result.put(o, quantity);
-       return result;
-    }
-    
     /**
-     * 
-     * @return 
+     * Restituisce un dizionario con l'oggetto specificato e la sua quantità.
+     * Se l'oggetto non è presente, lancia un'eccezione.
+     *
+     * @param o oggetto da cercare
+     * @return mappa contenente solo l'oggetto cercato e la sua quantità
      */
-    
+    public Map<GeneralItem, Integer> getObject(GeneralItem o) {
+        if (!containedItems.containsKey(o)) {
+            throw new IllegalArgumentException("L'oggetto '" + o.getName() + "' non è presente nel contenitore.");
+        }
+
+        int quantity = containedItems.get(o);
+        Map<GeneralItem, Integer> result = new HashMap<>();
+        result.put(o, quantity);
+        return result;
+    }
+
+    /**
+     *
+     * @return
+     */
+
     public boolean isOpen() {
         return open;
     }
-    
+
     /**
-     * 
-     * @param open 
+     *
+     * @param open
      */
-    
+
     public void setOpen(boolean open) {
         this.open = open;
     }
@@ -136,5 +136,16 @@ public class ItemContainer extends GeneralItem implements Serializable {
     public boolean containsObject(GeneralItem item) {
         return containedItems.containsKey(item);
     }
+
+    public GeneralItem containsObjectById(int id) {
+    for (GeneralItem gi : containedItems.keySet()) {
+        if (gi.getId() == id) {
+            return gi;
+        }
+    }
+    return null;
+}
+
+
 
 }

@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -476,7 +477,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         System.out.println("Aumenta volume cliccato");
         int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
         if (volumePercent >= 0) {
-            float volume = volumePercent / 100f; 
+            float volume = volumePercent / 100f;
             AudioManager.getInstance().setVolume(volume);
         }
     }
@@ -643,17 +644,34 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         SwingUtilities.invokeLater(() -> {
             progressBar.setStringPainted(true);
             progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
-            if (newValue < 600) { // primi 10 minuti
-                progressBar.setForeground(Color.black);
+
+            // Cambia solo il colore del riempimento in base al tempo
+            if (newValue < 600) {
+                progressBar.setForeground(Color.GREEN);  // riempimento
+                progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                 progressBar.setString("FORZA IL DOVERE CHIAMA");
 
-            } else if (newValue < 900) { // da 10 a 15 minuti
+            } else if (newValue < 900) {
                 progressBar.setForeground(Color.ORANGE);
-                progressBar.setString("ahi ho paura di mollare");
-            } else { // ultimi 5 minuti
+                progressBar.setBackground(Color.LIGHT_GRAY);
+                progressBar.setString("AHI HO PAURA DI MOLLARE");
+
+            } else {
                 progressBar.setForeground(Color.RED);
-                progressBar.setString("Sto quasi per mollare");
+                progressBar.setBackground(Color.LIGHT_GRAY);
+                progressBar.setString("STO QUASI PER MOLLARE");
             }
+
+            // Scritta sempre nera
+            progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+                @Override
+                protected void paintString(Graphics g, int x, int y,
+                        int width, int height,
+                        int amountFull, Insets b) {
+                    g.setColor(Color.BLACK);
+                    super.paintString(g, x, y, width, height, amountFull, b);
+                }
+            });
         });
     }
 

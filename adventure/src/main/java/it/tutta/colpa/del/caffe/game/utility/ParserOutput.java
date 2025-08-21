@@ -11,122 +11,136 @@ import it.tutta.colpa.del.caffe.game.entity.NPC;
 
 /**
  *
- * @author pierpaolo
+ * @author giova
+ * 
+ * Rappresenta il risultato dell'analisi di un comando inserito dal giocatore.
+ * Contiene il comando interpretato e, opzionalmente, informazioni su oggetti,
+ * NPC o numero di piano associati all'input.
+ * 
+ * 
  */
+ 
 public class ParserOutput {
 
     private Command command;
 
     private GeneralItem object;
-    
-    private GeneralItem object1;
     private NPC npc;
     private int piano=-1;
 
     /**
+     * Costruisce un ParserOutput contenente un comando e un oggetto.
      *
-     * @param command
-     * @param object
+     * @param command comando interpretato
+     * @param object  oggetto generico associato
      */
     public ParserOutput(Command command, GeneralItem object) {
         this.command = command;
         this.object = object;
     }
 
+    /**
+     * Costruisce un ParserOutput contenente solo un comando.
+     *
+     * @param command comando interpretato
+     */
     public ParserOutput(Command command) {
         this.command = command;
     }
 
     /**
+     * Costruisce un ParserOutput contenente un comando e un NPC.
      *
-     * @param command
-     * @param object
-     * @param invObejct
+     * @param command comando interpretato
+     * @param npc     NPC associato
      */
-    public ParserOutput(Command command, GeneralItem object, GeneralItem object1) {
-        this.command = command;
-        this.object = object;
-        this.object1 = object1;
-    }
-
-
     public ParserOutput(Command command, NPC npc) {
         this.command = command;
         this.npc = npc;
     }
 
+
+    /**
+     * Costruisce un ParserOutput contenente un comando e un numero di piano.
+     *
+     * @param command comando interpretato
+     * @param piano   numero del piano
+     */
     public ParserOutput(Command command, int piano) {
         this.command = command;
         this.piano = piano;
     }
 
+    /**
+     * Restituisce il numero di piano associato.
+     *
+     * @return numero del piano o -1 se non impostato
+     */
     public int getPiano() {
         return this.piano;
     }
 
     /**
+     * Imposta il numero di piano associato.
      *
-     * @param piano
+     * @param piano numero del piano
      */
     public void setPiano(int piano) {
         this.piano = piano;
     }
 
-
     /**
+     * Restituisce il comando interpretato.
      *
-     * @return
+     * @return comando
      */
     public Command getCommand() {
         return command;
     }
 
     /**
+     * Imposta il comando interpretato.
      *
-     * @param command
+     * @param command comando da impostare
      */
     public void setCommand(Command command) {
         this.command = command;
     }
 
     /**
+     * Restituisce l'oggetto generico associato.
      *
-     * @return
+     * @return oggetto generico o null se non presente
      */
     public GeneralItem getObject() {
         return object;
     }
 
     /**
+     * Imposta l'oggetto generico associato.
      *
-     * @param object
+     * @param object oggetto generico da impostare
      */
     public void setObject(GeneralItem object) {
         this.object = object;
     }
 
     /**
+     * Restituisce l'NPC associato.
      *
-     * @return
+     * @return NPC o null se non presente
      */
     public NPC getNpc() {
         return npc;
     }
 
     /**
+     * Imposta l'NPC associato.
      *
-     * @param n
+     * @param npc NPC da impostare
      */
     public void setObject(NPC npc) {
         this.npc = npc;
-    }
-
-    public GeneralItem getObject1() {
-        return object1;
-    }
-
-    public void setObject1(GeneralItem object1) {
-        this.object1 = object1;
     }
 
 }
