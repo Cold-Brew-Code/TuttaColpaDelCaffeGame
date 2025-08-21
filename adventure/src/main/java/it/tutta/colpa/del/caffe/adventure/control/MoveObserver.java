@@ -99,6 +99,7 @@ public class MoveObserver implements GameObserver {
                     }
                     if (hasUsedRestroom(description)) {
                         description.setStatus(GameStatus.BAGNO_USATO);
+                        msg.append("\n\nHai usato finalmente il bagno, liberando i tuoi impellenti bisogni.\nAdesso non ti resta che sostenere il tuo esame.\nCorri!!!!");
                     }
                 }
             } catch (GameMapException ex) {
