@@ -11,7 +11,6 @@ import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
 import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
 import it.tutta.colpa.del.caffe.game.entity.Room;
@@ -40,7 +39,6 @@ public class UseObserver implements GameObserver {
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
-        System.out.println("sono in use cazp");
         if (parserOutput.getCommand().getType() == CommandType.USE) {
             ServerInterface server;
             try {
@@ -112,7 +110,6 @@ public class UseObserver implements GameObserver {
                     case 16 -> {
                         // il caffè è l'oggetto 16
                         boolean isInRoom = description.getCurrentRoom().getObject(16) != null;
-                        System.out.println("isInRoom: " + isInRoom);
                         if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(), 8) != null) {
                             objInv = GameUtils.getObjectFromInventory(description.getInventory(), 8);
                             msg.append(" caffè");
@@ -137,7 +134,7 @@ public class UseObserver implements GameObserver {
                             
                             
                         } else if (isInRoom && GameUtils.getObjectFromInventory(description.getInventory(), 8) == null) {
-                            msg.append("you can not take a caffè , because you have not a maney into inventory  you are poor");
+                            msg.append("non puoi prendere il caffe, non hai monete nell' inventario");
                            
                         } else if (isInRoom == false && GameUtils.getObjectFromInventory(description.getInventory(), 8) != null) {
                             msg.append("non fare lo spendaccione!"); // la stanza è errata ma ha i soldi
@@ -147,9 +144,9 @@ public class UseObserver implements GameObserver {
                     case 1 -> {
                         boolean isVisibleMap = description.getCurrentRoom().getObject(1) != null;
                         if (isVisibleMap && parserOutput.getObject().isVisibile() == false) {
-                            msg.append("there is not a map in this room"); // perche la mappa e visibile solo se passa l'indovinello altrimenti non è nota la sua esistenza.
+                            msg.append("Non c'è nessuna mappa qui"); // perche la mappa e visibile solo se passa l'indovinello altrimenti non è nota la sua esistenza.
                         } else if (isVisibleMap && GameUtils.getObjectFromInventory(description.getInventory(), 1) == null) {
-                            msg.append("You must take the map before!");
+                            msg.append("Hai già preso la mappa!");
                         } else if (isVisibleMap == false && GameUtils.getObjectFromInventory(description.getInventory(), 1) != null) {
                             //la mappa può essere aperta ovunque
                             // stampa il contenuto 

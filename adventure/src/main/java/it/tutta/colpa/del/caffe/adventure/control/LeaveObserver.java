@@ -16,6 +16,22 @@ import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
+ * Osservatore che gestisce il comando {@code LEAVE} nel gioco.
+ * <p>
+ * Implementa l'interfaccia {@link GameObserver} e si occupa di rimuovere un
+ * oggetto dall'inventario del giocatore e collocarlo nella stanza corrente.
+ * </p>
+ *
+ * <p>
+ * Esempio di comportamento:</p>
+ * <ul>
+ * <li>Se il giocatore scrive "lascia spada", l'oggetto viene rimosso
+ * dall'inventario e aggiunto agli oggetti presenti nella stanza.</li>
+ * <li>Se l'oggetto non è presente nell'inventario, viene restituito un
+ * messaggio di errore.</li>
+ * <li>Se il comando è incompleto o l'oggetto non è valido, viene segnalato al
+ * giocatore.</li>
+ * </ul>
  *
  * @author giovanni
  */
@@ -29,7 +45,17 @@ public class LeaveObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
-
+        /**
+         * Gestisce l'aggiornamento dello stato del gioco in base al comando
+         * {@code LEAVE}.
+         *
+         * @param description lo stato corrente del gioco, contenente inventario
+         * e stanza attuale
+         * @param parserOutput il risultato del parsing del comando dell'utente
+         * @return un messaggio testuale che descrive l'esito dell'operazione
+         * @throws ServerCommunicationException se si verifica un errore nella
+         * comunicazione con il server
+         */
         StringBuilder msg = new StringBuilder();
         if (parserOutput.getCommand().getType() == CommandType.LEAVE) {
             if (parserOutput.getObject() == null) {
