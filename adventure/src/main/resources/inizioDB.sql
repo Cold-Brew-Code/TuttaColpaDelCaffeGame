@@ -369,7 +369,7 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
     (10,45,'Questa sì che profuma di dedizione. Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.'),
     (11,35,'Mi sa che la ricerca non è andata bene, vero?'),
     (11,36,'Calma, ragazzo. Ricorda: nessuna corsa può essere vinta se prima non si respira. Persino il bisogno più urgente va affrontato con dignità… e carta igienica. Tieni, giovane guerriero. Non è molto… ma nelle mani giuste, può fare miracoli.'),
-    (11,37,'Vai. Corri. E ricorda:\nIl vero eroe non è chi trattiene…… ma chi arriva in tempo!'),
+    (11,37,'Vai. Corri. E ricorda: Il vero eroe non è chi trattiene…… ma chi arriva in tempo!'),
     (12,38,'DEVO FARE QUELLA CALL, ALTRIMENTI ESPLODO...'),
     (12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove possa trovare un posto tranquillo per fare una call in America?'),
     (12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!'),
