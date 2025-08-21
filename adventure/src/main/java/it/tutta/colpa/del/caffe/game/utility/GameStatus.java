@@ -6,5 +6,6 @@ public enum GameStatus {
     BOCCIATO,
     PROMOSSO,
     BAGNO_USATO_TEMPO_ESAURITO,
-    TEMPO_ESAURITO
+    TEMPO_ESAURITO,
+    ESAME_DA_FARE
 }
