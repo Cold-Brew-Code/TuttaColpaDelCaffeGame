@@ -12,6 +12,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * Rappresenta un oggetto generico all'interno del gioco. Ogni oggetto ha un
+ * identificatore unico, un nome, una descrizione, eventuali alias, un'immagine
+ * associata e proprietà di visibilità e possibilità di essere raccolto.
+ *
+ * Gli alias permettono di riferirsi allo stesso oggetto con nomi alternativi.
+ * La proprietà {@code pickupable} indica se l'oggetto può essere raccolto dal
+ * giocatore. La proprietà {@code visibile} indica se l'oggetto è visibile nella
+ * stanza o nell'ambiente.
+ *
  * @author giovanni
  */
 public class GeneralItem implements Serializable {
@@ -24,6 +33,16 @@ public class GeneralItem implements Serializable {
     private String immagine;
     private boolean pickupable = false;
 
+    /**
+     * Costruisce un oggetto generico completo con tutti i dettagli principali.
+     *
+     * @param id identificatore unico dell'oggetto
+     * @param name nome dell'oggetto
+     * @param description descrizione dell'oggetto
+     * @param alias insieme di nomi alternativi per riferirsi all'oggetto
+     * @param immagine nome del file immagine associato all'oggetto (verrà
+     * aggiunto il percorso "/images/")
+     */
     public GeneralItem(int id, String name, String description, Set<String> alias, String immagine) {
         this.id = id;
         this.name = name;
@@ -32,35 +51,70 @@ public class GeneralItem implements Serializable {
         this.immagine = "/images/" + immagine;
     }
 
+    /**
+     * Costruisce un oggetto generico con solo l'identificatore. Utile per
+     * creare riferimenti placeholder o per confronti tramite id.
+     *
+     * @param id identificatore unico dell'oggetto
+     */
     public GeneralItem(int id) {
         this.id = id;
 
     }
 
-
+    /**
+     * Restituisce true se l'oggetto può essere raccolto dal giocatore.
+     *
+     * @return true se l'oggetto è pickupable, false altrimenti
+     */
     public boolean isPickupable() {
         return pickupable;
     }
 
-
+    /**
+     * Imposta se l'oggetto può essere raccolto dal giocatore.
+     *
+     * @param pickupable true per rendere l'oggetto raccolgibile, false
+     * altrimenti
+     */
     public void setPickupable(boolean pickupable) {
         this.pickupable = pickupable;
     }
 
-
+    /**
+     * Restituisce true se l'oggetto è visibile nell'ambiente.
+     *
+     * @return true se l'oggetto è visibile, false altrimenti
+     */
     public boolean isVisibile() {
         return visibile;
     }
 
+    /**
+     * Imposta la visibilità dell'oggetto nell'ambiente.
+     *
+     * @param visibile true per rendere l'oggetto visibile, false per
+     * nasconderlo
+     */
     public void setVisibile(boolean visibile) {
         this.visibile = visibile;
     }
 
+    /**
+     * Restituisce il percorso dell'immagine associata all'oggetto.
+     *
+     * @return percorso dell'immagine
+     */
     public String getImmagine() {
         return immagine;
     }
 
-
+    /**
+     * Imposta il percorso dell'immagine associata all'oggetto.
+     *
+     * @param immagine percorso dell'immagine (può includere il prefisso
+     * "/images/")
+     */
     public void setImmagine(String immagine) {
         this.immagine = immagine;
     }
@@ -92,7 +146,6 @@ public class GeneralItem implements Serializable {
     public void setDescrizione(String description) {
         this.description = description;
     }
-
 
     /**
      * @return

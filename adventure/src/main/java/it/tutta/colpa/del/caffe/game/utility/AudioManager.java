@@ -1,15 +1,16 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 public class AudioManager {
+
     private static AudioManager instance;
     private final Map<String, Clip> audioClips;
     private float volume = 0.4f; // default
@@ -19,6 +20,11 @@ public class AudioManager {
         audioClips = new HashMap<>();
     }
 
+    /**
+     * Restituisce l'istanza unica di {@code AudioManager}.
+     *
+     * @return l'istanza singleton
+     */
     public static AudioManager getInstance() {
         if (instance == null) {
             instance = new AudioManager();
@@ -26,6 +32,13 @@ public class AudioManager {
         return instance;
     }
 
+    /**
+     * Carica un file audio nella mappa dei clip gestiti.
+     *
+     * @param name nome identificativo della traccia
+     * @param path percorso del file audio relativo alla cartella
+     * {@code /sounds/}
+     */
     public void loadAudio(String name, String path) {
         try {
             URL audioUrl = getClass().getResource("/sounds/" + path);
@@ -45,6 +58,16 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Riproduce una traccia audio caricata.
+     * <p>
+     * Se un'altra traccia è in riproduzione, viene prima fermata.
+     * </p>
+     *
+     * @param name nome della traccia
+     * @param loop {@code true} se deve essere riprodotta in loop, {@code false}
+     * altrimenti
+     */
     public void play(String name, boolean loop) {
         if (currentTrack != null && !currentTrack.equals(name)) {
             stop(currentTrack);
@@ -62,6 +85,13 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Riproduce una traccia applicando un effetto di fade-in sul volume.
+     *
+     * @param name nome della traccia
+     * @param loop {@code true} per ripetizione continua
+     * @param durationMillis durata del fade-in in millisecondi
+     */
     public void fadeIn(String name, boolean loop, int durationMillis) {
         Clip clip = audioClips.get(name);
         if (clip == null) {
@@ -112,6 +142,11 @@ public class AudioManager {
         }).start();
     }
 
+    /**
+     * Ferma la riproduzione di una traccia audio.
+     *
+     * @param name nome della traccia da fermare
+     */
     public void stop(String name) {
         Clip clip = audioClips.get(name);
         if (clip != null) {
@@ -122,6 +157,11 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Imposta il volume globale per tutte le tracce.
+     *
+     * @param volume livello del volume tra {@code 0.1f} e {@code 1.0f}
+     */
     public void setVolume(float volume) {
         this.volume = Math.max(0.1f, Math.min(1.0f, volume));
         for (Clip clip : audioClips.values()) {
@@ -143,10 +183,22 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Restituisce il volume attualmente impostato.
+     *
+     * @return il livello del volume (0.1 - 1.0)
+     */
     public float getVolume() {
         return volume;
     }
 
+    /**
+     * Applica un effetto di fade-out e interrompe la riproduzione di una
+     * traccia.
+     *
+     * @param name nome della traccia
+     * @param durationMillis durata del fade-out in millisecondi
+     */
     public void fadeOut(String name, int durationMillis) {
         Clip clip = audioClips.get(name);
         if (clip != null && clip.isRunning() && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
@@ -163,8 +215,9 @@ public class AudioManager {
                 while (v > min) {
                     gainControl.setValue(v);
                     v -= delta;
-                    if (v < min)
+                    if (v < min) {
                         v = min;
+                    }
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -178,6 +231,11 @@ public class AudioManager {
 
     private Map<String, Long> pausePositions = new HashMap<>();
 
+    /**
+     * Mette in pausa la traccia specificata salvando la posizione corrente.
+     *
+     * @param name nome della traccia da mettere in pausa
+     */
     public void pause(String name) {
         Clip clip = audioClips.get(name);
         if (clip != null && clip.isRunning()) {
@@ -186,9 +244,15 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Riprende la riproduzione di una traccia precedentemente messa in pausa.
+     *
+     * @param name nome della traccia
+     */
     public void resume(String name) {
-        if (!pausePositions.containsKey(name))
+        if (!pausePositions.containsKey(name)) {
             return;
+        }
 
         Clip clip = audioClips.get(name);
         if (clip != null && !clip.isRunning()) {
@@ -198,6 +262,12 @@ public class AudioManager {
         }
     }
 
+    /**
+     * Verifica se una traccia è attualmente in pausa.
+     *
+     * @param name nome della traccia
+     * @return {@code true} se la traccia è in pausa, {@code false} altrimenti
+     */
     public boolean isPaused(String name) {
         return pausePositions.containsKey(name);
     }

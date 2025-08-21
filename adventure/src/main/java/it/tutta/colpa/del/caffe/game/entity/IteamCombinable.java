@@ -8,15 +8,17 @@ package it.tutta.colpa.del.caffe.game.entity;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
-import javax.swing.ImageIcon;
 
 /**
+ * Rappresenta un oggetto combinabile all'interno del gioco. Un
+ * {@code IteamCombinable} è un oggetto speciale che può essere composto da
+ * altri oggetti. Estende la classe {@link Item}.
  *
  * @author giova
  */
-public class IteamCombinable extends Item implements Serializable{
-    
-    private List<Item> composedOf ;
+public class IteamCombinable extends Item implements Serializable {
+
+    private List<Item> composedOf;
 
     /**
      *
@@ -35,26 +37,17 @@ public class IteamCombinable extends Item implements Serializable{
 
     /**
      *
-     * @return 
+     * @return
      */
     public List<Item> getComposedOf() {
         return composedOf;
     }
-    
-    /**
-     * 
-     * @param composedOf 
-     */
 
+    /**
+     *
+     * @param composedOf
+     */
     public void setComposedOf(List<Item> composedOf) {
         this.composedOf = composedOf;
     }
-
-    
-
-   
-    
-    
-   
-    
 }

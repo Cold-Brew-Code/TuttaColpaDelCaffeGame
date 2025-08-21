@@ -24,7 +24,23 @@ import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
+/**
+ * La classe {@code MainPage} rappresenta la finestra principale (menu iniziale)
+ * del gioco.
+ * <p>
+ * Estende {@link JFrame} e implementa l'interfaccia {@link GUI}, fornendo i
+ * pulsanti e le funzionalità per avviare una nuova partita, caricare un
+ * salvataggio, uscire dal gioco e gestire le opzioni audio (attiva/disattiva,
+ * pausa/riprendi, volume).
+ * </p>
+ * <p>
+ * La schermata principale include uno sfondo personalizzato, pulsanti grafici e
+ * un menu popup per le impostazioni audio. La gestione dell'audio avviene
+ * tramite la classe {@link AudioManager}.
+ * </p>
+ */
 public class MainPage extends JFrame implements GUI {
+
     MainPageController c;
     private boolean isAudioPaused = false;
     private boolean isAudioEnabled = true;
@@ -62,6 +78,18 @@ public class MainPage extends JFrame implements GUI {
     JMenuItem volumeDownItem = new JMenuItem("Aumenta/Abbassa Volume");
     JMenuItem toggleAudioItem = new JMenuItem("Disattiva Audio");
 
+    /**
+     * Costruttore della schermata principale.
+     * <p>
+     * Si occupa di:
+     * <ul>
+     * <li>verificare la disponibilità delle risorse (immagini, suoni)</li>
+     * <li>inizializzare il gestore audio e impostarne il volume</li>
+     * <li>costruire l'interfaccia grafica con pulsanti e sfondo</li>
+     * <li>collegare i listener ai pulsanti e al menu audio</li>
+     * <li>avviare la musica di sottofondo del menu</li>
+     * </ul>
+     */
     public MainPage() {
         System.out.println("=== VERIFICA RISORSE ===");
         checkResource("/images/button.png", "Immagine pulsante");
@@ -162,10 +190,20 @@ public class MainPage extends JFrame implements GUI {
         });
     }
 
+    /**
+     * Classe interna per la gestione dei pulsanti personalizzati con immagine
+     * di sfondo e testo sovrapposto.
+     */
     private class PButton extends JButton {
+
         private final Image backgroundImage = new ImageIcon(getClass().getResource("/images/button.png"))
                 .getImage();
 
+        /**
+         * Costruisce un pulsante personalizzato con il testo indicato.
+         *
+         * @param text il testo da mostrare sul pulsante
+         */
         public PButton(String text) {
             super(text);
             setContentAreaFilled(false);
@@ -184,13 +222,16 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
+    /**
+     * Attiva o disattiva completamente l'audio del gioco.
+     */
     private void toggleAudio() {
         AudioManager audioManager = AudioManager.getInstance();
         isAudioEnabled = !isAudioEnabled;
 
         toggleAudioItem.setText(isAudioEnabled ? "Disattiva Audio" : "Attiva Audio");
         togglePauseItem.setEnabled(isAudioEnabled);
-       // volumeUpItem.setEnabled(isAudioEnabled);
+        // volumeUpItem.setEnabled(isAudioEnabled);
         volumeDownItem.setEnabled(isAudioEnabled);
 
         if (isAudioEnabled) {
@@ -200,6 +241,9 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
+    /**
+     * Mette in pausa o riprende la musica di sottofondo.
+     */
     private void toggleAudioPause() {
         AudioManager audioManager = AudioManager.getInstance();
         if (isAudioPaused) {
@@ -212,6 +256,11 @@ public class MainPage extends JFrame implements GUI {
         isAudioPaused = !isAudioPaused;
     }
 
+    /**
+     * Listener per la gestione del menu di aumento/riduzione del volume.
+     *
+     * @param evt l'evento di click sul menu
+     */
     private void increaseDecreaseVolumeMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
         System.out.println("Aumenta volume cliccato");
         int volumePercent = askVolumeSlider("Imposta Volume", "Scegli il livello del volume:");
@@ -221,6 +270,13 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
+    /**
+     * Mostra una finestra di dialogo con uno slider per impostare il volume.
+     *
+     * @param title il titolo della finestra
+     * @param message il messaggio da mostrare
+     * @return il livello di volume scelto (0-100) oppure -1 se annullato
+     */
     private int askVolumeSlider(String title, String message) {
         JSlider slider = new JSlider(0, 100, (int) (AudioManager.getInstance().getVolume() * 100));
         slider.setMajorTickSpacing(10);
@@ -242,6 +298,9 @@ public class MainPage extends JFrame implements GUI {
         return -1; //ha premuto annulla
     }
 
+    /**
+     * Chiude la schermata principale e interrompe la musica di sottofondo.
+     */
     @Override
     public void close() {
         if (isAudioEnabled) {
@@ -250,6 +309,13 @@ public class MainPage extends JFrame implements GUI {
         this.setVisible(false);
     }
 
+    /**
+     * Collega un controller alla pagina principale.
+     *
+     * @param c il controller da associare
+     * @throws RuntimeException se il controller non è un
+     * {@link MainPageController}
+     */
     @Override
     public void linkController(Controller c) {
         if (c instanceof MainPageController) {
@@ -259,6 +325,9 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
+    /**
+     * Apre la schermata principale e avvia la musica di sottofondo.
+     */
     @Override
     public void open() {
         this.setVisible(true);
@@ -269,6 +338,13 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
+    /**
+     * Verifica che una risorsa sia presente nel percorso indicato e stampa
+     * l'esito nel log.
+     *
+     * @param path percorso relativo della risorsa
+     * @param descrizione descrizione testuale della risorsa
+     */
     private void checkResource(String path, String descrizione) {
         URL url = getClass().getResource(path);
         if (url != null) {

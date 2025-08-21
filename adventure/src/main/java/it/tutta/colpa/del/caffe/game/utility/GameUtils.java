@@ -7,20 +7,22 @@ package it.tutta.colpa.del.caffe.game.utility;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 
-
 /**
- *
- * @author pierpaolo
+ * Classe di utilità per operazioni relative al gioco.
+ * Contiene metodi statici per facilitare la gestione dell'inventario e altri oggetti di gioco.
+ * 
+ * @author giova
  */
 public class GameUtils {
 
     /**
-     *
-     * @param inventory
-     * @param id
-     * @return
+     * Recupera un oggetto dall'inventario in base al suo ID.
+     * 
+     * @param inventory l'inventario da cui cercare l'oggetto
+     * @param id l'identificatore dell'oggetto da cercare
+     * @return l'oggetto {@link GeneralItem} corrispondente all'ID, oppure {@code null} se non trovato
      */
-    public static GeneralItem getObjectFromInventory( Inventory inventory, int id) {
+    public static GeneralItem getObjectFromInventory(Inventory inventory, int id) {
         for (GeneralItem o : inventory.getInventory().keySet()) {
             if (o.getId() == id) {
                 return o;
@@ -28,5 +30,5 @@ public class GameUtils {
         }
         return null;
     }
-
 }
+

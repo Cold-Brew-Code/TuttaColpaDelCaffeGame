@@ -35,11 +35,9 @@ public class BuildObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
-        System.out.println("sono in build");
         StringBuilder msg = new StringBuilder();
 
         if (parserOutput.getCommand().getType() == CommandType.MERGE) {
-            System.out.println("sono in build2");
 
             ServerInterface server;
             try {
