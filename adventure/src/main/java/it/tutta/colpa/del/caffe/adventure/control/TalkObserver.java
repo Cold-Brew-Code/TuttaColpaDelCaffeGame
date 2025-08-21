@@ -143,6 +143,8 @@ public class TalkObserver implements GameObserver {
         private final static String NODE_EVT_DROP_BLECH = "Questa sì che profuma di dedizione. Ascolta bene, ragazzo: Sette sono i piani, ma non tutti mostrano il vero. Dove il sapere si tiene alto, una porta si apre solo a chi ha la chiave della pulizia.";
         private final static String NODE_EVT_DROP_COFFEE = "Okay, ora sì che mi sento meglio. Allora ragazzo, ascolta: Si mormora che, al settimo cielo del sapere, esista un bagno così segreto che persino le mappe evitano di disegnarlo. La leggenda narra che la sua porta appaia solo a chi possiede un misterioso oggetto magico e la follia di usarlo.";
 
+        private final static String NODE_SHOW_TOILETPAPER = "Vai. Corri. E ricorda: Il vero eroe non è chi trattiene…… ma chi arriva in tempo!";
+
         public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             this.dialogue = dialogue;
             this.NPCName = NPCName;
@@ -251,8 +253,6 @@ public class TalkObserver implements GameObserver {
                         lookEvent(13, description.getCurrentRoom(), lastProducedStatement);
                         break;
                     case 4:
-                        // Bruno mostra la chiave
-                        // da verificare se ha passato l'indovinello !!!!!!!!!!!!!!!!!!!!!
                         System.err.println(NODE_EVT_SHOW_KEY);
                         System.err.println(lastProducedStatement);
                         if (lastProducedStatement.equals(NODE_EVT_SHOW_KEY)) {
@@ -282,6 +282,11 @@ public class TalkObserver implements GameObserver {
                     case 10:
                         // dialogo con inserviente
                         lookEvent(10, description.getCurrentRoom(), lastProducedStatement);
+                        break;
+                    case 11:
+                        if(lastProducedStatement.equals(NODE_SHOW_TOILETPAPER)){
+                            this.description.getGameMap().getRoom(10).getObject(13).setVisibile(true);
+                        }
                         break;
                     case 12:
                         // dialogo con dottor cravattone
