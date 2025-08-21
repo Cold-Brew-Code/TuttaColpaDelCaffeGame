@@ -17,6 +17,10 @@ import it.tutta.colpa.del.caffe.game.utility.ArcoGrafo;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 /**
+ * Rappresenta la mappa del gioco utilizzando un grafo diretto. Ogni stanza è un
+ * vertice del grafo e le connessioni tra stanze sono rappresentate da archi
+ * etichettati con direzioni. La classe gestisce anche la stanza corrente del
+ * giocatore.
  *
  * @author giovanni
  */
@@ -29,19 +33,46 @@ public class GameMap implements Serializable {
         this.grafo = new DefaultDirectedGraph<>(ArcoGrafo.class);
     }
 
+    /**
+     * Aggiunge una stanza al grafo senza modificarne lo stato corrente.
+     *
+     * @param stanza la stanza da aggiungere
+     */
     public void aggiungiStanza(Room stanza) {
         this.grafo.addVertex(stanza);
     }
 
+    /**
+     * Aggiunge una stanza al grafo e la imposta come stanza corrente.
+     *
+     * @param stanza la stanza da aggiungere
+     * @param current se true, imposta questa stanza come stanza corrente
+     */
     public void aggiungiStanza(Room stanza, boolean current) {
         this.grafo.addVertex(stanza);
         this.currentRoom = stanza;
     }
 
+    /**
+     * Collega due stanze nel grafo tramite un arco diretto etichettato con una
+     * direzione.
+     *
+     * @param stanzaP stanza di partenza
+     * @param stanzaA stanza di arrivo
+     * @param d direzione dell'arco
+     */
     public void collegaStanze(Room stanzaP, Room stanzaA, Direzione d) {
         this.grafo.addEdge(stanzaP, stanzaA, new ArcoGrafo(d));
     }
 
+    /**
+     * Restituisce la stanza raggiungibile dalla stanza corrente nella direzione
+     * specificata.
+     *
+     * @param d la direzione in cui muoversi
+     * @return la stanza di arrivo
+     * @throws GameMapException se non esiste alcuna stanza in quella direzione
+     */
     public Room getStanzaArrivo(Direzione d) throws GameMapException {
         for (ArcoGrafo arco : grafo.outgoingEdgesOf(currentRoom)) {
             if (arco.getEtichetta() == d) {
@@ -51,6 +82,14 @@ public class GameMap implements Serializable {
         throw new GameMapException("Non puoi andare in quella direzione!");
     }
 
+    /**
+     * Permette di prendere l'ascensore dalla stanza corrente e arrivare al
+     * piano desiderato.
+     *
+     * @param pianoArrivo numero del piano desiderato
+     * @return la stanza corrispondente al piano
+     * @throws GameMapException se non ci si trova in una stanza con ascensore
+     */
     public Room prendiAscensore(int pianoArrivo) throws GameMapException {
         if (!Set.of(4, 6, 8, 10, 14, 17, 20, 25).contains(getCurrentRoom().getId())) {
             throw new GameMapException("Non puoi prendere l'ascensore qui");
@@ -58,6 +97,13 @@ public class GameMap implements Serializable {
         return getPiano(pianoArrivo);
     }
 
+    /**
+     * Restituisce la stanza corrispondente a un piano specifico.
+     *
+     * @param numeroP numero del piano
+     * @return la stanza del piano richiesto, oppure null se non presente
+     * @throws GameMapException se il numero del piano non esiste
+     */
     public Room getPiano(int numeroP) throws GameMapException {
         final String piano;
         switch (numeroP) {
@@ -89,10 +135,20 @@ public class GameMap implements Serializable {
 
     }
 
+    /**
+     * Restituisce la stanza corrente in cui si trova il giocatore.
+     *
+     * @return la stanza corrente
+     */
     public Room getCurrentRoom() {
         return currentRoom;
     }
 
+    /**
+     * Imposta la stanza corrente del giocatore.
+     *
+     * @param currentRoom la stanza da impostare come corrente
+     */
     public void setCurrentRoom(Room currentRoom) {
         this.currentRoom = currentRoom;
     }
@@ -136,7 +192,7 @@ public class GameMap implements Serializable {
     public String stampaDirezioniPerStanza() {
         StringBuilder msg = new StringBuilder();
         for (Room room : this.grafo.vertexSet()) {
-            msg.append("Dalla stanza ").append (room.getName() ).append(" puoi andare in: \n");
+            msg.append("Dalla stanza ").append(room.getName()).append(" puoi andare in: \n");
 
             // prendo tutti gli archi uscenti dal nodo i-esimo
             Set<ArcoGrafo> uscenti = this.grafo.outgoingEdgesOf(room);
@@ -146,13 +202,20 @@ public class GameMap implements Serializable {
                 for (ArcoGrafo arco : uscenti) {
                     Direzione direzione = arco.getEtichetta(); // mi prendo l'etichetta
                     Room destinazione = grafo.getEdgeTarget(arco); // mi prendo la stanza in cui arrivo da quella direzione
-                    msg.append("  -> ").append( direzione).append(" verso \n").append(destinazione.getName()).append("\n");
+                    msg.append("  -> ").append(direzione).append(" verso \n").append(destinazione.getName()).append("\n");
                 }
             }
         }
         return msg.toString();
     }
 
+    /**
+     * Restituisce la lista di stanze raggiungibili dalla stanza corrente
+     * seguendo le connessioni definite nel grafo.
+     *
+     * @return lista di stanze raggiungibili dalla stanza corrente
+     * @throws GameMapException se la stanza corrente non è definita
+     */
     public List<Room> getStanzeRaggiungibiliDallaStanzaCorrente() {
         if (currentRoom == null) {
             throw new GameMapException("Non puoi andare da nessuna parte!");
@@ -164,6 +227,12 @@ public class GameMap implements Serializable {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Restituisce la stanza identificata dall'id specificato.
+     *
+     * @param id l'identificativo della stanza
+     * @return la stanza corrispondente all'id, oppure null se non esiste
+     */
     public Room getRoom(int id) {
         for (Room r : this.grafo.vertexSet()) {
             if (r.getId() == id) {
@@ -173,6 +242,24 @@ public class GameMap implements Serializable {
         return null;
     }
 
+    /**
+     * Restituisce il numero del piano in cui si trova la stanza corrente. I
+     * piani sono mappati come segue:
+     * <ul>
+     * <li>0 -> Dipartimento di Informatica</li>
+     * <li>1 -> Primo piano</li>
+     * <li>2 -> Secondo piano</li>
+     * <li>3 -> Terzo piano</li>
+     * <li>4 -> Quarto piano</li>
+     * <li>5 -> Quinto piano</li>
+     * <li>6 -> Sesto piano</li>
+     * <li>7 -> Settimo piano</li>
+     * </ul>
+     *
+     * @return il numero del piano corrente
+     * @throws GameMapException se la stanza corrente non è definita o non
+     * corrisponde a un piano valido
+     */
     public int getPianoCorrente() throws GameMapException {
         if (currentRoom == null) {
             throw new GameMapException("Stanza corrente non definita.");
