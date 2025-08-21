@@ -6,9 +6,7 @@ import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-import it.tutta.colpa.del.caffe.game.utility.CommandType;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.*;
 
 public class MoveObserver implements GameObserver {
 
@@ -97,8 +95,10 @@ public class MoveObserver implements GameObserver {
                             }
                         } else {
                             msg.append("\n").append(description.getCurrentRoom().getDescription());
-
                         }
+                    }
+                    if (hasUsedRestroom(description)) {
+                        description.setStatus(GameStatus.BAGNO_USATO);
                     }
                 }
             } catch (GameMapException ex) {
@@ -110,4 +110,8 @@ public class MoveObserver implements GameObserver {
         return msg.toString();
     }
 
+    private boolean hasUsedRestroom(GameDescription description) {
+        return ((description.getCurrentRoom().getId() == 11 && (GameUtils.getObjectFromInventory(description.getInventory(), 13)) != null)
+                || (description.getCurrentRoom().getId() == 28)) && !(description.getStatus() == GameStatus.BAGNO_USATO);
+    }
 }
