@@ -86,7 +86,7 @@ public class UseObserver implements GameObserver {
                             
                         }
                         else if (magicCard) {
-                            Item card= (Item) parserOutput.getObject();
+                            Item card= (Item) GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId());
                             if(card.getUses()>0){
                                 //se voglio utilizzare la carta su una qualsiasi porta (compreso quelle che erno chiuse ma che sono già aperte) aperta
                                 List<Room> listR= description.getGameMap().getStanzeRaggiungibiliDallaStanzaCorrente();
