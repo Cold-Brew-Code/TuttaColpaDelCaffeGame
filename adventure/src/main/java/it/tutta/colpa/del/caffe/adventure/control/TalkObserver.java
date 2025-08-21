@@ -112,7 +112,7 @@ public class TalkObserver implements GameObserver {
     private String runQuiz(NPC npc, GameDescription description) {
         StringBuilder msg = new StringBuilder();
         try {
-            new QuizHandler(npc.getNome(), npc.getDialogoCorr(), description);
+            msg.append(new QuizHandler(npc.getNome(), npc.getDialogoCorr(), description).toString());
         } catch (DialogueException e) {
             throw new RuntimeException(e);
         }
