@@ -41,7 +41,7 @@ public interface GameGUI extends GUI{
      */
     int notifySomething(String header, String message);
 
-
+    void showInformation(String title, String message);
     void notifyWarning(String header, String message);
     void notifyError(String header, String message);
     /**
@@ -65,4 +65,6 @@ public interface GameGUI extends GUI{
     void increaseProgressBar();
 
     void executedCommand();
+
+    void initProgressBar(int ms, boolean hasUsedRestroom);
 }

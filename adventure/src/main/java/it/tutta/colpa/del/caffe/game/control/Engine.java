@@ -33,11 +33,7 @@ import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.exception.ParserException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import it.tutta.colpa.del.caffe.game.utility.Parser;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
-import it.tutta.colpa.del.caffe.game.utility.RequestType;
-import it.tutta.colpa.del.caffe.game.utility.Utils;
+import it.tutta.colpa.del.caffe.game.utility.*;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 
@@ -288,31 +284,31 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         for (GameObserver o : observers) {
             try {
                 String out = o.update(description, po);
-                if (!out.isEmpty()){
+                if (!out.isEmpty()) {
                     description.getMessages().add(out);
                 }
             } catch (ServerCommunicationException e) {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    public void finishGame() {
-        GUI.out("Tempo esaurito! La partita è finita.");
-        GUI.notifyWarning("Tempo scaduto", "Hai esaurito il tempo a disposizione!");
-        GUI.close();
+        if (Set.of(GameStatus.BOCCIATO, GameStatus.PROMOSSO).contains(description.getStatus())) {
+            handleGameEnding();
+        } else if (description.getStatus() == GameStatus.BAGNO_USATO) {
+            description.setStatus(GameStatus.ESAME_DA_FARE);
+            this.GUI.initProgressBar(300, true);
+            this.timer.setRemainingTime(300);
+        }
     }
 
     /**
      * Notifica all'interfaccia grafica l'aggiornamento del tempo residuo.
      * <p>
-     * Questo metodo viene chiamato ad ogni tick del {@link Clock} e aggiorna il
+     * Questo metodo viene chiamato per ogni tick del {@link Clock} e aggiorna il
      * display dell'orologio nella GUI con il tempo formattato.
      *
      * @param timeFormatted il tempo residuo formattato come stringa, ad esempio
-     * "mm:ss" o "HH:mm:ss"
+     *                      "mm:ss" o "HH:mm:ss"
      */
-
     @Override
     public void onTimeUpdate(String timeFormatted) {
         GUI.setDisplayedClock(timeFormatted);
@@ -320,7 +316,16 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     @Override
     public void onTimeExpired() {
-        // chiama il metodo esistente
-        finishGame();
+        if (description.getStatus() == GameStatus.BAGNO_USATO) {
+            description.setStatus(GameStatus.BAGNO_USATO_TEMPO_ESAURITO);
+        } else {
+            description.setStatus(GameStatus.TEMPO_ESAURITO);
+        }
+        handleGameEnding();
+    }
+
+    private void handleGameEnding() {
+        this.GUI.close();
+        new GameEndedPage(description.getStatus(),mpc).setVisible(true);
     }
 }
