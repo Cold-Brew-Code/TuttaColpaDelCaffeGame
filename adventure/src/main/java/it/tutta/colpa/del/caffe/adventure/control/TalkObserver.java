@@ -360,9 +360,9 @@ public class TalkObserver implements GameObserver {
                     super.GUI.addNPCStatement(super.NPCName, sb.toString());
                     super.GUI.addNPCStatement(super.NPCName, "L'esame è terminato, se ne vada!");
                     if ((quizScore * 30) / 5 >= 18) {
-                        this.description.setStatus(GameStatus.VINTA);
+                        this.description.setStatus(GameStatus.PROMOSSO);
                     } else {
-                        this.description.setStatus(GameStatus.PERSA);
+                        this.description.setStatus(GameStatus.BOCCIATO);
                     }
                     super.returnStatement.append("Hai sostenuto l'esame con una votazione di").append((quizScore * 30) / 5 >= 18).append( "30esimi");
                     if ((quizScore * 30) / 5 >= 18) {
