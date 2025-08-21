@@ -47,7 +47,7 @@ public class TalkObserver implements GameObserver {
                             .findFirst()
                             .get();
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        if (description.getStatus() == GameStatus.BAGNO_USATO) {
+                        if (description.getStatus() == GameStatus.ESAME_DA_FARE) {
                             msg.append(this.runQuiz(npc, description));
                         } else {
                             msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
@@ -62,7 +62,7 @@ public class TalkObserver implements GameObserver {
                 NPC npc = description.getCurrentRoom().getNPCs().get(0);
                 try {
                     if (npc.getId() == 8) { // id = 8 <=> NPC è Professore MAP
-                        if (description.getStatus() == GameStatus.BAGNO_USATO) {
+                        if (description.getStatus() == GameStatus.ESAME_DA_FARE) {
                             msg.append(this.runQuiz(npc, description));
                         } else {
                             msg.append("Non puoi sostenere l'esame se non vai prima in bagno");
@@ -253,8 +253,6 @@ public class TalkObserver implements GameObserver {
                         lookEvent(13, description.getCurrentRoom(), lastProducedStatement);
                         break;
                     case 4:
-                        System.err.println(NODE_EVT_SHOW_KEY);
-                        System.err.println(lastProducedStatement);
                         if (lastProducedStatement.equals(NODE_EVT_SHOW_KEY)) {
                             this.description.getGameMap().getRoom(4).getObject(9).setVisibile(true);
                             this.returnStatement.append("Nella stanza c'è una chiave, raccoglila.");

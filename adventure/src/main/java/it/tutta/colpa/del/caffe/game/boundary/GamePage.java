@@ -33,6 +33,7 @@ import it.tutta.colpa.del.caffe.game.utility.AudioManager;
 public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private GameController controller;
+    private boolean barUtilHasUsedRestroom = false;
 
     public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
@@ -71,6 +72,14 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 message,
                 title,
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInformation(String title, String message) {
+        JOptionPane.showMessageDialog(
+                null,
+                message,
+                title,
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void showWarning(String title, String message) {
@@ -206,8 +215,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         Dimension menuItemSize = new Dimension(170, 35);
         Color itemBorderColor = new Color(220, 220, 220);
         JMenuItem[] allMenuItems = {
-            abbassa_alza, toggleMuteMenuItem,
-            slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
+                abbassa_alza, toggleMuteMenuItem,
+                slowEffectMenuItem, mediumEffectMenuItem, fastEffectMenuItem, disabledEffectMenuItem
         };
 
         for (JMenuItem item : allMenuItems) {
@@ -612,8 +621,14 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         }
     }
 
+    @Override
+    public void initProgressBar(int ms, boolean hasUsedRestroom) {
+        this.progressBar.setMaximum(ms);
+        this.progressBar.setValue(0);
+        this.barUtilHasUsedRestroom = hasUsedRestroom;
+    }
+
     /**
-     *
      * <p>
      * Il metodo esegue l'aggiornamento della {@code progressBar} all'interno
      * Thread (EDT) che si occupa di gestire tutti gli eventi GUI, utilizzando
@@ -624,8 +639,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
      * la corretta visualizzazione. Incrementa il valore corrente della barra di
      * progresso di 1 unità in modo thread-safe.
      * </p>
-     *
-     *
+     * <p>
+     * <p>
      * In base al valore aggiornato della barra, cambia il colore e il testo
      * visualizzato:</p>
      * <ul>
@@ -637,42 +652,81 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
      */
     @Override
     public void increaseProgressBar() {
-        // Incrementa di 1 secondo
-        int newValue = progressBar.getValue() + 1;
-        progressBar.setValue(newValue);
+        if (!barUtilHasUsedRestroom) {
+            // Incrementa di 1 secondo
+            int newValue = progressBar.getValue() + 1;
+            progressBar.setValue(newValue);
 
-        SwingUtilities.invokeLater(() -> {
-            progressBar.setStringPainted(true);
-            progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setStringPainted(true);
+                progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
 
-            // Cambia solo il colore del riempimento in base al tempo
-            if (newValue < 600) {
-                progressBar.setForeground(Color.GREEN);  // riempimento
-                progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
-                progressBar.setString("FORZA IL DOVERE CHIAMA");
+                // Cambia solo il colore del riempimento in base al tempo
+                if (newValue < 600) {
+                    progressBar.setForeground(Color.GREEN);  // riempimento
+                    progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
+                    progressBar.setString("FORZA IL DOVERE CHIAMA");
 
-            } else if (newValue < 900) {
-                progressBar.setForeground(Color.ORANGE);
-                progressBar.setBackground(Color.LIGHT_GRAY);
-                progressBar.setString("AHI HO PAURA DI MOLLARE");
+                } else if (newValue < 900) {
+                    progressBar.setForeground(Color.ORANGE);
+                    progressBar.setBackground(Color.LIGHT_GRAY);
+                    progressBar.setString("AHI HO PAURA DI MOLLARE");
 
-            } else {
-                progressBar.setForeground(Color.RED);
-                progressBar.setBackground(Color.LIGHT_GRAY);
-                progressBar.setString("STO QUASI PER MOLLARE");
-            }
-
-            // Scritta sempre nera
-            progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
-                @Override
-                protected void paintString(Graphics g, int x, int y,
-                        int width, int height,
-                        int amountFull, Insets b) {
-                    g.setColor(Color.BLACK);
-                    super.paintString(g, x, y, width, height, amountFull, b);
+                } else {
+                    progressBar.setForeground(Color.RED);
+                    progressBar.setBackground(Color.LIGHT_GRAY);
+                    progressBar.setString("STO QUASI PER MOLLARE");
                 }
+
+                // Scritta sempre nera
+                progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+                    @Override
+                    protected void paintString(Graphics g, int x, int y,
+                                               int width, int height,
+                                               int amountFull, Insets b) {
+                        g.setColor(Color.BLACK);
+                        super.paintString(g, x, y, width, height, amountFull, b);
+                    }
+                });
             });
-        });
+        } else {
+            // Incrementa di 1 secondo
+            int newValue = progressBar.getValue() + 1;
+            progressBar.setValue(newValue);
+
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setStringPainted(true);
+                progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
+
+                // Cambia solo il colore del riempimento in base al tempo
+                if (newValue < 100) {
+                    progressBar.setForeground(Color.GREEN);  // riempimento
+                    progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
+                    progressBar.setString("VAI A FARE L'ESAME, SBRIGATI!");
+
+                } else if (newValue < 200) {
+                    progressBar.setForeground(Color.ORANGE);
+                    progressBar.setBackground(Color.LIGHT_GRAY);
+                    progressBar.setString("IL LIBRETTO NON SI RIEMPIE DA SOLO!");
+
+                } else {
+                    progressBar.setForeground(Color.RED);
+                    progressBar.setBackground(Color.LIGHT_GRAY);
+                    progressBar.setString("ORMAI... SARÀ PER IL PROSSIMO APPELLO...");
+                }
+
+                // Scritta sempre nera
+                progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
+                    @Override
+                    protected void paintString(Graphics g, int x, int y,
+                                               int width, int height,
+                                               int amountFull, Insets b) {
+                        g.setColor(Color.BLACK);
+                        super.paintString(g, x, y, width, height, amountFull, b);
+                    }
+                });
+            });
+        }
     }
 
     @Override

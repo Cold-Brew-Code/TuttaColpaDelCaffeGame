@@ -293,10 +293,12 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         }
         if (Set.of(GameStatus.BOCCIATO, GameStatus.PROMOSSO).contains(description.getStatus())) {
             handleGameEnding();
-        } else if (description.getStatus() == GameStatus.BAGNO_USATO) {
+        } else if (description.getStatus() == GameStatus.BAGNO_USATO)
+        {
+            GUI.showInformation("OTTIMO LAVORO", "<html><p>Hai usato finalmente il bagno, liberando i tuoi impellenti bisogni.</p><p>Adesso non ti resta che sostenere il tuo esame.</p><p><b>Corri!!!!</b></p></html>");
             description.setStatus(GameStatus.ESAME_DA_FARE);
-            this.GUI.initProgressBar(300, true);
-            this.timer.setRemainingTime(300);
+            this.GUI.initProgressBar(6000, true);
+            this.timer.setRemainingTime(6000);
         }
     }
 
