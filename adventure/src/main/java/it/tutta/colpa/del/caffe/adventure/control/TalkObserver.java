@@ -124,7 +124,7 @@ public class TalkObserver implements GameObserver {
         protected final String NPCName;
         private final Dialogo dialogue;
         protected final GameDescription description;
-        private final StringBuilder returnStatement = new StringBuilder();
+        protected final StringBuilder returnStatement = new StringBuilder();
 
         private final static String TO_DISABLE_ANSWER_DIALOGUE_3_STATEMENT = "Hmm... forse potrebbe esistere un bagno segreto. Ma non diffondo segreti mistici in maniera gratuita. Hai per caso un caffè per un povero portinaio stanco?";
         private final static String DIALOGUE_3_ANSWER_TO_DISABLE = "Sì";
@@ -363,6 +363,12 @@ public class TalkObserver implements GameObserver {
                         this.description.setStatus(GameStatus.VINTA);
                     } else {
                         this.description.setStatus(GameStatus.PERSA);
+                    }
+                    super.returnStatement.append("Hai sostenuto l'esame con una votazione di").append((quizScore * 30) / 5 >= 18).append( "30esimi");
+                    if ((quizScore * 30) / 5 >= 18) {
+                        super.returnStatement.append("Hai vinto!");
+                    } else {
+                        super.returnStatement.append("Hai perso!");
                     }
                 }
             } else {
