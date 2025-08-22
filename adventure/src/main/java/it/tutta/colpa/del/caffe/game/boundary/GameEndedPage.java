@@ -1,6 +1,5 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
-import com.sun.tools.javac.Main;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
