@@ -43,7 +43,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
 
     private JPanel mainContainer;
     private JScrollPane scrollPane;
-
+    private boolean locked = false;
     private DialogueController controller;
 
     public DialoguePage(Frame owner, boolean modal) {
@@ -78,7 +78,15 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     }
 
     private void onWindowClosingActionPerformed() {
-        this.dispose();
+        if(locked){
+            JOptionPane.showMessageDialog(
+                    null,
+                    "<html><p>Smettila di fare il maleducato.</p><p>Termina prima il dialogo!</p></html>",
+                    "Vergognati...",
+                    JOptionPane.YES_OPTION);
+        }else{
+            this.dispose();
+        }
     }
 
     private JTextArea createBubbleTextArea(String text, Color bgColor, Color textColor, Border border) {
@@ -237,6 +245,11 @@ public class DialoguePage extends JDialog implements DialogueGUI {
         } catch (Exception e) {
             throw new RuntimeException("Controller non valido: richiesto DialogueController", e);
         }
+    }
+
+    @Override
+    public void lockPage() {
+        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
     private static class ScrollablePanel extends JPanel implements Scrollable {
