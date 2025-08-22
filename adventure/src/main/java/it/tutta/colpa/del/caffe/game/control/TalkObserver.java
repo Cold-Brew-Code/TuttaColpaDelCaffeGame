@@ -5,6 +5,7 @@
 package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -324,6 +325,7 @@ public class TalkObserver implements GameObserver {
     }
 
     public class QuizHandler extends DialogueHandler {
+
         private final BlockingQueue<DialogoQuiz> quizQueue;
         private boolean isQuizRunning = false;
         private DialogoQuiz currentQuiz;
@@ -340,23 +342,14 @@ public class TalkObserver implements GameObserver {
             openGUI();
         }
 
-        /**
-         * Avvia il thread che carica i quiz in background.
-         */
         private void startQuizHandler() {
             new Thread(() -> {
                 System.err.println("Preload quiz thread started");
                 for (int i = 0; i < MAX_DOMANDE; i++) {
                     try {
                         DialogoQuiz quiz = QuizNpc.getQuiz();
-                        quizQueue.put(quiz); // aggiunge in coda
+                        quizQueue.put(quiz);
                         System.err.println("Loaded quiz " + (i + 1));
-
-                        // se è il primo quiz caricato → avvia subito la sessione
-                        if (i == 0) {
-                            isQuizRunning = true;
-                            runNextQuiz();
-                        }
                     } catch (Exception e) {
                         System.err.println("Errore caricamento quiz: " + e.getMessage());
                     }
@@ -365,38 +358,51 @@ public class TalkObserver implements GameObserver {
             }).start();
         }
 
-        /**
-         * Mostra il prossimo quiz se disponibile, altrimenti attende il caricamento.
-         */
         private void runNextQuiz() {
             if (attemptedQuiz < MAX_DOMANDE) {
-                // prova a prendere il quiz, se non c’è ancora aspetta un po’
-                new Thread(() -> {
-                    try {
-                        currentQuiz = quizQueue.take(); // blocca fino a che non è disponibile
-                        System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
-                        System.out.println("[Debug]Risposta corretta: " +
-                                currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()));
+                super.GUI.addUserPossibleAnswers(Collections.emptyList());
 
-                        super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
-                        super.GUI.addUserPossibleAnswers(
-                                currentQuiz.getRisposte().stream()
-                                        .map(ans -> new DialogueGUI.PossibleAnswer(ans, true))
-                                        .collect(Collectors.toList())
-                        );
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        System.err.println("Quiz loading interrupted");
-                    }
-                }).start();
+                DialogoQuiz nextQuiz = quizQueue.poll();
+
+                if (nextQuiz != null) {
+                    displayQuiz(nextQuiz);
+                } else {
+                    super.GUI.addNPCStatement(super.NPCName, "Non mi dia fretta, sto pensando...");
+                    new Thread(() -> {
+                        try {
+                            DialogoQuiz finalQuiz = quizQueue.take();
+                            displayQuiz(finalQuiz);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.err.println("Quiz loading interrupted while waiting");
+                        }
+                    }).start();
+                }
             } else {
                 endQuiz();
             }
         }
 
-        /**
-         * Termina il quiz e mostra il punteggio finale.
-         */
+        private void displayQuiz(DialogoQuiz quiz) {
+            currentQuiz = quiz;
+            System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
+            System.out.println("[Debug]Risposta corretta: " +
+                    currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()));
+
+            super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
+            super.GUI.addUserPossibleAnswers(
+                    currentQuiz.getRisposte().stream()
+                            .map(ans -> new DialogueGUI.PossibleAnswer(ans, true))
+                            .collect(Collectors.toList())
+            );
+        }
+
+        private void startQuiz() {
+            this.isQuizRunning = true;
+            super.GUI.addNPCStatement(super.NPCName, "Iniziamo con la prima domanda...");
+            runNextQuiz();
+        }
+
         private void endQuiz() {
             int score30 = (quizScore * 30) / MAX_DOMANDE;
             StringBuilder sb = new StringBuilder("L'esame è terminato, il punteggio che ha ottenuto è di " + score30 + "/30esimi pertanto lei è... ");
@@ -417,7 +423,7 @@ public class TalkObserver implements GameObserver {
         @Override
         public void answerChosen(final String answer) {
             if (isQuizRunning) {
-                if (answer.equals(currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()))) {
+                if (currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()).equals(answer)) {
                     quizScore++;
                     super.GUI.addNPCStatement(super.NPCName, currentQuiz.getMessaggioCorret());
                     System.out.println("Risposta corretta! Punteggio attuale: " + quizScore);
@@ -432,11 +438,15 @@ public class TalkObserver implements GameObserver {
                     super.dialogue.setNextStatementFromAnswer(answer);
                 } catch (DialogueException e) {
                     System.err.println("DialogueException " + e.getMessage());
+                    return;
                 }
-                showCurrentDialogue();
+
                 if (super.dialogue.getCurrentAssociatedPossibleAnswers().isEmpty()) {
                     super.dialogue.setActivity(false);
                     super.dialogueEndedEvent(super.dialogue.getId(), super.dialogue.getCurrentNode());
+                    startQuiz();
+                } else {
+                    showCurrentDialogue();
                 }
             }
         }
