@@ -7,10 +7,7 @@ package it.tutta.colpa.del.caffe.game.control;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
@@ -328,7 +325,7 @@ public class TalkObserver implements GameObserver {
 
     public class QuizHandler extends DialogueHandler {
 
-        private final List<DialogoQuiz> quizQuestions;
+        private final BlockingQueue<DialogoQuiz> quizQueue;
         private boolean isQuizRunning = false;
         private DialogoQuiz currentQuiz;
         private int quizScore = 0;
@@ -336,48 +333,71 @@ public class TalkObserver implements GameObserver {
         private static final int MAX_DOMANDE = 5;
 
         public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
-            super(NPCName, dialogue, description, false); // deferGUI = true
-            quizQuestions = new ArrayList<>();
+            super(NPCName, dialogue, description, false);
+            quizQueue = new LinkedBlockingQueue<>();
             startQuizHandler();
             showCurrentDialogue();
             this.GUI.lockPage();
             openGUI();
         }
 
+        /**
+         * Avvia il thread che carica i quiz in background.
+         */
         private void startQuizHandler() {
             new Thread(() -> {
                 System.err.println("Preload quiz thread started");
                 for (int i = 0; i < MAX_DOMANDE; i++) {
                     try {
                         DialogoQuiz quiz = QuizNpc.getQuiz();
-                        quizQuestions.add(quiz);
+                        quizQueue.put(quiz); // aggiunge in coda
                         System.err.println("Loaded quiz " + (i + 1));
+
+                        // se è il primo quiz caricato → avvia subito la sessione
+                        if (i == 0) {
+                            isQuizRunning = true;
+                            runNextQuiz();
+                        }
                     } catch (Exception e) {
                         System.err.println("Errore caricamento quiz: " + e.getMessage());
                     }
                 }
-                System.err.println("All quizzes loaded");
-                isQuizRunning = true;
-                runNextQuiz();
+                System.err.println("All quizzes requested");
             }).start();
         }
 
+        /**
+         * Mostra il prossimo quiz se disponibile, altrimenti attende il caricamento.
+         */
         private void runNextQuiz() {
-            if (attemptedQuiz < MAX_DOMANDE && !quizQuestions.isEmpty()) {
-                currentQuiz = quizQuestions.get(attemptedQuiz);
-                System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
-                System.out.println("[Debug]Risposta corretta: " + currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()));
-                super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
-                super.GUI.addUserPossibleAnswers(
-                        currentQuiz.getRisposte().stream()
-                                .map(ans -> new DialogueGUI.PossibleAnswer(ans, true))
-                                .collect(Collectors.toList())
-                );
-            } else if (attemptedQuiz >= MAX_DOMANDE) {
+            if (attemptedQuiz < MAX_DOMANDE) {
+                // prova a prendere il quiz, se non c’è ancora aspetta un po’
+                new Thread(() -> {
+                    try {
+                        currentQuiz = quizQueue.take(); // blocca fino a che non è disponibile
+                        System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
+                        System.out.println("[Debug]Risposta corretta: " +
+                                currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()));
+
+                        super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
+                        super.GUI.addUserPossibleAnswers(
+                                currentQuiz.getRisposte().stream()
+                                        .map(ans -> new DialogueGUI.PossibleAnswer(ans, true))
+                                        .collect(Collectors.toList())
+                        );
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        System.err.println("Quiz loading interrupted");
+                    }
+                }).start();
+            } else {
                 endQuiz();
             }
         }
 
+        /**
+         * Termina il quiz e mostra il punteggio finale.
+         */
         private void endQuiz() {
             int score30 = (quizScore * 30) / MAX_DOMANDE;
             StringBuilder sb = new StringBuilder("L'esame è terminato, il punteggio che ha ottenuto è di " + score30 + "/30esimi pertanto lei è... ");
