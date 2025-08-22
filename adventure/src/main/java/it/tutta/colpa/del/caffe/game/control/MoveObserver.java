@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.Set;
 

@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.adventure.other;
+package it.tutta.colpa.del.caffe.game.utility;
 
 import java.io.Serializable;
 import java.util.concurrent.Executors;

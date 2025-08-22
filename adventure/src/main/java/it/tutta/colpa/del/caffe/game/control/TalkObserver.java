@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.List;
 import java.util.Set;
@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
-import it.tutta.colpa.del.caffe.game.control.DialogueController;
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
 import it.tutta.colpa.del.caffe.game.entity.Dialogo;
 import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;

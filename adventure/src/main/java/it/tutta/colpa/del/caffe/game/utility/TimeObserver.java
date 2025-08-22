@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.adventure.other;
+package it.tutta.colpa.del.caffe.game.utility;
 
 /**
  * Interfaccia per oggetti che vogliono essere notificati
