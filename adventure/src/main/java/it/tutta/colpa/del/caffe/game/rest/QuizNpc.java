@@ -158,7 +158,7 @@ public class QuizNpc {
         }
 
         // Crea e restituisce il DialogoQuiz
-        DialogoQuiz d = new DialogoQuiz(domandaTradotta, "sei una bomba", "bocciato", risposteTradotte, indiceCorretta);
+        DialogoQuiz d = new DialogoQuiz(domandaTradotta, risposteTradotte, indiceCorretta);
         return d;
     }
 }
