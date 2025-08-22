@@ -373,7 +373,6 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
     (12,38,'DEVO FARE QUELLA CALL, ALTRIMENTI ESPLODO...'),
     (12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove possa trovare un posto tranquillo per fare una call in America?'),
     (12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!'),
-    (13,46,'Chi è il prossimo??'),
     (13,47,'Buongiorno! Nome e matricola, per favore.'),
     (13,48,'Marco Rossi… molto bene. Mi sembra che lei sia un po’… affaticato oggi, tutto ok? \nSembri un po’ trafelato… Hai corso da lontano o è solo l’emozione dell’esame?'),
     (13,49,'Mini-marathon, dici? Spero che lei non abbia corso troppo vicino ai… corridoi sbagliati! \nSembri un po’ trafelato… Hai corso da lontano o è solo l’emozione dell’esame?'),
