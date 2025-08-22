@@ -99,11 +99,14 @@ public class QuizNpc {
      */
     public static DialogoQuiz getQuiz() throws ConnectionError {
          // esegue la chiamata
-        ResponseRiquest r = methodRest();
-        if (r.getResults() == null || r.getResults().isEmpty()) {
+        ResponseRiquest r;
+        do {
+             r = methodRest();
+             try {
+                 Thread.sleep(2000);
+             } catch (InterruptedException ignored) {}
+        }while (r.getResults() == null || r.getResults().isEmpty());
 
-            throw new IllegalStateException("Nessuna domanda trovata.");
-        }
         DomandaApi curr = r.getResults().get(0);
 
         // Traduce la domanda
