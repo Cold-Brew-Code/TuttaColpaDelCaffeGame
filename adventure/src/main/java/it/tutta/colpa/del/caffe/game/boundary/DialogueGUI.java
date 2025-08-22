@@ -26,4 +26,5 @@ public interface DialogueGUI {
     void linkController(Controller c);
 
     void lockPage();
+    void relasePage();
 }

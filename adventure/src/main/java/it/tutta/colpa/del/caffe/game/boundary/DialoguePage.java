@@ -249,7 +249,12 @@ public class DialoguePage extends JDialog implements DialogueGUI {
 
     @Override
     public void lockPage() {
-        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        this.locked = true;
+    }
+
+    @Override
+    public void relasePage(){
+        this.locked = false;
     }
 
     private static class ScrollablePanel extends JPanel implements Scrollable {

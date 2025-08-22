@@ -118,8 +118,8 @@ public class TalkObserver implements GameObserver {
         StringBuilder msg = new StringBuilder();
         try {
             QuizHandler quizHandler = new QuizHandler(npc.getNome(), npc.getDialogoCorr(), description);
-            quizHandler.startQuizHandler();
-
+            //quizHandler.startQuizHandler();
+            msg.append(quizHandler.getReturnStatement());
         } catch (DialogueException e) {
             throw new RuntimeException(e);
         }
@@ -365,6 +365,8 @@ public class TalkObserver implements GameObserver {
         private void runNextQuiz() {
             if (attemptedQuiz < MAX_DOMANDE && !quizQuestions.isEmpty()) {
                 currentQuiz = quizQuestions.get(attemptedQuiz);
+                System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
+                System.out.println("[Debug]Risposta corretta: " + currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()));
                 super.GUI.addNPCStatement(super.NPCName, currentQuiz.getDomanda());
                 super.GUI.addUserPossibleAnswers(
                         currentQuiz.getRisposte().stream()
@@ -390,6 +392,7 @@ public class TalkObserver implements GameObserver {
             super.GUI.addNPCStatement(super.NPCName, "L'esame è terminato, se ne vada!");
             super.returnStatement.append("Hai sostenuto l'esame con una votazione di ").append(score30).append(" 30esimi. ");
             super.returnStatement.append(score30 >= 18 ? "Hai vinto!" : "Hai perso!");
+            this.GUI.relasePage();
         }
 
         @Override
@@ -398,8 +401,10 @@ public class TalkObserver implements GameObserver {
                 if (answer.equals(currentQuiz.getRisposte().get(currentQuiz.getIdCorretta()))) {
                     quizScore++;
                     super.GUI.addNPCStatement(super.NPCName, currentQuiz.getMessaggioCorret());
+                    System.out.println("Risposta corretta! Punteggio attuale: " + quizScore);
                 } else {
                     super.GUI.addNPCStatement(super.NPCName, currentQuiz.getMessaggioErrato());
+                    System.out.println("Risposta sbagliata! Punteggio attuale: " + quizScore);
                 }
                 attemptedQuiz++;
                 runNextQuiz();
