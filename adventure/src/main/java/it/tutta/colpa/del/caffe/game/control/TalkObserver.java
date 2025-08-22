@@ -324,7 +324,6 @@ public class TalkObserver implements GameObserver {
     }
 
     public class QuizHandler extends DialogueHandler {
-
         private final BlockingQueue<DialogoQuiz> quizQueue;
         private boolean isQuizRunning = false;
         private DialogoQuiz currentQuiz;

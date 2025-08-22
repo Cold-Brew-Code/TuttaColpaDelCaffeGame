@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.game.boundary;
+package it.tutta.colpa.del.caffe.game.utility;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;

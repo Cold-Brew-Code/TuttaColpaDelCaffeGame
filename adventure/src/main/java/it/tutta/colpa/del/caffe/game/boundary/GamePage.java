@@ -25,6 +25,7 @@ import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
+import it.tutta.colpa.del.caffe.game.utility.TypeWriterEffect;
 
 /**
  * @author giovav
