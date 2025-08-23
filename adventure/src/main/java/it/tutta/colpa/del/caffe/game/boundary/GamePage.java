@@ -623,8 +623,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     @Override
-    public void initProgressBar(int ms, boolean hasUsedRestroom) {
-        this.progressBar.setMaximum(ms);
+    public void initProgressBar(int sec, boolean hasUsedRestroom) {
+        this.progressBar.setMaximum(sec);
         this.progressBar.setValue(0);
         this.barUtilHasUsedRestroom = hasUsedRestroom;
     }
@@ -663,12 +663,12 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
 
                 // Cambia solo il colore del riempimento in base al tempo
-                if (newValue < 600) {
+                if (newValue < 6000) {
                     progressBar.setForeground(Color.GREEN);  // riempimento
                     progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                     progressBar.setString("FORZA IL DOVERE CHIAMA");
 
-                } else if (newValue < 900) {
+                } else if (newValue < 9000) {
                     progressBar.setForeground(Color.ORANGE);
                     progressBar.setBackground(Color.LIGHT_GRAY);
                     progressBar.setString("AHI HO PAURA DI MOLLARE");
@@ -700,12 +700,12 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
 
                 // Cambia solo il colore del riempimento in base al tempo
-                if (newValue < 100) {
+                if (newValue < 300) {
                     progressBar.setForeground(Color.GREEN);  // riempimento
                     progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                     progressBar.setString("VAI A FARE L'ESAME, SBRIGATI!");
 
-                } else if (newValue < 200) {
+                } else if (newValue < 450) {
                     progressBar.setForeground(Color.ORANGE);
                     progressBar.setBackground(Color.LIGHT_GRAY);
                     progressBar.setString("IL LIBRETTO NON SI RIEMPIE DA SOLO!");

@@ -52,7 +52,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     private final List<GameObserver> observers = new ArrayList<>();
     private final Parser parser;
     private final MainPageController mpc;
-    private Clock timer;
+
 
     /**
      * Costruttore predefinito.
@@ -89,11 +89,13 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
-            description.setStatus(GameStatus.ESAME_DA_FARE);
-            description.getGameMap().setCurrentRoom(description.getGameMap().getRoom(29));
+            //[debug] description.setStatus(GameStatus.ESAME_DA_FARE);
+            //[debug] description.getGameMap().setCurrentRoom(description.getGameMap().getRoom(29));
             //init first scenario
-            this.timer = new Clock(20, this, this.GUI);// passo il tempo e l'engine corrente
-            timer.start();// starto l'orologio 
+            this.description.setTimer(new Clock(20, this, this.GUI));// passo il tempo e l'engine corrente
+            this.description.getTimer().setRemainingTime(2100);
+            this.GUI.initProgressBar(2100, false);
+            this.description.getTimer().start();// starto l'orologio
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
@@ -238,11 +240,18 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             }
             GUI.out(description.getMessages().getLast().translateEscapes());
         }
+
+        if (description.getStatus() == GameStatus.BAGNO_USATO) {
+            GUI.showInformation("OTTIMO LAVORO", "<html><p>Hai usato finalmente il bagno, liberando i tuoi impellenti bisogni.</p><p>Adesso non ti resta che sostenere il tuo esame.</p><p><b>Corri!!!!</b></p></html>");
+            description.setStatus(GameStatus.ESAME_DA_FARE);
+            this.GUI.initProgressBar(600, true);
+            this.description.getTimer().setRemainingTime(600);
+        }
     }
 
     @Override
     public void endGame() {
-        if (GUI.notifySomething("Chiusura", "Vuoi davvero chiudere il gioco?") == 0) {
+        if (GUI.notifySomething("Chiusura", "<html><p><b>Vuoi davvero chiudere il gioco?</b></p><p>ATTENZIONE, I PROGRESSI <b>NON</b> VERRANNO SALVATI</p></html>") == 0) {
             this.GUI.close();
             new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
@@ -285,12 +294,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         }
         if (Set.of(GameStatus.BOCCIATO, GameStatus.PROMOSSO).contains(description.getStatus())) {
             handleGameEnding();
-        } else if (description.getStatus() == GameStatus.BAGNO_USATO)
-        {
-            GUI.showInformation("OTTIMO LAVORO", "<html><p>Hai usato finalmente il bagno, liberando i tuoi impellenti bisogni.</p><p>Adesso non ti resta che sostenere il tuo esame.</p><p><b>Corri!!!!</b></p></html>");
-            description.setStatus(GameStatus.ESAME_DA_FARE);
-            this.GUI.initProgressBar(6000, true);
-            this.timer.setRemainingTime(6000);
         }
     }
 
@@ -320,6 +323,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     private void handleGameEnding() {
         this.GUI.close();
-        new GameEndedPage(description.getStatus(),mpc).setVisible(true);
+        new GameEndedPage(description.getStatus(), mpc).setVisible(true);
     }
 }
