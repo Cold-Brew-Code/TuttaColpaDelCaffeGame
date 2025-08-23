@@ -5,10 +5,10 @@
  */
 package it.tutta.colpa.del.caffe.game.control;
 
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -23,7 +23,7 @@ import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
  * <li>nell'inventario del giocatore;</li>
  * <li>oppure se non è presente nei paraggi.</li>
  * </ul>
- * Se l'oggetto è un {@link ItemContainer}, può essere aperto per rivelarne il
+ * Se l'oggetto è un {@link ContainerItem}, può essere aperto per rivelarne il
  * contenuto, altrimenti viene segnalato come non apribile.
  * </p>
  *
@@ -73,7 +73,7 @@ public class OpenObserver implements GameObserver {
         if (description.getCurrentRoom().hasObject(((GeneralItem) obj).getId())) {
             GeneralItem item = description.getCurrentRoom().getObject(((GeneralItem) obj).getId());
 
-            if (item instanceof ItemContainer c) {
+            if (item instanceof ContainerItem c) {
                 if (!c.isOpen()) {
                     if (c.getId() == 11 || c.getId() == 7) {
                         return "Come pretendi di aprirlo se non lo prendi?? L'oggetto " + c.getName() + " è nella stanza, fai 'raccogli' per prenderlo.";
@@ -100,7 +100,7 @@ public class OpenObserver implements GameObserver {
         } else if (GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId()) != null) {
             GeneralItem invObj = GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId());
 
-            if (invObj instanceof ItemContainer c) {
+            if (invObj instanceof ContainerItem c) {
                 if (!c.isOpen()) {
                     c.setOpen(true);
                     msg.append("Hai aperto: ").append(c.getName());

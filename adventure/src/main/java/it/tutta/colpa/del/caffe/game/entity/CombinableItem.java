@@ -11,12 +11,12 @@ import java.util.Set;
 
 /**
  * Rappresenta un oggetto combinabile all'interno del gioco. Un
- * {@code IteamCombinable} è un oggetto speciale che può essere composto da
+ * {@code CombinableItem} è un oggetto speciale che può essere composto da
  * altri oggetti. Estende la classe {@link Item}.
  *
  * @author giova
  */
-public class IteamCombinable extends Item implements Serializable {
+public class CombinableItem extends Item implements Serializable {
 
     private List<Item> composedOf;
 
@@ -30,7 +30,7 @@ public class IteamCombinable extends Item implements Serializable {
      * @param immagine
      * @param composedOf
      */
-    public IteamCombinable(int id, String name, String description, Set<String> alias, int uses, String immagine, List<Item> composedOf) {
+    public CombinableItem(int id, String name, String description, Set<String> alias, int uses, String immagine, List<Item> composedOf) {
         super(id, name, description, alias, uses, immagine);
         this.composedOf = composedOf;
     }

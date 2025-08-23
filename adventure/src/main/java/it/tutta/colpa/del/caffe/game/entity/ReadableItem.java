@@ -7,13 +7,12 @@ package it.tutta.colpa.del.caffe.game.entity;
 
 import java.io.Serializable;
 import java.util.Set;
-import javax.swing.ImageIcon;
 
 /**
  *
  * @author giova
  */
-public class ItemRead extends Item implements Serializable {
+public class ReadableItem extends Item implements Serializable {
     
     private String content;
 
@@ -27,7 +26,7 @@ public class ItemRead extends Item implements Serializable {
      * @param immagine
      * @param content
      */
-    public ItemRead(int id, String name, String description, Set<String> alias, int uses, String immagine, String content) {
+    public ReadableItem(int id, String name, String description, Set<String> alias, int uses, String immagine, String content) {
         super(id, name, description, alias, uses, immagine);
         this.content = content;
     }

@@ -12,11 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.exception.InventoryException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
@@ -114,7 +111,7 @@ public class PickUpObserver implements GameObserver {
                         conteiner = true;
                     }
                     if (conteiner) {
-                        if (isobjRoom instanceof ItemContainer isobjRoomC) {
+                        if (isobjRoom instanceof ContainerItem isobjRoomC) {
                             if (conteiner && isobjRoom.getId() != 15) {
                                 msg.append("l'oggetto non trovato. C'è l'oggetto: ").append(isobjRoomC.getName())
                                         .append("chissà se al suo intero c'è qualcosa. (Usa il comando prendi nome oggetto");
@@ -178,11 +175,11 @@ public class PickUpObserver implements GameObserver {
                         }
 
                         if (!listContainer.isEmpty()) {
-                            ItemContainer container = null;
+                            ContainerItem container = null;
                             boolean isOpen = false;
 
                             for (GeneralItem objCont : listContainer) {
-                                container = (ItemContainer) objCont;
+                                container = (ContainerItem) objCont;
                                 if (container.isOpen()) {
 
                                     if (container.containsObject(obj)) {
@@ -193,7 +190,7 @@ public class PickUpObserver implements GameObserver {
                             }
                             if (!isOpen) {
                                 for (GeneralItem co : listContainer) {
-                                    ItemContainer con = (ItemContainer) co;
+                                    ContainerItem con = (ContainerItem) co;
                                     if (!con.isOpen()) {
                                         msg.append("\nOps l'oggetto : ").append(co.getName())
                                                 .append(" è chiuso.");
@@ -296,11 +293,11 @@ public class PickUpObserver implements GameObserver {
                     c = true;
                     break;
                 } else {
-                    if (item instanceof ItemContainer container) {
+                    if (item instanceof ContainerItem container) {
                         System.out.println(container.getName() + container.containsObject(obj));
 
                         if (description.getInventory().contains(container)) {
-                            ItemContainer cont = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), container.getId());
+                            ContainerItem cont = (ContainerItem) GameUtils.getObjectFromInventory(description.getInventory(), container.getId());
                             if (cont.containsObject(obj)) {
                                 c = true;
                                 break;

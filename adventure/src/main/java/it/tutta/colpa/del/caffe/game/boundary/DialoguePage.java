@@ -49,7 +49,7 @@ public class DialoguePage extends JDialog implements DialogueGUI {
     public DialoguePage(Frame owner, boolean modal) {
         super(owner, modal);
         initComponents();
-        setTitle("Tutta Colpa del Caffè - Dialogo");
+        setTitle("Tutta Colpa del Caffè - Dialogue");
 
         mainContainer.setBackground(BACKGROUND_COLOR);
 

@@ -4,7 +4,6 @@
  */
 package it.tutta.colpa.del.caffe.game.control;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -13,13 +12,8 @@ import java.util.stream.Collectors;
 
 import it.tutta.colpa.del.caffe.game.boundary.DialogueGUI;
 import it.tutta.colpa.del.caffe.game.boundary.DialoguePage;
-import it.tutta.colpa.del.caffe.game.entity.Dialogo;
-import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.NPC;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.Dialogue;
 import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.DialogueException;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
@@ -28,8 +22,6 @@ import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 import it.tutta.colpa.del.caffe.game.utility.RequestType;
-
-import javax.swing.*;
 
 /**
  * Un osservatore che gestisce le interazioni del giocatore con i Personaggi Non Giocanti (NPC).
@@ -134,7 +126,7 @@ public class TalkObserver implements GameObserver {
     private String runDialogue(NPC npc, GameDescription description) {
         StringBuilder msg = new StringBuilder();
         try {
-            Dialogo dialogue = npc.getDialogoCorr();
+            Dialogue dialogue = npc.getDialogoCorr();
             msg.append((new DialogueHandler(npc.getNome(), dialogue, description, true)).getReturnStatement());
             if (!dialogue.isActive()) {
                 npc.consumedDialogue();
@@ -178,7 +170,7 @@ public class TalkObserver implements GameObserver {
     private class DialogueHandler implements DialogueController {
         protected final DialogueGUI GUI;
         protected final String NPCName;
-        private final Dialogo dialogue;
+        private final Dialogue dialogue;
         protected final GameDescription description;
         protected final StringBuilder returnStatement = new StringBuilder();
 
@@ -206,11 +198,11 @@ public class TalkObserver implements GameObserver {
          * Costruisce un gestore di dialoghi.
          *
          * @param NPCName     Il nome dell'NPC con cui si sta parlando.
-         * @param dialogue    L'oggetto Dialogo che contiene la logica della conversazione.
+         * @param dialogue    L'oggetto Dialogue che contiene la logica della conversazione.
          * @param description Lo stato corrente del gioco.
          * @param openGUI     Se {@code true}, la GUI del dialogo viene aperta immediatamente.
          */
-        public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description, boolean openGUI) {
+        public DialogueHandler(String NPCName, Dialogue dialogue, GameDescription description, boolean openGUI) {
             this.dialogue = dialogue;
             this.NPCName = NPCName;
             this.GUI = new DialoguePage(null, true);
@@ -451,7 +443,7 @@ public class TalkObserver implements GameObserver {
          * @param dialogue    Il dialogo introduttivo prima del quiz.
          * @param description Lo stato corrente del gioco.
          */
-        public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
+        public QuizHandler(String NPCName, Dialogue dialogue, GameDescription description) {
             super(NPCName, dialogue, description, false);
             quizQueue = new LinkedBlockingQueue<>();
             startQuizHandler();

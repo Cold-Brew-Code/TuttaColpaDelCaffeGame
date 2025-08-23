@@ -6,13 +6,8 @@ package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.List;
 
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.entity.Item;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -100,7 +95,7 @@ public class UseObserver implements GameObserver {
 
                             } else if (!hasDemagnetizedCard && hasChip) {
                                 objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 6); // tessera smagnetizzata
-                                ItemContainer scatola = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), 11); // controllo se ha la scatola nell'inventario
+                                ContainerItem scatola = (ContainerItem) GameUtils.getObjectFromInventory(description.getInventory(), 11); // controllo se ha la scatola nell'inventario
 
                                 if (scatola != null && scatola.isOpen()) {
                                     msg.append("Non hai l'oggetto ").append(objInv1.getName())

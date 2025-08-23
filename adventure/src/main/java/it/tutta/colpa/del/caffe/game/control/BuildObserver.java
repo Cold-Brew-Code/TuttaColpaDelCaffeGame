@@ -7,9 +7,9 @@ package it.tutta.colpa.del.caffe.game.control;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
+import it.tutta.colpa.del.caffe.game.entity.CombinableItem;
 import it.tutta.colpa.del.caffe.game.entity.Item;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -52,7 +52,7 @@ public class BuildObserver implements GameObserver {
                 return msg.toString();
             }
 
-            if (obj instanceof IteamCombinable item && item.getName().equalsIgnoreCase("tessera magica")) {
+            if (obj instanceof CombinableItem item && item.getName().equalsIgnoreCase("tessera magica")) {
 
                 // Controllo se già possiede la tessera magica
                 if (GameUtils.getObjectFromInventory(description.getInventory(), 14) != null) {
@@ -67,7 +67,7 @@ public class BuildObserver implements GameObserver {
                     try {
                         if (server != null) {
                             Item cartaM = server.requestToServer(RequestType.ITEM, 14);
-                            if (cartaM instanceof IteamCombinable cartaMagica) {
+                            if (cartaM instanceof CombinableItem cartaMagica) {
                                 System.out.println("ho fatto richiesta");
 
                                 GeneralItem obj1 = GameUtils.getObjectFromInventory(description.getInventory(), 12);
@@ -100,7 +100,7 @@ public class BuildObserver implements GameObserver {
                             GeneralItem invObj = GameUtils.getObjectFromInventory(description.getInventory(), 11);
                             if (invObj != null) {
                                 // L'oggetto è nell'inventario
-                                ItemContainer curr1 = (ItemContainer) invObj;
+                                ContainerItem curr1 = (ContainerItem) invObj;
                                 System.out.println(invObj.getName());
                                 if (!curr1.isOpen()) {
                                     msg.append("Non hai tutti gli oggetti a disposizione");

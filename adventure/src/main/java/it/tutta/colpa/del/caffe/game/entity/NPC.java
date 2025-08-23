@@ -28,7 +28,7 @@ public class NPC implements Serializable {
     private final int id;
     private String nome;
     private int dialogoCor;
-    private final List<Dialogo> dialoghi;
+    private final List<Dialogue> dialoghi;
     private Set<String> alias;
 
     /**
@@ -54,7 +54,7 @@ public class NPC implements Serializable {
      * @param dialoghi lista dei dialoghi iniziali
      * @param alias set di alias alternativi
      */
-    public NPC(int id, String nome, List<Dialogo> dialoghi, Set<String> alias) {
+    public NPC(int id, String nome, List<Dialogue> dialoghi, Set<String> alias) {
         this.id = id;
         this.nome = nome;
         this.dialogoCor = 0;
@@ -106,12 +106,12 @@ public class NPC implements Serializable {
     }
 
     /**
-     * Aggiunge un dialogo alla lista dei dialoghi dell'NPC.
+     * Aggiunge un dialogue alla lista dei dialoghi dell'NPC.
      *
-     * @param dialogo dialogo da aggiungere
+     * @param dialogue dialogue da aggiungere
      */
-    public void addDialogo(Dialogo dialogo) {
-        this.dialoghi.add(dialogo);
+    public void addDialogo(Dialogue dialogue) {
+        this.dialoghi.add(dialogue);
     }
 
     /**
@@ -120,7 +120,7 @@ public class NPC implements Serializable {
      * @return dialogo corrente
      * @throws DialogueException se non ci sono dialoghi disponibili
      */
-    public Dialogo getDialogoCorr() throws DialogueException {
+    public Dialogue getDialogoCorr() throws DialogueException {
         if (this.dialoghi.size() - 1 < this.dialogoCor) {
             throw new DialogueException("Non puoi parlare con " + this.nome);
         }
@@ -154,7 +154,7 @@ public class NPC implements Serializable {
      *
      * @return
      */
-    public List<Dialogo> getDialoghi() {
+    public List<Dialogue> getDialoghi() {
         return dialoghi;
     }
 
