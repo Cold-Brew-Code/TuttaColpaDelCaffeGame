@@ -149,7 +149,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      * @throws ServerCommunicationException Se fallisce la comunicazione con il server.
      */
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
-        Set<String> stopwords = Utils.loadFileListInSet(new File("./resources/stopwords"));
+        Set<String> stopwords = Utils.loadFileListInSet(new File("./src/main/resources/stopwords"));
         ServerInterface si = new ServerInterface("localhost", 49152);
         Parser p = new Parser(
                 stopwords,
