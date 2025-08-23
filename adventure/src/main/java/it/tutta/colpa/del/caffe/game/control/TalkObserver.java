@@ -346,12 +346,19 @@ public class TalkObserver implements GameObserver {
             new Thread(() -> {
                 System.err.println("Preload quiz thread started");
                 for (int i = 0; i < MAX_DOMANDE; i++) {
+                    DialogoQuiz quiz = null;
                     try {
-                        DialogoQuiz quiz = QuizNpc.getQuiz();
-                        quizQueue.put(quiz);
+                        quiz = QuizNpc.getQuiz();
                         System.err.println("Loaded quiz " + (i + 1));
-                    } catch (Exception e) {
-                        System.err.println("Errore caricamento quiz: " + e.getMessage());
+                    } catch (ConnectionError e) {
+                        System.err.println("Quiz caricato da memoria.");
+                        quiz = QuizNpc.defaultQuizzes.get(i);
+                    }finally {
+                        try {
+                            quizQueue.put(quiz);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 System.err.println("All quizzes requested");

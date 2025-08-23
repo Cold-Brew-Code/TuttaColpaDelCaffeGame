@@ -20,7 +20,33 @@ import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 
 public class QuizNpc {
-
+    public static final List<DialogoQuiz> defaultQuizzes = List.of(
+            new DialogoQuiz(
+                    "Quale viene considerato il primo computer elettronico della storia?",
+                    List.of("ENIAC", "Colossus", "Zuse Z3", "UNIVAC"),
+                    2
+            ),
+            new DialogoQuiz(
+                    "In che anno è stato inventato il World Wide Web da Tim Berners-Lee?",
+                    List.of("1983", "1989", "1991", "1995"),
+                    1
+            ),
+            new DialogoQuiz(
+                    "Chi è considerato il 'padre dell’informatica teorica'?",
+                    List.of("John von Neumann", "Alan Turing", "Charles Babbage", "Konrad Zuse"),
+                    1
+            ),
+            new DialogoQuiz(
+                    "Quale fu il primo linguaggio di programmazione ad alto livello di ampia diffusione?",
+                    List.of("BASIC", "COBOL", "FORTRAN", "Pascal"),
+                    2
+            ),
+            new DialogoQuiz(
+                    "Quale azienda ha introdotto il primo microprocessore commerciale, l’Intel 4004, nel 1971?",
+                    List.of("IBM", "Intel", "Texas Instruments", "Motorola"),
+                    1
+            )
+    );
     /**
      * Classe che rappresenta una singola domanda ottenuta dall'API
      */
@@ -120,6 +146,8 @@ public class QuizNpc {
                                                         , "en", "it");
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
+        } catch (ConnectionError c){
+            throw c;
         }
 
         Map<String, Boolean> risposteConFlag = new HashMap<>();// dizioanrio con chiave risposta e valore se e corretta o meno
@@ -156,7 +184,6 @@ public class QuizNpc {
                 break;
             }
         }
-
         // Crea e restituisce il DialogoQuiz
         DialogoQuiz d = new DialogoQuiz(domandaTradotta, risposteTradotte, indiceCorretta);
         return d;
