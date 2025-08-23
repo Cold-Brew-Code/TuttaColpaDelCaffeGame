@@ -32,10 +32,31 @@ import it.tutta.colpa.del.caffe.game.utility.RequestType;
 import javax.swing.*;
 
 /**
+ * Un osservatore che gestisce le interazioni del giocatore con i Personaggi Non Giocanti (NPC).
+ * Questa classe è responsabile per l'elaborazione del comando {@link CommandType#TALK_TO},
+ * avviando dialoghi o quiz a seconda dello specifico NPC e dello stato attuale del gioco.
+ *
  * @author giova
  */
 public class TalkObserver implements GameObserver {
 
+    /**
+     * Processa il comando del giocatore per parlare con un NPC.
+     * <p>
+     * Se il comando è {@link CommandType#TALK_TO}, questo metodo identifica l'NPC
+     * bersaglio nella stanza corrente. A seconda dell'ID dell'NPC e dello stato del gioco,
+     * lancia una sequenza di dialogo standard tramite {@link DialogueHandler} o una
+     * sessione di quiz tramite {@link QuizHandler}. Gestisce anche i casi in cui
+     * l'NPC non è presente o il comando è ambiguo.
+     *
+     * @param description  Lo stato corrente del gioco, inclusi inventario del giocatore,
+     * posizione e stato di gioco.
+     * @param parserOutput L'output analizzato del comando del giocatore, contenente il
+     * tipo di comando e l'eventuale NPC specificato.
+     * @return Una stringa di messaggio da mostrare al giocatore, che riassume il risultato
+     * dell'interazione o fornisce indicazioni. Ritorna una stringa vuota se il comando
+     * non è {@code TALK_TO}.
+     */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) {
         if (parserOutput.getCommand().getType() == CommandType.TALK_TO) {
@@ -90,10 +111,26 @@ public class TalkObserver implements GameObserver {
         return "";
     }
 
+    /**
+     * Controlla se un NPC specifico è presente in una data stanza.
+     *
+     * @param npc  L'NPC da cercare.
+     * @param room La stanza in cui cercare.
+     * @return {@code true} se l'NPC è nella stanza, {@code false} altrimenti.
+     */
     private boolean isNPCinCurrentRoom(NPC npc, Room room) {
         return room.getNPCs().contains(npc);
     }
 
+    /**
+     * Avvia e gestisce un dialogo standard con un NPC.
+     * Crea un {@link DialogueHandler} per mostrare la GUI del dialogo e processare
+     * le scelte del giocatore.
+     *
+     * @param npc         L'NPC con cui iniziare il dialogo.
+     * @param description Lo stato corrente del gioco.
+     * @return Una stringa riassuntiva da mostrare al giocatore al termine del dialogo.
+     */
     private String runDialogue(NPC npc, GameDescription description) {
         StringBuilder msg = new StringBuilder();
         try {
@@ -112,6 +149,15 @@ public class TalkObserver implements GameObserver {
     }
 
 
+    /**
+     * Avvia e gestisce una sessione di quiz con un NPC.
+     * Crea un {@link QuizHandler} per gestire la logica del quiz, mostrare le domande
+     * e valutare le risposte.
+     *
+     * @param npc         L'NPC che somministra il quiz.
+     * @param description Lo stato corrente del gioco.
+     * @return Una stringa riassuntiva da mostrare al giocatore al termine del quiz.
+     */
     private String runQuiz(NPC npc, GameDescription description) {
         StringBuilder msg = new StringBuilder();
         try {
@@ -124,6 +170,11 @@ public class TalkObserver implements GameObserver {
         return msg.toString();
     }
 
+    /**
+     * Controller per l'interfaccia di dialogo. Questa classe gestisce il flusso di una
+     * conversazione tra il giocatore e un NPC. Mostra i nodi del dialogo,
+     * processa le scelte del giocatore e scatena eventi di gioco al termine del dialogo.
+     */
     private class DialogueHandler implements DialogueController {
         protected final DialogueGUI GUI;
         protected final String NPCName;
@@ -131,6 +182,7 @@ public class TalkObserver implements GameObserver {
         protected final GameDescription description;
         protected final StringBuilder returnStatement = new StringBuilder();
 
+        // Costanti per specifici eventi e condizioni di dialogo.
         private final static String TO_DISABLE_ANSWER_DIALOGUE_3_STATEMENT = "Hmm... forse potrebbe esistere un bagno segreto. Ma non diffondo segreti mistici in maniera gratuita. Hai per caso un caffè per un povero portinaio stanco?";
         private final static String DIALOGUE_3_ANSWER_TO_DISABLE = "Sì";
         private final static String TO_DISABLE_ANSWER_DIALOGUE_10_STATEMENT_1 = "Potrei saperlo. Ma le verità profonde vanno pulite come i pavimenti: con candeggina. Tu ce l'hai?";
@@ -150,6 +202,14 @@ public class TalkObserver implements GameObserver {
 
         private final static String NODE_SHOW_TOILETPAPER = "Vai. Corri. E ricorda: Il vero eroe non è chi trattiene…… ma chi arriva in tempo!";
 
+        /**
+         * Costruisce un gestore di dialoghi.
+         *
+         * @param NPCName     Il nome dell'NPC con cui si sta parlando.
+         * @param dialogue    L'oggetto Dialogo che contiene la logica della conversazione.
+         * @param description Lo stato corrente del gioco.
+         * @param openGUI     Se {@code true}, la GUI del dialogo viene aperta immediatamente.
+         */
         public DialogueHandler(String NPCName, Dialogo dialogue, GameDescription description, boolean openGUI) {
             this.dialogue = dialogue;
             this.NPCName = NPCName;
@@ -166,6 +226,10 @@ public class TalkObserver implements GameObserver {
         }
 
 
+        /**
+         * Stampa nella GUI le battute precedenti del dialogo, per ricostruire la
+         * cronologia della conversazione se questa viene ripresa.
+         */
         void printPreviewsStatements() {
             List<String> dialogue = this.dialogue.getPreviewsStatement();
             for (int i = 0; i < dialogue.size(); i++) {
@@ -187,6 +251,14 @@ public class TalkObserver implements GameObserver {
             this.GUI.close();
         }
 
+        /**
+         * Processa la risposta scelta dal giocatore.
+         * Aggiorna lo stato del dialogo in base alla risposta, gestisce eventi specifici
+         * come la rimozione di oggetti dall'inventario, e mostra la parte successiva del dialogo.
+         * Chiama {@link #dialogueEndedEvent(int, String)} quando la conversazione si conclude.
+         *
+         * @param answer La stringa di testo della risposta selezionata dal giocatore.
+         */
         @Override
         public void answerChosen(final String answer) {
             try {
@@ -206,12 +278,24 @@ public class TalkObserver implements GameObserver {
             }
         }
 
+        /**
+         * Mostra la battuta corrente dell'NPC e le possibili risposte del giocatore nella GUI.
+         */
         public void showCurrentDialogue() {
             GUI.addNPCStatement(NPCName, dialogue.getCurrentNode());
             List<DialogueGUI.PossibleAnswer> answers = buildConditionalAnswers();
             GUI.addUserPossibleAnswers(answers);
         }
 
+        /**
+         * Costruisce la lista delle possibili risposte per il giocatore.
+         * Questa logica include la disabilitazione condizionale di alcune opzioni
+         * in base agli oggetti presenti nell'inventario del giocatore (es. non si può
+         * offrire un caffè se non lo si possiede).
+         *
+         * @return Una lista di oggetti {@link DialogueGUI.PossibleAnswer} che la GUI
+         * utilizzerà per mostrare le opzioni al giocatore.
+         */
         private List<DialogueGUI.PossibleAnswer> buildConditionalAnswers() {
             String textToDisable = null;
             int requiredItemId = -1;
@@ -252,6 +336,15 @@ public class TalkObserver implements GameObserver {
                     .collect(Collectors.toList());
         }
 
+        /**
+         * Gestisce gli eventi di gioco che si attivano alla fine di un dialogo.
+         * Funziona come un dispatcher: in base all'ID del dialogo e all'ultima battuta,
+         * possono essere scatenate diverse azioni, come rendere visibile un oggetto,
+         * aggiornare la descrizione di una stanza o sbloccare una porta.
+         *
+         * @param dialogueID            L'ID del dialogo appena concluso.
+         * @param lastProducedStatement L'ultima battuta pronunciata dall'NPC.
+         */
         private void dialogueEndedEvent(int dialogueID, String lastProducedStatement) {
             try {
                 switch (dialogueID) {
@@ -303,6 +396,13 @@ public class TalkObserver implements GameObserver {
             }
         }
 
+        /**
+         * Aggiorna la descrizione "look" di una stanza recuperando il nuovo testo da un server.
+         *
+         * @param eventID               L'ID dell'evento che determina quale descrizione caricare.
+         * @param currentRoom           La stanza corrente la cui descrizione deve essere aggiornata.
+         * @param lastProducedStatement L'ultima battuta dell'NPC, usata per condizioni specifiche.
+         */
         private void lookEvent(int eventID, Room currentRoom, String lastProducedStatement) {
             try {
                 ServerInterface serverInterface = new ServerInterface("localhost", 49152);
@@ -319,11 +419,22 @@ public class TalkObserver implements GameObserver {
             }
         }
 
+        /**
+         * Restituisce la stringa di messaggio da mostrare al giocatore nella console
+         * principale del gioco dopo la chiusura della finestra di dialogo.
+         *
+         * @return La stringa di ritorno.
+         */
         public String getReturnStatement() {
             return returnStatement.toString();
         }
     }
 
+    /**
+     * Un {@code DialogueHandler} specializzato, progettato per gestire una sessione di quiz con un NPC.
+     * Estende {@code DialogueHandler} per gestire la parte introduttiva della conversazione
+     * prima che inizi il quiz vero e proprio.
+     */
     public class QuizHandler extends DialogueHandler {
 
         private final BlockingQueue<DialogoQuiz> quizQueue;
@@ -333,6 +444,13 @@ public class TalkObserver implements GameObserver {
         private int attemptedQuiz = 0;
         private static final int MAX_DOMANDE = 5;
 
+        /**
+         * Costruisce un gestore di quiz.
+         *
+         * @param NPCName     Il nome dell'NPC che somministra il quiz.
+         * @param dialogue    Il dialogo introduttivo prima del quiz.
+         * @param description Lo stato corrente del gioco.
+         */
         public QuizHandler(String NPCName, Dialogo dialogue, GameDescription description) {
             super(NPCName, dialogue, description, false);
             quizQueue = new LinkedBlockingQueue<>();
@@ -342,6 +460,11 @@ public class TalkObserver implements GameObserver {
             openGUI();
         }
 
+        /**
+         * Avvia un thread in background per pre-caricare le domande del quiz da una fonte remota.
+         * Questo approccio evita ritardi nell'interfaccia utente durante il quiz.
+         * Gestisce anche un meccanismo di fallback utilizzando quiz predefiniti in caso di errore di connessione.
+         */
         private void startQuizHandler() {
             new Thread(() -> {
                 System.err.println("Preload quiz thread started");
@@ -353,7 +476,7 @@ public class TalkObserver implements GameObserver {
                     } catch (ConnectionError e) {
                         System.err.println("Quiz caricato da memoria.");
                         quiz = QuizNpc.defaultQuizzes.get(i);
-                    }finally {
+                    } finally {
                         try {
                             quizQueue.put(quiz);
                         } catch (InterruptedException e) {
@@ -365,6 +488,11 @@ public class TalkObserver implements GameObserver {
             }).start();
         }
 
+        /**
+         * Esegue la domanda successiva del quiz. Preleva una domanda dalla coda, la visualizza
+         * e gestisce l'attesa se la domanda successiva non è ancora stata caricata.
+         * Chiama {@link #endQuiz()} quando tutte le domande sono state fatte.
+         */
         private void runNextQuiz() {
             if (attemptedQuiz < MAX_DOMANDE) {
                 super.GUI.addUserPossibleAnswers(Collections.emptyList());
@@ -390,6 +518,11 @@ public class TalkObserver implements GameObserver {
             }
         }
 
+        /**
+         * Mostra una specifica domanda del quiz e le sue possibili risposte nella GUI.
+         *
+         * @param quiz L'oggetto {@link DialogoQuiz} contenente la domanda e le risposte.
+         */
         private void displayQuiz(DialogoQuiz quiz) {
             currentQuiz = quiz;
             System.out.println("[Debug]Domanda: " + currentQuiz.getDomanda());
@@ -404,12 +537,20 @@ public class TalkObserver implements GameObserver {
             );
         }
 
+        /**
+         * Avvia la fase di quiz dopo la conclusione del dialogo introduttivo.
+         */
         private void startQuiz() {
             this.isQuizRunning = true;
             super.GUI.addNPCStatement(super.NPCName, "Iniziamo con la prima domanda...");
             runNextQuiz();
         }
 
+        /**
+         * Conclude la sessione di quiz. Calcola il punteggio finale, determina se il giocatore
+         * è stato promosso o bocciato, aggiorna lo stato del gioco di conseguenza e mostra
+         * il risultato al giocatore sia nella GUI che nel messaggio di ritorno per la console.
+         */
         private void endQuiz() {
             int score30 = (quizScore * 30) / MAX_DOMANDE;
             StringBuilder sb = new StringBuilder("L'esame è terminato, il punteggio che ha ottenuto è di " + score30 + "/30esimi pertanto lei è... ");
@@ -427,6 +568,18 @@ public class TalkObserver implements GameObserver {
             this.GUI.relasePage();
         }
 
+        /**
+         * Sovrascrive il metodo del genitore per gestire una logica a due modalità.
+         * <p>
+         * Se il quiz non è ancora iniziato ({@code isQuizRunning} è false), si comporta
+         * come il {@code DialogueHandler} genitore per navigare nel dialogo pre-quiz.
+         * <p>
+         * Una volta che il quiz è attivo, valuta la risposta del giocatore, aggiorna
+         * il punteggio, mostra un feedback e chiama {@link #runNextQuiz()} per passare
+         * alla domanda successiva.
+         *
+         * @param answer La risposta selezionata dal giocatore.
+         */
         @Override
         public void answerChosen(final String answer) {
             if (isQuizRunning) {
