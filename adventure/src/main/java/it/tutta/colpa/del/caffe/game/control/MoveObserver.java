@@ -5,6 +5,7 @@ import java.util.Set;
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.utility.*;
 
@@ -42,6 +43,7 @@ public class MoveObserver implements GameObserver {
                         }
 
                     } else {
+                        Room tmpCurrentRoom = description.getCurrentRoom();
                         switch (commandType) {
                             case NORD -> {
                                 if (description.getGameMap().getStanzaArrivo(Direzione.NORD).isDeniedEntry()) {
@@ -95,6 +97,11 @@ public class MoveObserver implements GameObserver {
                             }
                         } else {
                             msg.append("\n").append(description.getCurrentRoom().getDescription());
+                        }
+                        if (tmpCurrentRoom.getId()!=21 && description.getCurrentRoom().getId()==21){
+                            description.getTimer().accelerate(2);
+                        } else if (tmpCurrentRoom.getId()==21 && description.getCurrentRoom().getId()!=21){
+                            description.getTimer().accelerate(1);
                         }
                     }
                     if (hasUsedRestroom(description)) {
