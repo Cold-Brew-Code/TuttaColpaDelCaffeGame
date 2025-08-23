@@ -336,22 +336,24 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         skipButton.addActionListener(this::skipButtonActionPerformed);
 
         ImageLabel.setOpaque(true);
-        InvButton.setIcon(
-                new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
-                        .getImage()
-                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
-        quitButton.setIcon(
-                new ImageIcon((new ImageIcon(getClass().getResource("/images/exit_icon.png")))
-                        .getImage()
-                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
-        saveButton.setIcon(
-                new ImageIcon((new ImageIcon(getClass().getResource("/images/save_icon.png")))
-                        .getImage()
-                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
-        sendButton.setIcon(
-                new ImageIcon((new ImageIcon(getClass().getResource("/images/send_icon.png")))
-                        .getImage()
-                        .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        try {
+            InvButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+            quitButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/exit_icon.png")))
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+            saveButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/save_icon.png")))
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+            sendButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/send_icon.png")))
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+        } catch (NullPointerException ignored) {}
         URL skipIconUrl = getClass().getResource("/images/skip_icon.png");
         if (skipIconUrl != null) {
             skipButton.setIcon(
