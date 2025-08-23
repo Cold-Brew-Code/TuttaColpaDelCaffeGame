@@ -8,6 +8,7 @@ import javax.ws.rs.core.Response;
 
 import com.google.gson.Gson;
 
+import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 
 /**
@@ -44,7 +45,7 @@ public class TraduttoreApi {
      * @param aLingua codice lingua destinazione
      * @return testo tradotto
      */
-    public static String traduci(String testo, String daLingua, String aLingua) {
+    public static String traduci(String testo, String daLingua, String aLingua) throws ConnectionError {
         Client client = ClientBuilder.newClient();
         WebTarget target = client
                 .target("https://api.mymemory.translated.net/get")
@@ -55,7 +56,7 @@ public class TraduttoreApi {
 
         // controllo per la risposta  http 
         if (resp.getStatus() != 200) {
-            return "errore risposta API: " + resp.getStatus();
+            throw new ConnectionError("Errore di traduzione. API returned code: "+resp.getStatus());
         }
 
         Gson g = new Gson();

@@ -2,12 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.control;
 
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.entity.ItemRead;
+import it.tutta.colpa.del.caffe.game.entity.ReadableItem;
 import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.ItemException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
@@ -17,7 +17,7 @@ import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
  * Observer che gestisce il comando {@code READ} nel gioco.
  * <p>
  * Questa classe implementa la logica necessaria per consentire al giocatore di
- * leggere un oggetto di tipo {@link ItemRead}, se presente nell'inventario o
+ * leggere un oggetto di tipo {@link ReadableItem}, se presente nell'inventario o
  * nella stanza corretta.
  * <br>
  * Gestisce i seguenti casi:
@@ -63,7 +63,7 @@ public class ReadObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato gli oggetto da combinare. (scrivi 'combina nome oggetto nome oggetto')");
                 return msg.toString();
-            } else if (obj instanceof ItemRead pippo) {
+            } else if (obj instanceof ReadableItem pippo) {
                 Room currRoom = description.getCurrentRoom();
                 Inventory inventory = description.getInventory();
                 boolean objInRoom = false;

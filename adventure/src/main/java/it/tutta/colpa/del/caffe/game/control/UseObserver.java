@@ -2,18 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.List;
 
-import it.tutta.colpa.del.caffe.game.control.ServerInterface;
-import it.tutta.colpa.del.caffe.game.entity.GameDescription;
-import it.tutta.colpa.del.caffe.game.entity.GameObserver;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.Inventory;
-import it.tutta.colpa.del.caffe.game.entity.Item;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.CommandType;
 import it.tutta.colpa.del.caffe.game.utility.GameUtils;
@@ -59,13 +53,13 @@ public class UseObserver implements GameObserver {
      * Alcuni oggetti possono interagire con il server per recuperare nuovi
      * oggetti (es. acquisto del caffè).
      *
-     * @param description stato corrente del gioco (stanze, inventario, mappa,
-     * ecc.)
+     * @param description  stato corrente del gioco (stanze, inventario, mappa,
+     *                     ecc.)
      * @param parserOutput output del parser, contenente il comando e l’oggetto
-     * scelto dal giocatore
+     *                     scelto dal giocatore
      * @return messaggio testuale che descrive l’esito dell’uso dell’oggetto
      * @throws ServerCommunicationException se fallisce la comunicazione col
-     * server durante l'uso di un oggetto
+     *                                      server durante l'uso di un oggetto
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
@@ -83,6 +77,8 @@ public class UseObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da usare. (scrivi 'usa nome oggetto')");
                 return msg.toString();
+            } else if (GameUtils.getObjectFromInventory(description.getInventory(), 14)==null) {
+                msg.append("Non hai questo oggetto nell'inventario...");
             } else {
                 switch (parserOutput.getObject().getId()) {
                     case 14 -> {
@@ -101,7 +97,7 @@ public class UseObserver implements GameObserver {
 
                             } else if (!hasDemagnetizedCard && hasChip) {
                                 objInv1 = GameUtils.getObjectFromInventory(description.getInventory(), 6); // tessera smagnetizzata
-                                ItemContainer scatola = (ItemContainer) GameUtils.getObjectFromInventory(description.getInventory(), 11); // controllo se ha la scatola nell'inventario
+                                ContainerItem scatola = (ContainerItem) GameUtils.getObjectFromInventory(description.getInventory(), 11); // controllo se ha la scatola nell'inventario
 
                                 if (scatola != null && scatola.isOpen()) {
                                     msg.append("Non hai l'oggetto ").append(objInv1.getName())

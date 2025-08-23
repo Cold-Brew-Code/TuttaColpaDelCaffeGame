@@ -1,5 +1,7 @@
 package it.tutta.colpa.del.caffe.game.exception;
 
+
+
 /**
  * Eccezione personalizzata che viene lanciata quando si verifica un errore di
  * connessione, ad esempio durante richieste HTTP a servizi esterni.
@@ -22,4 +24,12 @@ public class ConnectionError extends Exception {
         super(msg, cause);
     }
 
+    /**
+     * Costruisce una nuova ConnectionError con un messaggio descrittivo
+     *
+     * @param msg il messaggio che descrive l'errore di connessione
+     */
+    public ConnectionError(String msg) {
+        super(msg);
+    }
 }

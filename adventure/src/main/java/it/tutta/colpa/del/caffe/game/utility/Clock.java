@@ -1,4 +1,4 @@
-package it.tutta.colpa.del.caffe.adventure.other;
+package it.tutta.colpa.del.caffe.game.utility;
 
 import java.io.Serializable;
 import java.util.concurrent.Executors;
@@ -15,6 +15,12 @@ public class Clock implements Serializable {
     private transient ScheduledExecutorService scheduler;
     private final TimeObserver observer;
     private final GameGUI gui;
+    private double speedFactor = 1.0;
+
+    public void accelerate(double factor) {
+        this.speedFactor = factor;
+    }
+
 
     /**
      * Costruttore: inizializza il timer con il tempo iniziale desiderato.
@@ -36,19 +42,19 @@ public class Clock implements Serializable {
      * scheduleAtFixedRate prende in input l'operazione che deve essere ripetuta , 
      * il tempo di attesa, il tempo di esecuzione tra k e k+1 e l'unità di tempo (in questo caso i secondi)
      */
-
     public void start() {
         if (!isRunning && remainingTimeInSeconds > 0) {
             isRunning = true;
             scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(() -> {
                 if (remainingTimeInSeconds > 0) {
-                    remainingTimeInSeconds--;
-                    observer.onTimeUpdate(getTimeFormatted()); // notifico l'engine per aggiornare il tempo
+                    int decrement = (int)Math.round(1 * speedFactor);
+                    remainingTimeInSeconds -= decrement;
+                    observer.onTimeUpdate(getTimeFormatted());
                     gui.increaseProgressBar();
                 } else {
                     stop();
-                    observer.onTimeExpired();  // Notifica Engine che ha finito
+                    observer.onTimeExpired();
                 }
             }, 1, 1, TimeUnit.SECONDS);
         }

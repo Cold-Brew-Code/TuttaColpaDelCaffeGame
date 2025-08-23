@@ -1,14 +1,13 @@
-package it.tutta.colpa.del.caffe.adventure.control;
+package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.Set;
 
 import it.tutta.colpa.del.caffe.game.entity.Command;
 import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
-import it.tutta.colpa.del.caffe.game.utility.CommandType;
-import it.tutta.colpa.del.caffe.game.utility.Direzione;
-import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
+import it.tutta.colpa.del.caffe.game.utility.*;
 
 /**
  * Osservatore che gestisce i comandi di movimento del giocatore.
@@ -91,6 +90,7 @@ public class MoveObserver implements GameObserver {
                         }
 
                     } else {
+                        Room tmpCurrentRoom = description.getCurrentRoom();
                         switch (commandType) {
                             case NORD -> {
                                 if (description.getGameMap().getStanzaArrivo(Direzione.NORD).isDeniedEntry()) {
@@ -146,8 +146,16 @@ public class MoveObserver implements GameObserver {
                             }
                         } else {
                             msg.append("\n").append(description.getCurrentRoom().getDescription());
-
                         }
+                        if (tmpCurrentRoom.getId()!=21 && description.getCurrentRoom().getId()==21){
+                            description.getTimer().accelerate(2);
+                        } else if (tmpCurrentRoom.getId()==21 && description.getCurrentRoom().getId()!=21){
+                            description.getTimer().accelerate(1);
+                        }
+                    }
+                    if (hasUsedRestroom(description)) {
+                        description.setStatus(GameStatus.BAGNO_USATO);
+                        msg.append("\n\nHai usato finalmente il bagno, liberando i tuoi impellenti bisogni.\nAdesso non ti resta che sostenere il tuo esame.\nCorri!!!!");
                     }
                 }
             } catch (GameMapException ex) {
@@ -159,4 +167,8 @@ public class MoveObserver implements GameObserver {
         return msg.toString();
     }
 
+    private boolean hasUsedRestroom(GameDescription description) {
+        return ((description.getCurrentRoom().getId() == 11 && (GameUtils.getObjectFromInventory(description.getInventory(), 13)) != null)
+                || (description.getCurrentRoom().getId() == 28)) && !(description.getStatus() == GameStatus.BAGNO_USATO);
+    }
 }

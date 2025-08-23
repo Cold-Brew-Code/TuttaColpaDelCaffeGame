@@ -1,10 +1,8 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
-import com.sun.tools.javac.Main;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
-import it.tutta.colpa.del.caffe.start.control.Engine;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
 import javax.swing.*;
@@ -43,7 +41,7 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
 
         // inizializzazione audio basata sullo stato memorizzato
         AudioManager audioManager = AudioManager.getInstance();
-        if (this.gameStatus == GameStatus.VINTA) {
+        if (this.gameStatus == GameStatus.PROMOSSO) {
             audioManager.loadAudio("victory", "victory.wav");
             audioManager.play("victory", false);
         } else {
@@ -116,15 +114,16 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
     private String getImagePath(GameStatus s) {
         String victory_type;
         victory_type = switch (s) {
-            case VINTA -> "partita_vinta";
-            case BAGNO_USATO -> "bocciato";
-            default -> "partita_persa";
+            case PROMOSSO -> "partita_vinta";
+            case BAGNO_USATO_TEMPO_ESAURITO, ESAME_DA_FARE, BOCCIATO-> "bocciato";
+            case TEMPO_ESAURITO -> "partita_persa";
+            default -> "partita_persa"; //abbandonata
         };
         return "/images/" + victory_type + ".png";
     }
 
     private String currentlyPlayingTrack() {
-        return (this.gameStatus == GameStatus.VINTA) ? "victory" : "defeat";
+        return (this.gameStatus == GameStatus.PROMOSSO) ? "victory" : "defeat";
     }
 
     @Override

@@ -18,7 +18,7 @@ import it.tutta.colpa.del.caffe.game.exception.InventoryException;
  * classe degli oggetti contenitori
  * @author giovanni
  */
-public class ItemContainer extends GeneralItem implements Serializable {
+public class ContainerItem extends GeneralItem implements Serializable {
 
     private Map<GeneralItem, Integer> containedItems ;
     private boolean open = false;
@@ -33,7 +33,7 @@ public class ItemContainer extends GeneralItem implements Serializable {
      * @param containedItems
      * @param open
      */
-    public ItemContainer(int id, String name, String description, Set<String> alias, String immagine, Map<GeneralItem, Integer> containedItems, boolean open) {
+    public ContainerItem(int id, String name, String description, Set<String> alias, String immagine, Map<GeneralItem, Integer> containedItems, boolean open) {
         super(id, name, description, alias, immagine);
         this.containedItems = containedItems;
         this.open = open;

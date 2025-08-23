@@ -34,7 +34,7 @@ import it.tutta.colpa.del.caffe.game.utility.StringArcoGrafo;
  *
  * @author giova
  */
-public class Dialogo implements Serializable {
+public class Dialogue implements Serializable {
 
     /**
      * L'identificativo univoco del dialogo.
@@ -68,7 +68,7 @@ public class Dialogo implements Serializable {
      *
      * @param id L'identificativo univoco del dialogo.
      */
-    public Dialogo(int id) {
+    public Dialogue(int id) {
         this.id = id;
         dialogo = new DefaultDirectedGraph<>(StringArcoGrafo.class);
     }

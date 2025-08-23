@@ -5,6 +5,7 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
+import it.tutta.colpa.del.caffe.game.utility.Clock;
 import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 
 import java.io.Serializable;
@@ -21,6 +22,7 @@ public class GameDescription implements Serializable {
     private final Inventory inventory;
     private GameStatus status;
     private final List<String> messages;
+    private Clock timer;
 
     public GameDescription(GameMap gameMap, List<Command> commands) {
         this.gameMap = gameMap;
@@ -64,5 +66,12 @@ public class GameDescription implements Serializable {
         return this.gameMap.getCurrentRoom();
     }
 
+    public Clock getTimer() {
+        return timer;
+    }
+
+    public void setTimer(Clock timer) {
+        this.timer = timer;
+    }
     // </editor-fold>>
 }

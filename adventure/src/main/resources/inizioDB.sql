@@ -219,6 +219,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (4, 'Dipartimento di Informatica', 'Un atrio ampio ma freddo, pavimento in marmo consumato e neon tremolanti. Dietro un vetro spesso, il portinaio osserva chi entra e chi esce, sfogliando distrattamente un giornale. Alla sua sinistra, un vecchio ascensore con porte rumorose e delle scale che portano verso i piani superiori.', ' Ti ritrovi di nuovo al piano terra. Il portinaio, mezzo addormentato, armeggia con un mazzo di chiavi che sembra non finire mai, mentre si trascina verso l''ultima pagina del giornale',true, true, 'corridoio_piano_terra.png'),
 --piano terra
     (5, 'Aula studio piano terra', 'Un''aula rettangolare con tavoli lunghi e sedie rovinate. Libri dimenticati, fogli sparsi e zaini abbandonati. Ci sono diversi cartelloni sulla parete.', 'Ci sono tanti cartelloni attaccati al muro e ci sono anche scritte strane su alcuni tavoli: ''Punta in alto per la felicità'' , ''7FN'' ecc',true, true,'aula_studio_T.png'),-- la mappa la facciamo trovare solo se passa l'indovinello
+    (29, 'Aula d''esame', 'Qui si tiene l''esame più temuto dell''anno. Una grande aula con sette righe per lato di banchi, ognuna da sei posti. Più del 50% dei posti sono occupati da alunni pronti a sostenere il loro esame orale. L''aria è densa di tensione e speranza: l''arrivo in tempo dipende da ogni scelta fatta lungo il percorso.','',true, true, 'aula_esame_pianoT.png'),
 -- primo piano
     (6, 'Primo piano', 'Le scale conducono qui. \nAppena arrivi, il corridoio si apre su un bagno, che però scopri subito essere occupato dallo Studente Modello, intento a porre enigmi filosofico-informatici. ', 'A nord e ovest ci sono altre due porte, chissà cosa nascondono.',true, true,'corridoio_primo_piano.png'),
     (7, 'Biblioteca','Una stanza lunga, con scaffali traboccanti di manuali di informatica, riviste accademiche e vecchie tesi impolverate. La luce filtra da grandi finestre, e il silenzio è interrotto solo dal fruscio di pagine e dal ticchettio di una tastiera. Un ottimo posto per scoprire curiosità… o nascondere indizi.', 'Al secondo sguardo noti un libro che sta per cadere, il quale si intitola Calcolabilità e Complessità. Chissà che segreti nasconde....\n',true, true, 'biblioteca_primo_piano.png'),-- se prende il libro può usarlo per risolvere l'indovinello di p=np
@@ -248,8 +249,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (26, 'Ufficio del direttore', 'Vieni accolto da un ambiente elegante e curato nei minimi dettagli. Le pareti sono rivestite da pannelli di legno scuro, su cui sono appesi diplomi, riconoscimenti e fotografie di momenti importanti del dipartimento. Al centro domina una grande scrivania in mogano sulla destra una libreria di legno raffinato con fascicoli e libri.', 'Noti qualcosa di strano nella libreria. Forse stai solo svarionando, l''urgenza al bagno ti sta dando alla testa.',true, true,'ufficio_direttore_settimo_piano.png'),
     (27, 'Sala Consiglio','Ti trovi nella sala consiglio: al centro campeggia un grande tavolo rotondo di quercia massiccia, circondato dalle migliori sedie ergonomiche sul mercato, eleganti e rivestite in pelle scura. Sul tavolo sono poggiate numerose cartelle, alcune lasciate aperte con fogli sparsi che raccontano frammenti di discussioni accese. Alle pareti spiccano diversi quadri: alcuni ritraggono professori intenti a festeggiare eventi importanti del dipartimento, altri immortalano celebri vincitori del premio Turing, simboli di eccellenza e prestigio. Di fronte, una grande LIM cattura subito lo sguardo: sullo schermo troneggia l''immagine surreale di un WATER DIAMANTATO, enigmatico e quasi provocatorio, come se fosse un messaggio in codice nascosto tra le formalità accademiche.' , 'Se osservi con attenzione tra i tanti quadri, uno di questi raffigura una libreria con sopra un rotolo di carta igienica. La libreria non è un semplice mobile: è in realtà una porta segreta, leggermente socchiusa, dalla quale filtra una luce accecante.',false, true,'sala_consiglio_settimo_piano.png'),--chiusa
 -- stanza segreta settimo piano
-    (28, 'Il bagno Diamantato','Sei finalmente arrivato a un bagno e non un bagno qualsiasi... IL BAGNO. Water diamantato con accanto un rotolo di carta igienica d''oro zecchino il quale brilla in tutto il suo sfarzo. E poi, l''oggetto più raro e prezioso di tutti: una saponetta appoggiata sul lavandino. L''aria profuma di fiori esotici, e persino il getto del rubinetto sembra scorrere più elegante qui dentro. È il trionfo, la meta, la fine del viaggio: il bagno segreto del settimo piano. ' , '',false, false,'bagno_segreto_settimo_piano.png'),
-    (29, 'Aula d''esame', 'Qui si tiene l''esame più temuto dell''anno. Una grande aula con sette righe per lato di banchi, ognuna da sei posti. Più del 50% dei posti sono occupati da alunni pronti a sostenere il loro esame orale. L''aria è densa di tensione e speranza: l''arrivo in tempo dipende da ogni scelta fatta lungo il percorso.','',true, true, 'aula_esame_pianoT.png');
+    (28, 'Il bagno Diamantato','Sei finalmente arrivato a un bagno e non un bagno qualsiasi... IL BAGNO. Water diamantato con accanto un rotolo di carta igienica d''oro zecchino il quale brilla in tutto il suo sfarzo. E poi, l''oggetto più raro e prezioso di tutti: una saponetta appoggiata sul lavandino. L''aria profuma di fiori esotici, e persino il getto del rubinetto sembra scorrere più elegante qui dentro. È il trionfo, la meta, la fine del viaggio: il bagno segreto del settimo piano. ' , '',false, false,'bagno_segreto_settimo_piano.png');
 
 MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
 -- bar
@@ -373,14 +373,27 @@ MERGE INTO DialoguesStatements(dialogue_id, id, dialog_statement) KEY(id) VALUES
     (12,38,'DEVO FARE QUELLA CALL, ALTRIMENTI ESPLODO...'),
     (12,39,'Ah… scusami! Non ce l''ho con te… è che ho un dolor di pancia pazzesco… Sarà stato quel maledetto caffè del bar… Fra poco devo pure laurearmi… Non è che, per caso, sai dove possa trovare un posto tranquillo per fare una call in America?'),
     (12,40,'Capisco… va bene… speriamo di trovarlo in tempo. Anche se, a dirla tutta… credo che per me sia già troppo tardi…''Buona fortuna, collega… che il destino, e il rotolo di carta igienica, siano con te!'),
-    (13,46,'Chi è il prossimo??'),
-    (13,47,'Buongiorno anche a lei, possiamo iniziare.'),
-    (14,48,'Ehi, che ci fa lei qui? Stiamo sostenendo un esame!'),
-    (14,49,'Mi dispiace, ma lei è in estremo ritardo. Ci vediamo al PROSSIMO APPELLO.');
+    (13,47,'Buongiorno! Nome e matricola, per favore.'),
+    (13,48,'Marco Rossi… molto bene. Mi sembra che lei sia un po’… affaticato oggi, tutto ok? \nSembri un po’ trafelato… Hai corso da lontano o è solo l’emozione dell’esame?'),
+    (13,49,'Mini-marathon, dici? Spero che lei non abbia corso troppo vicino ai… corridoi sbagliati! \nSembri un po’ trafelato… Hai corso da lontano o è solo l’emozione dell’esame?'),
+    (13,50,'Memorabile, eh? Mi auguro di non dover inserire una domanda di geografia dei bagni nel tuo orale! \nSembri un po’ trafelato… Hai corso da lontano o è solo l’emozione dell’esame?'),
+    (13,51,'Ah, capisco… niente come l’adrenalina per rendere l’orale più… memorabile. \nBene, allora iniziamo. Prima doma- '),
+    (13,52,'Emergenza logistica, eh? Ottimo allenamento per la gestione dello stress… e delle vie di fuga! \nBene, allora iniziamo. Prima doma- '),
+    (13,53,'Tour educativo, dice? Bene, almeno ora può rispondere senza altre "interruzioni" improvvise. \nBene, allora iniziamo. Prima doma- '),
+    (13,54,'Perfetto, vedo che ha trovato l’equilibrio perfetto tra mente e… corpo'),
+    (13,55,'Bene, bene… speriamo che le tue risposte non richiedano pause d’emergenza!'),
+    (13,56,'Ah, storia… sì, storia dei bagni o della materia? In ogni caso, procediamo!');
 
 MERGE INTO DialoguesPossibleAnswers(answer, first_statement, related_answer_statement, dialogue_id) KEY(answer, first_statement, related_answer_statement) VALUES
-    ('Io. Buongiorno Prof.',46,47,13),
-    ('Mi scusi del ritardo prof, ho avuto degli imprevisti naturali. Mi faccia sostenere l''esame, la prego.',48,49,14),
+    ('Buongiorno… Marco Rossi, matricola 12345.',47,48,13),
+    ('Marco Rossi, 12345… e sì, ho corso un mini-marathon prima di arrivare qui.',47,49,13),
+    ('Marco Rossi, 12345… e devo dire che la mia visita ai bagni del campus è stata memorabile.',47,50,13),
+    ('Diciamo entrambe le cose, professore… il cuore batteva per l’esame e… beh, per altri motivi.',48,51,13),
+    ('Ho affrontato una piccola… emergenza logistica, ma ora sono pronto.',49,52,13),
+    ('Ho fatto un tour educativo dei bagni del campus… ma non temere, tutto sotto controllo adesso!',50,53,13),
+    ('Certo, professore… finalmente posso concentrarmi senza distrazioni.',51,54,13),
+    ('Sì, e ora prometto di rispondere senza pensare ad altri "urgenti impegni".',52,55,13),
+    ('Assolutamente… il corpo è libero, la mente è pronta, il resto è storia.',53,56,13),
     ('Ehi, scusa se ti disturbo… conosci un bagno qui vicino? È… una questione di vita o di imbarazzo!',1,2,1),
     ('…No, intendo un bagno vero. Qui. Adesso. Nel campus!',2,3,1),
     ('Quindi...non sai davvero dove sia?',3,4,1),

@@ -14,16 +14,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import it.tutta.colpa.del.caffe.game.entity.Command;
-import it.tutta.colpa.del.caffe.game.entity.Dialogo;
-import it.tutta.colpa.del.caffe.game.entity.GameMap;
-import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.IteamCombinable;
-import it.tutta.colpa.del.caffe.game.entity.Item;
-import it.tutta.colpa.del.caffe.game.entity.ItemContainer;
-import it.tutta.colpa.del.caffe.game.entity.ItemRead;
-import it.tutta.colpa.del.caffe.game.entity.NPC;
-import it.tutta.colpa.del.caffe.game.entity.Room;
+import it.tutta.colpa.del.caffe.game.entity.*;
+import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 /**
@@ -271,11 +263,11 @@ public class DataBaseManager {
      * Recupera i dialoghi associati a un NPC.
      *
      * @param npcID l'ID dell'NPC.
-     * @return una lista di oggetti Dialogo.
+     * @return una lista di oggetti Dialogue.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private List<Dialogo> askForDialogues(int npcID) throws SQLException {
-        List<Dialogo> dialogues = new ArrayList<>();
+    private List<Dialogue> askForDialogues(int npcID) throws SQLException {
+        List<Dialogue> dialogues = new ArrayList<>();
         PreparedStatement pstm = connection.prepareStatement(
                 "SELECT d.id as d_id, ds.id AS ds_id, ds.dialogue_id AS ds_dialogue_id, " +
                         "ds.dialog_statement AS ds_dialog_statement " +
@@ -289,13 +281,13 @@ public class DataBaseManager {
 
         Map<Integer, String> nodes = new HashMap<>();
         int di = -1;
-        Dialogo dialogue = null;
+        Dialogue dialogue = null;
         boolean firstNode = true;
         while (rsDialoghi.next()) {
             if (di == -1 || di != rsDialoghi.getInt("d_id")) {
                 if (di != -1) dialogues.add(generateDialogue(dialogue, nodes));
                 di = rsDialoghi.getInt("d_id");
-                dialogue = new Dialogo(di);
+                dialogue = new Dialogue(di);
                 firstNode = true;
             }
             nodes.put(rsDialoghi.getInt("ds_id"), rsDialoghi.getString("ds_dialog_statement"));
@@ -309,14 +301,14 @@ public class DataBaseManager {
     }
 
     /**
-     * Popola un oggetto Dialogo con le possibili risposte e collegamenti.
+     * Popola un oggetto Dialogue con le possibili risposte e collegamenti.
      *
      * @param dialogue il dialogo da completare.
      * @param nodes    una mappa di frasi del dialogo indicizzate per ID.
-     * @return l'oggetto Dialogo completo.
+     * @return l'oggetto Dialogue completo.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private Dialogo generateDialogue(Dialogo dialogue, Map<Integer, String> nodes) throws SQLException {
+    private Dialogue generateDialogue(Dialogue dialogue, Map<Integer, String> nodes) throws SQLException {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM DialoguesPossibleAnswers WHERE dialogue_id=?;");
         pstm.setInt(1, dialogue.getId());
         ResultSet rsArchi = pstm.executeQuery();
@@ -379,7 +371,7 @@ public class DataBaseManager {
      * Genera un oggetto di tipo Item (o una sua sottoclasse) a partire da un ResultSet.
      *
      * @param rsItem il ResultSet contenente i dati dell'oggetto.
-     * @return un'istanza di Item o una delle sue sottoclassi (IteamCombinable, ItemRead).
+     * @return un'istanza di Item o una delle sue sottoclassi (CombinableItem, ReadableItem).
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Item generateItem(ResultSet rsItem) throws SQLException {
@@ -422,14 +414,14 @@ public class DataBaseManager {
     }
 
     /**
-     * Genera un oggetto IteamCombinable a partire da un ResultSet.
+     * Genera un oggetto CombinableItem a partire da un ResultSet.
      *
      * @param rsItem il ResultSet contenente i dati dell'oggetto.
-     * @return un nuovo oggetto IteamCombinable.
+     * @return un nuovo oggetto CombinableItem.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private IteamCombinable generateComposableItem(ResultSet rsItem) throws SQLException {
-        return new IteamCombinable(
+    private CombinableItem generateComposableItem(ResultSet rsItem) throws SQLException {
+        return new CombinableItem(
                 rsItem.getInt("i_id"),
                 rsItem.getString("i_name"),
                 rsItem.getString("i_description"),
@@ -476,14 +468,14 @@ public class DataBaseManager {
     }
 
     /**
-     * Genera un oggetto ItemRead a partire da un ResultSet.
+     * Genera un oggetto ReadableItem a partire da un ResultSet.
      *
      * @param rsItem il ResultSet contenente i dati dell'oggetto.
-     * @return un nuovo oggetto ItemRead.
+     * @return un nuovo oggetto ReadableItem.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    private ItemRead generateReadableItem(ResultSet rsItem) throws SQLException {
-        return new ItemRead(
+    private ReadableItem generateReadableItem(ResultSet rsItem) throws SQLException {
+        return new ReadableItem(
                 rsItem.getInt("i_id"),
                 rsItem.getString("i_name"),
                 rsItem.getString("i_description"),
@@ -515,14 +507,14 @@ public class DataBaseManager {
     }
 
     /**
-     * Genera un oggetto ItemContainer a partire da un ResultSet.
+     * Genera un oggetto ContainerItem a partire da un ResultSet.
      *
      * @param rsContainer il ResultSet contenente i dati del contenitore.
-     * @return un nuovo oggetto ItemContainer.
+     * @return un nuovo oggetto ContainerItem.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-   private ItemContainer generateContainerItem(ResultSet rsContainer) throws SQLException {
-    ItemContainer container = new ItemContainer(
+   private ContainerItem generateContainerItem(ResultSet rsContainer) throws SQLException {
+    ContainerItem container = new ContainerItem(
         rsContainer.getInt("i_id"),
         rsContainer.getString("i_name"),
         rsContainer.getString("i_description"),
