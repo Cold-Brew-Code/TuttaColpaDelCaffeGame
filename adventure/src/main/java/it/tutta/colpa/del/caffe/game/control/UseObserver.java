@@ -53,13 +53,13 @@ public class UseObserver implements GameObserver {
      * Alcuni oggetti possono interagire con il server per recuperare nuovi
      * oggetti (es. acquisto del caffè).
      *
-     * @param description stato corrente del gioco (stanze, inventario, mappa,
-     * ecc.)
+     * @param description  stato corrente del gioco (stanze, inventario, mappa,
+     *                     ecc.)
      * @param parserOutput output del parser, contenente il comando e l’oggetto
-     * scelto dal giocatore
+     *                     scelto dal giocatore
      * @return messaggio testuale che descrive l’esito dell’uso dell’oggetto
      * @throws ServerCommunicationException se fallisce la comunicazione col
-     * server durante l'uso di un oggetto
+     *                                      server durante l'uso di un oggetto
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
@@ -77,6 +77,8 @@ public class UseObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da usare. (scrivi 'usa nome oggetto')");
                 return msg.toString();
+            } else if (GameUtils.getObjectFromInventory(description.getInventory(), 14)==null) {
+                msg.append("Non hai questo oggetto nell'inventario...");
             } else {
                 switch (parserOutput.getObject().getId()) {
                     case 14 -> {
