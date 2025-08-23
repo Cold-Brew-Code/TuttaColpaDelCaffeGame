@@ -14,6 +14,24 @@ import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
+ * Osservatore che gestisce il comando {@code LIFT} nel gioco.
+ * <p>
+ * Implementa l'interfaccia {@link GameObserver} e consente al giocatore di
+ * usare l'ascensore per spostarsi a un determinato piano dell'edificio, a
+ * condizione che possieda la chiave necessaria nell'inventario.
+ * </p>
+ *
+ * <p>
+ * Esempio di comportamento:</p>
+ * <ul>
+ * <li>Se il giocatore scrive <i>"sali a 3"</i>, e possiede la chiave (oggetto
+ * con ID 9), viene teletrasportato al piano 3 e la stanza corrente viene
+ * aggiornata.</li>
+ * <li>Se non specifica un piano valido, viene mostrato un messaggio di
+ * errore.</li>
+ * <li>Se non possiede la chiave nell'inventario, non può usare
+ * l'ascensore.</li>
+ * </ul>
  *
  * @author giovanni
  */
@@ -27,31 +45,38 @@ public class LiftObserver implements GameObserver {
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
-        System.out.println("sono in asce1");
+        /**
+         * Gestisce il comando {@code LIFT}, verificando se il giocatore
+         * possiede la chiave necessaria e aggiornando la stanza corrente con
+         * quella corrispondente al piano richiesto.
+         *
+         * @param description lo stato corrente del gioco (inventario, mappa,
+         * stanza attuale)
+         * @param parserOutput il risultato del parsing del comando dell'utente
+         * @return un messaggio testuale che descrive l'esito dell'operazione
+         * @throws ServerCommunicationException se si verifica un errore nella
+         * comunicazione con il server
+         */
         StringBuilder msg = new StringBuilder();
         System.out.println(parserOutput.getCommand().getType() == CommandType.LIFT);
-        System.out.println("piano "+parserOutput.getPiano());
-        int p=parserOutput.getPiano();
+        int p = parserOutput.getPiano();
         if (parserOutput.getCommand().getType() == CommandType.LIFT) {
-            if(GameUtils.getObjectFromInventory(description.getInventory(), 9)!=null){
-                System.out.println("supero il primo if");
-                if(p <0){
+            if (GameUtils.getObjectFromInventory(description.getInventory(), 9) != null) {
+                if (p < 0) {
                     msg.append("Non hai specificato il numero del piano in cui vuoi teletrasportarti\n").append("Scrivi sali a numero piano (1,2,...7)");
-                }else{
-                    System.out.println("sono in asce2");
+                } else {
                     try {
-                        Room room= description.getGameMap().prendiAscensore(p);
-                        System.out.println(room.getName());
+                        Room room = description.getGameMap().prendiAscensore(p);
                         description.getGameMap().setCurrentRoom(room);
-                        msg.append("siamo arrivati al piano ").append(p).append("\n stanza: ").append(room.getName());    
+                        msg.append("siamo arrivati al piano ").append(p).append("\n stanza: ").append(room.getName());
                     } catch (GameMapException ex) {
-                    msg.append(ex.getMessage());
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
-                    msg.append(ex.getMessage());
+                        msg.append(ex.getMessage());
+                    } catch (Exception ex) {
+                        System.out.println(ex.getMessage());
+                        msg.append(ex.getMessage());
+                    }
                 }
-                }
-            }else{
+            } else {
                 msg.append("non hai l'achiave nell'inventario");
             }
         }

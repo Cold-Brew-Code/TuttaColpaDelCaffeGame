@@ -19,6 +19,21 @@ import it.tutta.colpa.del.caffe.game.entity.DialogoQuiz;
 import it.tutta.colpa.del.caffe.game.exception.ConnectionError;
 import it.tutta.colpa.del.caffe.game.exception.TraduzioneException;
 
+/**
+ * Classe che gestisce le domande del quiz ottenute dall'API Open Trivia DB.
+ *
+ * <p>
+ * Fornisce funzionalità per:
+ * <ul>
+ * <li>Effettuare richieste REST all'API di Open Trivia DB.</li>
+ * <li>Ricevere una domanda con le risposte, comprese quelle corrette e
+ * sbagliate.</li>
+ * <li>Tradurre la domanda e le risposte dall'inglese all'italiano.</li>
+ * <li>Mischiare le risposte e restituire un oggetto {@link DialogoQuiz} pronto
+ * all'uso.</li>
+ * </ul>
+ * </p>
+ */
 public class QuizNpc {
     public static final List<DialogoQuiz> defaultQuizzes = List.of(
             new DialogoQuiz(
@@ -100,7 +115,8 @@ public class QuizNpc {
     }
 
     /**
-     * Metodo che effettua la richiesta all'API e restituisce la risposta deserializzata
+     * Metodo che effettua la richiesta all'API e restituisce la risposta
+     * deserializzata
      */
     public static ResponseRiquest methodRest() throws ConnectionError {
         try{ 
@@ -120,8 +136,10 @@ public class QuizNpc {
     }
 
     /**
-     * Metodo che converte la domanda in un oggetto DialogoQuiz con traduzioni e risposte mischiate
-     * @return 
+     * Metodo che converte la domanda in un oggetto DialogoQuiz con traduzioni e
+     * risposte mischiate
+     *
+     * @return
      */
     public static DialogoQuiz getQuiz() throws ConnectionError {
          // esegue la chiamata
@@ -184,6 +202,7 @@ public class QuizNpc {
                 break;
             }
         }
+
         // Crea e restituisce il DialogoQuiz
         DialogoQuiz d = new DialogoQuiz(domandaTradotta, risposteTradotte, indiceCorretta);
         return d;

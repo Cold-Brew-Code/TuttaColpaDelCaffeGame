@@ -15,88 +15,115 @@ import it.tutta.colpa.del.caffe.game.utility.GameUtils;
 import it.tutta.colpa.del.caffe.game.utility.ParserOutput;
 
 /**
+ * Gestisce il comando {@code OPEN} nel gioco.
+ * <p>
+ * L'osservatore controlla se l'oggetto da aprire si trova:
+ * <ul>
+ * <li>nella stanza corrente;</li>
+ * <li>nell'inventario del giocatore;</li>
+ * <li>oppure se non è presente nei paraggi.</li>
+ * </ul>
+ * Se l'oggetto è un {@link ItemContainer}, può essere aperto per rivelarne il
+ * contenuto, altrimenti viene segnalato come non apribile.
+ * </p>
+ *
  * @author giovanni
  */
 public class OpenObserver implements GameObserver {
 
     /**
-     * @param description
-     * @param parserOutput
-     * @return
+     * Elabora il comando {@code OPEN} in base all'oggetto specificato dal
+     * giocatore.
+     * <p>
+     * Sono gestiti i seguenti casi:
+     * <ul>
+     * <li>Se non viene specificato un oggetto, viene restituito un messaggio di
+     * errore.</li>
+     * <li>Se l'oggetto si trova nella stanza e può essere aperto, viene aperto
+     * e ne viene mostrato il contenuto.</li>
+     * <li>Se l'oggetto si trova nell'inventario ed è apribile, viene aperto e
+     * ne viene mostrato il contenuto.</li>
+     * <li>Se l'oggetto non è apribile o non è presente né nella stanza né
+     * nell'inventario, viene segnalato con un messaggio.</li>
+     * </ul>
+     * </p>
+     *
+     * @param description lo stato corrente del gioco, che include mappa, stanze
+     * e inventario
+     * @param parserOutput il risultato dell'analisi del comando inserito dal
+     * giocatore
+     * @return un messaggio testuale che descrive l'esito del comando
+     * @throws ServerCommunicationException se si verificano problemi nella
+     * comunicazione con il server
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
         Object obj = parserOutput.getObject();
-        if (parserOutput.getCommand().getType() == CommandType.OPEN) {
-            if (obj == null) {
-                msg.append("Non hai specificato l'oggetto da aprire. (scrivi 'apri nome oggetto').");
-                return msg.toString();
-            } else if (description.getCurrentRoom().hasObject(((GeneralItem) obj).getId())) { //oggetto nella stanza da aprire
-                GeneralItem item = description.getCurrentRoom().getObject(((GeneralItem) obj).getId());
-                if (item instanceof ItemContainer c) {
-                    // id della stanza in cui mi trovo
-                    int currentRoomId = description.getCurrentRoom().getId();
-                    boolean isOpen = c.isOpen();
-                    if (!isOpen) {
-                        if ((c.getId() == 11 || c.getId() == 7)) {
-                            msg.append("Come pretendi di aprirlo se non lo prendi?? L'oggetto: ")
-                                    .append(c.getName())
-                                    .append(" è nella stanza, fai 'raccogli' per prenderlo.");
-                        } else if (c.getId() == 15) { // armadietto
-                        System.out.println("sono qui in prendi");
-                            c.setOpen(true);
-                            for(GeneralItem it:description.getCurrentRoom().getObjects().keySet()){
-                                System.err.println(it.getName()+it.hashCode());
-                                if (it instanceof ItemContainer itC){
-                                    System.err.print(itC.isOpen());
-                                }
-                            }
-                            System.out.println("OPEN: armadietto aperto - hash: " + System.identityHashCode(c));
 
-                            msg.append("Hai aperto: ").append(c.getName());
-                            if (!c.getList().isEmpty()) {
-                                msg.append(". ").append(c.getName()).append(" contiene:");
-                                c.getList().forEach((next, quantity)
-                                        -> msg.append(" ").append(quantity).append(" x ").append(next.getName())
-                                );// mi stampo ogni oggetto con la sua quantità presente nel contenitore
-                            }
-                        }
+        if (parserOutput.getCommand().getType() != CommandType.OPEN) {
+            return msg.toString();
+        }
+
+        if (obj == null) {
+            return "Non hai specificato l'oggetto da aprire. (scrivi 'apri nome oggetto').";
+        }
+
+        // Caso 1: oggetto nella stanza
+        if (description.getCurrentRoom().hasObject(((GeneralItem) obj).getId())) {
+            GeneralItem item = description.getCurrentRoom().getObject(((GeneralItem) obj).getId());
+
+            if (item instanceof ItemContainer c) {
+                if (!c.isOpen()) {
+                    if (c.getId() == 11 || c.getId() == 7) {
+                        return "Come pretendi di aprirlo se non lo prendi?? L'oggetto " + c.getName() + " è nella stanza, fai 'raccogli' per prenderlo.";
                     } else {
-                        msg.append("L'oggetto ").append(c.getName()).append(" è già aperto.");
-                    }
-                } else {
-                    GeneralItem curr = (GeneralItem) obj;
-                    msg.append("L'oggetto ")
-                            .append(curr.getName())
-                            .append(" non può essere aperto");
-                }
-            } else if (GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId()) != null) {
-                // se ho l'oggetto che può essere raccolto (scatola o borsellino) è nell'inventario
-                GeneralItem invObj = GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId());
-                if (invObj.getId() == 11 || invObj.getId() == 7) {
-                    ItemContainer c = (ItemContainer) invObj;
-                    if (c.isOpen() == false) { // se non è aperto lo apro e stampo il suo contenuto
-                     System.out.println("OPEN: scatola aperto - hash: " + System.identityHashCode(c));
                         c.setOpen(true);
                         msg.append("Hai aperto: ").append(c.getName());
                         if (!c.getList().isEmpty()) {
                             msg.append(". ").append(c.getName()).append(" contiene:");
-                            c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).
-                                    append(" x ").append(next.getName())
-                            );
+                            c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).append(" x ").append(next.getName()));
                         }
-                    } else if (c.isOpen()) {
-                        msg.append("L'oggetto ").append(c.getName()).append(" è già aperto");
                     }
-                } // caso in cui l'oggetto è nell'inventario ma non è uno di quelli apribili
-                else if (invObj != null) {
-                    msg.append("L'oggetto indicato non è apribili");
+                } else {
+                    msg.append("L'oggetto ").append(c.getName()).append(" è già aperto.");
                 }
             } else {
-                msg.append("L'oggetto indicato non è nei paraggi"); // non è né nella stanza, né nell'inventario
+                if (item != null) {
+                    msg.append("L'oggetto ").append(item.getName()).append(" non può essere aperto.");
+                } else {
+                    msg.append("L'oggetto specificato non è presente nella stanza.");
+                }
             }
+
+            // Caso 2: oggetto nell’inventario
+        } else if (GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId()) != null) {
+            GeneralItem invObj = GameUtils.getObjectFromInventory(description.getInventory(), parserOutput.getObject().getId());
+
+            if (invObj instanceof ItemContainer c) {
+                if (!c.isOpen()) {
+                    c.setOpen(true);
+                    msg.append("Hai aperto: ").append(c.getName());
+                    if (!c.getList().isEmpty()) {
+                        msg.append(". ").append(c.getName()).append(" contiene:");
+                        c.getList().forEach((next, quantity) -> msg.append(" ").append(quantity).append(" x ").append(next.getName()));
+                    }
+                } else {
+                    msg.append("L'oggetto ").append(c.getName()).append(" è già aperto.");
+                }
+            } else {
+                if (invObj != null) {
+                    msg.append("L'oggetto ").append(invObj.getName()).append(" non è apribile.");
+                } else {
+                    msg.append("L'oggetto specificato non è presente nell'inventario.");
+                }
+            }
+
+            // Caso 3: oggetto non trovato
+        } else {
+            msg.append("L'oggetto indicato non è nei paraggi.");
         }
+
         return msg.toString();
     }
 }

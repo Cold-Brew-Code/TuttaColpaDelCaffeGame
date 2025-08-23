@@ -26,16 +26,50 @@ import static it.tutta.colpa.del.caffe.game.utility.RequestType.ITEMS;
 import static it.tutta.colpa.del.caffe.game.utility.RequestType.UPDATED_LOOK;
 
 /**
+ * Observer che gestisce il comando {@code PICK_UP} nel gioco.
+ * <p>
+ * Questa classe implementa la logica necessaria per consentire al giocatore di
+ * raccogliere oggetti da una stanza o da contenitori, gestendo anche i casi in
+ * cui:
+ * <ul>
+ * <li>l'oggetto non è specificato</li>
+ * <li>l'oggetto non è presente nella stanza o nell'inventario</li>
+ * <li>l'oggetto si trova dentro un contenitore (aperto o chiuso)</li>
+ * <li>l'oggetto non è raccoglibile</li>
+ * <li>il server deve aggiornare la descrizione della stanza a seguito della
+ * raccolta</li>
+ * </ul>
+ *
+ * In caso di problemi, possono essere sollevate eccezioni come
+ * {@link ServerCommunicationException} o {@link InventoryException}.
  *
  * @author giova
  */
 public class PickUpObserver implements GameObserver {
 
     /**
+     * Aggiorna lo stato del gioco in base al comando {@code PICK_UP}.
+     * <p>
+     * Questo metodo tenta di raccogliere l'oggetto specificato dal giocatore:
+     * <ul>
+     * <li>se l'oggetto è nella stanza e raccoglibile, lo aggiunge
+     * all'inventario</li>
+     * <li>se l'oggetto è contenuto in un contenitore, ne gestisce l'apertura e
+     * il trasferimento</li>
+     * <li>se l'oggetto è già nell'inventario, viene notificato al
+     * giocatore</li>
+     * <li>se necessario, aggiorna la descrizione della stanza contattando il
+     * server</li>
+     * </ul>
      *
-     * @param description
-     * @param parserOutput
-     * @return
+     * @param description stato corrente del gioco, incluse stanze, inventario e
+     * oggetti
+     * @param parserOutput output del parser contenente comando, oggetto e
+     * parametri
+     * @return un messaggio testuale per il giocatore che descrive l'esito
+     * dell'azione
+     * @throws ServerCommunicationException se la comunicazione col server
+     * fallisce
      */
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
@@ -54,12 +88,11 @@ public class PickUpObserver implements GameObserver {
                 msg.append("Non hai specificato l'oggetto da raccogliere. (scrivi 'raccogli nome oggetto')");
                 return msg.toString();
 
-            } 
-            boolean c= findObjectInventory(description, server, msg, obj);
+            }
+            boolean c = findObjectInventory(description, server, msg, obj);
             if (!description.getCurrentRoom().getObjects().isEmpty() || c) {
                 //controllo se è nella stazna
 
-                System.out.println("sono dentro");
                 GeneralItem isobjRoom = description.getCurrentRoom()
                         .getObjects()
                         .keySet()
@@ -69,7 +102,7 @@ public class PickUpObserver implements GameObserver {
                         .orElse(null);
                 //controllo se è nell'inventario 
                 if (isobjRoom == null && c == false) {
-                    msg.append("oggetto contenit\n");
+                    // msg.append("oggetto contenit\n");
                     if (description.getCurrentRoom().getObject(7) != null) {
                         isobjRoom = description.getCurrentRoom().getObject(7);
                         conteiner = true;
@@ -130,7 +163,7 @@ public class PickUpObserver implements GameObserver {
                         msg.append("L'oggetto ").append(obj.getName()).append(" non è nella stanza o nell'inventario");
                     }
                 } else if (isobjRoom == null && c != false) {
-                    msg.append("invent");
+                    // msg.append("invent");
                     List<GeneralItem> listContainer = new ArrayList<>();
                     if (!description.getInventory().getInventory().containsKey(obj)) {
                         Inventory inventario = description.getInventory();
@@ -187,7 +220,7 @@ public class PickUpObserver implements GameObserver {
                                 } catch (IllegalArgumentException e) {
                                     msg.append(e.getMessage());
                                 }
-                            } 
+                            }
                         } else {
                             msg.append("L'oggetto ").append(obj.getName()).append(" non è nell'inventario");
                         }
@@ -195,7 +228,7 @@ public class PickUpObserver implements GameObserver {
                         msg.append("L'oggetto inidcato è già nell'inventario");
                     }
                 } else if (isobjRoom != null && c == false) {// oggetto nella stanza
-                    msg.append("nella stanza");
+                    //msg.append("nella stanza");
                     if (parserOutput.getObject().isPickupable()) {
                         Map<GeneralItem, Integer> objRoom = description.getCurrentRoom().getObjects();
                         if (isobjRoom.isVisibile()) {
@@ -236,7 +269,7 @@ public class PickUpObserver implements GameObserver {
                                 msg.append(e.getMessage());
                             }
                         } else {
-                            msg.append("non c'è: ").append(isobjRoom.getName()).append(" nella stanza L'urgenza da alla testa.");
+                            msg.append(" non c'è: ").append(isobjRoom.getName()).append(" nella stanza L'urgenza da alla testa.");
                         }
                     } else {
                         msg.append("l'oggetto ").append(parserOutput.getObject().getName()).append(" non può essere raccolto");

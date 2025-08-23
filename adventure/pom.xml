@@ -3,9 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.tutta.colpa.del.caffe</groupId>
     <artifactId>adventure</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>jar</packaging>
-    
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>ColdBrewCode - Packages</name>
+            <url>https://maven.pkg.github.com/Cold-Brew-Code/TuttaColpaDelCaffeGame</url>
+        </repository>
+    </distributionManagement>
+
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>

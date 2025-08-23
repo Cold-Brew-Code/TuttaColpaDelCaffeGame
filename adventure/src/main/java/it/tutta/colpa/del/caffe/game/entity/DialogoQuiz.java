@@ -8,12 +8,36 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * Rappresenta un singolo quiz dialogico con una domanda, un insieme di risposte
+ * possibili e messaggi per indicare se la risposta scelta è corretta o errata.
+ *
+ * <p>
+ * Ogni quiz contiene:</p>
+ * <ul>
+ * <li>La domanda da porre all'utente.</li>
+ * <li>Una lista di risposte possibili.</li>
+ * <li>Un messaggio da mostrare se la risposta scelta è corretta.</li>
+ * <li>Un messaggio da mostrare se la risposta scelta è errata.</li>
+ * <li>L'indice della risposta corretta nella lista delle risposte.</li>
+ * </ul>
+ *
+ * <p>
+ * Questa classe permette di gestire sia la domanda che le risposte, e di
+ * verificare facilmente quale risposta è corretta.</p>
  *
  * @author giova
  */
 public class DialogoQuiz {
+
+    /**
+     * La domanda del quiz.
+     */
     private String domanda;
     List<String> risposte;
+
+    /**
+     * Indice della risposta corretta nella lista {@link #risposte}.
+     */
     private int id_rispostaCorretta;
     private static final List<String> rispostePositive = List.of(
             "Bravo! Finalmente qualcuno che sembra sveglio prima di un caffè doppio.",
@@ -48,34 +72,74 @@ public class DialogoQuiz {
 
     }
 
+    /**
+     * Restituisce la domanda del quiz.
+     *
+     * @return La domanda come stringa.
+     */
     public String getDomanda() {
         return domanda;
     }
 
+    /**
+     * Imposta la domanda del quiz.
+     *
+     * @param domanda La nuova domanda.
+     */
     public void setDomanda(String domanda) {
         this.domanda = domanda;
     }
 
+    /**
+     * Restituisce il messaggio da mostrare in caso di risposta corretta.
+     *
+     * @return Il messaggio corretto.
+     */
     public String getMessaggioCorret() {
         return DialogoQuiz.rispostePositive.get((int) (Math.random() * 10));
     }
 
+    /**
+     * Restituisce il messaggio da mostrare in caso di risposta errata.
+     *
+     * @return Il messaggio errato.
+     */
     public String getMessaggioErrato() {
         return (DialogoQuiz.risposteNegative.get((int) (Math.random() * 10)));
     }
 
+    /**
+     * Restituisce la lista delle possibili risposte.
+     *
+     * @return Lista di risposte.
+     */
     public List<String> getRisposte() {
         return risposte;
     }
 
+    /**
+     * Imposta la lista delle possibili risposte.
+     *
+     * @param risposte La nuova lista di risposte.
+     */
     public void setRisposte(List<String> risposte) {
         this.risposte = risposte;
     }
-    
+
+    /**
+     * Restituisce l'indice della risposta corretta.
+     *
+     * @return L'indice della risposta corretta nella lista {@link #risposte}.
+     */
     public int getIdCorretta() {
         return id_rispostaCorretta;
     }
 
+    /**
+     * Imposta l'indice della risposta corretta.
+     *
+     * @param id_rispostaCorretta Il nuovo indice della risposta corretta.
+     */
     public void setIdCorretta(int id_rispostaCorretta) {
         this.id_rispostaCorretta = id_rispostaCorretta;
     }

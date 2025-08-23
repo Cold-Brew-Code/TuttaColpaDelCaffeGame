@@ -13,8 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Rappresenta una stanza all'interno del gioco, contenente oggetti e NPC.
+ * <p>
+ * Ogni stanza ha un identificatore univoco, un nome, una descrizione testuale,
+ * una descrizione dettagliata per il comando "look", visibilità, restrizioni di
+ * accesso, un percorso per un'immagine e collezioni di oggetti e NPC presenti
+ * nella stanza.
+ * </p>
  *
- * @author pierpaolo
+ * @author giova
  */
 public class Room implements Serializable {
 
@@ -23,9 +30,9 @@ public class Room implements Serializable {
     private String description;
     private String look;
     private boolean visible = true;
-    private boolean denied_entry=false;
+    private boolean denied_entry = false;
     private String imagePath;
-    private Map<GeneralItem,Integer> objects = new HashMap<>();
+    private Map<GeneralItem, Integer> objects = new HashMap<>();
     private List<NPC> NPCs = new ArrayList<>();
 
     /**
@@ -42,15 +49,28 @@ public class Room implements Serializable {
      * @param name
      * @param description
      */
-    public Room(int id, String name, String description,String image_name) {
+    public Room(int id, String name, String description, String image_name) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.imagePath = "/images/" + image_name;
     }
 
+    /**
+     * Costruisce una stanza completa con tutti i dettagli.
+     *
+     * @param id identificatore univoco della stanza
+     * @param name nome della stanza
+     * @param description descrizione generica della stanza
+     * @param look descrizione dettagliata per il comando "look"
+     * @param visible indica se la stanza è visibile
+     * @param denied_entry indica se l'accesso è negato
+     * @param imageName nome del file immagine associato
+     * @param objects mappa di oggetti presenti e le loro quantità
+     * @param NPCs lista degli NPC presenti nella stanza
+     */
     public Room(int id, String name, String description, String look, boolean visible, boolean denied_entry,
-                String imageName, Map<GeneralItem, Integer> objects, List<NPC> NPCs) {
+            String imageName, Map<GeneralItem, Integer> objects, List<NPC> NPCs) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -190,34 +210,48 @@ public class Room implements Serializable {
         return null;
     }
 
+    /**
+     * @return true se l'accesso alla stanza è negato
+     */
     public boolean isDeniedEntry() {
         return denied_entry;
     }
 
+    /**
+     * @param denied_entry imposta se l'accesso alla stanza è negato
+     */
     public void setDeniedEntry(boolean denied_entry) {
         this.denied_entry = denied_entry;
     }
 
+    /**
+     * @return la lista degli NPC presenti nella stanza
+     */
     public List<NPC> getNPCs() {
         return NPCs;
     }
 
+    /**
+     * @param NPCs lista degli NPC da impostare nella stanza
+     */
     public void setNPCs(List<NPC> NPCs) {
         this.NPCs = NPCs;
     }
 
+    /**
+     * @param objects mappa di oggetti da impostare nella stanza
+     */
     public void setObjects(Map<GeneralItem, Integer> objects) {
         this.objects = objects;
     }
 
     @Override
     public String toString() {
-        return "Room{" +
-                "name='" + name + '\'' +
-                ", id=" + id +
-                '}';
+        return "Room{"
+                + "name='" + name + '\''
+                + ", id=" + id
+                + '}';
     }
-
 
     /**
      * Restituisce true se la stanza contiene un oggetto con l'ID specificato.
@@ -234,6 +268,9 @@ public class Room implements Serializable {
         return false;
     }
 
+    /**
+     * @return il percorso dell'immagine associata alla stanza
+     */
     public String getImagePath() {
         return imagePath;
     }

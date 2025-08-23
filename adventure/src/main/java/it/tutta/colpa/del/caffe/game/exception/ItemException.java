@@ -7,8 +7,7 @@ package it.tutta.colpa.del.caffe.game.exception;
 /**
  *
  * @author giova
- */
-/**
+ *
  * Eccezione personalizzata per gestire errori legati agli oggetti di tipo Item.
  */
 public class ItemException extends Exception {
