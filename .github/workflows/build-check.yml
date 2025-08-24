@@ -1,4 +1,4 @@
-name: Build and Test on PR or Main
+name: Integrity Check
 
 on:
   pull_request:
