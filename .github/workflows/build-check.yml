@@ -1,10 +1,14 @@
-name: Build and Test on PR
+name: Build and Test on PR or Main
 
 on:
-  pull_request:
+  workflow_run:
+    workflows: ["Generate and Deploy Javadoc"]
+    types:
+      - completed
+
+  push:
     branches:
       - main
-    types: [opened, synchronize, reopened]
 
 jobs:
   build:
