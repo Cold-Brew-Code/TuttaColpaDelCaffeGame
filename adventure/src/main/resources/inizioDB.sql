@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Items(
-                                    id INT,
-                                    name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     description TEXT,
     is_container BOOLEAN DEFAULT FALSE,
     is_readable BOOLEAN DEFAULT FALSE,
@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS Items(
     );
 
 CREATE TABLE IF NOT EXISTS Commands(
-                                       id INT,
-                                       name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS Rooms(
-                                    id INT,
-                                    name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     description TEXT,
     look TEXT,
     allowed_entry BOOLEAN DEFAULT TRUE,
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS Rooms(
     );
 
 CREATE TABLE IF NOT EXISTS RoomConnections(
-                                              initial_room_id INT,
-                                              target_room_id INT,
-                                              direction ENUM('n', 's', 'e', 'o','sopra','sotto'),
+    initial_room_id INT,
+    target_room_id INT,
+    direction ENUM('n', 's', 'e', 'o','sopra','sotto'),
     PRIMARY KEY (initial_room_id, target_room_id),
     FOREIGN KEY (initial_room_id) REFERENCES Rooms(id),
     FOREIGN KEY (target_room_id) REFERENCES Rooms(id)
@@ -40,35 +40,35 @@ CREATE TABLE IF NOT EXISTS RoomConnections(
 
 -- si occupa anche del collocamento degli npc nelle stanze
 CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
-                                                  id INT,
-                                                  name VARCHAR(30),
+    id INT,
+    name VARCHAR(30),
     room_id INT,
     FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY (id)
     );
 
 CREATE TABLE IF NOT EXISTS NpcAlias (
-                                        id INT,
-                                        npc_alias VARCHAR(30),
+    id INT,
+    npc_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES NonPlayerCharacters(id),
     PRIMARY KEY (id, npc_alias)
     );
 
 CREATE TABLE IF NOT EXISTS Dialogues(
-                                        id INTEGER,
-                                        NPC INTEGER REFERENCES NonPlayerCharacters(id),
+    id INTEGER,
+    NPC INTEGER REFERENCES NonPlayerCharacters(id),
     PRIMARY KEY (id)
     );
 
 CREATE TABLE IF NOT EXISTS DialoguesStatements(
-                                                  id INTEGER,
-                                                  dialogue_id INTEGER REFERENCES Dialogues(id),
+    id INTEGER,
+    dialogue_id INTEGER REFERENCES Dialogues(id),
     dialog_statement VARCHAR(500),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS DialoguesPossibleAnswers(
-                                                       answer VARCHAR(500),
+    answer VARCHAR(500),
     first_statement INTEGER REFERENCES DialoguesStatements(id),
     related_answer_statement INTEGER REFERENCES DialoguesStatements(id),
     dialogue_id INTEGER REFERENCES Dialogues(id),
@@ -76,53 +76,53 @@ CREATE TABLE IF NOT EXISTS DialoguesPossibleAnswers(
     );
 
 CREATE TABLE IF NOT EXISTS InRoomObjects(
-                                            room_id INT,
-                                            object_id INT,
-                                            quantity INT,
-                                            PRIMARY KEY (room_id,object_id),
+    room_id INT,
+    object_id INT,
+    quantity INT,
+    PRIMARY KEY (room_id,object_id),
     FOREIGN KEY (room_id) REFERENCES Rooms(id),
     FOREIGN KEY (object_id) REFERENCES Items(id)
     );
 
 CREATE TABLE IF NOT EXISTS ItemAlias (
-                                         id INT,
-                                         item_alias VARCHAR(30),
+    id INT,
+    item_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES Items(id),
     PRIMARY KEY (id, item_alias)
     );
 
 CREATE TABLE IF NOT EXISTS CommandAlias(
-                                           id INT,
-                                           command_alias VARCHAR(30),
+    id INT,
+    command_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES Commands(id),
     PRIMARY KEY (id, command_alias)
     );
 
 CREATE TABLE IF NOT EXISTS Event(
-                                    id INT,
-                                    updated_room_look TEXT,
-                                    room_id INT,
-                                    FOREIGN KEY (room_id) REFERENCES Rooms(id),
+    id INT,
+    updated_room_look TEXT,
+    room_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS ContainerContents(
-                                                container_id INT,
-                                                content_id INT,
-                                                quantity INT,
-                                                FOREIGN KEY (container_id) REFERENCES Items(id),
+    container_id INT,
+    content_id INT,
+    quantity INT,
+    FOREIGN KEY (container_id) REFERENCES Items(id),
     FOREIGN KEY (content_id) REFERENCES Items(id),
     PRIMARY KEY(container_id,content_id)
     );
 
 CREATE TABLE IF NOT EXISTS ComposedOf(
-                                         composed_item_id INT REFERENCES Items(id),
+    composed_item_id INT REFERENCES Items(id),
     composing_item_id INT REFERENCES Items(id),
     PRIMARY KEY (composed_item_id,composing_item_id)
     );
 
 CREATE TABLE IF NOT EXISTS ReadableContent(
-                                              readable_item_id INT REFERENCES Items(id),
+    readable_item_id INT REFERENCES Items(id),
     content VARCHAR(500),
     PRIMARY KEY (readable_item_id)
     );
@@ -135,16 +135,21 @@ MERGE INTO Commands(id,name) KEY(id) VALUES
     (18,'ascensore');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
-    (1, 'n'), (2,'s'), (3,'e'), (4,'o'),
-    (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
-    (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
-    (9, 'open'), (9,'accedi'),
-    (11, 'crea'), (11, 'costruisci'), (11, 'inventa'),
-    (12, 'sfoglia'), (12, 'decifra'), (12, 'interpreta'),
-    (13, 'interagisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchiera'),
-    (16,'butta'),
-    (17, 'utilizza'),
-    (18, 'ascen');
+    (1,'n'), (1, 'avanti'), (1, 'su'),
+    (2,'s'), (2, 'indietro'), (2, 'giu'),
+    (3,'e'), (3, 'destra'), (3, 'dritta'),
+    (4,'o'), (4, 'sinistra'),
+    (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'), (7, 'esamina'), (7, 'ispeziona'), (7, 'buttaunocchio'), (7, 'daiunocchiata'),
+    (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'), (8, 'raccatta'),
+    (9, 'accedi'), (9, 'scassina'), (9, 'sfonda'),
+    (11, 'crea'), (11, 'costruisci'), (11, 'inventa'), (11, 'assembla'), (11, 'fabbrica'),
+    (12, 'sfoglia'), (12, 'decifra'), (12, 'interpreta'), (12, 'scansiona'), (12, 'leggiti'),
+    (13, 'interagisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchiera'), (13, 'spicciadueparole'), (13, 'dialoga'),
+    (14,'sali'), (14, 'ascendi'), (14, 'monta'),
+    (15,'cala'),
+    (16,'lascia'),(16, 'butta'), (16, 'molla'), (16, 'posa'), (16, 'abbandona'),
+    (17,'usa'), (17, 'utilizza'), (17, 'adopera'), (17, 'impiega'),
+    (18,'ascensore'), (18, 'ascen'), (18, 'elevatore'), (18, 'montacarichi');
 
 MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
     (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale, consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata.', false,false,false,false,-1, 'chiave.png', true),
@@ -166,7 +171,7 @@ MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, i
     (11,'SCATOLA', 'Una semplice scatola bianca, sorprendentemente leggera, che non emette alcun suono quando la si scuote, come se fosse vuota o custodisse qualcosa di immobile. Sul retro è inciso in piccolo un simbolo misterioso: 7L.', true, false,true,false,-1,'scatola.png', true),
     (12, 'TESSERA SMAGNETIZZATA','Una tessera bianca, dall''aspetto anonimo, priva del chip che le darebbe vita. Un tempo poteva essere una carta di accesso o una vecchia tessera servizi, ora ridotta a un semplice pezzo di plastica apparentemente inutile.', false,false,true,false,-1, 'tessera_smagnetizzata.png', true ),
     (13, 'CARTA IGIENICA', 'Un semplice rotolo di carta igienica, leggermente sgualcito ai bordi.', false,false,false,false,-1, 'carta_igienica.png', true),
-    (14, 'TESSERA MAGICA', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,true,2,'tessera_magica.png', true),
+    (14, 'PASS MAGICO', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,true,2,'tessera_magica.png', true),
     (16, 'MACCHINETTA DEL CAFFÈ', 'Un''elegante colonna metallica dall''aspetto futuristico, impreziosita da un ampio touch screen lucido come uno specchio. Accetta pagamenti contactless con una rapidità quasi magica e permette di scegliere tra decine di aromi personalizzati: dal caffè intenso delle notti d''esame al più delicato decaffeinato del “tanto ormai è andata”. Sul display, brevi messaggi motivazionali compaiono all''improvviso, come bisbigli incoraggianti per studenti assonnati e docenti esausti. Un piccolo altare tecnologico dedicato al culto quotidiano della caffeina.', true,false,true,true,-1, 'macchinetta_del_caffè.png', false);
 
 
@@ -196,21 +201,38 @@ MERGE INTO ContainerContents(container_id, content_id, quantity) KEY(container_i
     (16,2,1);
 
 MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
-    (1,'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1,'map'),
-    (4, '3000'), (4, 'prodotto'), (4, 'cande'),
-    (2, 'bevanda'), (2, 'energia' ), (2, 'coffee'),
-    (3, 'libro'), (3, 'cc'), (3,'calcolabilità'), (3,'complessità'), (3,'calcol'), (3,'comples'), (3,'lib'),
+-- CHIAVE (9)
+    (9, 'key'), (9, 'ottone'), (9, 'ascensore'),
+-- LA MAPPA DEL FUORICORSO (1)
+    (1, 'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1, 'map'),
+-- CAFFÈ RIGENERANTE (2)
+    (2, 'bevanda'), (2, 'energia'), (2, 'coffee'), (2, 'caffè'), (2, 'rigenerante'),
+-- LIBRO DI CALCOLABILITÀ E COMPLESSITÀ (3)
+    (3, 'libro'), (3, 'cc'), (3, 'calcolabilità'), (3, 'complessità'), (3, 'calcol'), (3, 'comples'), (3, 'lib'),
+-- CANDEGGINATOR 3000 (4)
+    (4, '3000'), (4, 'prodotto'), (4, 'cande'), (4, 'candeggina'), (4, 'candegginator'),
+-- ARMADIETTO (15)
     (15, 'mobile'), (15, 'armadio'),
-    (5, 'bigliettino'), (5, 'foglio'),
+-- BIGLIETTINO MISTERIOSO (5)
+    (5, 'bigliettino'), (5, 'foglio'), (5, 'nota'), (5, 'appunto'),
+-- SCHEDA MADRE (6)
     (6, 'scheda'), (6, 'motherboard'), (6, 'madre'),
-    (7, 'borsel'), (7, 'astuccio'),
-    (8,'moneta'), (8,'monete'),(8, 'soldo'), (8,'metallo'), (8,'denaro'),
-    (10, 'penna'), (10,'null'),
+-- BORSELLINO (7)
+    (7, 'borsel'), (7, 'astuccio'), (7, 'sacchetto'),
+-- MONETA DI METALLO (8)
+    (8, 'moneta'), (8, 'monete'), (8, 'soldo'), (8, 'metallo'), (8, 'denaro'),
+-- PENNA NULL (10)
+    (10, 'penna'), (10, 'null'),
+-- SCATOLA (11)
     (11, 'contenitore'), (11, 'box'), (11, 'cassa'),
-    (12, 'tessera s'),
+-- TESSERA SMAGNETIZZATA (12)
+    (12, 'tessera s'), (12, 'tessera'), (12, 'smagnetizzata'),
+-- CARTA IGIENICA (13)
     (13, 'carta'), (13, 'rotolo'), (13, 'igienica'),
-    (14, 'magica'), (14,'pass'),
-    (16, 'macchinetta'), (16,'distributore');
+-- PASS MAGICO (14)
+    (14, 'magica'), (14, 'pass'), (14, 'magico'), (14, 'carta magica'),
+-- MACCHINETTA DEL CAFFÈ (16)
+    (16, 'macchinetta'), (16, 'distributore');
 
 MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_path) KEY(id) VALUES
     (1, 'Ingresso del Campus', 'Davanti a te si apre il cancello del campus universitario, imponente ma familiare. Oltre il cancello si vede un viale lungo, da grandi palazzi e piccioni prepotenti, pronti a colpirti. A pochi passi dall''ingresso, un piccolo bar brulica di studenti già assonnati e inservienti carichi di pacchi. Il dipartimento di informatica si staglia più avanti, grigio e severo, come un labirinto di vetro e cemento che sembra nascondere più segreti che aule.\n TUTORIAL \n Muoviti tramite i comandi Nord, Est, Ovest, Sud, Sali, Scendi ed arriva il prima possibile al bagno.\n Guarda attentamente ciò che ti circonda, può sempre essere utile (usando il comando ''osserva'')!','',true, true, 'ingresso.png'),
@@ -242,7 +264,7 @@ MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_p
     (19, 'Secondo ufficio', 'Qui l''ordine regna sovrano: pochi libri, una scrivania lucidata e un''unica sedia per i visitatori. Sul muro, un grande orologio vintage scandisce il tempo con ticchettii regolari. Una foto in cornice mostra il docente accanto a una squadra di studenti sorridenti, immortalati in tempi più sereni.', 'A destra c''è una libreria, che oltre ai libri ha una scatola. Ma la scatola è chiusa. Dovresti aprirla',true, true, 'ufficio2_quinto_piano.png'),-- se prende la scatola e la apre ha la tessera che combinata alla scheda madre crea una tessera magica con 3 aperture e se ha ancore le aperture può vedere il bagno magico
 -- sesto piano
     (20, 'Sesto piano',  'Corridoio stretto e dall''aria sospesa. Un rumore di sottofondo ti accoglie al sesto piano, è il ronzio continuo dei computer dei laboratori, talmente fitto da sembrare quasi un coro di zanzare tecnologiche in piena estate. Ci sono Due porte con targhette metalliche indicano i laboratori di ricerca, uno di Intelligenza Artificiale e l''altro di Calcolo Quantistico.', 'Sei di nuovo all''ingresso del sesto piano, tra un bip e l''altro, qualche led lampeggia come a salutarti. Inoltre vedi un ragazzo ben vestito e con sguardo minaccioso che ti fissa, chissà che vorrà. Forse dovrei parlarci',true, true, 'corridoio_sesto_piano_(dialogo1).png'),
-    (21, 'Laboratorio di Intelligenza Artificiale', 'Inizialmente una luce bianca e accecante ti accoglie, causata da una sfilza di computer accesi. Essi mostrano stringhe di codice e grafici in tempo reale.', 'Osservando meglio, noti che su uno dei monitor lampeggia lentamente l''immagine di una tazza di caffè fumante. Per un attimo ti fermi a guardarla, ipnotizzato... poi la realtà ti colpisce di nuovo: maledizione, ti ricordi all''improvviso della tua urgente necessità di trovare un bagno.',true, true, 'laboratorio_di_ricerca_Intelligenza_Artificiale_sesto_piano.png'),-- qui la barra che indica fra quanto si caga a dosso aumenta di 1/4 perchè ha visto il caffe
+    (21, 'Laboratorio di Intelligenza Artificiale', 'Inizialmente una luce bianca e accecante ti accoglie, causata da una sfilza di computer accesi. Essi mostrano stringhe di codice e grafici in tempo reale. \nAttenzione: quando pensi al caffé il tuo corpo sembrerebbe percepire l''urgenza <<più velocemente>>...', 'Osservando meglio, noti che su uno dei monitor lampeggia lentamente l''immagine di una tazza di caffè fumante. Per un attimo ti fermi a guardarla, ipnotizzato... poi la realtà ti colpisce di nuovo: maledizione, ti ricordi all''improvviso della tua urgente necessità di trovare un bagno.',true, true, 'laboratorio_di_ricerca_Intelligenza_Artificiale_sesto_piano.png'),-- qui la barra che indica fra quanto si caga a dosso aumenta di 1/4 perchè ha visto il caffe
     (22, 'Laboratorio di Calcolo Quantistico', 'Un ambiente più buio, illuminato solo da spie verdi e blu provenienti da strane macchine cilindriche. Cavi intrecciati come radici si diramano lungo il pavimento. Sul tavolo principale, un laptop mostra simulazioni che sembrano incomprensibili.', 'Sei sempre nel solito laboratorio di ricerca situato a NORD del corridoio. Questa volta noti un cassetto semiaperto con un bigliettino sul quale c''è scritto “Il segreto è in alto, non fermarti 7FN”.',true, true,'laboratorio_di_ricerca_Calcolo_Quantistico_sesto_piano.png'),
 -- settimo piano
     (25, 'Settimo piano', 'Appena salite le scale, ti accoglie un corridoio largo e luminoso, illuminato da grandi finestre. L''aria qui è più silenziosa, quasi solenne. Sulla sinistra, in netto contrasto con i muri rivestiti in legno scuro e le targhe eleganti, spicca una macchinetta del caffè ultramoderna: touch screen, pagamenti contactless, possibilità di scegliere tra decine di aromi personalizzati e persino un display che mostra messaggi motivazionali.\n Poco più avanti, una porta imponente segnata da una targhetta placcata d''oro indica l''ufficio del direttore del dipartimento, mentre sull''altro lato del corridoio si apre la sala consiglio, riconoscibile dal vetro smerigliato che lascia solo intuire sedie imbottite e un lungo tavolo di acacia.', 'Sei ancora nello splendido e incantato settimo piano: a destra (EST) c''è l''imponente ufficio del direttore, mentre di fronte a te (NORD) si trova la riservata sala consiglio, avvolta da un''atmosfera di mistero e autorità.',true, true, 'corridoio_settimo_piano.png'),
@@ -271,28 +293,26 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
     (8, 'La stanza è troppo disordinata, ti sei perso tra libri e appunti? Per uscire dalla stanza vai a EST',18),
     (9, 'Niente di nuovo, per uscire vai a OVEST',19),
 -- sesto piano
-    (12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20),
-
-    (14, '', 21);-- serve se decidiamo di diminuire il tempo se l'utente vede l'immagine del caffe
+    (12, 'Ti trovi sempre al sesto piano con Dottor Cravattone che a momenti esplode',20);
 
 MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial_room_id, target_room_id) VALUES
-    (1,2,'s'),(2,1,'n'), (2,3,'e'), (3,2,'o'),
+    (1,2,'n'),(2,1,'s'), (2,3,'e'), (3,2,'o'),
 -- pianto terra collegamento
-    (3,4,'e'),(4,5,'o'), (4,3,'s'),(5,4,'e'),(4,29,'n'),(29,4,'s'),
+    (3,4,'n'),(4,5,'o'), (4,3,'s'),(5,4,'e'),(4,29,'n'),(29,4,'s'),
 --primo piano collegamento
     (6,7,'n'),(6,12,'o'),(7,6,'s'), (12,6,'e'),
 -- secondo piano
     (8,9,'n'),(8,16,'o'),(9,8,'s'), (16,8,'e'),
 --terzo piano
-    (14,15,'e'), (14,30,'o'), (15,14,'o'),(30,14,'e'),
+    (14,15,'o'), (14,30,'e'), (15,14,'e'),(30,14,'o'),
 --quarto piano
     (10,11,'o'), (10,13,'n'), (11,10,'e'), (13,10,'s'),
 -- quinto piano
     (17,18,'o'),(17,19,'e'),(18,17,'e'),(19,17,'o'),
 --sesto piano
-    (20,21,'e'), (20,22,'n'), (21,20,'o'),(22,20,'s'),
+    (20,21,'e'), (20,22,'o'), (21,20,'o'),(22,20,'e'),
 --settimo piano
-    (25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'s'),(28,26,'n'),
+    (25,26,'e'),(25,27,'n'), (26,25,'s'), (27,25,'s'), (26,28,'o'),(28,26,'e'),
 --sopra/sotto
     (4,6,'sopra'),(6,8,'sopra'), (8,14, 'sopra'), (14,10,'sopra'),(10,17,'sopra'),(17,20,'sopra'), (20,25,'sopra'),
     (25,20,'sotto'), (20,17,'sotto'),(17,10,'sotto'),(10,14,'sotto'),(14,8,'sotto'),(8,6,'sotto'),(6,4,'sotto');
