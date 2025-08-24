@@ -62,7 +62,7 @@ public class LookAtObserver implements GameObserver {
             } catch (ServerCommunicationException ex) {
                 server = null;
             }
-            if (description.getCurrentRoom().getLook() != null) {
+            if (!description.getCurrentRoom().getLook().isEmpty()) {
                 msg.append(description.getCurrentRoom().getLook());
                 try {
                     int roomId = description.getCurrentRoom().getId();
