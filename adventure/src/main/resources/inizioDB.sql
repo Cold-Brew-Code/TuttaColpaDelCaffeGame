@@ -135,16 +135,21 @@ MERGE INTO Commands(id,name) KEY(id) VALUES
     (18,'ascensore');
 
 MERGE INTO CommandAlias(id,command_alias) KEY(id, command_alias) VALUES
-    (1, 'n'), (2,'s'), (3,'e'), (4,'o'),
-    (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'),
-    (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'),
-    (9, 'open'), (9,'accedi'),
-    (11, 'crea'), (11, 'costruisci'), (11, 'inventa'),
-    (12, 'sfoglia'), (12, 'decifra'), (12, 'interpreta'),
-    (13, 'interagisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchiera'),
-    (16,'butta'),
-    (17, 'utilizza'),
-    (18, 'ascen');
+    (1,'n'), (1, 'avanti'), (1, 'su'),
+    (2,'s'), (2, 'indietro'), (2, 'giu'),
+    (3,'e'), (3, 'destra'), (3, 'dritta'),
+    (4,'o'), (4, 'sinistra'),
+    (7, 'guarda'), (7, 'vedi'), (7, 'trova'), (7,'cerca'), (7, 'descrivi'), (7, 'occhiali'), (7, 'esamina'), (7, 'ispeziona'), (7, 'buttaunocchio'), (7, 'daiunocchiata'),
+    (8, 'prendi'), (8, 'afferra'), (8, 'colleziona'), (8,'accumula'), (8,'inserisci'), (8, 'raccatta'),
+    (9, 'accedi'), (9, 'scassina'), (9, 'sfonda'),
+    (11, 'crea'), (11, 'costruisci'), (11, 'inventa'), (11, 'assembla'), (11, 'fabbrica'),
+    (12, 'sfoglia'), (12, 'decifra'), (12, 'interpreta'), (12, 'scansiona'), (12, 'leggiti'),
+    (13, 'interagisci'), (13, 'comunica'), (13, 'conversa'), (13, 'chiacchiera'), (13, 'spicciadueparole'), (13, 'dialoga'),
+    (14,'sali'), (14, 'ascendi'), (14, 'monta'),
+    (15,'cala'),
+    (16,'lascia'),(16, 'butta'), (16, 'molla'), (16, 'posa'), (16, 'abbandona'),
+    (17,'usa'), (17, 'utilizza'), (17, 'adopera'), (17, 'impiega'),
+    (18,'ascensore'), (18, 'ascen'), (18, 'elevatore'), (18, 'montacarichi');
 
 MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, is_composable, uses, image_path, is_pickable) KEY(id) VALUES
     (9, 'CHIAVE', 'Una piccola chiave d''ottone, più grande e massiccia del normale, consumata dal tempo e leggermente ossidata alle estremità. All''apparenza banale, ma capace di sbloccare l''ascensore del dipartimento, portando chi la possiede verso piani superiori a una velocità elevata.', false,false,false,false,-1, 'chiave.png', true),
