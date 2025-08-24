@@ -665,12 +665,12 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 progressBar.setFont(new Font("Verdana", Font.BOLD, 16));
 
                 // Cambia solo il colore del riempimento in base al tempo
-                if (newValue < 6000) {
+                if (newValue < 1050) {
                     progressBar.setForeground(Color.GREEN);  // riempimento
                     progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                     progressBar.setString("FORZA IL DOVERE CHIAMA");
 
-                } else if (newValue < 9000) {
+                } else if (newValue < 1575) {
                     progressBar.setForeground(Color.ORANGE);
                     progressBar.setBackground(Color.LIGHT_GRAY);
                     progressBar.setString("AHI HO PAURA DI MOLLARE");

@@ -18,7 +18,14 @@ public class Clock implements Serializable {
     private double speedFactor = 1.0;
 
     public void accelerate(double factor) {
-        this.speedFactor = factor;
+        if (factor > 0) {
+            this.speedFactor = factor;
+            // Se il timer è già in esecuzione, lo ferma e lo riavvia con il nuovo fattore di velocità
+            if (isRunning) {
+                stop();
+                start();
+            }
+        }
     }
 
 
@@ -36,27 +43,27 @@ public class Clock implements Serializable {
     }
     /**
      * Avvia il timer se non è già in esecuzione e c'è tempo residuo.
-     * Inizializza uno scheduler {@link ScheduledExecutorService}  che decrementa il tempo residuo ogni secondo. questo fatto n volte 
+     * Inizializza uno scheduler {@link ScheduledExecutorService}  che decrementa il tempo residuo ogni secondo. questo fatto n volte
      * Quando il tempo residuo arriva a zero, il timer si ferma e viene notificato l'osservatore
      * tramite {@code observer.onTimeExpired()}.
-     * scheduleAtFixedRate prende in input l'operazione che deve essere ripetuta , 
+     * scheduleAtFixedRate prende in input l'operazione che deve essere ripetuta ,
      * il tempo di attesa, il tempo di esecuzione tra k e k+1 e l'unità di tempo (in questo caso i secondi)
      */
     public void start() {
         if (!isRunning && remainingTimeInSeconds > 0) {
             isRunning = true;
             scheduler = Executors.newSingleThreadScheduledExecutor();
+            long delay = (long) (1000 / speedFactor); // Calcola il delay in millisecondi
             scheduler.scheduleAtFixedRate(() -> {
                 if (remainingTimeInSeconds > 0) {
-                    int decrement = (int)Math.round(1 * speedFactor);
-                    remainingTimeInSeconds -= decrement;
+                    remainingTimeInSeconds -= 1; // Decrementa sempre di 1
                     observer.onTimeUpdate(getTimeFormatted());
                     gui.increaseProgressBar();
                 } else {
                     stop();
                     observer.onTimeExpired();
                 }
-            }, 1, 1, TimeUnit.SECONDS);
+            }, 0, delay, TimeUnit.MILLISECONDS);
         }
     }
 
