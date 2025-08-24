@@ -1,7 +1,5 @@
 name: Generate and Deploy Javadoc
 
-# ATTIVAZIONE: Questo workflow si esegue a ogni push sul branch 'main'.
-# Un merge è a tutti gli effetti un push, quindi questo copre il tuo caso d'uso.
 on:
   push:
     branches:
@@ -15,12 +13,9 @@ jobs:
       contents: write
 
     steps:
-      # 1. Fa il checkout del codice di 'main' all'ultimo commit.
-      # Non c'è più ambiguità sul branch, siamo sicuramente su main.
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Imposta l'ambiente Java (JDK 21)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -28,21 +23,32 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Genera la Javadoc
-      - name: Generate Javadoc with Maven
-        run: mvn clean javadoc:javadoc
+      # ====================================================================
+      # STEP 1 (MODIFICATO): Eseguiamo Maven in modalità debug (-X)
+      # Questo produrrà un log molto lungo, ma conterrà l'errore esatto se Maven fallisce.
+      # ====================================================================
+      - name: Generate Javadoc with Maven (DEBUG MODE)
+        run: mvn clean javadoc:javadoc -X
         working-directory: ./adventure
 
-      # 4. Esegue il commit e il push dei file generati
+      # ====================================================================
+      # STEP 2 (NUOVO): Listiamo tutti i file nel workspace
+      # Questo ci mostrerà SE e DOVE la cartella 'docs' è stata creata.
+      # ====================================================================
+      - name: See what was created (List all files)
+        run: ls -R
+
+      # ====================================================================
+      # STEP 3 (NUOVO): Controlliamo cosa vede Git prima del commit
+      # Questo ci dirà se Git ha rilevato nuovi file da committare.
+      # ====================================================================
+      - name: Check Git status before commit
+        run: git status
+
       - name: Commit and push Javadoc
         run: |
-          # Questa configurazione è necessaria perché il workflow esegua il commit
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions-bot@github.com"
-          
-          # Aggiunge i file e fa il commit SOLO se ci sono stati cambiamenti
           git add docs
           git diff-index --quiet HEAD || git commit -m "docs: Generate and update Javadoc [ci skip]"
-          
-          # Invia il commit al branch 'main'
           git push
