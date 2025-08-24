@@ -1,7 +1,7 @@
 name: Generate and Deploy Javadoc
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -13,11 +13,9 @@ jobs:
       contents: write
 
     steps:
-      # 1. Checkout del codice
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Java 21
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -25,20 +23,17 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Genera la Javadoc
       - name: Generate Javadoc with Maven
         run: mvn clean javadoc:javadoc
         working-directory: ./adventure
 
-      # 4. Copia la Javadoc in una cartella di repo (es. `docs`)
-      - name: Move Javadoc to docs folder
+      - name: Move Javadoc to docs/javadoc folder
         run: |
-          rm -rf docs
-          mkdir -p docs
-          cp -r adventure/target/site/apidocs/* docs/
+          rm -rf docs/javadoc
+          mkdir -p docs/javadoc
+          cp -r adventure/docs/* docs/javadoc/
 
-      # 5. Commit e push solo se ci sono modifiche
-      - name: Commit and push Javadoc
+      - name: Commit Javadoc changes
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions-bot@github.com"
@@ -46,7 +41,6 @@ jobs:
           git add docs
           if ! git diff --cached --quiet; then
             git commit -m "docs: Update Javadoc [skip ci]"
-            git push
           else
             echo "Nessuna modifica alla Javadoc."
           fi
