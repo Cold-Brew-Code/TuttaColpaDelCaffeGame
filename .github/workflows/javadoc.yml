@@ -25,17 +25,17 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Genera la Javadoc
+      # 3. Genera la Javadoc (nel tuo caso viene salvata in adventure/docs)
       - name: Generate Javadoc with Maven
         run: mvn clean javadoc:javadoc
         working-directory: ./adventure
 
-      # 4. Copia la Javadoc in una cartella di repo (es. `docs`)
-      - name: Move Javadoc to docs folder
+      # 4. Copia la Javadoc in docs/javadoc
+      - name: Move Javadoc to docs/javadoc folder
         run: |
-          rm -rf docs
-          mkdir -p docs
-          cp -r adventure/target/site/apidocs/* docs/
+          rm -rf docs/javadoc
+          mkdir -p docs/javadoc
+          cp -r adventure/docs/* docs/javadoc/
 
       # 5. Commit e push solo se ci sono modifiche
       - name: Commit and push Javadoc
