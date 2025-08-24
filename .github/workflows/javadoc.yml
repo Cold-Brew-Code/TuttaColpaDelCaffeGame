@@ -1,0 +1,41 @@
+name: Generate and Deploy Javadoc on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  generate-and-deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Generate Javadoc with Maven
+        run: mvn clean javadoc:javadoc
+        working-directory: ./adventure
+
+      - name: Commit and push Javadoc
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions-bot@github.com"
+          # Il commit viene eseguito dalla radice, che è corretto
+          git add docs
+          git diff-index --quiet HEAD || git commit -m "docs: Generate and update Javadoc [ci skip]"
+          git push

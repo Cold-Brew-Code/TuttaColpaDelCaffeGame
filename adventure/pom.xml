@@ -14,7 +14,6 @@
         </repository>
     </distributionManagement>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
@@ -29,7 +28,6 @@
     </repositories>
 
     <dependencies>
-        <!-- Le tue dipendenze esistenti rimangono invariate -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -74,7 +72,6 @@
 
     <build>
         <resources>
-            <!-- Aggiunto: Include i file audio dalla cartella personalizzata -->
             <resource>
                 <directory>adventure/resources</directory>
                 <includes>
@@ -82,20 +79,19 @@
                 </includes>
                 <targetPath>sounds</targetPath>
             </resource>
-            <!-- Include anche le risorse standard se presenti -->
             <resource>
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
-                    <includes>
-                        <include>**/*.wav</include>
-                        <include>**/*.png</include>
-                        <include>**/*.jpg</include>
-                        <include>**/*.sql</include>
-                        <include>**/stopwords</include>
-                    </includes>
-        </resource>
+                <includes>
+                    <include>**/*.wav</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.sql</include>
+                    <include>**/stopwords</include>
+                </includes>
+            </resource>
         </resources>
 
         <plugins>
@@ -123,7 +119,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -144,11 +139,16 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.6.3</version>
+                <configuration>
+                    <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
+                    <destDir>docs</destDir>
+                    <encoding>UTF-8</encoding>
+                    <doclint>none</doclint>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadoc</id>
