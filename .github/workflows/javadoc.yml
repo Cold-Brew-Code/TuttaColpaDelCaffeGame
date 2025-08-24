@@ -22,7 +22,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: 'maven'
-
       # ====================================================================
       # STEP 1 (MODIFICATO): Eseguiamo Maven in modalità debug (-X)
       # Questo produrrà un log molto lungo, ma conterrà l'errore esatto se Maven fallisce.
