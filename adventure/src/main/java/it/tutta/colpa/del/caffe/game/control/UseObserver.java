@@ -6,6 +6,7 @@ package it.tutta.colpa.del.caffe.game.control;
 
 import java.util.List;
 
+import it.tutta.colpa.del.caffe.game.boundary.MapPage;
 import it.tutta.colpa.del.caffe.game.entity.*;
 import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
@@ -64,7 +65,7 @@ public class UseObserver implements GameObserver {
     @Override
     public String update(GameDescription description, ParserOutput parserOutput) throws ServerCommunicationException {
         StringBuilder msg = new StringBuilder();
-        Object obj = parserOutput.getObject();
+        GeneralItem obj = parserOutput.getObject();
         if (parserOutput.getCommand().getType() == CommandType.USE) {
             ServerInterface server;
             try {
@@ -77,7 +78,7 @@ public class UseObserver implements GameObserver {
             if (obj == null) {
                 msg.append("Non hai specificato l'oggetto da usare. (scrivi 'usa nome oggetto')");
                 return msg.toString();
-            } else if (GameUtils.getObjectFromInventory(description.getInventory(), 14)==null) {
+            } else if (GameUtils.getObjectFromInventory(description.getInventory(), obj.getId()) == null) {
                 msg.append("Non hai questo oggetto nell'inventario...");
             } else {
                 switch (parserOutput.getObject().getId()) {
@@ -128,7 +129,7 @@ public class UseObserver implements GameObserver {
                                     }
                                 }
                             } else if (magicCard && card.getUses() <= 0 && description.getCurrentRoom().isDeniedEntry()) {
-                                msg.append("Mi dipsice, ma non puoi più usare la carta magina. Hai finito gli utilizzi!");
+                                msg.append("Mi dispiace, ma non puoi più usare la carta magina. Hai finito gli utilizzi!");
 
                             }
                         }
@@ -174,8 +175,8 @@ public class UseObserver implements GameObserver {
                             msg.append("Hai già preso la mappa!");
                         } else if (isVisibleMap == false && GameUtils.getObjectFromInventory(description.getInventory(), 1) != null) {
                             //la mappa può essere aperta ovunque
-                            // stampa il contenuto 
-                            msg.append(description.getGameMap().stampaDirezioniPerStanza());
+                            new MapPage().setVisible(true);
+                            msg.append("Hai usato la mappa! Speriamo che ti porti nella giusta direzione...\nNessuno garantisce che tutte le mappe siano facili da leggere!");
                         }
                     }
 
