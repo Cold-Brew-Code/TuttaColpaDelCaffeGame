@@ -1,29 +1,24 @@
-name: Generate and Deploy Javadoc on Merge
+name: Generate and Deploy Javadoc
 
-# Triggera il workflow solo quando una Pull Request verso 'main' viene chiusa e unita (merged).
+# ATTIVAZIONE: Questo workflow si esegue a ogni push sul branch 'main'.
+# Un merge è a tutti gli effetti un push, quindi questo copre il tuo caso d'uso.
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
 
 jobs:
   generate-and-deploy:
-    # Questa condizione assicura che il job venga eseguito SOLO se la PR è stata effettivamente unita.
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
-    # Permessi necessari per permettere all'azione di fare un commit e push
     permissions:
       contents: write
 
     steps:
-      # 1. Fa il checkout del codice del branch 'main' dopo il merge
+      # 1. Fa il checkout del codice di 'main' all'ultimo commit.
+      # Non c'è più ambiguità sul branch, siamo sicuramente su main.
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          # Fa il checkout del branch 'main' per avere l'ultima versione del codice
-          ref: main
 
       # 2. Imposta l'ambiente Java (JDK 21)
       - name: Set up JDK 21
@@ -33,16 +28,21 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # 3. Esegue il comando Maven per generare la Javadoc
+      # 3. Genera la Javadoc
       - name: Generate Javadoc with Maven
         run: mvn clean javadoc:javadoc
+        working-directory: ./adventure
 
       # 4. Esegue il commit e il push dei file generati
       - name: Commit and push Javadoc
         run: |
+          # Questa configurazione è necessaria perché il workflow esegua il commit
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions-bot@github.com"
+          
+          # Aggiunge i file e fa il commit SOLO se ci sono stati cambiamenti
           git add docs
-          # Esegue il commit solo se ci sono cambiamenti nella cartella 'docs'
           git diff-index --quiet HEAD || git commit -m "docs: Generate and update Javadoc [ci skip]"
+          
+          # Invia il commit al branch 'main'
           git push
