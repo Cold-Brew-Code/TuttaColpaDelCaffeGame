@@ -171,7 +171,7 @@ MERGE INTO Items(id, name, description, is_container, is_readable, is_visible, i
     (11,'SCATOLA', 'Una semplice scatola bianca, sorprendentemente leggera, che non emette alcun suono quando la si scuote, come se fosse vuota o custodisse qualcosa di immobile. Sul retro è inciso in piccolo un simbolo misterioso: 7L.', true, false,true,false,-1,'scatola.png', true),
     (12, 'TESSERA SMAGNETIZZATA','Una tessera bianca, dall''aspetto anonimo, priva del chip che le darebbe vita. Un tempo poteva essere una carta di accesso o una vecchia tessera servizi, ora ridotta a un semplice pezzo di plastica apparentemente inutile.', false,false,true,false,-1, 'tessera_smagnetizzata.png', true ),
     (13, 'CARTA IGIENICA', 'Un semplice rotolo di carta igienica, leggermente sgualcito ai bordi.', false,false,false,false,-1, 'carta_igienica.png', true),
-    (14, 'TESSERA MAGICA', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,true,2,'tessera_magica.png', true),
+    (14, 'PASS MAGICO', 'Dall''incontro tra una tessera priva di vita e una scheda madre ormai logora è nato questo curioso artefatto: un rettangolo di plastica bianca, attraversato da venature metalliche ossidate che paiono vibrare di un''energia invisibile. Basta sfiorarla per spalancare porte sigillate da tempo e far affiorare particolari nascosti agli occhi più attenti. Ma la sua magia è fragile come un fiammifero al vento: può brillare solo poche volte prima che il mistero che la anima si consumi del tutto....',false,false,false,true,2,'tessera_magica.png', true),
     (16, 'MACCHINETTA DEL CAFFÈ', 'Un''elegante colonna metallica dall''aspetto futuristico, impreziosita da un ampio touch screen lucido come uno specchio. Accetta pagamenti contactless con una rapidità quasi magica e permette di scegliere tra decine di aromi personalizzati: dal caffè intenso delle notti d''esame al più delicato decaffeinato del “tanto ormai è andata”. Sul display, brevi messaggi motivazionali compaiono all''improvviso, come bisbigli incoraggianti per studenti assonnati e docenti esausti. Un piccolo altare tecnologico dedicato al culto quotidiano della caffeina.', true,false,true,true,-1, 'macchinetta_del_caffè.png', false);
 
 
@@ -201,21 +201,38 @@ MERGE INTO ContainerContents(container_id, content_id, quantity) KEY(container_i
     (16,2,1);
 
 MERGE INTO ItemAlias(id,item_alias) KEY(id, item_alias) VALUES
-    (1,'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1,'map'),
-    (4, '3000'), (4, 'prodotto'), (4, 'cande'),
-    (2, 'bevanda'), (2, 'energia' ), (2, 'coffee'),
-    (3, 'libro'), (3, 'cc'), (3,'calcolabilità'), (3,'complessità'), (3,'calcol'), (3,'comples'), (3,'lib'),
+-- CHIAVE (9)
+    (9, 'key'), (9, 'ottone'), (9, 'ascensore'),
+-- LA MAPPA DEL FUORICORSO (1)
+    (1, 'mappa'), (1, 'fuoricorso'), (1, 'cartina'), (1, 'map'),
+-- CAFFÈ RIGENERANTE (2)
+    (2, 'bevanda'), (2, 'energia'), (2, 'coffee'), (2, 'caffè'), (2, 'rigenerante'),
+-- LIBRO DI CALCOLABILITÀ E COMPLESSITÀ (3)
+    (3, 'libro'), (3, 'cc'), (3, 'calcolabilità'), (3, 'complessità'), (3, 'calcol'), (3, 'comples'), (3, 'lib'),
+-- CANDEGGINATOR 3000 (4)
+    (4, '3000'), (4, 'prodotto'), (4, 'cande'), (4, 'candeggina'), (4, 'candegginator'),
+-- ARMADIETTO (15)
     (15, 'mobile'), (15, 'armadio'),
-    (5, 'bigliettino'), (5, 'foglio'),
+-- BIGLIETTINO MISTERIOSO (5)
+    (5, 'bigliettino'), (5, 'foglio'), (5, 'nota'), (5, 'appunto'),
+-- SCHEDA MADRE (6)
     (6, 'scheda'), (6, 'motherboard'), (6, 'madre'),
-    (7, 'borsel'), (7, 'astuccio'),
-    (8,'moneta'), (8,'monete'),(8, 'soldo'), (8,'metallo'), (8,'denaro'),
-    (10, 'penna'), (10,'null'),
+-- BORSELLINO (7)
+    (7, 'borsel'), (7, 'astuccio'), (7, 'sacchetto'),
+-- MONETA DI METALLO (8)
+    (8, 'moneta'), (8, 'monete'), (8, 'soldo'), (8, 'metallo'), (8, 'denaro'),
+-- PENNA NULL (10)
+    (10, 'penna'), (10, 'null'),
+-- SCATOLA (11)
     (11, 'contenitore'), (11, 'box'), (11, 'cassa'),
-    (12, 'tessera s'),
+-- TESSERA SMAGNETIZZATA (12)
+    (12, 'tessera s'), (12, 'tessera'), (12, 'smagnetizzata'),
+-- CARTA IGIENICA (13)
     (13, 'carta'), (13, 'rotolo'), (13, 'igienica'),
-    (14, 'magica'), (14,'pass'),
-    (16, 'macchinetta'), (16,'distributore');
+-- PASS MAGICO (14)
+    (14, 'magica'), (14, 'pass'), (14, 'magico'), (14, 'carta magica'),
+-- MACCHINETTA DEL CAFFÈ (16)
+    (16, 'macchinetta'), (16, 'distributore');
 
 MERGE INTO Rooms(id, name, description, look, allowed_entry, is_visible, image_path) KEY(id) VALUES
     (1, 'Ingresso del Campus', 'Davanti a te si apre il cancello del campus universitario, imponente ma familiare. Oltre il cancello si vede un viale lungo, da grandi palazzi e piccioni prepotenti, pronti a colpirti. A pochi passi dall''ingresso, un piccolo bar brulica di studenti già assonnati e inservienti carichi di pacchi. Il dipartimento di informatica si staglia più avanti, grigio e severo, come un labirinto di vetro e cemento che sembra nascondere più segreti che aule.\n TUTORIAL \n Muoviti tramite i comandi Nord, Est, Ovest, Sud, Sali, Scendi ed arriva il prima possibile al bagno.\n Guarda attentamente ciò che ti circonda, può sempre essere utile (usando il comando ''osserva'')!','',true, true, 'ingresso.png'),
