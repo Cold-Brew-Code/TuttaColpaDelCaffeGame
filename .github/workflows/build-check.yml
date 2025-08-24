@@ -1,10 +1,13 @@
-name: Build and Test on PR
+name: Build and Test on PR or Main
 
 on:
   pull_request:
     branches:
       - main
-    types: [opened, synchronize, reopened]
+
+  push:
+    branches:
+      - main
 
 jobs:
   build:
