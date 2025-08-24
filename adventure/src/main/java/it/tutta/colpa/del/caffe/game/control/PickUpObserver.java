@@ -4,10 +4,6 @@
  */
 package it.tutta.colpa.del.caffe.game.control;
 
-/**
- *
- * @author giova
- */
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -275,7 +271,7 @@ public class PickUpObserver implements GameObserver {
                 }
 
             } else {
-                msg.append("Lurgenza da alla testa, non c'è nessun l'oggetto").append(obj.getName());
+                msg.append("L'urgenza da alla testa, questo oggetto non è quì!");
             }
         }
         return msg.toString();
