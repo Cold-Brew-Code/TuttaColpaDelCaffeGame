@@ -31,6 +31,46 @@ public class ServerInterface {
     private PrintWriter out;
     private ObjectInputStream in;
 
+    @FunctionalInterface
+    private interface RetryAction<T> {
+        T execute() throws Exception;
+    }
+
+    /**
+     * Esegue un'azione di richiesta al server con un meccanismo di retry.
+     * Tenta di eseguire l'operazione fino a 5 volte. Se tutti i tentativi falliscono,
+     * lancia una {@link ServerCommunicationException}.
+     *
+     * @param action La Callable che rappresenta l'azione di richiesta.
+     * @param <T> Il tipo di dato atteso come risposta.
+     * @return Il risultato dell'azione.
+     * @throws ServerCommunicationException se l'azione fallisce dopo 5 tentativi.
+     */
+    private <T> T executeWithRetry(RetryAction<T> action) throws ServerCommunicationException {
+        int attempts = 0;
+        final int maxAttempts = 5;
+        while (attempts < maxAttempts) {
+            try {
+                return action.execute();
+            } catch (ServerCommunicationException e) {
+                throw e; // Rilancia subito se l'eccezione è di comunicazione, poiché non è temporanea
+            } catch (Exception e) {
+                attempts++;
+                System.err.println("[Retry] Tentativo " + attempts + " fallito. Riprovo... " + e.getMessage());
+                if (attempts >= maxAttempts) {
+                    throw new ServerCommunicationException("Impossibile completare l'operazione dopo " + maxAttempts + " tentativi.");
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new ServerCommunicationException("Thread interrotto durante il retry.");
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Inizializza l'interfaccia con il server stabilendo la connessione.
      *
@@ -60,35 +100,7 @@ public class ServerInterface {
      */
     @SuppressWarnings("unchecked")
     public <T> T requestToServer(RequestType rt) throws ServerCommunicationException {
-        boolean reCheck = true;
-        int timesChecked = 0;
-        T answer = null;
-        while (reCheck && timesChecked < 4) {
-            try {
-                reCheck = false;
-                answer = (T) getRequestAction(rt).call();
-            } catch (ServerCommunicationException e) {
-                throw e;
-            } catch (Exception e) {
-                reCheck = true;
-            }
-            timesChecked++;
-        }
-        if (reCheck) {
-            try {
-                answer = (T) getRequestAction(rt).call();
-            } catch (ServerException e) {
-                throw new ServerCommunicationException("Il server non ha elaborato correttamente la richiesta: " + e.getMessage() + ".");
-            } catch (IOException e) {
-                throw new ServerCommunicationException("Il server ha chiuso la connessione.");
-            } catch (ClassNotFoundException e) {
-                throw new ServerCommunicationException("Il server ha inviato un oggetto sconosciuto.");
-            } catch (Exception e) {
-                throw new ServerCommunicationException("Errore generico: " + e.getMessage());
-            }
-        }
-
-        return answer;
+        return executeWithRetry(() -> (T) getRequestAction(rt).call());
     }
 
     /**
@@ -102,38 +114,8 @@ public class ServerInterface {
      */
     @SuppressWarnings("unchecked")
     public <T> T requestToServer(RequestType rt, int id) throws ServerCommunicationException {
-        boolean reCheck = true;
-        int timesChecked = 0;
-        T answer = null;
-        while (reCheck && timesChecked < 4) {
-            try {
-                reCheck = false;
-                answer = (T) getRequestAction(rt, id).call();
-            } catch (ServerCommunicationException e) {
-                System.err.println(e.getMessage());
-                throw e;
-            } catch (Exception e) {
-                reCheck = true;
-            }
-            timesChecked++;
-        }
-        if (reCheck) {
-            try {
-                answer = (T) getRequestAction(rt, id).call();
-            } catch (ServerException e) {
-                throw new ServerCommunicationException("Il server non ha elaborato correttamente la richiesta: " + e.getMessage() + ".");
-            } catch (IOException e) {
-                throw new ServerCommunicationException("Il server ha chiuso la connessione.");
-            } catch (ClassNotFoundException e) {
-                throw new ServerCommunicationException("Il server ha inviato un oggetto sconosciuto.");
-            } catch (Exception e) {
-                throw new ServerCommunicationException("Errore generico: " + e.getMessage());
-            }
-        }
-
-        return answer;
+        return executeWithRetry(() -> (T) getRequestAction(rt, id).call());
     }
-
 
     /**
      * Metodo dispatcher che restituisce un'azione {@link Callable} basata sul {@link RequestType}.

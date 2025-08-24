@@ -15,7 +15,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import it.tutta.colpa.del.caffe.game.entity.*;
-import it.tutta.colpa.del.caffe.game.entity.ContainerItem;
 import it.tutta.colpa.del.caffe.game.utility.Direzione;
 
 /**
@@ -27,6 +26,36 @@ import it.tutta.colpa.del.caffe.game.utility.Direzione;
  */
 public class DataBaseManager {
     private Connection connection;
+
+    @FunctionalInterface
+    private interface RetryExecutor {
+        void execute() throws SQLException;
+    }
+
+    private boolean executeWithRetry(RetryExecutor executor) throws SQLException {
+        int attempts = 0;
+        final int maxAttempts = 5;
+        while (attempts < maxAttempts) {
+            try {
+                executor.execute();
+                return true;
+            } catch (SQLException e) {
+                attempts++;
+                System.err.println("[Retry] Tentativo " + attempts + " fallito. Riprovo... " + e.getMessage());
+                if (attempts >= maxAttempts) {
+                    System.err.println("[Retry] Fallimento definitivo dopo " + maxAttempts + " tentativi.");
+                    throw new SQLException("Impossibile completare l'operazione dopo " + maxAttempts + " tentativi.", e);
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new SQLException("Thread interrotto durante il retry.", ie);
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Stabilisce la connessione con il database utilizzando le credenziali fornite.
@@ -40,8 +69,7 @@ public class DataBaseManager {
         String password = "12345";
         dbProperties.setProperty("pw", password);
         String dataBasePath = "jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'";
-        connection = DriverManager.getConnection(dataBasePath,
-                dbProperties);
+        connection = DriverManager.getConnection(dataBasePath, dbProperties);
     }
 
     /**
@@ -64,8 +92,6 @@ public class DataBaseManager {
         connection = null;
     }
 
-    // Commands
-
     /**
      * Recupera tutti i comandi disponibili dal database, inclusi i loro alias.
      *
@@ -74,15 +100,17 @@ public class DataBaseManager {
      */
     public List<Command> askForCommands() throws SQLException {
         List<Command> commands = new ArrayList<>();
-        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Commands;");
-        ResultSet rs = pstm.executeQuery();
-        while (rs.next()) {
-            Command c = new Command(rs.getString("name"));
-            c.setAlias(askForCommandAlias(rs.getInt("id")).toArray(new String[0]));
-            commands.add(c);
-        }
-        rs.close();
-        pstm.close();
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Commands;");
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                Command c = new Command(rs.getString("name"));
+                c.setAlias(askForCommandAlias(rs.getInt("id")).toArray(new String[0]));
+                commands.add(c);
+            }
+            rs.close();
+            pstm.close();
+        });
         return commands;
     }
 
@@ -94,15 +122,13 @@ public class DataBaseManager {
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     private Set<String> askForCommandAlias(int commandID) throws SQLException {
+        Set<String> alias = new HashSet<>();
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM CommandAlias WHERE id = ?");
         pstm.setInt(1, commandID);
         ResultSet rs = pstm.executeQuery();
-
-        Set<String> alias = new HashSet<>();
         while (rs.next()) {
             alias.add(rs.getString("command_alias"));
         }
-
         rs.close();
         pstm.close();
         return alias;
@@ -116,26 +142,26 @@ public class DataBaseManager {
      */
     public GameMap askForGameMap() throws SQLException {
         GameMap gameMap = new GameMap();
-        Statement stm = connection.createStatement();
-        ResultSet rs = stm.executeQuery("SELECT * FROM Rooms ORDER BY id ASC;");
-        Map<Integer, Room> nodes = new HashMap<>();
-        if (rs.next()) {
-            Room room = generateRoom(rs);
-            nodes.put(room.getId(), room);
-            gameMap.aggiungiStanza(room, true);
-        }
-        while (rs.next()) {
-            Room room = generateRoom(rs);
-            nodes.put(room.getId(), room);
-            gameMap.aggiungiStanza(room);
-        }
-        rs.close();
-        stm.close();
-        return getLinkedMap(gameMap, nodes);
+        executeWithRetry(() -> {
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM Rooms ORDER BY id ASC;");
+            Map<Integer, Room> nodes = new HashMap<>();
+            if (rs.next()) {
+                Room room = generateRoom(rs);
+                nodes.put(room.getId(), room);
+                gameMap.aggiungiStanza(room, true);
+            }
+            while (rs.next()) {
+                Room room = generateRoom(rs);
+                nodes.put(room.getId(), room);
+                gameMap.aggiungiStanza(room);
+            }
+            rs.close();
+            stm.close();
+            getLinkedMap(gameMap, nodes);
+        });
+        return gameMap;
     }
-
-
-    // Rooms
 
     /**
      * Genera un oggetto Room a partire dai dati di un ResultSet.
@@ -196,8 +222,6 @@ public class DataBaseManager {
         return map;
     }
 
-    // NPCs
-
     /**
      * Recupera gli NPC presenti in una specifica stanza.
      *
@@ -207,19 +231,17 @@ public class DataBaseManager {
      */
     private List<NPC> askForNPCs(int roomID) throws SQLException {
         List<NPC> NPCs = new ArrayList<>();
-        PreparedStatement pstm = connection.prepareStatement(
-                "SELECT * " +
-                        "FROM NonPlayerCharacters " +
-                        "WHERE room_id=?;");
-        pstm.setInt(1, roomID);
-        ResultSet rs = pstm.executeQuery();
-
-        while (rs.next()) {
-            NPCs.add(generateNPC(rs));
-        }
-
-        rs.close();
-        pstm.close();
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement(
+                    "SELECT * FROM NonPlayerCharacters WHERE room_id=?;");
+            pstm.setInt(1, roomID);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                NPCs.add(generateNPC(rs));
+            }
+            rs.close();
+            pstm.close();
+        });
         return NPCs;
     }
 
@@ -278,7 +300,6 @@ public class DataBaseManager {
                         "ORDER BY d.id, ds.id;");
         pstm.setInt(1, npcID);
         ResultSet rsDialoghi = pstm.executeQuery();
-
         Map<Integer, String> nodes = new HashMap<>();
         int di = -1;
         Dialogue dialogue = null;
@@ -312,20 +333,15 @@ public class DataBaseManager {
         PreparedStatement pstm = connection.prepareStatement("SELECT * FROM DialoguesPossibleAnswers WHERE dialogue_id=?;");
         pstm.setInt(1, dialogue.getId());
         ResultSet rsArchi = pstm.executeQuery();
-
         while (rsArchi.next()) {
             dialogue.addRisposta(nodes.get(rsArchi.getInt("first_statement")),
                     nodes.get(rsArchi.getInt("related_answer_statement")),
                     rsArchi.getString("answer"));
         }
-
         rsArchi.close();
         pstm.close();
         return dialogue;
     }
-
-
-    // Items
 
     /**
      * Recupera gli oggetti presenti in una stanza specifica, con le loro quantità.
@@ -336,34 +352,36 @@ public class DataBaseManager {
      */
     private Map<GeneralItem, Integer> askForInRoomItems(int roomID) throws SQLException {
         Map<GeneralItem, Integer> items = new HashMap<>();
-        PreparedStatement pstm = connection.prepareStatement("SELECT " +
-                "    iro.room_id        AS iro_room_id, " +
-                "    iro.object_id      AS iro_object_id, " +
-                "    iro.quantity       AS iro_quantity, " +
-                "    i.id               AS i_id, " +
-                "    i.name             AS i_name, " +
-                "    i.description      AS i_description, " +
-                "    i.is_container     AS i_is_container, " +
-                "    i.is_readable      AS i_is_readable, " +
-                "    i.is_visible       AS i_is_visible, " +
-                "    i.is_composable    AS i_is_composable, " +
-                "    i.is_pickable      AS i_is_pickable, " +
-                "    i.uses             AS i_uses, " +
-                "    i.image_path       AS i_image_path " +
-                "FROM InRoomObjects     AS iro " +
-                "INNER JOIN Items AS i ON i.id = iro.object_id " +
-                "WHERE iro.room_id = ?;");
-        pstm.setInt(1, roomID);
-        ResultSet rs = pstm.executeQuery();
-        while (rs.next()) {
-            if (rs.getBoolean("i_is_container")) {
-                items.put(generateContainerItem(rs), rs.getInt("iro_quantity"));
-            } else {
-                items.put(generateItem(rs), rs.getInt("iro_quantity"));
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                    "    iro.room_id        AS iro_room_id, " +
+                    "    iro.object_id      AS iro_object_id, " +
+                    "    iro.quantity       AS iro_quantity, " +
+                    "    i.id               AS i_id, " +
+                    "    i.name             AS i_name, " +
+                    "    i.description      AS i_description, " +
+                    "    i.is_container     AS i_is_container, " +
+                    "    i.is_readable      AS i_is_readable, " +
+                    "    i.is_visible       AS i_is_visible, " +
+                    "    i.is_composable    AS i_is_composable, " +
+                    "    i.is_pickable      AS i_is_pickable, " +
+                    "    i.uses             AS i_uses, " +
+                    "    i.image_path       AS i_image_path " +
+                    "FROM InRoomObjects     AS iro " +
+                    "INNER JOIN Items AS i ON i.id = iro.object_id " +
+                    "WHERE iro.room_id = ?;");
+            pstm.setInt(1, roomID);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                if (rs.getBoolean("i_is_container")) {
+                    items.put(generateContainerItem(rs), rs.getInt("iro_quantity"));
+                } else {
+                    items.put(generateItem(rs), rs.getInt("iro_quantity"));
+                }
             }
-        }
-        rs.close();
-        pstm.close();
+            rs.close();
+            pstm.close();
+        });
         return items;
     }
 
@@ -383,13 +401,10 @@ public class DataBaseManager {
         } else {
             i = assembleItem(rsItem);
         }
-        //System.out.println(" VALORE visibile " +rsItem.getBoolean("i_is_visible")+ i.getName());
-        if(rsItem.getBoolean("i_is_visible")){
+        if (rsItem.getBoolean("i_is_visible")) {
             i.setVisibile(rsItem.getBoolean("i_is_visible"));
         }
-
-        //System.out.println(" VALORE PRENDIBILE " +rsItem.getBoolean("i_is_pickable")+ i.getName());
-        if(rsItem.getBoolean("i_is_pickable")){
+        if (rsItem.getBoolean("i_is_pickable")) {
             i.setPickupable(rsItem.getBoolean("i_is_pickable"));
         }
         return i;
@@ -513,23 +528,20 @@ public class DataBaseManager {
      * @return un nuovo oggetto ContainerItem.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-   private ContainerItem generateContainerItem(ResultSet rsContainer) throws SQLException {
-    ContainerItem container = new ContainerItem(
-        rsContainer.getInt("i_id"),
-        rsContainer.getString("i_name"),
-        rsContainer.getString("i_description"),
-        askForItemAlias(rsContainer.getInt("i_id")),
-        rsContainer.getString("i_image_path"),
-        askForContainedItems(rsContainer.getInt("i_id")),
-        false // oppure metti un valore corretto per 'isOpen' se viene dal DB
-    );
-    //System.out.println("VALORE visibile: " + rsContainer.getBoolean("i_is_visible") + " " + container.getName());
-    container.setVisibile(rsContainer.getBoolean("i_is_visible"));
-    //System.out.println("VALORE prendibile: " + rsContainer.getBoolean("i_is_pickable") + " " + container.getName());
-    container.setPickupable(rsContainer.getBoolean("i_is_pickable"));
-    return container;
-}
-
+    private ContainerItem generateContainerItem(ResultSet rsContainer) throws SQLException {
+        ContainerItem container = new ContainerItem(
+                rsContainer.getInt("i_id"),
+                rsContainer.getString("i_name"),
+                rsContainer.getString("i_description"),
+                askForItemAlias(rsContainer.getInt("i_id")),
+                rsContainer.getString("i_image_path"),
+                askForContainedItems(rsContainer.getInt("i_id")),
+                false
+        );
+        container.setVisibile(rsContainer.getBoolean("i_is_visible"));
+        container.setPickupable(rsContainer.getBoolean("i_is_pickable"));
+        return container;
+    }
 
     /**
      * Recupera gli oggetti contenuti all'interno di un contenitore.
@@ -540,30 +552,32 @@ public class DataBaseManager {
      */
     private Map<GeneralItem, Integer> askForContainedItems(int containerID) throws SQLException {
         Map<GeneralItem, Integer> containedItems = new HashMap<>();
-        PreparedStatement pstm = connection.prepareStatement("SELECT " +
-                "    cc.container_id    AS cc_container_id, " +
-                "    cc.content_id      AS cc_content_id, " +
-                "    cc.quantity        AS cc_quantity, " +
-                "    i.id               AS i_id, " +
-                "    i.name             AS i_name, " +
-                "    i.description      AS i_description, " +
-                "    i.is_container     AS i_is_container, " +
-                "    i.is_readable      AS i_is_readable, " +
-                "    i.is_visible       AS i_is_visible, " +
-                "    i.is_composable    AS i_is_composable, " +
-                "    i.is_pickable      AS i_is_pickable, " +
-                "    i.uses             AS i_uses, " +
-                "    i.image_path       AS i_image_path " +
-                "FROM ContainerContents AS cc " +
-                "INNER JOIN Items AS i ON i.id = cc.content_id " +
-                "WHERE cc.container_id = ?;");
-        pstm.setInt(1, containerID);
-        ResultSet rs = pstm.executeQuery();
-        while (rs.next()) {
-            containedItems.put(generateItem(rs), rs.getInt("cc_quantity"));
-        }
-        rs.close();
-        pstm.close();
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                    "    cc.container_id    AS cc_container_id, " +
+                    "    cc.content_id      AS cc_content_id, " +
+                    "    cc.quantity        AS cc_quantity, " +
+                    "    i.id               AS i_id, " +
+                    "    i.name             AS i_name, " +
+                    "    i.description      AS i_description, " +
+                    "    i.is_container     AS i_is_container, " +
+                    "    i.is_readable      AS i_is_readable, " +
+                    "    i.is_visible       AS i_is_visible, " +
+                    "    i.is_composable    AS i_is_composable, " +
+                    "    i.is_pickable      AS i_is_pickable, " +
+                    "    i.uses             AS i_uses, " +
+                    "    i.image_path       AS i_image_path " +
+                    "FROM ContainerContents AS cc " +
+                    "INNER JOIN Items AS i ON i.id = cc.content_id " +
+                    "WHERE cc.container_id = ?;");
+            pstm.setInt(1, containerID);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                containedItems.put(generateItem(rs), rs.getInt("cc_quantity"));
+            }
+            rs.close();
+            pstm.close();
+        });
         return containedItems;
     }
 
@@ -587,8 +601,6 @@ public class DataBaseManager {
         return alias;
     }
 
-    // Room's look refresh
-
     /**
      * Recupera la nuova descrizione 'look' di una stanza a seguito di un evento.
      *
@@ -597,15 +609,18 @@ public class DataBaseManager {
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     public String askForNewRoomLook(int eventID) throws SQLException {
-        PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Event where id=?");
-        pstm.setInt(1, eventID);
-        ResultSet rs = pstm.executeQuery();
-        if (rs.next()) {
-            return rs.getString("updated_room_look");
-        }
-        rs.close();
-        pstm.close();
-        return null;
+        final String[] result = {null};
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM Event where id=?");
+            pstm.setInt(1, eventID);
+            ResultSet rs = pstm.executeQuery();
+            if (rs.next()) {
+                result[0] = rs.getString("updated_room_look");
+            }
+            rs.close();
+            pstm.close();
+        });
+        return result[0];
     }
 
     /**
@@ -616,32 +631,34 @@ public class DataBaseManager {
      * @throws SQLException se si verifica un errore di accesso al database.
      */
     public GeneralItem askForItem(int itemID) throws SQLException {
-        GeneralItem item = null;
-        PreparedStatement pstm = connection.prepareStatement("SELECT " +
-                "    i.id               AS i_id, " +
-                "    i.name             AS i_name, " +
-                "    i.description      AS i_description, " +
-                "    i.is_container     AS i_is_container, " +
-                "    i.is_readable      AS i_is_readable, " +
-                "    i.is_visible       AS i_is_visible, " +
-                "    i.is_composable    AS i_is_composable, " +
-                "    i.is_pickable      AS i_is_pickable, " +
-                "    i.uses             AS i_uses, " +
-                "    i.image_path       AS i_image_path " +
-                "FROM Items AS i " +
-                "WHERE i.id = ?;");
-        pstm.setInt(1, itemID);
-        ResultSet rs = pstm.executeQuery();
-        if (rs.next()) {
-            if (rs.getBoolean("i_is_container")) {
-                item = generateContainerItem(rs);
-            } else {
-                item = generateItem(rs);
+        final GeneralItem[] item = {null};
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                    "    i.id               AS i_id, " +
+                    "    i.name             AS i_name, " +
+                    "    i.description      AS i_description, " +
+                    "    i.is_container     AS i_is_container, " +
+                    "    i.is_readable      AS i_is_readable, " +
+                    "    i.is_visible       AS i_is_visible, " +
+                    "    i.is_composable    AS i_is_composable, " +
+                    "    i.is_pickable      AS i_is_pickable, " +
+                    "    i.uses             AS i_uses, " +
+                    "    i.image_path       AS i_image_path " +
+                    "FROM Items AS i " +
+                    "WHERE i.id = ?;");
+            pstm.setInt(1, itemID);
+            ResultSet rs = pstm.executeQuery();
+            if (rs.next()) {
+                if (rs.getBoolean("i_is_container")) {
+                    item[0] = generateContainerItem(rs);
+                } else {
+                    item[0] = generateItem(rs);
+                }
             }
-        }
-        rs.close();
-        pstm.close();
-        return item;
+            rs.close();
+            pstm.close();
+        });
+        return item[0];
     }
 
     /**
@@ -652,28 +669,30 @@ public class DataBaseManager {
      */
     public List<GeneralItem> askForItems() throws SQLException {
         List<GeneralItem> items = new ArrayList<>();
-        PreparedStatement pstm = connection.prepareStatement("SELECT " +
-                "    i.id               AS i_id, " +
-                "    i.name             AS i_name, " +
-                "    i.description      AS i_description, " +
-                "    i.is_container     AS i_is_container, " +
-                "    i.is_readable      AS i_is_readable, " +
-                "    i.is_visible       AS i_is_visible, " +
-                "    i.is_composable    AS i_is_composable, " +
-                "    i.is_pickable      AS i_is_pickable, " +
-                "    i.uses             AS i_uses, " +
-                "    i.image_path       AS i_image_path " +
-                "FROM Items AS i;");
-        ResultSet rs = pstm.executeQuery();
-        while (rs.next()) {
-            if (rs.getBoolean("i_is_container")) {
-                items.add(generateContainerItem(rs));
-            } else {
-                items.add(generateItem(rs));
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                    "    i.id               AS i_id, " +
+                    "    i.name             AS i_name, " +
+                    "    i.description      AS i_description, " +
+                    "    i.is_container     AS i_is_container, " +
+                    "    i.is_readable      AS i_is_readable, " +
+                    "    i.is_visible       AS i_is_visible, " +
+                    "    i.is_composable    AS i_is_composable, " +
+                    "    i.is_pickable      AS i_is_pickable, " +
+                    "    i.uses             AS i_uses, " +
+                    "    i.image_path       AS i_image_path " +
+                    "FROM Items AS i;");
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                if (rs.getBoolean("i_is_container")) {
+                    items.add(generateContainerItem(rs));
+                } else {
+                    items.add(generateItem(rs));
+                }
             }
-        }
-        rs.close();
-        pstm.close();
+            rs.close();
+            pstm.close();
+        });
         return items;
     }
 
@@ -683,20 +702,18 @@ public class DataBaseManager {
      * @return una lista di tutti gli NPC.
      * @throws SQLException se si verifica un errore di accesso al database.
      */
-    public List<NPC> askForNonPlayerCharacters() throws SQLException{
+    public List<NPC> askForNonPlayerCharacters() throws SQLException {
         List<NPC> NPCs = new ArrayList<>();
-        PreparedStatement pstm = connection.prepareStatement(
-                "SELECT * " +
-                        "FROM NonPlayerCharacters;");
-        ResultSet rs = pstm.executeQuery();
-
-        while (rs.next()) {
-            NPCs.add(generateNPC(rs));
-        }
-
-        rs.close();
-        pstm.close();
-
+        executeWithRetry(() -> {
+            PreparedStatement pstm = connection.prepareStatement(
+                    "SELECT * FROM NonPlayerCharacters;");
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                NPCs.add(generateNPC(rs));
+            }
+            rs.close();
+            pstm.close();
+        });
         return NPCs;
     }
 }
