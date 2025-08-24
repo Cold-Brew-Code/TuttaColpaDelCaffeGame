@@ -1,7 +1,5 @@
 name: Generate and Deploy Javadoc
 
-# ATTIVAZIONE: Questo workflow si esegue a ogni push sul branch 'main'.
-# Un merge è a tutti gli effetti un push, quindi questo copre il tuo caso d'uso.
 on:
   push:
     branches:
@@ -10,17 +8,16 @@ on:
 jobs:
   generate-and-deploy:
     runs-on: ubuntu-latest
-    
+
     permissions:
       contents: write
 
     steps:
-      # 1. Fa il checkout del codice di 'main' all'ultimo commit.
-      # Non c'è più ambiguità sul branch, siamo sicuramente su main.
+      # 1. Checkout del codice
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Imposta l'ambiente Java (JDK 21)
+      # 2. Setup Java 21
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
@@ -33,16 +30,23 @@ jobs:
         run: mvn clean javadoc:javadoc
         working-directory: ./adventure
 
-      # 4. Esegue il commit e il push dei file generati
+      # 4. Copia la Javadoc in una cartella di repo (es. `docs`)
+      - name: Move Javadoc to docs folder
+        run: |
+          rm -rf docs
+          mkdir -p docs
+          cp -r adventure/target/site/apidocs/* docs/
+
+      # 5. Commit e push solo se ci sono modifiche
       - name: Commit and push Javadoc
         run: |
-          # Questa configurazione è necessaria perché il workflow esegua il commit
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions-bot@github.com"
-          
-          # Aggiunge i file e fa il commit SOLO se ci sono stati cambiamenti
+
           git add docs
-          git diff-index --quiet HEAD || git commit -m "docs: Generate and update Javadoc [ci skip]"
-          
-          # Invia il commit al branch 'main'
-          git push
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: Update Javadoc [skip ci]"
+            git push
+          else
+            echo "Nessuna modifica alla Javadoc."
+          fi
