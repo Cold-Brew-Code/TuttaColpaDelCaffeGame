@@ -10,7 +10,7 @@ on:
 jobs:
   generate-and-deploy:
     runs-on: ubuntu-latest
-
+    
     permissions:
       contents: write
 
