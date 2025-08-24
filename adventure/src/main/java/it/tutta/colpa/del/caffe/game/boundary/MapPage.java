@@ -38,6 +38,9 @@ public class MapPage extends JDialog {
      */
     private double zoomLevel = 1.0;
 
+    private int zoomInCounter = 0;
+    private static final int MAX_ZOOM_CLICKS = 5;
+
     /**
      * Costruisce una nuova istanza di MapPage.
      * Configura la finestra principale, i pannelli, i bottoni
@@ -68,7 +71,10 @@ public class MapPage extends JDialog {
         zoomInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                zoom(1.1);
+                if (zoomInCounter < MAX_ZOOM_CLICKS) {
+                    zoom(1.1);
+                    zoomInCounter++;
+                }
             }
         });
 
@@ -76,6 +82,9 @@ public class MapPage extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 zoom(0.9);
+                if (zoomInCounter > 0) {
+                    zoomInCounter--;
+                }
             }
         });
 
@@ -105,7 +114,7 @@ public class MapPage extends JDialog {
     /**
      * Applica un fattore di zoom all'immagine e aggiorna la visualizzazione.
      * Il livello di zoom è limitato per non essere inferiore alle dimensioni
-     * della finestra e non superare un massimo di 10.0.
+     * della finestra.
      *
      * @param factor Il fattore di scala da applicare al livello di zoom corrente.
      */
@@ -117,9 +126,8 @@ public class MapPage extends JDialog {
 
         if (zoomLevel < minZoomLevel) {
             zoomLevel = minZoomLevel;
-        } else if (zoomLevel > 10.0) {
-            zoomLevel = 10.0;
         }
+
         imagePanel.setPreferredSize(new Dimension((int) (imagePanel.originalImage.getWidth() * zoomLevel),
                 (int) (imagePanel.originalImage.getHeight() * zoomLevel)));
         imagePanel.revalidate();
@@ -169,11 +177,8 @@ public class MapPage extends JDialog {
             super.paintComponent(g);
             if (originalImage != null) {
                 Graphics g2d = g.create();
-
                 AffineTransform at = AffineTransform.getScaleInstance(zoomLevel, zoomLevel);
-
                 ((java.awt.Graphics2D) g2d).drawImage(originalImage, at, null);
-
                 g2d.dispose();
             }
         }
