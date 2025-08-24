@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS Items(
-                                    id INT,
-                                    name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     description TEXT,
     is_container BOOLEAN DEFAULT FALSE,
     is_readable BOOLEAN DEFAULT FALSE,
@@ -13,14 +13,14 @@ CREATE TABLE IF NOT EXISTS Items(
     );
 
 CREATE TABLE IF NOT EXISTS Commands(
-                                       id INT,
-                                       name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS Rooms(
-                                    id INT,
-                                    name VARCHAR(40),
+    id INT,
+    name VARCHAR(40),
     description TEXT,
     look TEXT,
     allowed_entry BOOLEAN DEFAULT TRUE,
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS Rooms(
     );
 
 CREATE TABLE IF NOT EXISTS RoomConnections(
-                                              initial_room_id INT,
-                                              target_room_id INT,
-                                              direction ENUM('n', 's', 'e', 'o','sopra','sotto'),
+    initial_room_id INT,
+    target_room_id INT,
+    direction ENUM('n', 's', 'e', 'o','sopra','sotto'),
     PRIMARY KEY (initial_room_id, target_room_id),
     FOREIGN KEY (initial_room_id) REFERENCES Rooms(id),
     FOREIGN KEY (target_room_id) REFERENCES Rooms(id)
@@ -40,35 +40,35 @@ CREATE TABLE IF NOT EXISTS RoomConnections(
 
 -- si occupa anche del collocamento degli npc nelle stanze
 CREATE TABLE IF NOT EXISTS NonPlayerCharacters(
-                                                  id INT,
-                                                  name VARCHAR(30),
+    id INT,
+    name VARCHAR(30),
     room_id INT,
     FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY (id)
     );
 
 CREATE TABLE IF NOT EXISTS NpcAlias (
-                                        id INT,
-                                        npc_alias VARCHAR(30),
+    id INT,
+    npc_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES NonPlayerCharacters(id),
     PRIMARY KEY (id, npc_alias)
     );
 
 CREATE TABLE IF NOT EXISTS Dialogues(
-                                        id INTEGER,
-                                        NPC INTEGER REFERENCES NonPlayerCharacters(id),
+    id INTEGER,
+    NPC INTEGER REFERENCES NonPlayerCharacters(id),
     PRIMARY KEY (id)
     );
 
 CREATE TABLE IF NOT EXISTS DialoguesStatements(
-                                                  id INTEGER,
-                                                  dialogue_id INTEGER REFERENCES Dialogues(id),
+    id INTEGER,
+    dialogue_id INTEGER REFERENCES Dialogues(id),
     dialog_statement VARCHAR(500),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS DialoguesPossibleAnswers(
-                                                       answer VARCHAR(500),
+    answer VARCHAR(500),
     first_statement INTEGER REFERENCES DialoguesStatements(id),
     related_answer_statement INTEGER REFERENCES DialoguesStatements(id),
     dialogue_id INTEGER REFERENCES Dialogues(id),
@@ -76,53 +76,53 @@ CREATE TABLE IF NOT EXISTS DialoguesPossibleAnswers(
     );
 
 CREATE TABLE IF NOT EXISTS InRoomObjects(
-                                            room_id INT,
-                                            object_id INT,
-                                            quantity INT,
-                                            PRIMARY KEY (room_id,object_id),
+    room_id INT,
+    object_id INT,
+    quantity INT,
+    PRIMARY KEY (room_id,object_id),
     FOREIGN KEY (room_id) REFERENCES Rooms(id),
     FOREIGN KEY (object_id) REFERENCES Items(id)
     );
 
 CREATE TABLE IF NOT EXISTS ItemAlias (
-                                         id INT,
-                                         item_alias VARCHAR(30),
+    id INT,
+    item_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES Items(id),
     PRIMARY KEY (id, item_alias)
     );
 
 CREATE TABLE IF NOT EXISTS CommandAlias(
-                                           id INT,
-                                           command_alias VARCHAR(30),
+    id INT,
+    command_alias VARCHAR(30),
     FOREIGN KEY (id) REFERENCES Commands(id),
     PRIMARY KEY (id, command_alias)
     );
 
 CREATE TABLE IF NOT EXISTS Event(
-                                    id INT,
-                                    updated_room_look TEXT,
-                                    room_id INT,
-                                    FOREIGN KEY (room_id) REFERENCES Rooms(id),
+    id INT,
+    updated_room_look TEXT,
+    room_id INT,
+    FOREIGN KEY (room_id) REFERENCES Rooms(id),
     PRIMARY KEY(id)
     );
 
 CREATE TABLE IF NOT EXISTS ContainerContents(
-                                                container_id INT,
-                                                content_id INT,
-                                                quantity INT,
-                                                FOREIGN KEY (container_id) REFERENCES Items(id),
+    container_id INT,
+    content_id INT,
+    quantity INT,
+    FOREIGN KEY (container_id) REFERENCES Items(id),
     FOREIGN KEY (content_id) REFERENCES Items(id),
     PRIMARY KEY(container_id,content_id)
     );
 
 CREATE TABLE IF NOT EXISTS ComposedOf(
-                                         composed_item_id INT REFERENCES Items(id),
+    composed_item_id INT REFERENCES Items(id),
     composing_item_id INT REFERENCES Items(id),
     PRIMARY KEY (composed_item_id,composing_item_id)
     );
 
 CREATE TABLE IF NOT EXISTS ReadableContent(
-                                              readable_item_id INT REFERENCES Items(id),
+    readable_item_id INT REFERENCES Items(id),
     content VARCHAR(500),
     PRIMARY KEY (readable_item_id)
     );
