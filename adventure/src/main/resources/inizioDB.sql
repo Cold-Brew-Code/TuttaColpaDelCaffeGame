@@ -276,23 +276,23 @@ MERGE INTO Event(id, updated_room_look, room_id) KEY(id) VALUES
     (14, '', 21);-- serve se decidiamo di diminuire il tempo se l'utente vede l'immagine del caffe
 
 MERGE INTO RoomConnections(initial_room_id,target_room_id,direction) KEY(initial_room_id, target_room_id) VALUES
-    (1,2,'s'),(2,1,'n'), (2,3,'e'), (3,2,'o'),
+    (1,2,'n'),(2,1,'s'), (2,3,'e'), (3,2,'o'),
 -- pianto terra collegamento
-    (3,4,'e'),(4,5,'o'), (4,3,'s'),(5,4,'e'),(4,29,'n'),(29,4,'s'),
+    (3,4,'n'),(4,5,'o'), (4,3,'s'),(5,4,'e'),(4,29,'n'),(29,4,'s'),
 --primo piano collegamento
     (6,7,'n'),(6,12,'o'),(7,6,'s'), (12,6,'e'),
 -- secondo piano
     (8,9,'n'),(8,16,'o'),(9,8,'s'), (16,8,'e'),
 --terzo piano
-    (14,15,'e'), (14,30,'o'), (15,14,'o'),(30,14,'e'),
+    (14,15,'o'), (14,30,'e'), (15,14,'e'),(30,14,'o'),
 --quarto piano
     (10,11,'o'), (10,13,'n'), (11,10,'e'), (13,10,'s'),
 -- quinto piano
     (17,18,'o'),(17,19,'e'),(18,17,'e'),(19,17,'o'),
 --sesto piano
-    (20,21,'e'), (20,22,'n'), (21,20,'o'),(22,20,'s'),
+    (20,21,'e'), (20,22,'o'), (21,20,'o'),(22,20,'e'),
 --settimo piano
-    (25,26,'e'),(25,27,'n'), (26,25,'o'), (27,25,'s'), (26,28,'s'),(28,26,'n'),
+    (25,26,'e'),(25,27,'n'), (26,25,'s'), (27,25,'s'), (26,28,'o'),(28,26,'e'),
 --sopra/sotto
     (4,6,'sopra'),(6,8,'sopra'), (8,14, 'sopra'), (14,10,'sopra'),(10,17,'sopra'),(17,20,'sopra'), (20,25,'sopra'),
     (25,20,'sotto'), (20,17,'sotto'),(17,10,'sotto'),(10,14,'sotto'),(14,8,'sotto'),(8,6,'sotto'),(6,4,'sotto');
