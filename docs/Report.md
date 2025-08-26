@@ -276,10 +276,158 @@ Nella seguente sezione viene mostrato come gli argomenti trattati nel corso sono
   ```
   Grazie all'interfaccia funzionale il metodo `executeWithRetry(...)` può funzionare indipendentemente dal valore di ritorno che l'azione da ripetere ha. In questo modo il metodo può agire su qualsiasi tipo di richiesta al server e non è necessario sovraccaricare il codice con inutili metodi specifici in più.
 - ### File
-- ### Database (JDBC)
-- ### Lamba Expression
-- ### SWING
-- ### Thread e programmazione concorrente
-- ### Socket e API RESTful
 
+
+- ### Database (JDBC)
+  Java, grazie a JDBC, mette a disposizione una serie di librerie, contenute nel namespaces `java.sql`, che permettono di sfruttare l'utilizzo di basi di dati all'interno del codice.
+  Il modo in cui le basi di dati vengono utilizzate non è altro che SQLEmbedded, dove ogni richiesta (query) al database, effettuata mediante un metodo della libreria java, viene interpretato come un oggetto di tipo `ResultSet` che deve essere ispezionato una tupla alla volta (questo perché i linguaggi di programmazione non sono set-oriented).
+  
+  Le librerie mettono a disposizione diversi metodi per interfacciarsi con la base di dati. Per poter effettuare la connessione, infatti, viene utilizzata la classe `DriverManager`, che conosce molti tipi di DBMS e permette di generare un oggetto di tipo `Connection` che il codice può usare per effettuare delle query qualsiasi sia il DBMS adottato.
+  Ottenuto l'oggetto connection è possibile effettuare due tipi di richiesta:
+  - con Statement
+  - con Statement Preparati
+  
+  Le richieste `Statement` consentono di effettuare, attraverso il metodo `executeQuery("...");` sull'oggetto istanziato, delle query direttamente eseguibili, che non necessitano di parametri ottenibili solo a runtime, come ad esempio una `SELECT` senza clausola `WHERE`.
+  Le richieste `PreparedStatement` consentono di inizializzare lo statement da comunicare al DBMS, mediante il metodo `prepareStatement("...");` sull'oggetto connessione e di lasciarlo incompleto. Questo consente di completare la query quando possibile con il dato mancante, attraverso il metodo `set[Type](index, value);` richiamato sullo statement, e di effettuare la query quando è completa.
+  Per i `PreparedStatement`s è possibile lasciare la query incompleta mediante l'uso del placeholder `?`.
+  
+  Una volta invocato il metodo `executeQuery()` sullo statement, e nel caso la query vada a buon fine senza sollevare una `SQLException`, l'istruzione ritornerà un oggetto di tipo `ResultSet` che contiene non altro che l'insieme di tuple (o la singola tupla nel caso di query scalary) che soddisfa la query.
+  Il `ResultSet` ottenuto è accessibile mediante il metodo `next()`, comunemente usato in un `while`, il quale consentirà di accedere alla successiva tupla ogni volta. Sull'oggetto ResultStatement è possibile invocare il metodo `get[Type](columnName)` per ottenere il valore di una specifica colonna della tupla che si sta ispezionando al momento.
+  
+  Di seguito sono riportate alcuni dei metodi presenti nella classe `DataBaseManager` che mostrano come le precedenti librerie siano state utilizzate all'interno di questo progetto:
+
+  ```java
+    /**
+     * Stabilisce la connessione con il database utilizzando le credenziali fornite.
+     *
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    private void establishConnection() throws SQLException {
+        Properties dbProperties = new Properties();
+        String username = "cacca";
+        dbProperties.setProperty("user", username);
+        String password = "12345";
+        dbProperties.setProperty("pw", password);
+        String dataBasePath = "jdbc:h2:./database;INIT=RUNSCRIPT FROM 'classpath:inizioDB.sql'";
+        connection = DriverManager.getConnection(dataBasePath, dbProperties);
+    }
+  ```
+  Il precedente metodo mostra la generazione dell'oggetto di tipo connessione, ottenuto per mezzo della classe `DriverManager`.
+  Il DBMS con il quale ci si sta cercando di interfacciare è **H2**, un database utilizzabile direttamente in Java che non necessita di essere adoperato necessariamente per mezzo di una console (anche se ne fornisce una).
+  H2 è un'ottima scelta come DBMS per il precedente motivo e per la sua facilità d'uso, infatti basta includere la dipendenza all'interno del progetto *Maven* e funzionerà perfettamente.
+
+
+
+  ```java
+  /**
+     * Costruisce e restituisce la mappa di gioco completa, con stanze e collegamenti.
+     *
+     * @return l'oggetto GameMap inizializzato.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    public GameMap askForGameMap() throws SQLException {
+        GameMap gameMap = new GameMap();
+        executeWithRetry(() -> {
+            Statement stm = connection.createStatement();
+            ResultSet rs = stm.executeQuery("SELECT * FROM Rooms ORDER BY id ASC;");
+            Map<Integer, Room> nodes = new HashMap<>();
+            if (rs.next()) {
+                Room room = generateRoom(rs);
+                nodes.put(room.getId(), room);
+                gameMap.aggiungiStanza(room, true);
+            }
+            while (rs.next()) {
+                Room room = generateRoom(rs);
+                nodes.put(room.getId(), room);
+                gameMap.aggiungiStanza(room);
+            }
+            rs.close();
+            stm.close();
+            getLinkedMap(gameMap, nodes);
+        });
+        return gameMap;
+    }
+  ```
+  Il precedente metodo, invece, mostra come viene utilizzato l'oggetto `Statement` e come le tuple del `ResultSet` possono essere scorse per mezzo di un costrutto `while` mediante il metodo `next()`.
+
+  ```java
+    /**
+     * Recupera gli oggetti presenti in una stanza specifica, con le loro quantità.
+     *
+     * @param roomID l'ID della stanza.
+     * @return una mappa di GeneralItem e le loro quantità.
+     * @throws SQLException se si verifica un errore di accesso al database.
+     */
+    private Map<GeneralItem, Integer> askForInRoomItems(int roomID) throws SQLException {
+      Map<GeneralItem, Integer> items = new HashMap<>();
+      executeWithRetry(() -> {
+        PreparedStatement pstm = connection.prepareStatement("SELECT " +
+                "    iro.room_id        AS iro_room_id, " +
+                "    iro.object_id      AS iro_object_id, " +
+                "    iro.quantity       AS iro_quantity, " +
+                "    i.id               AS i_id, " +
+                "    i.name             AS i_name, " +
+                "    i.description      AS i_description, " +
+                "    i.is_container     AS i_is_container, " +
+                "    i.is_readable      AS i_is_readable, " +
+                "    i.is_visible       AS i_is_visible, " +
+                "    i.is_composable    AS i_is_composable, " +
+                "    i.is_pickable      AS i_is_pickable, " +
+                "    i.uses             AS i_uses, " +
+                "    i.image_path       AS i_image_path " +
+                "FROM InRoomObjects     AS iro " +
+                "INNER JOIN Items AS i ON i.id = iro.object_id " +
+                "WHERE iro.room_id = ?;");
+        pstm.setInt(1, roomID);
+        ResultSet rs = pstm.executeQuery();
+        while (rs.next()) {
+          if (rs.getBoolean("i_is_container")) {
+            items.put(generateContainerItem(rs), rs.getInt("iro_quantity"));
+          } else {
+            items.put(generateItem(rs), rs.getInt("iro_quantity"));
+          }
+        }
+        rs.close();
+        pstm.close();
+      });
+      return items;
+    }
+  ```
+  Il precedente metodo, invece, mostra molto similmente come viene utilizzato l'oggetto `PreparedStatement`.
+
+
+  ```java
+    /**
+       * Genera un oggetto Room a partire dai dati di un ResultSet.
+       *
+       * @param room il ResultSet contenente i dati della stanza.
+       * @return un nuovo oggetto Room.
+       * @throws SQLException se si verifica un errore di accesso al database.
+       */
+      private Room generateRoom(ResultSet room) throws SQLException {
+          return new Room(
+                  room.getInt("id"),
+                  room.getString("name"),
+                  room.getString("description"),
+                  room.getString("look"),
+                  room.getBoolean("is_visible"),
+                  room.getBoolean("allowed_entry"),
+                  room.getString("image_path"),
+                  askForInRoomItems(room.getInt("id")),
+                  askForNPCs(room.getInt("id"))
+          );
+      }
+  ```
+  Infine, il metodo qui sopra mostra come ottenere i valori dei campi di una specifica tupla del `ResultSet` per mezzo dei nomi delle colonne della relazione.
+
+- ### Lamba Expression
+
+
+- ### SWING
+
+
+- ### Thread e programmazione concorrente
+
+
+- ### Socket e API RESTful
 
