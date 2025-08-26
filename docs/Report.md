@@ -25,7 +25,7 @@
 
 # Descrizione dell’avventura
 Tratto (quasi) da una storia vera.
-È una calda 🥵 mattina di luglio. Uno studente di Informatica si sta dirigendo al Dipartimento per sostenere uno degli esami più temuti del corso di laurea: Metodi Avanzati di Programmazione. 
+È una calda 🥵 mattina di luglio. Uno studente di Informatica si sta dirigendo al Dipartimento per sostenere uno degli esami più temuti del corso di laurea: Metodi Avanzati di Programmazione.
 
 Tutto sembra andare secondo i piani... finché, non appena varcato l'ingresso del campus, viene colto da un’improvvisa, impellente esigenza fisiologica 😰.
 
@@ -33,7 +33,7 @@ Inizia così un'odissea tragicomica tra i corridoi dell’università. Nessun ba
 
 Riuscirà a trovare un bagno funzionante prima che sia troppo tardi? E soprattutto, ce la farà ad arrivare in tempo all’esame senza compromettere il proprio futuro accademico?
 
-Un’avventura testuale tra il grottesco e il quotidiano, dove ogni scelta può fare la differenza. 
+Un’avventura testuale tra il grottesco e il quotidiano, dove ogni scelta può fare la differenza.
 
 Preparati a ridere, riflettere... e correre💨.
 
@@ -45,8 +45,8 @@ Preparati a ridere, riflettere... e correre💨.
 
 ### Competenze
 La suddivisione delle competenze o **responsabilità** delle classi viene effettuata secondo il principio di presentazione separata **Entity, Control, Boundary** (**ECB**), dove ogni classe ha una propria responsabilità.
-Più precisamente, le responsabilità costituiscono il ciò che un’istanza di una classe è destinato a fare. 
-Andando ad assegnare responsabilità precise per ogni classe si va a rendere le classi invarianti ai cambiamenti tra loro. 
+Più precisamente, le responsabilità costituiscono il ciò che un’istanza di una classe è destinato a fare.
+Andando ad assegnare responsabilità precise per ogni classe si va a rendere le classi invarianti ai cambiamenti tra loro.
 
 In questo progetto le classi sono state suddivise per competenze all'interno di relativi packages (entity, control, boundary) e, a livello superiore, è stata effettuata un'ulteriore raggruppamento per "aree" dell'applicativo: `game`, `start`, `loadAndSave` e `rete`; in questo modo abbiamo ottenuto una suddivisione per competenze corretta e, inoltre, la facilità di **individuare** le classi corrette per ogni area dell'applicativo.
 
@@ -66,7 +66,7 @@ Il package `game`, a differenza degli altri package, sviluppa una struttura di s
 
 Il package `rete` non viene suddiviso ulteriormente in packages perché tutte le classi che contiene sono di tipo `control` (non c'è nessuna necessità - se non per info di debug già provviste - di comunicare con l'esterno per quest'area dell'applicativo).
 
-Ogni package `game`, `loadsave` e `start` ha la propria classe `Handler` che si occupa di gestire il **binding** tra la GUI e il proprio controller. Questo può essere fatto molto facilmente, pur mantenendo un **basso accoppiamento**, come le buone norme dell'ingegneria del software prevedono, mediante l'uso di **Interfacce**. 
+Ogni package `game`, `loadsave` e `start` ha la propria classe `Handler` che si occupa di gestire il **binding** tra la GUI e il proprio controller. Questo può essere fatto molto facilmente, pur mantenendo un **basso accoppiamento**, come le buone norme dell'ingegneria del software prevedono, mediante l'uso di **Interfacce**.
 In java le interfacce costituiscono la specifica sintattica di metodi che una classe andrà a implementare e sono un meccanismo molto potente. Applicando il polimorfismo ad oggetti che implementano le interfacce è possibile utilizzare gli oggetti senza conoscerne il reale tipo, per questo se in futuro verranno effettuate modifiche di implementazione alle GUI o ai Controller, nessuna controparte necessiterà di ulteriori modifiche (**codice invariante rispetto ai cambiamenti**).
 
 Segue un breve riassunto delle competenze di ciascuna classe, raggruppate per packages:
@@ -95,7 +95,7 @@ Segue un breve riassunto delle competenze di ciascuna classe, raggruppate per pa
     - `PickUpObserver`: Classe che gestisce la raccolta di oggetti mediante il comando `prendi`;
     - `ReadObserver`: Classe che gestisce la logica del comando `leggi`, potendo così mostrare il contenuto degli oggetti leggibili;
     - `ServerInterface`: Classe che permette di interfacciarsi correttamente con il server per effettuare correttamente tutte le richieste necessarie ad istanziare una partita o ad aggiornare lo stato del gioco (se necessario);
-    - `TalkObserver`: Classe che gestisce i dialoghi e le interazioni con gli Non Player Characters nel gioco; 
+    - `TalkObserver`: Classe che gestisce i dialoghi e le interazioni con gli Non Player Characters nel gioco;
     - `UseObserver`: Classe che gestisce la logica del comando `usa`, permettendo al player di usare gli oggetti;
   - **`it.tutta.colpa.del.caffe.game.entity`**:
     - `CombinableItem`: Classe che rappresenta gli oggetti combinabili;
@@ -155,7 +155,7 @@ Segue un breve riassunto delle competenze di ciascuna classe, raggruppate per pa
     - `MainPage`: GUI della schermata iniziale del gioco, il launcher;
   - **`it.tutta.colpa.del.caffe.start.control`**:
     - `Engine`: Controller della GUI del gioco, gestisce le operazioni conseguenti alle scelte effettuate dall'utente;
-    - `MainPageController`: Estensione dell'interfaccia controller, fornisce una specifica sintattica dei metodi che deve avere il `MainPageController` per interfacciarsi con la GUI; 
+    - `MainPageController`: Estensione dell'interfaccia controller, fornisce una specifica sintattica dei metodi che deve avere il `MainPageController` per interfacciarsi con la GUI;
 
 > Per maggiori informazioni riguardanti le classi e le proprie competenze specifiche si rimanda alla [**javadoc**](javadoc/index.html) di questo progetto.
 
@@ -181,9 +181,100 @@ Di seguito riportiamo la specifica algebrica della struttura dati **Dizionario**
 
 ### Specifica Semantica
 Individuiamo come osservatori le f
+
+
+---
+
 ## Dettagli implementativi
-Nella seguente sezione viene mostrato come gli argomenti trattati nel corso vengono utilizzati all'interno di questo progetto.
+Nella seguente sezione viene mostrato come gli argomenti trattati nel corso sono stati utilizzati all'interno di questo progetto.
 - ### Programmazione generica
+  A livello teorico la programmazione generica è una forma di **polimorfismo universale**, più precisamente di **polimorfismo parametrico**.
+  Questo tipo di polimorfismo è molto potente perché permette di rendere **metodi polimorfi** e di poter, più precisamente, applicare l'**operazione che il metodo implementa a insiemi di tipi di dato**.
+  In Java il polimorfismo parametrico viene implementato in più modi e particolarmente con le **Generics**.
+  I metodi generici consentono di effettuare un'operazione su un tipo di dato `<T>` generico per un determinato insieme di dati (o per restrizione di un insieme di dati per mezzo delle *wildcards*).
+
+  La programmazione generica, all'interno di questo progetto è stata utilizzata per poter fornire un'interfaccia unica con la classe `ServerInterface` all'esterno.
+  La classe `ServerInterface`, infatti, presenta un unico metodo pubblico (oltre che al suo costruttore), che serve per effettuare una richiesta generica al server. In questo modo le classi che la usano (come `Engine`, ad esempio) possono effettuare diverse richieste mediante un unico metodo,
+  semplicemente specificando tra i parametri del metodo il tipo di richiesta.
+
+  Il metodo generico è `T<T> requestToServer(...)` e si presenta in più forme. È un metodo polimorfico anche per altri motivi (implementa polimorfismo ad Hoc con overloading), ma focalizzandoci sulla programmazione generica, questa è la sua implementazione:
+  ```java
+    /**
+     * Invia una richiesta senza parametri al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T requestToServer(RequestType rt) throws ServerCommunicationException {
+        return executeWithRetry(() -> (T) getRequestAction(rt).call());
+    }
+
+    /**
+     * Invia una richiesta con un parametro ID al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param id  L'identificatore numerico da inviare con la richiesta.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T requestToServer(RequestType rt, int id) throws ServerCommunicationException {
+        return executeWithRetry(() -> (T) getRequestAction(rt, id).call());
+    }
+  ```
+  Il metodo, in base al parametro `RequestType` ricevuto in input, sceglie il metodo da chiamare mediante `getRequestAction(...).call()`.
+  Quest'ultimo metodo chiama effettivamente uno dei metodi privati della classe che si occupa di effettuare una richiesta specifica al server. Il valore di ritorno di questa funzione non è mai lo stesso, ma è un tipo `<T>` generico.
+  L'uso delle generics, dunque, consente di usare il metodo qualsiasi sia il suo valore di ritorno, cioè qualsiasi sia il tipo della richiesta da gestire.
+  
+  Sempre all'interno della stessa classe, la programmazione generica viene sfruttata all'interno della seguente **interfaccia funzionale**, utile al funzionamento delle lambda expressions (che in seguito tratteremo).
+  ```java
+   @FunctionalInterface
+    private interface RetryAction<T> {
+        T execute() throws Exception;
+    }
+  ```
+  L'interfaccia viene utilizzata per astrarre sul tipo di ritorno dell'azione da compiere all'interno del metodo lambda (anch'esso generico) che segue:
+  ```java
+    /**
+     * Esegue un'azione di richiesta al server con un meccanismo di retry.
+     * Tenta di eseguire l'operazione fino a 5 volte. Se tutti i tentativi falliscono,
+     * lancia una {@link ServerCommunicationException}.
+     *
+     * @param action La Callable che rappresenta l'azione di richiesta.
+     * @param <T> Il tipo di dato atteso come risposta.
+     * @return Il risultato dell'azione.
+     * @throws ServerCommunicationException se l'azione fallisce dopo 5 tentativi.
+     */
+    private <T> T executeWithRetry(RetryAction<T> action) throws ServerCommunicationException {
+        int attempts = 0;
+        final int maxAttempts = 5;
+        while (attempts < maxAttempts) {
+            try {
+                return action.execute();
+            } catch (ServerCommunicationException e) {
+                throw e; // Rilancia subito se l'eccezione è di comunicazione, poiché non è temporanea
+            } catch (Exception e) {
+                attempts++;
+                System.err.println("[Retry] Tentativo " + attempts + " fallito. Riprovo... " + e.getMessage());
+                if (attempts >= maxAttempts) {
+                    throw new ServerCommunicationException("Impossibile completare l'operazione dopo " + maxAttempts + " tentativi.");
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new ServerCommunicationException("Thread interrotto durante il retry.");
+                }
+            }
+        }
+        return null;
+    }
+  ```
+  Grazie all'interfaccia funzionale il metodo `executeWithRetry(...)` può funzionare indipendentemente dal valore di ritorno che l'azione da ripetere ha. In questo modo il metodo può agire su qualsiasi tipo di richiesta al server e non è necessario sovraccaricare il codice con inutili metodi specifici in più.
 - ### File
 - ### Database (JDBC)
 - ### Lamba Expression
