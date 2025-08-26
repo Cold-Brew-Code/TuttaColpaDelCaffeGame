@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import it.tutta.colpa.del.caffe.game.utility.Clock;
-import it.tutta.colpa.del.caffe.game.utility.TimeObserver;
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.boundary.GameEndedPage;
 import it.tutta.colpa.del.caffe.game.boundary.GameGUI;
@@ -18,6 +16,10 @@ import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.GameMap;
 import it.tutta.colpa.del.caffe.game.entity.GameObservable;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
+import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
+import it.tutta.colpa.del.caffe.game.entity.Item;
+import it.tutta.colpa.del.caffe.game.entity.NPC;
+import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.exception.ParserException;
@@ -25,18 +27,23 @@ import it.tutta.colpa.del.caffe.game.exception.ServerCommunicationException;
 import it.tutta.colpa.del.caffe.game.utility.*;
 import it.tutta.colpa.del.caffe.start.control.MainPageController;
 
-
 /**
- * Classe principale che orchestra la logica del gioco, agendo come motore centrale.
- * Gestisce l'intero ciclo di vita di una partita: inizializzazione (da server o, in futuro, da salvataggio),
- * elaborazione dei comandi del giocatore, aggiornamento dello stato del gioco e interazione con l'interfaccia grafica.
+ * Classe principale che orchestra la logica del gioco, agendo come motore
+ * centrale.
+ * Gestisce l'intero ciclo di vita di una partita: inizializzazione (da server
+ * o, in futuro, da salvataggio),
+ * elaborazione dei comandi del giocatore, aggiornamento dello stato del gioco e
+ * interazione con l'interfaccia grafica.
  * <p>
  * Implementa:
  * <ul>
- * <li>{@link GameController}: per esporre i metodi di controllo principali (es. esecuzione comandi, chiusura).</li>
- * <li>{@link GameObservable}: per implementare il pattern Observer, notificando gli osservatori (che gestiscono comandi specifici)
+ * <li>{@link GameController}: per esporre i metodi di controllo principali (es.
+ * esecuzione comandi, chiusura).</li>
+ * <li>{@link GameObservable}: per implementare il pattern Observer, notificando
+ * gli osservatori (che gestiscono comandi specifici)
  * delle azioni del giocatore.</li>
- * <li>{@link TimeObserver}: per reagire agli eventi del timer di gioco (aggiornamento del tempo, scadenza).</li>
+ * <li>{@link TimeObserver}: per reagire agli eventi del timer di gioco
+ * (aggiornamento del tempo, scadenza).</li>
  * </ul>
  *
  * @author giovav
@@ -45,25 +52,31 @@ import it.tutta.colpa.del.caffe.start.control.MainPageController;
 public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
-     * Riferimento all'interfaccia grafica (GUI) del gioco, utilizzato per aggiornare la vista
+     * Riferimento all'interfaccia grafica (GUI) del gioco, utilizzato per
+     * aggiornare la vista
      * in base ai cambiamenti del modello.
      */
     private GameGUI GUI;
 
     /**
-     * Contiene l'intero stato della partita corrente, inclusi la mappa, l'inventario, lo stato del giocatore
+     * Contiene l'intero stato della partita corrente, inclusi la mappa,
+     * l'inventario, lo stato del giocatore
      * e i messaggi da visualizzare.
      */
     private final GameDescription description;
 
     /**
-     * Lista degli osservatori che reagiscono ai comandi del giocatore. Ogni osservatore
-     * è specializzato nella gestione di uno o più tipi di comandi (es. movimento, interazione).
+     * Lista degli osservatori che reagiscono ai comandi del giocatore. Ogni
+     * osservatore
+     * è specializzato nella gestione di uno o più tipi di comandi (es. movimento,
+     * interazione).
      */
     private final List<GameObserver> observers = new ArrayList<>();
     /**
-     * L'analizzatore sintattico (parser) che interpreta i comandi testuali del giocatore
-     * e li trasforma in un formato strutturato ({@link ParserOutput}) comprensibile dal motore di gioco.
+     * L'analizzatore sintattico (parser) che interpreta i comandi testuali del
+     * giocatore
+     * e li trasforma in un formato strutturato ({@link ParserOutput}) comprensibile
+     * dal motore di gioco.
      */
     private final Parser parser;
     /**
@@ -72,15 +85,19 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      */
     private final MainPageController mpc;
 
-
     /**
      * Costruttore per avviare una nuova partita.
-     * Inizializza lo stato del gioco recuperando i dati necessari (mappa, comandi, oggetti, NPC)
-     * da un server. In caso di errore durante l'inizializzazione (es. server non raggiungibile),
-     * interrompe l'avvio del gioco e notifica l'utente tramite un messaggio di errore.
-     * Se l'inizializzazione ha successo, avvia il timer di gioco e mostra la schermata iniziale.
+     * Inizializza lo stato del gioco recuperando i dati necessari (mappa, comandi,
+     * oggetti, NPC)
+     * da un server. In caso di errore durante l'inizializzazione (es. server non
+     * raggiungibile),
+     * interrompe l'avvio del gioco e notifica l'utente tramite un messaggio di
+     * errore.
+     * Se l'inizializzazione ha successo, avvia il timer di gioco e mostra la
+     * schermata iniziale.
      *
-     * @param mpc Il controller della pagina principale, per gestire il ritorno al menu.
+     * @param mpc Il controller della pagina principale, per gestire il ritorno al
+     *            menu.
      * @param GUI L'interfaccia grafica del gioco da controllare.
      */
     public Engine(MainPageController mpc, GameGUI GUI) {
@@ -92,7 +109,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         try {
             tmpDescription = initDescriptionFromServer();
             tmpParser = initParserFromServer(tmpDescription);
-            //timer
         } catch (ServerCommunicationException e) {
             err.append("<p><b>Errore di comunicazione con il server</b>:</p><p>").append(e.getMessage()).append("</p>");
         } catch (IOException e) {
@@ -112,13 +128,10 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
-            //[debug] description.setStatus(GameStatus.ESAME_DA_FARE);
-            //[debug] description.getGameMap().setCurrentRoom(description.getGameMap().getRoom(29));
-            //init first scenario
-            this.description.setTimer(new Clock(20, this, this.GUI));// passo il tempo e l'engine corrente
+            this.description.setTimer(new Clock(20, this, this.GUI));
             this.description.getTimer().setRemainingTime(2100);
             this.GUI.initProgressBar(2100, false);
-            this.description.getTimer().start();// starto l'orologio
+            this.description.getTimer().start();
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
@@ -127,6 +140,104 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
             }
         }
+        this.attachObservers();
+    }
+
+    public Engine(MainPageController mpc, GameGUI GUI, GameDescription loadedGame) {
+        this.GUI = GUI;
+        this.mpc = mpc;
+        this.description = loadedGame;
+
+        this.parser = initParserFromDescription(loadedGame);
+
+        Clock loadedClock = loadedGame.getTimer();
+        Clock newClock = new Clock(20, this, this.GUI);
+
+        if (loadedClock != null) {
+            newClock.setRemainingTime(loadedClock.getRemainingTimeInSeconds());
+        } else {
+            newClock.setRemainingTime(2100);
+        }
+
+        this.description.setTimer(newClock);
+
+        initializeLoadedGame();
+    }
+
+    private void initializeLoadedGame() {
+        this.description.getTimer().start();
+
+        boolean hasUsedRestroom = description.getStatus() == GameStatus.ESAME_DA_FARE;
+        this.GUI.initProgressBar(description.getTimer().getRemainingTimeInSeconds(), hasUsedRestroom);
+
+        GUI.out("Partita caricata: " + description.getWelcomeMsg());
+
+        if (description.getCurrentRoom() != null) {
+            try {
+                GUI.setImage(description.getCurrentRoom().getImagePath());
+            } catch (ImageNotFoundException e) {
+                GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
+                try {
+                    GUI.setImage("/images/resource_not_found.png");
+                } catch (ImageNotFoundException e2) {
+                }
+            }
+
+            GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
+        }
+
+        attachObservers();
+    }
+
+    private Parser initParserFromDescription(GameDescription description) {
+        try {
+            Set<String> stopwords = Utils.loadFileListInSet(new File("./src/main/resources/stopwords"));
+            List<GeneralItem> allItems = new ArrayList<>();
+            for (Room room : description.getGameMap().getGrafo().vertexSet()) {
+                allItems.addAll(room.getItems());
+            }
+
+            return new Parser(
+                    stopwords,
+                    description.getCommands(),
+                    allItems,
+                    getAllNPCsFromMap(description.getGameMap()));
+        } catch (IOException e) {
+            throw new RuntimeException("Errore nell'inizializzazione del parser: " + e.getMessage(), e);
+        }
+    }
+
+    private List<GeneralItem> getAllItemsFromMap(GameMap gameMap) {
+        List<GeneralItem> allItems = new ArrayList<>();
+        for (Room room : gameMap.getGrafo().vertexSet()) {
+            allItems.addAll(room.getItems());
+        }
+        return allItems;
+    }
+
+    private List<NPC> getAllNPCsFromMap(GameMap gameMap) {
+        List<NPC> allNPCs = new ArrayList<>();
+        for (Room room : gameMap.getGrafo().vertexSet()) {
+            allNPCs.addAll(room.getNPCs());
+        }
+        return allNPCs;
+    }
+
+    @Override
+    public void saveGame() {
+        try {
+            String fileName = it.tutta.colpa.del.caffe.loadsave.control.SaveLoad.saveObject(this.description);
+            this.GUI.showInformation("Salvataggio", "Partita salvata con successo!");
+
+            this.closeGUI();
+            this.mpc.openGUI();
+        } catch (Exception e) {
+            System.err.println("[ERROR] Errore salvataggio: " + e.getMessage());
+            this.GUI.notifyError("Salvataggio Fallito", "Errore: " + e.getMessage());
+        }
+    }
+
+    private void attachObservers() {
         this.attach(new BuildObserver());
         this.attach(new LookAtObserver());
         this.attach(new MoveObserver());
@@ -140,53 +251,39 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     }
 
     /**
-     * Inizializza il parser recuperando dal server le liste di oggetti e NPC,
-     * che costituiscono il vocabolario del gioco.
-     *
-     * @param description Lo stato del gioco, necessario per ottenere l'elenco dei comandi.
-     * @return Un'istanza di {@link Parser} configurata e pronta all'uso.
-     * @throws IOException Se si verifica un errore durante la lettura del file delle stopwords.
-     * @throws ServerCommunicationException Se fallisce la comunicazione con il server.
+     * Inizializza il parser recuperando dal server le liste di oggetti e NPC.
      */
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
         Set<String> stopwords = Utils.loadFileListInSet(new File("./src/main/resources/stopwords"));
         ServerInterface si = new ServerInterface("localhost", 49152);
-        Parser p = new Parser(
-                stopwords,
-                description.getCommands(),
-                si.requestToServer(RequestType.ITEMS),
-                si.requestToServer(RequestType.NPCs)
-        );
+
+        // Il server dovrebbe già restituire List<GeneralItem>
+        List<GeneralItem> items = si.requestToServer(RequestType.ITEMS);
+        List<NPC> npcs = si.requestToServer(RequestType.NPCs);
+
+        Parser p = new Parser(stopwords, description.getCommands(), items, npcs);
         si.requestToServer(RequestType.CLOSE_CONNECTION);
         return p;
     }
 
     /**
-     * Inizializza lo stato del gioco ({@link GameDescription}) contattando il server locale.
-     * Recupera la mappa di gioco e l'elenco dei comandi disponibili.
-     *
-     * @return una {@link GameDescription} contenente la mappa e i comandi.
-     * @throws ServerCommunicationException se la comunicazione fallisce o i dati ricevuti sono incompleti.
+     * Inizializza lo stato del gioco dal server.
      */
-
     private GameDescription initDescriptionFromServer() throws ServerCommunicationException {
         ServerInterface si = new ServerInterface("localhost", 49152);
-        GameMap gm = si.requestToServer(RequestType.GAME_MAP);
-        List<Command> c = si.requestToServer(RequestType.COMMANDS);
-        GameDescription gd = new GameDescription(
-                si.requestToServer(RequestType.GAME_MAP),
-                si.requestToServer(RequestType.COMMANDS));
+        GameMap gameMap = si.requestToServer(RequestType.GAME_MAP);
+        List<Command> commandList = si.requestToServer(RequestType.COMMANDS);
+        GameDescription gd = new GameDescription(gameMap, commandList);
         si.requestToServer(RequestType.CLOSE_CONNECTION);
         return gd;
     }
-
 
     /**
      * Costruttore per caricare una partita da un file di salvataggio.
      * Funzionalità non ancora implementata.
      *
      * @param filePath il percorso del file di salvataggio.
-     * @param mpc Il controller della pagina principale.
+     * @param mpc      Il controller della pagina principale.
      */
     @SuppressWarnings("unused")
     public Engine(String filePath, it.tutta.colpa.del.caffe.start.control.Engine mpc) {
@@ -195,7 +292,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         description = null;
         this.mpc = mpc;
     }
-
 
     /**
      * Inizializza lo stato di una partita a partire da un file di salvataggio.
@@ -210,7 +306,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Tenta di muovere il giocatore nella direzione specificata.
-     * Metodo di utilità, non più utilizzato direttamente poiché la logica è gestita da {@link MoveObserver}.
+     * Metodo di utilità, non più utilizzato direttamente poiché la logica è gestita
+     * da {@link MoveObserver}.
      *
      * @param direction la direzione in cui muoversi.
      * @return true se il movimento è possibile, false altrimenti.
@@ -227,7 +324,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Tenta di utilizzare l'ascensore per spostarsi a un piano specifico.
-     * Metodo di utilità, non più utilizzato direttamente poiché la logica è gestita da {@link LiftObserver}.
+     * Metodo di utilità, non più utilizzato direttamente poiché la logica è gestita
+     * da {@link LiftObserver}.
      *
      * @param floor il piano da raggiungere.
      * @return true se lo spostamento è riuscito, false altrimenti.
@@ -244,6 +342,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Imposta il riferimento all'interfaccia grafica.
+     * 
      * @param bo L'istanza di {@link GameGUI}.
      */
     public void setGUI(GameGUI bo) {
@@ -262,9 +361,11 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Esegue un nuovo comando fornito dal giocatore.
-     * Il comando viene prima analizzato dal parser. Se valido, notifica tutti gli osservatori,
+     * Il comando viene prima analizzato dal parser. Se valido, notifica tutti gli
+     * osservatori,
      * che tenteranno di eseguirlo. Aggiorna l'output e l'immagine nella GUI.
-     * Contiene anche la logica per gestire la transizione di stato dopo l'uso del bagno.
+     * Contiene anche la logica per gestire la transizione di stato dopo l'uso del
+     * bagno.
      *
      * @param command la stringa di comando inserita dal giocatore.
      */
@@ -289,7 +390,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         }
 
         if (description.getStatus() == GameStatus.BAGNO_USATO) {
-            GUI.showInformation("OTTIMO LAVORO", "<html><p>Hai usato finalmente il bagno, liberando i tuoi impellenti bisogni.</p><p>Adesso non ti resta che sostenere il tuo esame.</p><p><b>Corri!!!!</b></p></html>");
+            GUI.showInformation("OTTIMO LAVORO",
+                    "<html><p>Hai usato finalmente il bagno, liberando i tuoi impellenti bisogni.</p><p>Adesso non ti resta che sostenere il tuo esame.</p><p><b>Corri!!!!</b></p></html>");
             description.setStatus(GameStatus.ESAME_DA_FARE);
             this.GUI.initProgressBar(600, true);
             this.description.getTimer().setRemainingTime(600);
@@ -298,24 +400,17 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Termina la partita corrente.
-     * Chiede conferma all'utente e, in caso affermativo, chiude la finestra di gioco
+     * Chiede conferma all'utente e, in caso affermativo, chiude la finestra di
+     * gioco
      * e mostra la schermata di fine partita.
      */
     @Override
     public void endGame() {
-        if (GUI.notifySomething("Chiusura", "<html><p><b>Vuoi davvero chiudere il gioco?</b></p><p>ATTENZIONE, I PROGRESSI <b>NON</b> VERRANNO SALVATI</p></html>") == 0) {
+        if (GUI.notifySomething("Chiusura",
+                "<html><p><b>Vuoi davvero chiudere il gioco?</b></p><p>ATTENZIONE, I PROGRESSI <b>NON</b> VERRANNO SALVATI</p></html>") == 0) {
             this.GUI.close();
             new GameEndedPage(this.description.getStatus(), mpc).setVisible(true);
         }
-    }
-
-    /**
-     * Salva lo stato attuale della partita.
-     * Funzionalità non ancora implementata.
-     */
-    @Override
-    public void saveGame() {
-        //chiamare LoadSave.save();
     }
 
     /**
@@ -327,9 +422,9 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         inventory.open();
     }
 
-
     /**
      * Aggiunge un osservatore alla lista, se non è già presente.
+     * 
      * @param o L'osservatore da aggiungere.
      */
     @Override
@@ -340,6 +435,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Rimuove un osservatore dalla lista.
+     * 
      * @param o L'osservatore da rimuovere.
      */
     @Override
@@ -351,7 +447,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      * Notifica a tutti gli osservatori registrati un nuovo comando da processare.
      * Ogni osservatore riceve il comando analizzato e, se competente, lo esegue,
      * potenzialmente modificando lo stato del gioco.
-     * Al termine, controlla se il gioco è terminato (vittoria/sconfitta) per gestirne la conclusione.
+     * Al termine, controlla se il gioco è terminato (vittoria/sconfitta) per
+     * gestirne la conclusione.
      *
      * @param po L'output del parser, contenente il comando strutturato.
      */
@@ -385,7 +482,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     /**
      * Gestisce l'evento di scadenza del tempo.
-     * Imposta lo stato del gioco su "tempo esaurito" e avvia la sequenza di fine partita.
+     * Imposta lo stato del gioco su "tempo esaurito" e avvia la sequenza di fine
+     * partita.
      */
     @Override
     public void onTimeExpired() {
@@ -405,5 +503,13 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     private void handleGameEnding() {
         this.GUI.close();
         new GameEndedPage(description.getStatus(), mpc).setVisible(true);
+    }
+
+    /**
+     * Restituisce la descrizione del gioco corrente.
+     * Utile per l'inizializzazione della GUI quando si carica un salvataggio.
+     */
+    public GameDescription getGameDescription() {
+        return this.description;
     }
 }

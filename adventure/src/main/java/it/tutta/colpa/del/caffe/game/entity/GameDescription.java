@@ -17,12 +17,13 @@ import java.util.List;
  */
 public class GameDescription implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private final GameMap gameMap;
     private final List<Command> commands;
     private final Inventory inventory;
     private GameStatus status;
     private final List<String> messages;
-    private Clock timer;
+    private transient Clock timer;
 
     public GameDescription(GameMap gameMap, List<Command> commands) {
         this.gameMap = gameMap;
@@ -31,7 +32,6 @@ public class GameDescription implements Serializable {
         this.status = GameStatus.IN_CORSO;
         this.messages = new ArrayList<>();
     }
-
 
     // <editor-fold defaultstate="collapsed" desc="< Get & Set >">
     public String getWelcomeMsg() {

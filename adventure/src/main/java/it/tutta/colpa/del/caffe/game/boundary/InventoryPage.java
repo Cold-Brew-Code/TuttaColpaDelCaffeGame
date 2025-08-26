@@ -103,7 +103,6 @@ public class InventoryPage extends JDialog implements GUI {
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
-
         firstItem.setBackground(new Color(255, 255, 255));
         firstItem.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
         firstItem.addMouseListener(new MouseAdapter() {
@@ -213,65 +212,73 @@ public class InventoryPage extends JDialog implements GUI {
                         .addGroup(panelLayout.createSequentialGroup()
                                 .addGap(90, 90, 90)
                                 .addComponent(qtyFirstItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+                                        Short.MAX_VALUE)
                                 .addComponent(qtySecondItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                                 .addGap(87, 87, 87))
                         .addGroup(GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                                 .addGap(90, 90, 90)
                                 .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE,
+                                        Short.MAX_VALUE)
                                 .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
                                 .addGap(88, 88, 88))
                         .addGroup(panelLayout.createSequentialGroup()
                                 .addGap(60, 60, 60)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(thirdItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(thirdItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE)
+                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85,
+                                                GroupLayout.PREFERRED_SIZE))
                                 .addGap(60, 60, 60)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE)
                                         .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
                                 .addGap(60, 60, 60))
                         .addGroup(GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
         panelLayout.setVerticalGroup(
                 panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(panelLayout.createSequentialGroup()
                                 .addGap(37, 37, 37)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(secondItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE)
+                                        .addComponent(firstItem, GroupLayout.PREFERRED_SIZE, 85,
+                                                GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(qtyFirstItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(qtySecondItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(qtyFirstItem, GroupLayout.PREFERRED_SIZE, 25,
+                                                GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(qtySecondItem, GroupLayout.PREFERRED_SIZE, 25,
+                                                GroupLayout.PREFERRED_SIZE))
                                 .addGap(29, 29, 29)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
                                         .addComponent(thirdItem, GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                                        .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(fourthItem, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                Short.MAX_VALUE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(qtyThirdItem, GroupLayout.PREFERRED_SIZE, 25,
+                                                GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(qtyFourthItem, GroupLayout.PREFERRED_SIZE, 25,
+                                                GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                //  MODIFICA QUI
+                                // MODIFICA QUI
                                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
 
         GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+                        .addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         this.setResizable(false);
         firstItem.setHorizontalAlignment(SwingConstants.CENTER);
         firstItem.setVerticalAlignment(SwingConstants.CENTER);
@@ -383,5 +390,17 @@ public class InventoryPage extends JDialog implements GUI {
     @Override
     public void linkController(Controller c) {
         // controller non necessario per questa finestra
+    }
+
+    @Override
+    public void notifyError(String string, String string2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'notifyError'");
+    }
+
+    @Override
+    public void showInformation(String string, String string2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'showInformation'");
     }
 }

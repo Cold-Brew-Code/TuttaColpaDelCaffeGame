@@ -45,7 +45,7 @@ public class GameMap implements Serializable {
     /**
      * Aggiunge una stanza al grafo e la imposta come stanza corrente.
      *
-     * @param stanza la stanza da aggiungere
+     * @param stanza  la stanza da aggiungere
      * @param current se true, imposta questa stanza come stanza corrente
      */
     public void aggiungiStanza(Room stanza, boolean current) {
@@ -59,7 +59,7 @@ public class GameMap implements Serializable {
      *
      * @param stanzaP stanza di partenza
      * @param stanzaA stanza di arrivo
-     * @param d direzione dell'arco
+     * @param d       direzione dell'arco
      */
     public void collegaStanze(Room stanzaP, Room stanzaA, Direzione d) {
         this.grafo.addEdge(stanzaP, stanzaA, new ArcoGrafo(d));
@@ -129,7 +129,7 @@ public class GameMap implements Serializable {
         return this.grafo.vertexSet()
                 .stream()
                 .filter(r -> r.getName().equals(new StringBuilder(piano + " piano").toString())
-                || r.getName().equals(piano))
+                        || r.getName().equals(piano))
                 .findFirst()
                 .orElse(null);
 
@@ -160,7 +160,8 @@ public class GameMap implements Serializable {
         // Stampa gli archi
         System.out.println("Archi:");
         for (ArcoGrafo edge : this.grafo.edgeSet()) {
-            System.out.println(this.grafo.getEdgeSource(edge) + " -" + edge.getEtichetta().toString() + "- " + this.grafo.getEdgeTarget(edge)
+            System.out.println(this.grafo.getEdgeSource(edge) + " -" + edge.getEtichetta().toString() + "- "
+                    + this.grafo.getEdgeTarget(edge)
                     + "\n entrambiel?\t" + this.grafo.getEdgeTarget(edge).isDeniedEntry());
         }
     }
@@ -180,6 +181,7 @@ public class GameMap implements Serializable {
      * </p>
      *
      * Esempio di output:
+     * 
      * <pre>
      * Dalla stanza Aula puoi andare in:
      *   -> NORD verso
@@ -201,8 +203,10 @@ public class GameMap implements Serializable {
             } else {
                 for (ArcoGrafo arco : uscenti) {
                     Direzione direzione = arco.getEtichetta(); // mi prendo l'etichetta
-                    Room destinazione = grafo.getEdgeTarget(arco); // mi prendo la stanza in cui arrivo da quella direzione
-                    msg.append("  -> ").append(direzione).append(" verso \n").append(destinazione.getName()).append("\n");
+                    Room destinazione = grafo.getEdgeTarget(arco); // mi prendo la stanza in cui arrivo da quella
+                                                                   // direzione
+                    msg.append("  -> ").append(direzione).append(" verso \n").append(destinazione.getName())
+                            .append("\n");
                 }
             }
         }
@@ -258,7 +262,7 @@ public class GameMap implements Serializable {
      *
      * @return il numero del piano corrente
      * @throws GameMapException se la stanza corrente non è definita o non
-     * corrisponde a un piano valido
+     *                          corrisponde a un piano valido
      */
     public int getPianoCorrente() throws GameMapException {
         if (currentRoom == null) {
@@ -286,6 +290,24 @@ public class GameMap implements Serializable {
         } else {
             throw new GameMapException("Non puoi prendere l'ascensore qui");
         }
+    }
+
+    /**
+     * Restituisce tutte le stanze della mappa.
+     * 
+     * @return Set di tutte le stanze
+     */
+    public Set<Room> getRooms() {
+        return this.grafo.vertexSet();
+    }
+
+    /**
+     * Restituisce il grafo della mappa.
+     * 
+     * @return il grafo
+     */
+    public Graph<Room, ArcoGrafo> getGrafo() {
+        return this.grafo;
     }
 
 }

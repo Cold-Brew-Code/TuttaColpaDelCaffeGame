@@ -1,5 +1,8 @@
 package it.tutta.colpa.del.caffe.game.utility;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,14 +16,15 @@ public class Clock implements Serializable {
     private int remainingTimeInSeconds;
     private boolean isRunning;
     private transient ScheduledExecutorService scheduler;
-    private final TimeObserver observer;
-    private final GameGUI gui;
+    private final transient TimeObserver observer;
+    private final transient GameGUI gui;
     private double speedFactor = 1.0;
 
     public void accelerate(double factor) {
         if (factor > 0) {
             this.speedFactor = factor;
-            // Se il timer è già in esecuzione, lo ferma e lo riavvia con il nuovo fattore di velocità
+            // Se il timer è già in esecuzione, lo ferma e lo riavvia con il nuovo fattore
+            // di velocità
             if (isRunning) {
                 stop();
                 start();
@@ -28,9 +32,9 @@ public class Clock implements Serializable {
         }
     }
 
-
     /**
      * Costruttore: inizializza il timer con il tempo iniziale desiderato.
+     * 
      * @param minutes tempo iniziale in minuti
      */
     public Clock(int minutes, TimeObserver observer, GameGUI gui) {
@@ -38,16 +42,20 @@ public class Clock implements Serializable {
         this.remainingTimeInSeconds = initialTimeInSeconds;
         this.isRunning = false;
         this.observer = observer;
-        this.gui= gui;
+        this.gui = gui;
 
     }
+
     /**
      * Avvia il timer se non è già in esecuzione e c'è tempo residuo.
-     * Inizializza uno scheduler {@link ScheduledExecutorService}  che decrementa il tempo residuo ogni secondo. questo fatto n volte
-     * Quando il tempo residuo arriva a zero, il timer si ferma e viene notificato l'osservatore
+     * Inizializza uno scheduler {@link ScheduledExecutorService} che decrementa il
+     * tempo residuo ogni secondo. questo fatto n volte
+     * Quando il tempo residuo arriva a zero, il timer si ferma e viene notificato
+     * l'osservatore
      * tramite {@code observer.onTimeExpired()}.
      * scheduleAtFixedRate prende in input l'operazione che deve essere ripetuta ,
-     * il tempo di attesa, il tempo di esecuzione tra k e k+1 e l'unità di tempo (in questo caso i secondi)
+     * il tempo di attesa, il tempo di esecuzione tra k e k+1 e l'unità di tempo (in
+     * questo caso i secondi)
      */
     public void start() {
         if (!isRunning && remainingTimeInSeconds > 0) {
@@ -58,7 +66,9 @@ public class Clock implements Serializable {
                 if (remainingTimeInSeconds > 0) {
                     remainingTimeInSeconds -= 1; // Decrementa sempre di 1
                     observer.onTimeUpdate(getTimeFormatted());
-                    gui.increaseProgressBar();
+                    if (gui != null) {
+                        gui.increaseProgressBar();
+                    }
                 } else {
                     stop();
                     observer.onTimeExpired();
@@ -85,7 +95,8 @@ public class Clock implements Serializable {
     /**
      * Reimposta il timer al valore iniziale specificato al momento della creazione.
      * <p>
-     * Ferma il timer se è attualmente in esecuzione e riporta il tempo residuo al valore originale.
+     * Ferma il timer se è attualmente in esecuzione e riporta il tempo residuo al
+     * valore originale.
      */
 
     public void reset() {
@@ -126,7 +137,8 @@ public class Clock implements Serializable {
     /**
      * Restituisce il tempo residuo formattato come stringa leggibile.
      * <p>
-     * Il formato restituito sarà "HH:mm:ss" se il tempo supera un'ora, altrimenti "mm:ss".
+     * Il formato restituito sarà "HH:mm:ss" se il tempo supera un'ora, altrimenti
+     * "mm:ss".
      *
      * @return una stringa rappresentante il tempo residuo formattato
      */
@@ -141,5 +153,15 @@ public class Clock implements Serializable {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
+    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.scheduler = null;
+        this.isRunning = false;
     }
 }

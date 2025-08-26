@@ -8,13 +8,16 @@ import it.tutta.colpa.del.caffe.start.boundary.MainPage;
  * @author giovav
  * @since 16/07/25
  *
- * La classe {@code Engine} rappresenta il motore principale dell'applicazione
- * e implementa l'interfaccia {@link MainPageController}.
- * <p>
- * Si occupa di gestire il flusso del gioco, permettendo di avviare una nuova partita,
- * caricare un salvataggio, chiudere l'applicazione e controllare l'apertura/chiusura
- * della finestra principale (GUI).
- * </p>
+ *        La classe {@code Engine} rappresenta il motore principale
+ *        dell'applicazione
+ *        e implementa l'interfaccia {@link MainPageController}.
+ *        <p>
+ *        Si occupa di gestire il flusso del gioco, permettendo di avviare una
+ *        nuova partita,
+ *        caricare un salvataggio, chiudere l'applicazione e controllare
+ *        l'apertura/chiusura
+ *        della finestra principale (GUI).
+ *        </p>
  */
 public class Engine implements MainPageController {
 
