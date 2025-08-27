@@ -14,13 +14,14 @@
 
 ---
 ## Indice
-- ### [Descrizione dell'avventura]()
-- ### [Progettazione]()
-  - #### [Competenze]()
-  - #### [Organizzazione in packages]()
-- ### [Diagramma delle classi]()
-- ### [Specifica algebrica]()
-- ### [Dettagli implementativi]()
+- ### [Descrizione dell'avventura](#descrizione-dellavventura-1)
+- ### [Progettazione](#progettazione-1)
+  - #### [Competenze](#competenze-1)
+  - #### [Organizzazione in packages](#organizzazione-in-packages-1)
+- ### [Diagramma delle classi](#diagramma-delle-classi-1)
+- ### [Specifica algebrica](#specifica-algebrica-1)
+- ### [Dettagli implementativi](#dettagli-implementativi-1)
+- ### [Modo più veloce per vincere](#modo-più-veloce-per-vincere-il-gioco)
 ---
 
 # Descrizione dell’avventura
@@ -180,7 +181,11 @@ Di seguito riportiamo la specifica algebrica della struttura dati **Dizionario**
 - $$Recupera(Chiave, Dizionario)\rightarrow Valore$$
 
 ### Specifica Semantica
-Individuiamo come osservatori le f
+Individuiamo come osservatori le funzioni: `DizionarioVuoto`, `Appartiene`, `Recupera`, `Cancella`;
+
+Individuiamo come costruttori le funzioni: `CreaDizionario`, `Inserisci`.
+
+Ne consegue la seguente tabella:
 
 
 ---
@@ -430,4 +435,28 @@ Nella seguente sezione viene mostrato come gli argomenti trattati nel corso sono
 
 
 - ### Socket e API RESTful
+
+
+---
+
+## Modo più veloce per vincere il gioco
+
+1. `nord`
+2. `est`
+3. `nord`
+4. `sali`
+5. `sali`
+6. `sali`
+7. `sali`
+8. `parla con Ivano` - dialogo futile
+9. `parla con Ivano` - alla fine del dialogo verrà droppata la carta igienica
+10. `parla con Javanna` - Risposta all'indovinello "Non si sà"
+11. `ovest` - si vince la prima parte del gioco
+12. `est` 
+13. `scendi`
+14. `scendi`
+15. `scendi`
+16. `scendi`
+17. `nord`
+18. `parla` - risolvere il quiz per essere promosso. Le risposte corrette appariranno nella console.
 
