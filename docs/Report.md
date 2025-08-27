@@ -22,6 +22,13 @@
 - ### [Diagramma delle classi](#diagramma-delle-classi-1)
 - ### [Specifica algebrica](#specifica-algebrica-1)
 - ### [Dettagli implementativi](#dettagli-implementativi-1)
+  - #### [Programmazione generica](#programmazione-generica-1)
+  - #### [Files](#file)
+  - #### [DataBases](#database-jdbc)
+  - #### [Lambda Expressions](#lamba-expression)
+  - #### [Swing](#swing-1)
+  - #### [Threads e programmazione concorrente](#thread-e-programmazione-concorrente)
+  - #### [Socket e API RESTful](#socket-e-api-restful-1)
 - ### [Modo più veloce per vincere](#modo-più-veloce-per-vincere-il-gioco)
 ---
 # Introduzione
