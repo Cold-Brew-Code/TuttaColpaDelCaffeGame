@@ -150,25 +150,35 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
         this.parser = initParserFromDescription(loadedGame);
 
-        Clock loadedClock = loadedGame.getTimer();
-        Clock newClock = new Clock(20, this, this.GUI);
-
-        if (loadedClock != null) {
-            newClock.setRemainingTime(loadedClock.getRemainingTimeInSeconds());
+        // Se il timer è null (perché era transient in precedenza), creane uno nuovo
+        if (description.getTimer() == null) {
+            Clock newClock = new Clock(0, this, this.GUI);
+            newClock.setRemainingTime(2100); // Valore di default
+            this.description.setTimer(newClock);
         } else {
-            newClock.setRemainingTime(2100);
+            // Se il timer esiste, reimposta gli observer e la GUI
+            description.getTimer().accelerate(1.0); // Resetta il fattore di velocità
+            // Non possiamo reimpostare observer e GUI direttamente, quindi
+            // dobbiamo assicurarci che vengano gestiti correttamente
         }
-
-        this.description.setTimer(newClock);
 
         initializeLoadedGame();
     }
 
     private void initializeLoadedGame() {
+        // Ri-collega gli observer e la GUI al timer esistente
+        if (description.getTimer() != null) {
+            // Poiché observer e GUI sono transient, dobbiamo reimpostarli
+            // Dovresti aggiungere metodi setter nella classe Clock per questo
+            description.getTimer().setObserver(this);
+            description.getTimer().setGUI(this.GUI);
+        }
+
         this.description.getTimer().start();
 
         boolean hasUsedRestroom = description.getStatus() == GameStatus.ESAME_DA_FARE;
-        this.GUI.initProgressBar(description.getTimer().getRemainingTimeInSeconds(), hasUsedRestroom);
+        int remainingTime = description.getTimer().getRemainingTimeInSeconds();
+        this.GUI.initProgressBar(remainingTime, hasUsedRestroom);
 
         GUI.out("Partita caricata: " + description.getWelcomeMsg());
 

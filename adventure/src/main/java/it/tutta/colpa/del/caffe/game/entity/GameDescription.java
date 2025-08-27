@@ -23,7 +23,7 @@ public class GameDescription implements Serializable {
     private final Inventory inventory;
     private GameStatus status;
     private final List<String> messages;
-    private transient Clock timer;
+    private Clock timer;
 
     public GameDescription(GameMap gameMap, List<Command> commands) {
         this.gameMap = gameMap;

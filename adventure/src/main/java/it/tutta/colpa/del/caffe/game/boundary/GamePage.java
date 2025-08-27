@@ -27,6 +27,7 @@ import it.tutta.colpa.del.caffe.game.entity.GameDescription;
 import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
+import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.TypeWriterEffect;
 
 /**
@@ -264,11 +265,14 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(saveButton)
-                                .addContainerGap()));
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
@@ -643,13 +647,16 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
                 if (gameDescription != null && gameDescription.getCurrentRoom() != null) {
                     setImage(gameDescription.getCurrentRoom().getImagePath());
-
                     out(gameDescription.getCurrentRoom().getDescription().translateEscapes());
-
                     updateInventoryDisplay(gameDescription.getInventory());
 
+                    // CORREZIONE: Imposta il timer dal salvataggio
                     if (gameDescription.getTimer() != null) {
                         setDisplayedClock(gameDescription.getTimer().getTimeFormatted());
+
+                        // Inizializza anche la progress bar con il tempo corretto
+                        boolean hasUsedRestroom = gameDescription.getStatus() == GameStatus.ESAME_DA_FARE;
+                        initProgressBar(gameDescription.getTimer().getRemainingTimeInSeconds(), hasUsedRestroom);
                     }
                 }
             } catch (Exception e) {

@@ -16,8 +16,8 @@ public class Clock implements Serializable {
     private int remainingTimeInSeconds;
     private boolean isRunning;
     private transient ScheduledExecutorService scheduler;
-    private final transient TimeObserver observer;
-    private final transient GameGUI gui;
+    private transient TimeObserver observer;
+    private transient GameGUI gui;
     private double speedFactor = 1.0;
 
     public void accelerate(double factor) {
@@ -157,11 +157,24 @@ public class Clock implements Serializable {
 
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
+        out.writeInt(remainingTimeInSeconds);
+        out.writeBoolean(isRunning);
+        out.writeDouble(speedFactor);
     }
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        this.scheduler = null;
-        this.isRunning = false;
+        this.remainingTimeInSeconds = in.readInt();
+        this.isRunning = in.readBoolean();
+        this.speedFactor = in.readDouble();
+        this.scheduler = null; // Il scheduler viene ricreato al caricamento
+    }
+
+    public void setObserver(TimeObserver observer) {
+        this.observer = observer;
+    }
+
+    public void setGUI(GameGUI gui) {
+        this.gui = gui;
     }
 }
