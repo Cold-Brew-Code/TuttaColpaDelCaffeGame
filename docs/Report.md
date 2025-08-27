@@ -196,9 +196,10 @@ Ne consegue la seguente tabella:
 |                        | `CreaDizionario()`                     | `Inserisci(<K,V>, D)`                                               |
 |------------------------|--------------------------------------|----------------------------------------------------------------------|
 | `DizionarioVuoto(D')`   | `True`                               | `False`                                                              |
-| `Cancella(K', D')`      | `error`                              | `if K = K' then D else Inserisci(Cancella(K, D), K', D)`             |
+| `Cancella(K', D')`      | `error`                              | `if K' = K then D else Inserisci(Cancella(K', D), K, V)`             |
 | `Appartiene(K', D')`    | `False`                              | `if K = K' then T else Appartiene(D, K')`                            |
 | `Recupera(K', D')`      | `error`                              | `if K = K' then V else Recupera(D, K')`                               |
+
 ---
 
 ## Dettagli implementativi
