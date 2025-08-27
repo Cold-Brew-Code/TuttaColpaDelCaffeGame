@@ -643,10 +643,185 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
   ![Modal](img/Modal.png)
 
 - ### Thread e programmazione concorrente
+  I calcolatori sono in grado, grazie ai loro sistemi operativi, di gestire più task nello stesso momento, contemporaneamente. Questo è possibile grazie al *time slicing* della CPU. 
+  È possibile dunque far sì che più processi possano girare (quasi) contemporaneamente. 
   
+  In Java è possibile lanciare Threads concorrenti. I threads sono unità d'esecuzione leggere che condividono la stessa area di memoria e, più in generale, le stesse risorse. Sono molto più leggeri di processi e concorrono allo stesso scopo.
+
+  In Java è possibile creare nuovi Threads in due modi:
+  - Estendendo la classe `Thread` e facendo l'override del metodo `run()`;
+  - Fornendo un'implementazione dell'interfaccia funzionale `Runnable`.
+
+  La seconda è la più versatile perché permette ereditare da altre classi, se necessario. Entrambe sono comunque efficaci.
+
+  All'interno di questo progetto i Threads vengono utilizzati per disparati motivi:
+  - **Velocizzazione del reperimento delle domande e risposte dall'API RESTful per l'implementazione del quiz finale**
+    Di seguito è riportato il pezzo di codice che implementa il Thread che permette il reperimento degli oggetti `DialogoQuiz` in maniera efficiente:
+    ```java
+      /**
+         * Avvia un thread in background per pre-caricare le domande del quiz da una fonte remota.
+         * Questo approccio evita ritardi nell'interfaccia utente durante il quiz.
+         * Gestisce anche un meccanismo di fallback utilizzando quiz predefiniti in caso di errore di connessione.
+         */
+        private void startQuizHandler() {
+            new Thread(() -> {
+                System.out.println("[DEBUG] Preload quiz thread started");
+                for (int i = 0; i < MAX_DOMANDE; i++) {
+                    DialogoQuiz quiz = null;
+                    try {
+                        quiz = QuizNpc.getQuiz();
+                        System.err.println("Loaded quiz " + (i + 1));
+                    } catch (ConnectionError e) {
+                        System.err.println("Quiz caricato da memoria.");
+                        quiz = QuizNpc.defaultQuizzes.get(i);
+                    } finally {
+                        try {
+                            quizQueue.put(quiz);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }
+                System.out.println("[DEBUG] All quizzes requested");
+            }).start();
+        }
+    ```
+    La funzione viene richiamata all'inizio, all'interno del costruttore. Questo passo garantisce che il reperimento delle domande inizi dal momento in cui la GUI che le mostrerà viene mostrata. Prima del quiz c'è un piccolo dialogo con il quale il player dovrà aver a che fare, questo garantisce che nel frattempo il thread recuperi almeno due domande dall'API RESTful, velocizzando così l'esecuzione e rendendo il programma più user-friendly.
+    Il thread utilizza e aggiorna una `BlockingQueve`, collection thread safe.
+
+    Il Thread mostrato sopra ha un thread che viene eseguito in maniera concorrente a lui, il seguente:
+    ```java
+      new Thread(() -> {
+                        try {
+                            DialogoQuiz finalQuiz = quizQueue.take();
+                            displayQuiz(finalQuiz);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            System.err.println("Quiz loading interrupted while waiting");
+                        }
+                    }).start();
+    ```
+    Questo thread, all'interno del metodo `runNextQuiz()` agisce come un **consumatore** occupandosi di mostrare sulla GUI le domande, volta per volta, con le sue possibili risposte e di attendere (grazie al metodo `take()` di `BlockingQueve`) la risposta nel caso in cui non sia immediatamente disponibile.
+
+    Il primo thread funge dunque da **Producer** e il secondo da **Consumer**.
+
+    > Nonostante questa classe non sembri essere né una sottoclasse di `Thread`, né un'implementazione di `Runnable`, si noti che l'espressione lambda va a fornire un'implementazione per il metodo `run()` dell'interfaccia funzionale `Runnable`.
+
+
+  - **Gestione dei Client che richiedono una connessione al server**
+    Si riporta di seguito il corpo della classe `ClientHandler`.
+    ```java
+      /**
+      * Gestisce la comunicazione con un singolo client su un thread dedicato.
+      * Questa classe è responsabile di leggere le richieste inviate dal client,
+      * elaborarle interrogando il database tramite un'istanza di {@link DataBaseManager},
+      * e inviare una risposta serializzata. Gestisce anche le disconnessioni
+      * e gli errori di comunicazione o di parsing in modo robusto.
+      *
+      * @author giovav
+      */
+      public class ClientHandler extends Thread {
+
+          /**
+          * Il socket che rappresenta la connessione con il client.
+          */
+          private final Socket clientSocket;
+
+          /**
+          * Costruisce un nuovo gestore per un client specifico.
+          *
+          * @param socket il {@link Socket} del client appena connesso.
+          */
+          public ClientHandler(Socket socket) {
+              this.clientSocket = socket;
+              System.out.println("[Debug rete/ClientHandler] Nuovo client connesso: " + clientSocket.getInetAddress());
+          }
+
+          /**
+          * Il corpo principale del thread, che gestisce l'intero ciclo di vita
+          * della comunicazione con il client.
+          * <p>
+          * Inizializza i flussi di input/output e una connessione al database.
+          * Entra in un ciclo di ascolto infinito, leggendo le richieste testuali del client.
+          * A seconda del comando ricevuto, interroga il database e invia l'oggetto
+          * risultante al client. Il ciclo termina quando il client invia il comando "end".
+          * <p>
+          * La gestione delle eccezioni è implementata per catturare errori di I/O,
+          * problemi con il database (SQLException) e disconnessioni anomale (NullPointerException),
+          * garantendo che il server non si blocchi a causa di un singolo client difettoso.
+          */
+          @Override
+          public void run() {
+              try (
+                      this.clientSocket;
+                      ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                      BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+              ) {
+                  DataBaseManager dataBase = new DataBaseManager();
+                  String richiesta;
+                  while (true) {
+                      richiesta = in.readLine();
+                      System.out.println("[Debug rete/ClientHandler] Richiesta da " + clientSocket.getInetAddress() + ": " + richiesta);
+                      if (richiesta.equals("comandi")) {
+                          out.writeObject(dataBase.askForCommands());
+                      } else if (richiesta.equals("mappa")) {
+                          out.writeObject(dataBase.askForGameMap());
+                      } else if (richiesta.startsWith("descrizione-aggiornata-")) {
+                          try {
+                              String[] tk = richiesta.split("-");
+                              out.writeObject(dataBase.askForNewRoomLook(Integer.parseInt(tk[2])));
+                          } catch (Exception e) {
+                              out.writeObject("Oops, qualcosa è andato storto!");
+                          }
+                      }else if (richiesta.startsWith("oggetti")) {
+                          out.writeObject(dataBase.askForItems());
+                      }else if (richiesta.startsWith("NPCs")) {
+                          out.writeObject(dataBase.askForNonPlayerCharacters());
+                      } else if (richiesta.startsWith("oggetto-")) {
+                          try {
+                              String[] tk = richiesta.split("-");
+                              out.writeObject(dataBase.askForItem(Integer.parseInt(tk[1])));
+                          } catch (Exception e) {
+                              System.err.println("[server] " +e.getMessage()+" "+e.getStackTrace());
+                              out.writeObject("Oops, qualcosa è andato storto!");
+                          }
+                      }else if (richiesta.equals("end")) {
+                          break;
+                      } else {
+                          out.writeObject("[Debug rete/ClientHandler] said: Errore - Comando non riconosciuto");
+                      }
+                  }
+                  dataBase.closeConnection();
+
+              } catch (IOException e) {
+                  System.err.println("Errore di comunicazione con il client: " + e.getMessage());
+              } catch (SQLException e) {
+                  System.err.println("Errore database durante la gestione del client: " + e.getMessage());
+              } catch (NullPointerException e) {
+                  System.err.println("Il client ha terminato la connessione in modo anomalo: "+e.getMessage());
+              }
+
+              System.out.println("Connessione con " + clientSocket.getInetAddress() + " terminata.");
+          }
+      }
+      ```
+      È facile osservare che, questa volta, la soluzione proposta fa uso dell'ereditarietà, infatti la classe `ClientHandler` fa ereditarietà per variazione funzionale della classe `Thread` sul metodo `run()`. 
+
+      L'oggetto `ClientHandler` verrà istanziato ogni qualvolta la classe `Server`, in esecuzione, rileverà una nuova connessione. Essa istanzia un oggetto di `ClientHandler` per far si che più client possano essere serviti contemporaneamente. I thread rendono questo possibile, senza l'uso dei thread il server non avrebbe mai potuto accettare ulteriori connessioni se non avesse prima terminato di servire il precedente client, rendendo quindi il flusso di gestione sequenziale e, dunque, poco efficiente. In questo contesto, quello di una demo, il client è sempre e solo uno dato che il server è in localhost. 
+      Se così non fosse, questa funzionalità sarebbe utile.
+
+  - **Gestione del Timer della partita**
+    
+
+  - **Gestione della Musica all'interno del Gioco**
+
+
+  - **Gestione dell'effetto Type Writer nelle GUI**
+
+
 
 - ### Socket e API RESTful
-
+  La programmazione di rete è 
 
 ---
 
