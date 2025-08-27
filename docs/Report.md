@@ -821,7 +821,158 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
 
 
 - ### Socket e API RESTful
-  La programmazione di rete è 
+  La programmazione di rete è molto importante per la comunicazione di dati con il mondo esterno. In Java è possibile comunicare e fare richieste a server mediante l'uso di una libreria apposita all'interno del package `java.net`. 
+  In Java la programmazione di rete è astratta, infatti la comunicazione con il web è gestita (ad alto livello) mediante stream di oggetti. Ci sembrerà dunque di manipolare flussi di dato con il nostro File System. 
+  La capacità di poter astrarre sulla rete ci è concessa dal fatto che java è cross-platform e i dettagli di rete vengono stabiliti durante l'installazione della Java Virtual Machine.
+
+  Le socket sono astrazioni software che rappresentano i terminali che permettono di collegare due macchine. Sono composti da: **Indirizzo IP** che identifica la macchina con la quale vogliamo connetterci e **porta**. Il concetto di porta è fondamentale, infatti ogni macchina può ospitare diversi server o servizi. Grazie alla porta possiamo identificare il servizio che stiamo richiedendo. Viceversa, il server può individuare una porta per il client per poter effettuare una connessione con il client indipendente da quella degli altri servizi che il client sta usando in rete.
+
+  Per effettuare connessioni Java mette a disposizione due oggetti principalmente:
+  - `Socket`: oggetto istanziato dal client che identifica la connessione con il server. Contiene IP e Porta del server.
+  - `ServerSocket`: Oggetto che il server usa per attendere connessioni dal client ed elaborarle. Anch'esso contiene IP e Porta del client.
+  
+  Una volta istanziato un oggetto `Socket` è possibile ottenere, mediante i metodi `getInputStream()` e `getOutputStream()` gli stream di oggetti per la comunicazione I/O.
+
+  All'interno di questo progetto è stato implementato un server, il quale accetta le connessioni e poi le gestisce mediante un Thread (come visto nel paragrafo precedente). Segue l'implementazione della classe `Server`, opportunamente commentata.
+  ```java
+    /**
+     * La classe Server rappresenta il punto di ingresso principale per l'applicazione lato server.
+    * Si occupa di mettersi in ascolto su una porta specifica e di accettare le connessioni
+    * dai client. Per ogni client connesso, crea e avvia un nuovo thread {@link ClientHandler}
+    * per gestire la comunicazione in modo isolato.
+    *
+    */
+    public class Server {
+
+        /**
+        * La porta sulla quale il server si mette in ascolto per le connessioni in ingresso.
+        */
+        private final int port = 49152;
+
+        /**
+        * Avvia il server.
+        * Crea un {@link ServerSocket} sulla porta specificata ed entra in un ciclo infinito
+        * in attesa di connessioni dai client. Per ogni connessione accettata,
+        * istanzia un nuovo {@link ClientHandler} e avvia il suo thread per gestire
+        * la comunicazione con quel client specifico.
+        * Gestisce le eccezioni di I/O che possono verificarsi durante l'inizializzazione.
+        */
+        public void start() {
+            try (ServerSocket serverSocket = new ServerSocket(port)) {
+                System.out.println("[Debug rete/Server]Server in ascolto sulla porta " + port);
+
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    new ClientHandler(clientSocket).start();
+                }
+
+            } catch (IOException e) {
+                System.err.println("[Debug rete/Server]Errore nell'avvio del server: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        /**
+        * Il metodo main dell'applicazione server.
+        * Crea un'istanza della classe Server e invoca il metodo {@link #start()}
+        * per avviare il processo di ascolto.
+        *
+        * @param args gli argomenti passati dalla riga di comando (non utilizzati).
+        */
+        public static void main(String[] args) {
+            Server server = new Server();
+            server.start();
+        }
+    }
+  ```
+  Il server accetta connessioni sulla prima porta libera `49152` e le elabora lanciando un oggetto di tipo `ClientHandler` il quale recupera gli stream dalla Socket e elabora la richiesta fornendo in output il risultato. Segue un pezzo di codice riassuntivo che mostra come la risposta viene effettuata:
+  ```java
+    @Override
+    public void run() {
+        try (
+                this.clientSocket;
+                ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+                BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()))
+        ) {
+          ...
+        }
+    }
+  ```
+  Nell'estratto precedente il thread recupera gli stream. In quello successivo, invece, viene mostrato un esempio di risposta in output in base a ciò che il client ha specificato in input al server:
+  ```java
+    ...
+      if (richiesta.equals("comandi")) {
+        out.writeObject(dataBase.askForCommands());
+      } 
+    ...
+  ```
+
+  Le REST (Representational State Transfer) sono un'architettura per sistemi distribuiti. Sono sistemi stateless che non prevedono l'uso di sessioni e si avvalgono dei verbi del protocollo HTTP per effettuare richieste. Questo tipo di protocollo è comodo perché può accedere a risorse web mediante gli URI e ricevere una risposta, opportunamente elaborata da un server (che non memorizzerà dati relativi al client grazie alla proprietà stateless), in formato JSON o addirittura GSON (descrizione di un oggetto Java).
+
+  Nel nostro progetto le API RESTful sono state utilizzate per effettuare due tipi di richieste a due server diversi. Entrambe le richieste sono state effettuate nello **stesso ambito**, cioè per reperire i quiz da sottoporre al player per determinarne la vittoria (oppure no).
+
+  La prima richiesta REST viene effettuata all'API avente URL `https://opentdb.com/api.php`. Quest'ultima ritorna un GSON contenente un quiz e le diverse risposte possibili, evidenziando quella giusta. Segue il metodo della classe `QuizNpc` che effettua la richiesta e ne interpreta la risposta GSON.
+
+  ```java
+    /**
+     * Metodo che effettua la richiesta all'API e restituisce la risposta
+     * deserializzata
+     */
+    public static ResponseRiquest methodRest() throws ConnectionError {
+        try{ 
+            Client client = ClientBuilder.newClient();
+            WebTarget target = client
+                    .target("https://opentdb.com/api.php")
+                    .queryParam("amount", 1)
+                    .queryParam("category", 18)
+                    .queryParam("type", "multiple");
+
+            Response resp = target.request(MediaType.APPLICATION_JSON).get();
+            Gson g = new Gson();
+            return g.fromJson(resp.readEntity(String.class), ResponseRiquest.class);
+        }catch (ProcessingException e) {
+            throw new ConnectionError("Connessione a Internet non disponibile.", e);
+        }
+    }
+  ```
+
+  Successivamente, in un metodo che omettiamo perché non è fondamentale, viene richiamato più volte un metodo che effettua una chiamata REST ad un'altra API. Questo metodo viene richiamato per tradurre la domanda e le risposte possibili in italiano. La chiamata viene fatta al server con URL `https://api.mymemory.translated.net/get` ed è mostrata di seguito.
+  ```java
+      /**
+     * metodo statico che effettua una richiesta HTTP a MyMemory API per
+     * tradurre il testo
+     *
+     * @param testo il testo da tradurre
+     * @param daLingua codice lingua iniziale
+     * @param aLingua codice lingua destinazione
+     * @return testo tradotto
+     */
+    public static String traduci(String testo, String daLingua, String aLingua) throws ConnectionError {
+        Client client = ClientBuilder.newClient();
+        WebTarget target = client
+                .target("https://api.mymemory.translated.net/get")
+                .queryParam("q", testo)
+                .queryParam("langpair", daLingua + "|" + aLingua);
+
+        Response resp = target.request(MediaType.APPLICATION_JSON).get();// risposta del server
+
+        // controllo per la risposta  http 
+        if (resp.getStatus() != 200) {
+            throw new ConnectionError("Errore di traduzione. API returned code: "+resp.getStatus());
+        }
+
+        Gson g = new Gson();
+        // mi predno il contenuto della risposta api e la converto da json a oggetto java
+        MyMemoryResponse rispostaApi = g.fromJson(resp.readEntity(String.class), MyMemoryResponse.class);
+        // se la risposa http è ok ma c'è stato un problema con il server MyMemory API
+        if (rispostaApi.responseStatus != 200) {
+            throw new TraduzioneException("Errore dalla MyMemory API: " + rispostaApi.responseDetails);
+        }
+
+        return rispostaApi.responseData.translatedText; // mi prendo il campo interessto 
+
+    }
+  ```
 
 ---
 
