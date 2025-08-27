@@ -8,9 +8,9 @@
 </div>
 
 ## Caso di studio a cura di
-- Patruno Mirko, [@]()
-- Vendola Giovanni, [@Giovanni0910](http://github.com/Giovanni0910)
-- Vittore Giovanni, [@giovav](http://github.com/giovav)
+- Patruno Mirko ([@]())
+- Vendola Giovanni ([@Giovanni0910](http://github.com/Giovanni0910))
+- Vittore Giovanni ([@giovav](http://github.com/giovav))
 
 ---
 ## Indice
@@ -192,6 +192,10 @@ Ne consegue la seguente tabella:
 
 ## Dettagli implementativi
 Nella seguente sezione viene mostrato come gli argomenti trattati nel corso sono stati utilizzati all'interno di questo progetto.
+
+Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Database](#database-jdbc), qui sotto presentato, **ci riconduciamo ad esempi**, non presentando tutte le parti del codice in cui abbiamo implementato lo specifico argomento perché risulterebbe tediosa e monotona altrimenti.
+
+
 - ### Programmazione generica
   A livello teorico la programmazione generica è una forma di **polimorfismo universale**, più precisamente di **polimorfismo parametrico**.
   Questo tipo di polimorfismo è molto potente perché permette di rendere **metodi polimorfi** e di poter, più precisamente, applicare l'**operazione che il metodo implementa a insiemi di tipi di dato**.
@@ -426,8 +430,105 @@ Nella seguente sezione viene mostrato come gli argomenti trattati nel corso sono
   Infine, il metodo qui sopra mostra come ottenere i valori dei campi di una specifica tupla del `ResultSet` per mezzo dei nomi delle colonne della relazione.
 
 - ### Lamba Expression
+  Le espressioni lambda sfruttano un paradigma di programmazione diverso rispetto a quello classico ad oggetti per il quale java è molto conosciuto (e per il quale noi lo adoperiamo).
+  Esse, infatti, sfruttano il paradigma operazionale funzionale, basato sul lambda calcolo. Il paradigma funzionale è molto comodo per vari motivi, tra cui:
+  - **Mancanza di side-effecting**: quando viene invocata una lambda expression, infatti, non viene modificato lo stato della memoria, ma viene generato un nuovo valore (contrariamente a quanto avviene nel paradigma funzionale e orientato agli oggetti);
+  - **Il flusso di esecuzione** assume la forma di **valutazioni di funzioni**;
+  - Lo **stato** del programma resta **immutato**: vengono generati nuovi stati per le computazioni lambda a partire da quello in cui si è, non viene modificato lo stato del programma.
 
+  All'interno di questo progetto vengono utilizzate le espressioni lambda in più contesti. Un esempio banale è quello della definizione di metodi che sfruttano il design-pattern listener all'interno delle classi `boundary` che implementano le GUI.
+  
+  Un esempio è qui di seguito riportato ed opportunamente commentato:
+  ```java
+    start.addActionListener(e -> {
+              if (isAudioEnabled) {
+                  AudioManager.getInstance().stop("menu_theme");
+              }
+              new Thread(() -> {
+                  try {
+                      Thread.sleep(300);
+                      c.startGame();
+                  } catch (InterruptedException ex) {
+                      Thread.currentThread().interrupt();
+                  }
+              }).start();
+          });
+  ```
+  Queste espressioni sono estrapolate dal file `it.tutta.colpa.del.caffe.start.boundary.MainPage`, interfaccia grafica del launcher del gioco.
+  È evidente come all'interno della lista dei parametri del metodo `addActionListener(...)` venga definito un modo per calcolare il parametro `e` mediante un'espressione lambda, la quale va a definire il comportamento del listener mediante una serie di istruzioni.
+  L'interfaccia funzionale per la quale viene fornita un'implementazione, in questo caso, è `ActionPerformed` che ha come unico metodo `actionPerformed(ActionEvent e)`. In questo caso `e` costituisce un'implementazione per l'`ActionPerformed` (Classe Anonima).
 
+  A parte l'utilizzo con le swings, le espressioni lambda vengono utilizzate anche in altri contesti del programma, come ad esempio all'interno della classe `ServerInterface`, esepio esposto anche in precedenza nel caso della programmazione generica, che risulta perfetto anche in questo caso.
+
+  ```java
+
+    @FunctionalInterface
+    private interface RetryAction<T> {
+        T execute() throws Exception;
+    }
+
+      /**
+     * Invia una richiesta con un parametro ID al server, gestendo una logica di tentativi.
+     *
+     * @param rt  Il tipo di richiesta da inviare, definito in {@link RequestType}.
+     * @param id  L'identificatore numerico da inviare con la richiesta.
+     * @param <T> Il tipo di dato atteso come risposta dal server.
+     * @return L'oggetto ricevuto dal server, castato al tipo T.
+     * @throws ServerCommunicationException se la comunicazione fallisce definitivamente.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T requestToServer(RequestType rt, int id) throws ServerCommunicationException {
+        return executeWithRetry(() -> (T) getRequestAction(rt, id).call());
+    }
+  ```
+  In questo caso l'espressione lambda viene definita nella lista dei parametri del metodo `executeWithRetry`, il quale prende in input un'implementazione del metodo `execute()` dell'interfaccia funzionale `RetryAction<T>`. 
+  La lista dei parametri formali della lambda, come si può notare, `() -> (T) getRequestAction(rt, id).call()`, è vuota, proprio come quella del metodo `execute()`. L'espressione mira ritornare un comportamento da rieseguire più volte in caso di errore, comportamento regolato dal comportamento del metodo `getRequestAction`, all'interno del corpo della lambda. 
+
+  Le lamda expressions sono state utilizzate in ambiti simili, che non citiamo per non risultare monotoni, all'interno della classe `DataBaseManager`.
+
+  Una peculiarità di Java è quella di mettere a disposizione dei metodi che lavorano sulle **Collections** in grado di elaborare le stesse come flussi di dati o **streams**. Trasformando una collection in stream, con il metodo `stream()`, è possibile applicare allo stesso una serie di **operazioni aggregate**, che permettono di elaborare le collection passando come parametri delle operazioni delle espressioni lambda. Un esempio solo nel funzioni `map(...)`, `sort(...)` e altre che prendono come parametro un'implementazione dell'interfaccia funzionale `Function<T>` e `Predicate<T>` (rispettivamente). Una serie di operazioni aggregate sugli stream di dati costituiscono una **pipeline**.
+
+  All'interno di questo contesto le pipeline sono state utilizzate più volte, perché ritenute comode per via della semplicità d'uso correlata all'uso di espressioni lambda per definire predicati e funzioni, e per via del paradigma funzionale privo di **side effecting** da loro utilizzato.
+
+  Seguono degli esempi:
+
+  ```java
+  ...
+    this.items.stream()
+                .filter(item -> {
+                    // Copio la lista di alias + nome (senza modificare l'originale)
+                    List<String> aliasList = new ArrayList<>(item.getAlias()
+                                                                 .stream()
+                                                                 .map(alias->alias.toLowerCase())
+                                                                 .collect(Collectors.toList()));
+                    aliasList.add(item.getName().toLowerCase());
+                    // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri speciali)
+                    String regex = aliasList.stream()
+                            .reduce((a, b) -> a + "|" + b)
+                            .orElse("");
+                    Pattern p = Pattern.compile(regex);
+                    // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
+                    return tentativo(p, token);
+                })
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla list
+  ...
+  ```
+  Il precedente pezzo di codice è stato tratto dalla classe `it.tutta.colpa.del.caffe.game.utility.Parser`, il quale pipeline innestate per ottenere la lista degli oggetti ritrovati all'interno del comando da parsare.
+  In questo esempio vengono mostrati più modi di usare gli stream attraverso operazioni aggregate. La classe `Parser` ne contiene altri che omettiamo per semplicità.
+
+  Segue un altro esempio di pipeline, tratto dalla classe `it.tutta.colpa.del.caffe.game.control.TalkObserver`:
+  ```java
+    NPC npc = description.getCurrentRoom()
+                            .getNPCs()
+                            .stream()
+                            .filter(npc1 -> (npc1.getId() == parserOutputNpc.getId()))
+                            .findFirst()
+                            .get();
+  ```
+  Questo esempio, meno complesso da commentare, mostra come recuperare un NPC dalla stanza corrente trasformando la lista degli NPC in una stanza in uno stream e, successivamente, applicando le operazioni aggregate per ottenere l'NPC corretto, opportunamente scelto in base all'operazione `filter()` che ha come `Predicate<T>` `npc1 -> (npc1.getId() == parserOutputNpc.getId())`. Il predicato ritorna `True` solo per l'NPC che soddisfa l'ugualianza sul field `id`.
+  Le successive operazioni aggregate prendono il primo elemento (che è anche l'unico).
+
+  In altre parti del codice vengono usati le pipeline con l'uso di lambda expressions, li omettiamo per semplicità.
 - ### SWING
 
 
