@@ -180,12 +180,12 @@ Di seguito riportiamo la specifica algebrica della struttura dati **Dizionario**
 - boolean - Sort ausiliario
 
 ### Specifica Sintattica
-- $$CreaDizionario()\rightarrow Dizionario$$
-- $$DizionarioVuoto(Dizionario)\rightarrow boolean$$
-- $$Appartiene(Chiave, Dizionario)\rightarrow boolean$$
-- $$Inserisci(<Chiave, Valore>, Dizionario)\rightarrow Dizionario$$
-- $$Cancella(Chiave, Dizionario)\rightarrow Dizionario$$
-- $$Recupera(Chiave, Dizionario)\rightarrow Valore$$
+- `CreaDizionario() -> Dizionario`
+- `DizionarioVuoto(Dizionario) -> boolean`
+- `Appartiene(Chiave, Dizionario) -> boolean`
+- `Inserisci(<Chiave, Valore>, Dizionario) -> Dizionario`
+- `Cancella(Chiave, Dizionario) -> Dizionario`
+- `Recupera(Chiave, Dizionario) -> Valore`
 
 ### Specifica Semantica
 Individuiamo come osservatori le funzioni: `DizionarioVuoto`, `Appartiene`, `Recupera`, `Cancella`;
@@ -193,8 +193,12 @@ Individuiamo come osservatori le funzioni: `DizionarioVuoto`, `Appartiene`, `Rec
 Individuiamo come costruttori le funzioni: `CreaDizionario`, `Inserisci`.
 
 Ne consegue la seguente tabella:
-
-
+|                        | `CreaDizionario()`                     | `Inserisci(<K,V>, D)`                                               |
+|------------------------|--------------------------------------|----------------------------------------------------------------------|
+| `DizionarioVuoto(D')`   | `True`                               | `False`                                                              |
+| `Cancella(K', D')`      | `error`                              | `if K = K' then D else Inserisci(Cancella(K, D), K', D)`             |
+| `Appartiene(K', D')`    | `False`                              | `if K = K' then T else Appartiene(D, K')`                            |
+| `Recupera(K', D')`      | `error`                              | `if K = K' then V else Recupera(D, K')`                               |
 ---
 
 ## Dettagli implementativi
