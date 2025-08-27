@@ -541,11 +541,102 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
   Le successive operazioni aggregate prendono il primo elemento (che è anche l'unico).
 
   In altre parti del codice vengono usati le pipeline con l'uso di lambda expressions, li omettiamo per semplicità.
-- ### SWING
 
+- ### SWING
+  Swing è un framework messo a disposizione da Java che permette la creazione di interfacce grafiche di diverso tipo. Esso infatti mette a disposizione diversi componenti per la realizzazione delle interfacce.
+  Per poter creare un programma con interfacce grafiche che usa Swing bisogna innanzitutto scegliere il contenitore di alto livello, senza quest'ultimo il programma Swing non può esistere. Swing ne mette a disposizione tre: `JFrame`, `JDialogue` e `JApplet`. In questo progetto vengono principalmente usati `JFrame` e `JApplet`. Ogni contenitore ad alto livello è visibile su schermo e può contenere tutti gli elementi di cui necessita l'interfaccia: `JButton`, `JTextArea`, `JField` e, in generale, tutti gli elementi messi a disposizione dal framework.
+  Le componenti possono appartenere ad un unico contenitore, che sia ad alto livello o non, e innestando contenitori ed elementi si possono creare vere e proprie gerarchie di componenti.
+  I componenti che possono essere messi all'interno dei contenitori sono di diverso tipo e possono essere personalizzati, dal punto di vista grafico **mediante i metodi che mettono a disposizione**.
+  
+  La programmazione con Swing è **event driven**, guidata dagli eventi. Questo vuol dire che lo stato degli oggetti viene modificato solo se un evento viene *triggerato*. Ogni componente ha diversi eventi che possono essere triggerati sullo stesso e il programmatore deve specificare il comportamento per ogni evento. Questi comportamenti vengono specificati per mezzo di `ActionListener`s.
+
+  Di seguito vengono riportati alcuni esempi di utilizzi di Swing nel codice. Si noti che **tutte** le classi in boundary sono state realizzate con il framework Swing per permettere all'utente di interagire con il gioco mediante GUI.
+
+  Le GUI di questo progetto sono state realizzando l'editor grafico **Matisse** di **NetBeans**. La IDE mette a disposizione del programmatore strumenti potenti (Drag&Drop delle componenti) per poter realizzare le GUI con Swing. Successivamente alla creazione delle GUI con Matisse, abbiamo rimosso il `.form` dal package, di modo da poter modificare l'intero file a nostro piacimento, dal punto di vista del codice.
+
+
+  ![MainPage](img/MainPage.png)
+  La precedente GUI è l'interfaccia iniziale del gioco. Attraverso essa è possibile accedere a tutte le altre funzionalità che l'applicativo mette a disposizione: iniziare una partita, caricare una partita dai salvataggi, uscire dal gioco o manipolare l'audio della schermata iniziale.
+  Questa interfaccia viene realizzata come un'estensione della classe `JFrame`, il top-level container (come specificavamo prima). All'interno di questo frame è presente un `JPanel`, un alto contenitore ma non di alto livello. Grazie all'overriding di metodi del `JPanel` è stato possibile inserire un'immagine di sfondo a questa interfaccia.
+  
+  La classe anonima per la generazione con un panel di sfondo è stata realizzata come segue:
+  ```java
+    JPanel wallpaper = new JPanel() {
+          private final Image wp;
+
+          {
+              URL imgUrl = getClass().getResource("/images/copertina.png");
+              if (imgUrl != null) {
+                  wp = new ImageIcon(imgUrl).getImage();
+              } else {
+                  wp = null;
+                  System.err.println("Immagine non trovata: images/copertina.png");
+              }
+          }
+
+          @Override
+          protected void paintComponent(Graphics g) {
+              super.paintComponent(g);
+              if (wp != null) {
+                  g.drawImage(wp, 0, 0, getWidth(), getHeight(), this);
+              }
+          }
+      };
+  ```
+ 
+  Per accedere alle funzionalità correlate a questa interfaccia (quelle elencate prima) sono stati messi a disposizione dei `JButton` con background modificato in maniera simile al metodo adottato per il `JPanel` prima. Ogni `JButton` ha la propria azione correlata. Le azioni vengono definite secondo `ActionListener` che verranno *linkate* al bottone (o al componente in generale) con il metodo `addActionListener(ActionListener evt)`. Di seguito è mostrato un esempio, quello per il bottone **INIZIA** di questa GUI:
+  ```java
+    load.addActionListener(e -> {
+            if (isAudioEnabled) {
+                AudioManager.getInstance().stop("menu_theme");
+            }
+            c.loadGame();
+        });
+  ``` 
+  In questo caso il bottone richiama il metodo `loadGame()` del controller dell'interfaccia stessa, il quale gestirà la logica dietro il tutto (oltre che a stoppare il theme della schermata iniziale).
+
+  Seguono ulteriori esempi di finestre che estendono `JFrame`. Commenteremo le componenti non ancora commentate in modo generale. Per l'implementazione e l'uso specifico delle componenti si rimanda al codice.
+
+  ![GamePage](img/GamePage.png)
+  All'interno di questa schermata vengono utilizzate componenti non ancora trattate prima.
+  Di seguito riportiamo quali e come vengono utilizzate:
+    - `JTextArea`: Viene utilizzata (sul lato destro) per mostrare a video i messaggi del gioco per l'utente e i messaggi che l'utente ha inviato in precedenza;
+    - `JTextField`: Viene utilizzata per acquisire un comando da parte dell'utente. Il testo viene processato quando viene invocata l'`ActionPerformed` del `JButton` `send`;
+    - `JProgressBar`: Viene incrementata per mano di un `Thread`, lo stesso che gestisce il timer di gioco. Mostra quanto tempo è già trascorso e viene colorata in base al tempo rimanente grazie ai metodi che la componente mette a disposizione. È possibile personalizzare anche il testo sulla stessa con il metodo `setText("...")`, come provvediamo a fare nel codice;
+    - `JLabel`: usate per due motivi. Mostrare l'immagine sul lato destro dello schermo, con il metodo `setIcon("...")`, e mostrare il tempo rimanente del timer di gioco, con il metodo `setText("...")`.
+
+    Le componenti sono state opportunamente divise in "zone" per merito di `JPanel` appositi. Per la precisione sono stati usati 3 `JPanel`: `header`, `footer` e `mainContainer`(quello centrale). Il panel centrale è stato riempito con altri panel prima di ospitare le componenti.
+
+  Seguono altre due schermate che non introducono alcun nuovo componente Swing:
+  La schermata della scelta di un salvataggio da caricare (usa `JPanel`, `JLabel` e `JButton`):
+  ![ChoseSavePage](img/ChoseSavePage.png)
+  La schermata di fine gioco (usa `JPanel`):
+  ![GameEndedPage](img/GameEndedPage.png)
+  
+  Adesso seguono due GUI che non utilizzano `JFrame` come top-level container, bensì `JDialogue`. La scelta è mirata ed è stata fatta in base a vincoli imposti sul gioco, infatti quando si osserva le due schermate successive non deve essere possibile interagire con altre parti del programma se non con queste. Questo tipo di finestre sono chiamate **modali**. Le loro implementazioni, al di là del contenitore di alto livello adottato, sfruttano componenti già viste.
+
+
+  La schermata dell'inventario o zaino (usa `JPanel`, `JLabel` e `JTextArea`):
+  ![InventoryPage](img/InventoryPage.png)
+
+  La schermata della mappa (usa `JPanel` e `JButton`):
+  ![MapPage](img/MapPage.png)
+
+  La schermata dei dialoghi (usa `JPanel` e `JLabel`, `JTextArea`):
+  ![DialoguePage](img/DialoguePage.png)
+
+  Per concludere, vengono utilizzate anche finestre modali messe a disposizione direttamente da Swing per comunicare informazioni, errori o warnings all'utente e, inoltre, per chiedere conferma di qualcosa. Segue un pezzo di codice esemplificativo che mostra un errore e l'immagine di una finestra modale che chiede conferma.
+  ```java
+    JOptionPane.showMessageDialog(
+                    this,
+                    message,
+                    title,
+                    JOptionPane.ERROR_MESSAGE);
+  ```
+  ![Modal](img/Modal.png)
 
 - ### Thread e programmazione concorrente
-
+  
 
 - ### Socket e API RESTful
 
