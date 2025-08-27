@@ -8,12 +8,13 @@
 </div>
 
 ## Caso di studio a cura di
-- Patruno Mirko ([@]())
+- Patruno Mirko ([@mirkopat](http://github.com/mirkopat))
 - Vendola Giovanni ([@Giovanni0910](http://github.com/Giovanni0910))
 - Vittore Giovanni ([@giovav](http://github.com/giovav))
 
 ---
 ## Indice
+- ### [Introduzione](#introduzione-1)
 - ### [Descrizione dell'avventura](#descrizione-dellavventura-1)
 - ### [Progettazione](#progettazione-1)
   - #### [Competenze](#competenze-1)
@@ -23,6 +24,12 @@
 - ### [Dettagli implementativi](#dettagli-implementativi-1)
 - ### [Modo più veloce per vincere](#modo-più-veloce-per-vincere-il-gioco)
 ---
+# Introduzione
+Questo gioco nasce come progetto per l'esame di Metodi Avanzati di Programmazione e ha come finalità
+quella di mettere in pratica le conoscenze acquisite riguardanti il paradigma di programmazione ad oggetti (e in parte anche riguardo a quello funzionale) mediante l'utilizzo del linguaggio di programmazione "Java". 
+Le modalità d'esame prevedono che si debba implementare un'avventura testuale (con il possibile utilizzo di interfacce grafiche GUI implementabili mediante la liberia Swing).
+Lo sviluppo di questa avventura testuale ci ha permesso di consolidare, e vedere dal punto di vista pratico, gli elementi del paradigma operazionale orientato agli oggetti, come l'uso di **classi** e **oggetti** (facendo focus sulla loro struttura), il concetto di **incapsulamento**, di **ereditarietà** nei suoi diversi tipi e forme, di **polimorfismo** (universale e ad hoc) e molto altro...
+Ci ha permesso, inoltre, di imparare un nuovo linguaggio di programmazione e di imparare gli elementi che mette a disposizione (trattati nel dettaglio in seguito). 
 
 # Descrizione dell’avventura
 Tratto (quasi) da una storia vera.
