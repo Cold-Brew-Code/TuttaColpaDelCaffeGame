@@ -326,7 +326,118 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
   Per interagire con il **file system**, Java mette a disposizione sia classi per la manipolazione dei percorsi e delle directory, come la classe `File` , sia una gerarchia di stream specifici per la lettura e scrittura, come `FileInputStream` e `FileReader`. Inoltre, per la persistenza di strutture complesse, il linguaggio offre il meccanismo della **serializzazione**, che consente di trasformare un oggetto in una sequenza di byte per memorizzarlo su un file e poterlo così ricostruire in un secondo momento.
 
   In questo progetto i file sono stati usati principalmente per effettuare salvataggio e caricamento della partita su disco.
+  ```java
+    @Override
+      public void load(String saveFileName) {
+      try {
+      Object loadedObject = SaveLoad.loadObject(saveFileName);
 
+      if (loadedObject instanceof it.tutta.colpa.del.caffe.game.entity.GameDescription) {
+      it.tutta.colpa.del.caffe.game.entity.GameDescription loadedGame = (it.tutta.colpa.del.caffe.game.entity.GameDescription) loadedObject;
+
+      choseSavePage.close();
+      it.tutta.colpa.del.caffe.game.GameHandler.loadGame(
+      (it.tutta.colpa.del.caffe.start.control.Engine) mainPageController,
+      loadedGame);
+      } else {
+      choseSavePage.notifyError("Errore", "File di salvataggio non valido");
+      }
+      } catch (Exception e) {
+      choseSavePage.notifyError("Errore di Caricamento",
+      "Impossibile caricare il salvataggio: " + e.getMessage());
+      }
+      }
+
+      // classe che si occupa di caricare l'oggetto in base al suo
+      public static Object loadObject(String fileName) throws IOException, ClassNotFoundException {
+        String filePath = SAVE_DIRECTORY + fileName;
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
+        return in.readObject();
+        } catch (FileNotFoundException e) {
+        throw new IOException("File di salvataggio non trovato: " + fileName, e);
+        }
+      }
+  ```
+  La logica di caricamento, invece, esegue il processo inverso di deserializzazione. Il metodo loadObject utilizza un `ObjectInputStream` per leggere la sequenza di dati dal file di salvataggio e ricostruire in memoria l'oggetto originale. Il metodo load completa il processo verificando che l'oggetto caricato sia del tipo corretto (instanceof GameDescription) prima di ripristinare lo stato della partita.
+
+
+  ```java
+    @Override
+    public void saveGame() {
+    try {
+    String fileName = it.tutta.colpa.del.caffe.loadsave.control.SaveLoad.saveObject(this.description);
+    this.GUI.showInformation("Salvataggio", "Partita salvata con successo!");
+
+    this.closeGUI();
+    this.mpc.openGUI();
+    } catch (Exception e) {
+    System.err.println("[ERROR] Errore salvataggio: " + e.getMessage());
+    this.GUI.notifyError("Salvataggio Fallito", "Errore: " + e.getMessage());
+    }
+    }
+
+
+
+
+    public static String saveObject(Object object) throws IOException {
+    Path savesDir = Paths.get(SAVE_DIRECTORY);
+    if (!Files.exists(savesDir)) {
+    Files.createDirectories(savesDir);
+    }
+
+    String timestamp = LocalDateTime.now().format(FORMATTER);
+    String fileName = timestamp + ".save";
+    String filePath = SAVE_DIRECTORY + fileName;
+
+    try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
+    out.writeObject(object);
+    logger.info("Salvataggio creato: " + fileName);
+    return fileName;
+    }
+    }
+  ```
+  Il processo di salvataggio si affida al meccanismo della serializzazione. Come si vede nel metodo saveObject, viene creato un `ObjectOutputStream`, un tipo di stream che si occupa di trasformare l'oggetto contenente lo stato del gioco in una sequenza di dati binaria. Questa sequenza viene poi scritta su un file all'interno del file system, in una posizione gestita dinamicamente.
+
+  I file sono stati usati in maniera molto simile in altre parti del codice, come il reperimento di un file `stopwords`, all'interno della cartella resources, per poter inizializzare l'oggetto `Parser`. Per farlo ci avvaliamo di questo metodo della libreria `Utils`.
+  ```java
+    /**
+     * Carica il contenuto di un file in un {@link Set} di stringhe.
+     * <p>
+     * Ogni riga del file viene letta, convertita in minuscolo e aggiunta al
+     * set. Le righe duplicate saranno automaticamente eliminate grazie alla
+     * natura del {@link Set}.
+     * </p>
+     *
+     * @param file il file da leggere
+     * @return un {@link Set} contenente tutte le righe del file in minuscolo
+     * @throws IOException se si verifica un errore durante la lettura del file
+     */
+    public static Set<String> loadFileListInSet(File file) throws IOException {
+        Set<String> set = new HashSet<>();
+        BufferedReader reader = new BufferedReader(new FileReader(file));
+        while (reader.ready()) {
+            set.add(reader.readLine().trim().toLowerCase());
+        }
+        reader.close();
+        return set;
+    }
+  ```
+
+  I file, inoltre, vengono utilizzati anche per il caricamento delle immagini all'interno delle `JLabel`e dei `JPanel` all'interno delle GUI. Le operazioni sono fatte tutte nel seguente modo:
+  ```java
+      InvButton.setIcon(
+                    new ImageIcon((new ImageIcon(getClass().getResource("/images/zaino_icon.png")))
+                            .getImage()
+                            .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
+  ```
+  Questo codice utilizza tre classi principali. La classe `ImageIcon` serve a contenere l'immagine da applicare al componente Swing. Il metodo `getResource()` della classe `Class` viene usato per localizzare il file dell'immagine all'interno delle risorse del progetto. Infine, la classe `Image` fornisce il metodo e la costante `SCALE_SMOOTH` per eseguire un ridimensionamento di alta qualità.
+  Il metodo getClass().getResource(String path) è uno strumento fondamentale in Java per caricare file (come immagini, suoni o dati) che sono inclusi direttamente all'interno del pacchetto dell'applicazione (ad esempio, in un file JAR).
+
+  Il metodo **`getClass().getResource(String path)`** è uno strumento fondamentale in Java per caricare file (come immagini, suoni o dati) che sono inclusi direttamente all'interno del pacchetto dell'applicazione (ad esempio, in un file JAR).
+
+La sua funzione principale è localizzare una risorsa cercandola nel **classpath**, ovvero l'insieme di percorsi in cui Java cerca classi e altri file. Usando un percorso che inizia con `/`, come `"/images/zaino_icon.png"`, la ricerca parte dalla radice del classpath, garantendo che il file venga trovato in modo affidabile, indipendentemente da dove l'applicazione viene eseguita sul computer dell'utente.
+
+In pratica, serve a rendere il programma portabile, evitando percorsi di file assoluti (es. `C:\Users\...`) che funzionerebbero solo su una specifica macchina. Il metodo restituisce un oggetto `URL` che punta alla risorsa, pronto per essere utilizzato da altre classi per caricarne il contenuto.
 [👆🏻 Torna all'indice ☕️](#indice)
 
 ---
