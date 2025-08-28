@@ -182,7 +182,17 @@ Segue un breve riassunto delle competenze di ciascuna classe, raggruppate per pa
 ---
 
 ## Diagramma delle classi
-*<-- Inserire una diagramma delle classi di una porzione significativa del progetto e commentare il diagramma fornendo dettagli sui principi della programmazione ad oggetti che sono stati utilizzati (ereditarietà, interfacce, classi astratte, composizione, …) -->*
+Di seguito è mostrato il diagramma UML delle classi (realizzato mediante il tool draw.io e successivamente esportato in SVG per migliorare la leggibilità il più possibile) di una porzione significativa del codice.
+
+La porzione da noi scelta è quella della gestione di un'intera partita. La classe principale è proprio `Engine`. Di seguito è mostrato il funzionamento di `Engine` e le interfacce che esso implementa (`GameController`, `GameObservable`, `TimeObserver`).
+Grazie all'uso del design pattern "Observer", lo stato della partita viene aggiornato (<<update>>) mediante gli observer di gioco, i quali comunicano con l'`Engine` mediante i metodi implementati dell'interfaccia `GameObservable`.
+![UML-1](img/uml1.svg)
+
+Nella seguente porzione del diagramma UML sono messi in evidenza i costrutti di ereditarietà e composizione.
+![UML-2](img/uml2.svg)
+
+
+![UML-3](img/uml3.svg)
 
 [👆🏻 Torna all'indice ☕️](#indice)
 
