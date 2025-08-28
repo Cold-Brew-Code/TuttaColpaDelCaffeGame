@@ -74,7 +74,6 @@ public class MainPage extends JFrame implements GUI {
 
     JPopupMenu audioMenu = new JPopupMenu();
     JMenuItem togglePauseItem = new JMenuItem("Pausa/Riprendi");
-    // JMenuItem volumeUpItem = new JMenuItem("Aumenta Volume");
     JMenuItem volumeDownItem = new JMenuItem("Aumenta/Abbassa Volume");
     JMenuItem toggleAudioItem = new JMenuItem("Disattiva Audio");
 
@@ -113,13 +112,11 @@ public class MainPage extends JFrame implements GUI {
         }
 
         audioMenu.add(togglePauseItem);
-        // audioMenu.add(volumeUpItem);
         audioMenu.add(volumeDownItem);
         audioMenu.addSeparator();
         audioMenu.add(toggleAudioItem);
 
         togglePauseItem.addActionListener(e -> toggleAudioPause());
-        // volumeUpItem.addActionListener(e -> adjustVolume(0.1f));
         volumeDownItem.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
         toggleAudioItem.addActionListener(e -> toggleAudio());
         audioControlButton
@@ -168,13 +165,7 @@ public class MainPage extends JFrame implements GUI {
             }).start();
         });
 
-        load.addActionListener(e -> {
-            if (isAudioEnabled) {
-                AudioManager.getInstance().stop("menu_theme");
-            }
-            c.loadGame();
-        });
-
+        // UNICO LISTENER CORRETTO PER IL PULSANTE "CARICA PARTITA"
         load.addActionListener(e -> {
             if (isAudioEnabled) {
                 audioManager.fadeOut("menu_theme", 300);
@@ -231,7 +222,6 @@ public class MainPage extends JFrame implements GUI {
 
         toggleAudioItem.setText(isAudioEnabled ? "Disattiva Audio" : "Attiva Audio");
         togglePauseItem.setEnabled(isAudioEnabled);
-        // volumeUpItem.setEnabled(isAudioEnabled);
         volumeDownItem.setEnabled(isAudioEnabled);
 
         if (isAudioEnabled) {
@@ -286,7 +276,7 @@ public class MainPage extends JFrame implements GUI {
 
         int option = JOptionPane.showConfirmDialog(
                 this,
-                new Object[] { message, slider },
+                new Object[]{message, slider},
                 title,
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.CLOSED_OPTION);
@@ -313,7 +303,7 @@ public class MainPage extends JFrame implements GUI {
      *
      * @param c il controller da associare
      * @throws RuntimeException se il controller non è un
-     *                          {@link MainPageController}
+     * {@link MainPageController}
      */
     @Override
     public void linkController(Controller c) {

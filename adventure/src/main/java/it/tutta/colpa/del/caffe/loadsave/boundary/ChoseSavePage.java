@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package it.tutta.colpa.del.caffe.loadsave.boundary;
 
 import it.tutta.colpa.del.caffe.game.boundary.GUI;
@@ -47,8 +43,6 @@ public class ChoseSavePage extends JFrame implements GUI {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated
-    // Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel() {
@@ -83,6 +77,7 @@ public class ChoseSavePage extends JFrame implements GUI {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Carica salvataggio");
         addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
             }
@@ -125,26 +120,20 @@ public class ChoseSavePage extends JFrame implements GUI {
         indicationalLabel.setText("<html><h2>Scegli un salvataggio...</h2></html>");
 
         saveButton.setText("Carica");
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
+        saveButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            saveButtonActionPerformed(evt);
         });
         saveButton.setEnabled(false);
 
         deleteButton.setText("Elimina");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
+        deleteButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            deleteButtonActionPerformed(evt);
         });
         deleteButton.setEnabled(false);
 
         cancelButton.setText("Annulla");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
+        cancelButton.addActionListener((java.awt.event.ActionEvent evt) -> {
+            cancelButtonActionPerformed(evt);
         });
         populateLabels();
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -201,9 +190,9 @@ public class ChoseSavePage extends JFrame implements GUI {
                         .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE,
                                 javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
         this.setResizable(false);
-        setSize(800, 700); // o qualunque misura desideri
+        setSize(800, 700);
         setResizable(false);
-        scrollPanePanel.setPreferredSize(new Dimension(750, 500)); // o la dimensione che vuoi
+        scrollPanePanel.setPreferredSize(new Dimension(750, 500));
         scrollPanePanel.setMinimumSize(new Dimension(750, 500));
         scrollPanePanel.setMaximumSize(new Dimension(750, 500));
         scrollPane.setPreferredSize(new Dimension(750, 500));
@@ -228,13 +217,13 @@ public class ChoseSavePage extends JFrame implements GUI {
         pack();
         indicationalLabel.setForeground(Color.WHITE);
         setLocationRelativeTo(null);
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_saveButtonActionPerformed
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (selectedSave != null && !selectedSave.isDeleted()) {
             c.load(selectedSave.getPath());
         }
-    }// GEN-LAST:event_saveButtonActionPerformed
+    }
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (selectedSave != null && !selectedSave.isDeleted()) {
@@ -246,7 +235,6 @@ public class ChoseSavePage extends JFrame implements GUI {
 
             if (scelta == javax.swing.JOptionPane.YES_OPTION) {
                 c.deleteSave(selectedSave.getPath());
-
                 selectedSave.delete();
                 clearSelection();
                 populateLabels();
@@ -262,27 +250,18 @@ public class ChoseSavePage extends JFrame implements GUI {
         populateLabels();
         saveButton.setEnabled(false);
         deleteButton.setEnabled(false);
-    }// GEN-LAST:event_deleteButtonActionPerformed
+    }
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.dispose();
-
         if (c != null) {
             c.cancelOperation();
         }
-    }// GEN-LAST:event_cancelButtonActionPerformed
+    }
 
-    private void formWindowClosed(java.awt.event.WindowEvent evt) {// GEN-FIRST:event_formWindowClosed
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {
         c.cancelOperation();
-        /**
-         * FIXIT, logica da spostare in EngineController
-         * try {
-         * deleteFileFromFileSystem();
-         * } catch (FileNotFoundException e) {
-         * System.err.println("Eliminazione file non riuscita");
-         * }
-         */
-    }// GEN-LAST:event_formWindowClosed
+    }
 
     private void deleteFileFromFileSystem() throws FileNotFoundException {
         File dir = new File("./src/main/resources/saves");
@@ -322,7 +301,7 @@ public class ChoseSavePage extends JFrame implements GUI {
     }
 
     private void populateLabels() {
-        insideScrollPanePanel.removeAll(); // PULISCI prima di riempire
+        insideScrollPanePanel.removeAll();
         insideScrollPanePanel.setLayout(new BoxLayout(insideScrollPanePanel, BoxLayout.Y_AXIS));
 
         try {
@@ -337,10 +316,10 @@ public class ChoseSavePage extends JFrame implements GUI {
                     save.setLabel(label);
 
                     if (save.isDeleted()) {
-                        label.setBackground(new Color(255, 150, 150, 255)); // alpha value 255 (opaco)
+                        label.setBackground(new Color(255, 150, 150, 255));
                         label.setForeground(Color.WHITE);
                     } else {
-                        label.setBackground(new Color(255, 255, 255, 180)); // sfondo semi-trasparente
+                        label.setBackground(new Color(255, 255, 255, 180));
                         label.setForeground(Color.BLACK);
                     }
 
@@ -363,20 +342,19 @@ public class ChoseSavePage extends JFrame implements GUI {
                                         s.getLabel().setForeground(Color.BLACK);
                                     }
                                 }
-                                label.setBackground(new Color(173, 216, 230, 200)); // azzurro chiaro
+                                label.setBackground(new Color(173, 216, 230, 200));
                                 label.setForeground(Color.BLACK);
                                 saveButton.setEnabled(true);
                                 deleteButton.setEnabled(true);
                             }
                         });
                     } else {
-                        // Disabilita completamente i salvataggi eliminati
                         label.setEnabled(false);
-                        label.setCursor(Cursor.getDefaultCursor()); // Cursore normale invece di mano
+                        label.setCursor(Cursor.getDefaultCursor());
                     }
 
                     insideScrollPanePanel.add(label);
-                    insideScrollPanePanel.add(Box.createRigidArea(new Dimension(0, 5))); // Spaziatura
+                    insideScrollPanePanel.add(Box.createRigidArea(new Dimension(0, 5)));
                 }
             }
         } catch (NullPointerException e) {
@@ -386,12 +364,10 @@ public class ChoseSavePage extends JFrame implements GUI {
             insideScrollPanePanel.add(label);
         }
 
-        // Aggiorna il pannello
         insideScrollPanePanel.revalidate();
         insideScrollPanePanel.repaint();
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton deleteButton;
     private JLabel indicationalLabel;
@@ -400,7 +376,6 @@ public class ChoseSavePage extends JFrame implements GUI {
     private javax.swing.JButton saveButton;
     private javax.swing.JScrollPane scrollPane;
     private javax.swing.JPanel scrollPanePanel;
-    // End of variables declaration//GEN-END:variables
     private List<Save> saves;
     private Save selectedSave;
 
@@ -439,7 +414,7 @@ public class ChoseSavePage extends JFrame implements GUI {
 
     private class Save {
         private JLabel saveLabel;
-        private String path;
+        private final String path;
         private boolean deleted;
 
         public Save(String path) {
@@ -450,7 +425,7 @@ public class ChoseSavePage extends JFrame implements GUI {
 
         public void setLabel(JLabel label) {
             this.saveLabel = label;
-            updateLabelAppearance(); // aggiorna l'aspetto quando viene impostata la label
+            updateLabelAppearance();
         }
 
         public String getPath() {
@@ -463,7 +438,7 @@ public class ChoseSavePage extends JFrame implements GUI {
 
         public void delete() {
             this.deleted = true;
-            updateLabelAppearance(); // aggiorna l'aspetto quando viene eliminato
+            updateLabelAppearance();
         }
 
         public boolean isDeleted() {
@@ -473,7 +448,7 @@ public class ChoseSavePage extends JFrame implements GUI {
         private void updateLabelAppearance() {
             if (saveLabel != null) {
                 if (deleted) {
-                    saveLabel.setBackground(new Color(255, 150, 150, 255)); // alpha value 255
+                    saveLabel.setBackground(new Color(255, 150, 150, 255));
                     saveLabel.setForeground(Color.WHITE);
                     saveLabel.setText("<html><div style='text-align: center;'>" +
                             getFormattedName() +
@@ -486,20 +461,16 @@ public class ChoseSavePage extends JFrame implements GUI {
                     saveLabel.setText(getFormattedName());
                     saveLabel.setEnabled(true);
                 }
-
-                // Forza il repaint per assicurarsi che i cambiamenti siano visibili
                 saveLabel.repaint();
             }
         }
 
         private String getFormattedName() {
-            // Formatta il nome del file in modo più leggibile
             String name = path.replace(".save", "");
             name = name.replace("_", " ");
             name = name.replace("-", ":");
             return "Salvataggio del " + name;
         }
-
     }
 
     private void clearSelection() {
@@ -507,7 +478,6 @@ public class ChoseSavePage extends JFrame implements GUI {
         saveButton.setEnabled(false);
         deleteButton.setEnabled(false);
 
-        // Ripristina i colori di tutte le label non eliminate
         for (Save s : saves) {
             if (!s.isDeleted() && s.getLabel() != null) {
                 s.getLabel().setBackground(new Color(255, 255, 255, 180));

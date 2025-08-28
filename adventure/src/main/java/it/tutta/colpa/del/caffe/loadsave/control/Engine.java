@@ -9,6 +9,7 @@ public class Engine implements LoadController {
     private Controller mainPageController;
     private GUI choseSavePage;
     private it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage savePage;
+    private boolean loadWasSuccessful = false;
 
     public Engine(Controller mainPageController, GUI choseSavePage) {
         this.mainPageController = mainPageController;
@@ -30,6 +31,8 @@ public class Engine implements LoadController {
             if (loadedObject instanceof it.tutta.colpa.del.caffe.game.entity.GameDescription) {
                 it.tutta.colpa.del.caffe.game.entity.GameDescription loadedGame = (it.tutta.colpa.del.caffe.game.entity.GameDescription) loadedObject;
 
+                this.loadWasSuccessful = true;
+
                 choseSavePage.close();
                 it.tutta.colpa.del.caffe.game.GameHandler.loadGame(
                         (it.tutta.colpa.del.caffe.start.control.Engine) mainPageController,
@@ -50,7 +53,7 @@ public class Engine implements LoadController {
             File fileToDelete = new File(saveDir + fileName);
 
             if (fileToDelete.exists() && fileToDelete.delete()) {
-                takeSaves(); // aggiorna la lista
+                takeSaves();
                 choseSavePage.showInformation("Successo", "Salvataggio eliminato con successo!");
             } else {
                 choseSavePage.notifyError("Errore", "Impossibile eliminare il salvataggio");
@@ -74,8 +77,10 @@ public class Engine implements LoadController {
 
     @Override
     public void cancelOperation() {
+        if (loadWasSuccessful) {
+            return;
+        }
         closeGUI();
-        mainPageController.openGUI();
     }
 
     @Override
@@ -87,6 +92,8 @@ public class Engine implements LoadController {
     @Override
     public void closeGUI() {
         choseSavePage.close();
-        mainPageController.openGUI();
+        if (!loadWasSuccessful) {
+            mainPageController.openGUI();
+        }
     }
 }
