@@ -5,14 +5,14 @@
 package it.tutta.colpa.del.caffe.game.entity;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Rappresenta un singolo quiz dialogico con una domanda, un insieme di risposte
  * possibili e messaggi per indicare se la risposta scelta è corretta o errata.
  *
  * <p>
- * Ogni quiz contiene:</p>
+ * Ogni quiz contiene:
+ * </p>
  * <ul>
  * <li>La domanda da porre all'utente.</li>
  * <li>Una lista di risposte possibili.</li>
@@ -23,7 +23,8 @@ import java.util.Set;
  *
  * <p>
  * Questa classe permette di gestire sia la domanda che le risposte, e di
- * verificare facilmente quale risposta è corretta.</p>
+ * verificare facilmente quale risposta è corretta.
+ * </p>
  *
  * @author giova
  */
@@ -49,8 +50,7 @@ public class DialogoQuiz {
             "Bingo! Quasi come trovare il bagno al primo colpo, ma molto più impressionante.",
             "Corretto! Mi chiedo come fai a concentrarti così bene dopo le tue avventure igieniche…",
             "Perfetto! Sei come un supereroe: salva la situazione e passa l’esame.",
-            "Fantastico! Non solo hai trovato la risposta giusta, ma hai anche guadagnato punti karma per la tua sopravvivenza intestinale."
-    );
+            "Fantastico! Non solo hai trovato la risposta giusta, ma hai anche guadagnato punti karma per la tua sopravvivenza intestinale.");
 
     private static final List<String> risposteNegative = List.of(
             "Oh no… sembra che il tuo cervello stia ancora cercando il bagno.",
@@ -62,13 +62,12 @@ public class DialogoQuiz {
             "Sbagliato! Ma hey, almeno hai mantenuto il sorriso… e quello conta.",
             "No, ma la tua audacia dopo mille peripezie è encomiabile!",
             "Manca! Ma ti ammiro per averci provato senza fuggire di nuovo alla toilette.",
-            "Errato… però apprezzo lo spirito di sopravvivenza, e non molti possono dire lo stesso."
-    );
+            "Errato… però apprezzo lo spirito di sopravvivenza, e non molti possono dire lo stesso.");
 
-    public DialogoQuiz(String domanda, List<String> risposte,int id_rispostaCorretta) {
+    public DialogoQuiz(String domanda, List<String> risposte, int id_rispostaCorretta) {
         this.domanda = domanda;
         this.risposte = risposte;
-        this.id_rispostaCorretta= id_rispostaCorretta;
+        this.id_rispostaCorretta = id_rispostaCorretta;
 
     }
 

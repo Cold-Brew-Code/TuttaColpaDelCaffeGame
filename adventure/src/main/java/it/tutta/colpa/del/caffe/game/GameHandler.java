@@ -28,17 +28,32 @@ public class GameHandler {
 
     /**
      * Costruttore che avvia una nuova partita.
-     *
-     * @param mainPageController il motore principale del menu iniziale, usato
-     * per chiudere la GUI principale e passare il controllo al nuovo
-     * {@link Engine} di gioco
      */
     public GameHandler(Engine mainPageController) {
         mainPageController.closeGUI();
-
         GameGUI bo = new GamePage();
         Controller controller = new it.tutta.colpa.del.caffe.game.control.Engine(mainPageController, bo);
-        controller.toString();
+        bo.linkController(controller);
+    }
+
+    /**
+     * Metodo statico per caricare una partita salvata.
+     */
+    public static void loadGame(Engine mainPageController, Object loadedGame) {
+        if (!(loadedGame instanceof it.tutta.colpa.del.caffe.game.entity.GameDescription)) {
+            throw new IllegalArgumentException("Oggetto di caricamento non valido");
+        }
+
+        it.tutta.colpa.del.caffe.game.entity.GameDescription gameDescription = (it.tutta.colpa.del.caffe.game.entity.GameDescription) loadedGame;
+
+        mainPageController.closeGUI();
+        GameGUI bo = new GamePage();
+
+        Controller controller = new it.tutta.colpa.del.caffe.game.control.Engine(
+                mainPageController,
+                bo,
+                gameDescription);
+
         bo.linkController(controller);
     }
 }

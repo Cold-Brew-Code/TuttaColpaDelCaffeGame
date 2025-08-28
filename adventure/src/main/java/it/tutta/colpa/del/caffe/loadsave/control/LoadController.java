@@ -3,12 +3,14 @@ package it.tutta.colpa.del.caffe.loadsave.control;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 
 /**
- * @author giovav
- * @since 19/07/25
+ * Interfaccia per il controller di caricamento salvataggi.
  */
 public interface LoadController extends Controller {
     void load(String save);
-    void deleteSaves();
+
+    void deleteSave(String fileName);
+
     void takeSaves();
+
     void cancelOperation();
 }

@@ -50,7 +50,6 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
         }
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents(GameStatus s) {
@@ -115,9 +114,9 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
         String victory_type;
         victory_type = switch (s) {
             case PROMOSSO -> "partita_vinta";
-            case BAGNO_USATO_TEMPO_ESAURITO, ESAME_DA_FARE, BOCCIATO-> "bocciato";
+            case BAGNO_USATO_TEMPO_ESAURITO, ESAME_DA_FARE, BOCCIATO -> "bocciato";
             case TEMPO_ESAURITO -> "partita_persa";
-            default -> "partita_persa"; //abbandonata
+            default -> "partita_persa"; // abbandonata
         };
         return "/images/" + victory_type + ".png";
     }
@@ -140,5 +139,13 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
     @Override
     public void linkController(Controller c) {
         this.mpc = (MainPageController) c;
+    }
+
+    public void notifyError(String string, String string2) {
+        throw new UnsupportedOperationException("Unimplemented method 'notifyError'");
+    }
+
+    public void showInformation(String string, String string2) {
+        throw new UnsupportedOperationException("Unimplemented method 'showInformation'");
     }
 }
