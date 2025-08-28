@@ -37,7 +37,7 @@ public class AudioManager {
      *
      * @param name nome identificativo della traccia
      * @param path percorso del file audio relativo alla cartella
-     * {@code /sounds/}
+     *             {@code /sounds/}
      */
     public void loadAudio(String name, String path) {
         try {
@@ -66,7 +66,7 @@ public class AudioManager {
      *
      * @param name nome della traccia
      * @param loop {@code true} se deve essere riprodotta in loop, {@code false}
-     * altrimenti
+     *             altrimenti
      */
     public void play(String name, boolean loop) {
         if (currentTrack != null && !currentTrack.equals(name)) {
@@ -88,8 +88,8 @@ public class AudioManager {
     /**
      * Riproduce una traccia applicando un effetto di fade-in sul volume.
      *
-     * @param name nome della traccia
-     * @param loop {@code true} per ripetizione continua
+     * @param name           nome della traccia
+     * @param loop           {@code true} per ripetizione continua
      * @param durationMillis durata del fade-in in millisecondi
      */
     public void fadeIn(String name, boolean loop, int durationMillis) {
@@ -196,7 +196,7 @@ public class AudioManager {
      * Applica un effetto di fade-out e interrompe la riproduzione di una
      * traccia.
      *
-     * @param name nome della traccia
+     * @param name           nome della traccia
      * @param durationMillis durata del fade-out in millisecondi
      */
     public void fadeOut(String name, int durationMillis) {
@@ -205,7 +205,6 @@ public class AudioManager {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
             float initialVolume = gainControl.getValue();
             float min = gainControl.getMinimum();
-            float max = gainControl.getMaximum();
 
             // assicurati che delta sia positivo
             float delta = (initialVolume - min) / (durationMillis / 50f);

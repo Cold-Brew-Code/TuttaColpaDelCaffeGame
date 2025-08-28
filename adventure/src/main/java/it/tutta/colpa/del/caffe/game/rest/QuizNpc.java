@@ -39,29 +39,24 @@ public class QuizNpc {
             new DialogoQuiz(
                     "Quale viene considerato il primo computer elettronico della storia?",
                     List.of("ENIAC", "Colossus", "Zuse Z3", "UNIVAC"),
-                    2
-            ),
+                    2),
             new DialogoQuiz(
                     "In che anno è stato inventato il World Wide Web da Tim Berners-Lee?",
                     List.of("1983", "1989", "1991", "1995"),
-                    1
-            ),
+                    1),
             new DialogoQuiz(
                     "Chi è considerato il 'padre dell’informatica teorica'?",
                     List.of("John von Neumann", "Alan Turing", "Charles Babbage", "Konrad Zuse"),
-                    1
-            ),
+                    1),
             new DialogoQuiz(
                     "Quale fu il primo linguaggio di programmazione ad alto livello di ampia diffusione?",
                     List.of("BASIC", "COBOL", "FORTRAN", "Pascal"),
-                    2
-            ),
+                    2),
             new DialogoQuiz(
                     "Quale azienda ha introdotto il primo microprocessore commerciale, l’Intel 4004, nel 1971?",
                     List.of("IBM", "Intel", "Texas Instruments", "Motorola"),
-                    1
-            )
-    );
+                    1));
+
     /**
      * Classe che rappresenta una singola domanda ottenuta dall'API
      */
@@ -102,12 +97,7 @@ public class QuizNpc {
      * Classe che rappresenta la risposta JSON dell'API contenente le domande
      */
     private class ResponseRiquest {
-        private int response_code;
         private List<DomandaApi> results;
-
-        public int getResponse_code() {
-            return response_code;
-        }
 
         public List<DomandaApi> getResults() {
             return results;
@@ -119,7 +109,7 @@ public class QuizNpc {
      * deserializzata
      */
     public static ResponseRiquest methodRest() throws ConnectionError {
-        try{ 
+        try {
             Client client = ClientBuilder.newClient();
             WebTarget target = client
                     .target("https://opentdb.com/api.php")
@@ -130,7 +120,7 @@ public class QuizNpc {
             Response resp = target.request(MediaType.APPLICATION_JSON).get();
             Gson g = new Gson();
             return g.fromJson(resp.readEntity(String.class), ResponseRiquest.class);
-        }catch (ProcessingException e) {
+        } catch (ProcessingException e) {
             throw new ConnectionError("Connessione a Internet non disponibile.", e);
         }
     }
@@ -142,56 +132,57 @@ public class QuizNpc {
      * @return
      */
     public static DialogoQuiz getQuiz() throws ConnectionError {
-         // esegue la chiamata
+        // esegue la chiamata
         ResponseRiquest r;
         do {
-             r = methodRest();
-             try {
-                 Thread.sleep(2000);
-             } catch (InterruptedException ignored) {}
-        }while (r.getResults() == null || r.getResults().isEmpty());
+            r = methodRest();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException ignored) {
+            }
+        } while (r.getResults() == null || r.getResults().isEmpty());
 
         DomandaApi curr = r.getResults().get(0);
 
         // Traduce la domanda
-        String domandaTradotta= " ";
+        String domandaTradotta = " ";
         try {
-             domandaTradotta = TraduttoreApi.traduci(curr.getQuestion()
-                                            .replaceAll("&quot;", "\"")
-                                            .replaceAll("&#039;", "'")
-                                            .replaceAll("&#233;", "é")
-                                            .replaceAll("&#225;", "á")
-                                                        , "en", "it");
+            domandaTradotta = TraduttoreApi.traduci(curr.getQuestion()
+                    .replaceAll("&quot;", "\"")
+                    .replaceAll("&#039;", "'")
+                    .replaceAll("&#233;", "é")
+                    .replaceAll("&#225;", "á"), "en", "it");
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
-        } catch (ConnectionError c){
+        } catch (ConnectionError c) {
             throw c;
         }
 
-        Map<String, Boolean> risposteConFlag = new HashMap<>();// dizioanrio con chiave risposta e valore se e corretta o meno
+        Map<String, Boolean> risposteConFlag = new HashMap<>();// dizioanrio con chiave risposta e valore se e corretta
+                                                               // o meno
         // Traduce la risposta corretta
         try {
             String rispostaCorrettaTradotta = TraduttoreApi.traduci(curr.getCorrect_answer()
-                                                            .replaceAll("&quot;", "\"")
-                                                            .replaceAll( "&#039;", "'"), 
-                                                                "en", "it");
+                    .replaceAll("&quot;", "\"")
+                    .replaceAll("&#039;", "'"),
+                    "en", "it");
             risposteConFlag.put(rispostaCorrettaTradotta, true);
         } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
 
         // Traduce e aggiunge le risposte sbagliate
-        try{
+        try {
             for (String rispErrata : curr.getIncorrect_answers()) {
                 risposteConFlag.put(TraduttoreApi.traduci(rispErrata
-                                                .replaceAll("&quot;", "\"")
-                                                .replaceAll( "&#039;", "'"), 
-                                                    "en", "it"),false);
+                        .replaceAll("&quot;", "\"")
+                        .replaceAll("&#039;", "'"),
+                        "en", "it"), false);
             }
-        }catch(TraduzioneException e){
+        } catch (TraduzioneException e) {
             System.err.println("Errore nella traduzione della domanda: " + e.getMessage());
         }
-        List<String> risposteTradotte = new ArrayList<>(risposteConFlag.keySet());// lsita con le rispsote 
+        List<String> risposteTradotte = new ArrayList<>(risposteConFlag.keySet());// lsita con le rispsote
         // Mischia tutte le risposte
 
         int indiceCorretta = -1;

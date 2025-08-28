@@ -5,7 +5,6 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
@@ -16,7 +15,7 @@ import java.util.Set;
  *
  * @author giova
  */
-public class CombinableItem extends Item implements Serializable {
+public class CombinableItem extends Item {
 
     private List<Item> composedOf;
 
@@ -30,7 +29,8 @@ public class CombinableItem extends Item implements Serializable {
      * @param immagine
      * @param composedOf
      */
-    public CombinableItem(int id, String name, String description, Set<String> alias, int uses, String immagine, List<Item> composedOf) {
+    public CombinableItem(int id, String name, String description, Set<String> alias, int uses, String immagine,
+            List<Item> composedOf) {
         super(id, name, description, alias, uses, immagine);
         this.composedOf = composedOf;
     }

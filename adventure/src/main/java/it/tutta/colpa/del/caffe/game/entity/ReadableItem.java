@@ -5,15 +5,14 @@
  */
 package it.tutta.colpa.del.caffe.game.entity;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
  *
  * @author giova
  */
-public class ReadableItem extends Item implements Serializable {
-    
+public class ReadableItem extends Item {
+
     private String content;
 
     /**
@@ -26,29 +25,28 @@ public class ReadableItem extends Item implements Serializable {
      * @param immagine
      * @param content
      */
-    public ReadableItem(int id, String name, String description, Set<String> alias, int uses, String immagine, String content) {
+    public ReadableItem(int id, String name, String description, Set<String> alias, int uses, String immagine,
+            String content) {
         super(id, name, description, alias, uses, immagine);
         this.content = content;
     }
 
     /**
      * 
-     * @return 
+     * @return
      */
-    
+
     public String getContent() {
         return content;
     }
-    
+
     /**
      * 
-     * @param content 
+     * @param content
      */
-    
+
     public void setContent(String content) {
         this.content = content;
     }
-    
-    
-    
+
 }

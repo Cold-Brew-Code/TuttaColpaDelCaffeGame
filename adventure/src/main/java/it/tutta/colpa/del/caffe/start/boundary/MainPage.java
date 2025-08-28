@@ -74,7 +74,6 @@ public class MainPage extends JFrame implements GUI {
 
     JPopupMenu audioMenu = new JPopupMenu();
     JMenuItem togglePauseItem = new JMenuItem("Pausa/Riprendi");
-    //JMenuItem volumeUpItem = new JMenuItem("Aumenta Volume");
     JMenuItem volumeDownItem = new JMenuItem("Aumenta/Abbassa Volume");
     JMenuItem toggleAudioItem = new JMenuItem("Disattiva Audio");
 
@@ -113,13 +112,11 @@ public class MainPage extends JFrame implements GUI {
         }
 
         audioMenu.add(togglePauseItem);
-        //audioMenu.add(volumeUpItem);
         audioMenu.add(volumeDownItem);
         audioMenu.addSeparator();
         audioMenu.add(toggleAudioItem);
 
         togglePauseItem.addActionListener(e -> toggleAudioPause());
-        //volumeUpItem.addActionListener(e -> adjustVolume(0.1f));
         volumeDownItem.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
         toggleAudioItem.addActionListener(e -> toggleAudio());
         audioControlButton
@@ -168,13 +165,7 @@ public class MainPage extends JFrame implements GUI {
             }).start();
         });
 
-        load.addActionListener(e -> {
-            if (isAudioEnabled) {
-                AudioManager.getInstance().stop("menu_theme");
-            }
-            c.loadGame();
-        });
-
+        // UNICO LISTENER CORRETTO PER IL PULSANTE "CARICA PARTITA"
         load.addActionListener(e -> {
             if (isAudioEnabled) {
                 audioManager.fadeOut("menu_theme", 300);
@@ -231,7 +222,6 @@ public class MainPage extends JFrame implements GUI {
 
         toggleAudioItem.setText(isAudioEnabled ? "Disattiva Audio" : "Attiva Audio");
         togglePauseItem.setEnabled(isAudioEnabled);
-        // volumeUpItem.setEnabled(isAudioEnabled);
         volumeDownItem.setEnabled(isAudioEnabled);
 
         if (isAudioEnabled) {
@@ -273,7 +263,7 @@ public class MainPage extends JFrame implements GUI {
     /**
      * Mostra una finestra di dialogo con uno slider per impostare il volume.
      *
-     * @param title il titolo della finestra
+     * @param title   il titolo della finestra
      * @param message il messaggio da mostrare
      * @return il livello di volume scelto (0-100) oppure -1 se annullato
      */
@@ -286,16 +276,15 @@ public class MainPage extends JFrame implements GUI {
 
         int option = JOptionPane.showConfirmDialog(
                 this,
-                new Object[]{message, slider},
+                new Object[] { message, slider },
                 title,
                 JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.CLOSED_OPTION
-        );
+                JOptionPane.CLOSED_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
             return slider.getValue();
         }
-        return -1; //ha premuto annulla
+        return -1; // ha premuto annulla
     }
 
     /**
@@ -314,7 +303,7 @@ public class MainPage extends JFrame implements GUI {
      *
      * @param c il controller da associare
      * @throws RuntimeException se il controller non è un
-     * {@link MainPageController}
+     *                          {@link MainPageController}
      */
     @Override
     public void linkController(Controller c) {
@@ -342,7 +331,7 @@ public class MainPage extends JFrame implements GUI {
      * Verifica che una risorsa sia presente nel percorso indicato e stampa
      * l'esito nel log.
      *
-     * @param path percorso relativo della risorsa
+     * @param path        percorso relativo della risorsa
      * @param descrizione descrizione testuale della risorsa
      */
     private void checkResource(String path, String descrizione) {
@@ -353,5 +342,13 @@ public class MainPage extends JFrame implements GUI {
             System.err.println("[ERR] " + descrizione + " NON trovato: " + path);
             System.err.println("Percorso assoluto tentato: " + new File("src/main/resources" + path).getAbsolutePath());
         }
+    }
+
+    public void notifyError(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showInformation(String title, String message) {
+        JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 }

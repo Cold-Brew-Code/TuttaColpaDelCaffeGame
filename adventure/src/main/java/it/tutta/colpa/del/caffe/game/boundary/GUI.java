@@ -8,6 +8,8 @@ import it.tutta.colpa.del.caffe.game.control.Controller;
  */
 public interface GUI {
     void open();
+
     void close();
+
     void linkController(Controller c);
 }

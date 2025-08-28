@@ -1,6 +1,5 @@
 package it.tutta.colpa.del.caffe.game.boundary;
 
-import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 
 /**
@@ -12,7 +11,7 @@ import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
  * @author giovav
  * @since 15/07/25
  */
-public interface GameGUI extends GUI{
+public interface GameGUI extends GUI {
 
     /**
      * Mostra un messaggio all'utente.
@@ -27,9 +26,9 @@ public interface GameGUI extends GUI{
      * <p>
      * I possibili valori restituiti indicano la risposta dell'utente:
      * <ul>
-     *   <li><b>0</b>: Sì / Conferma</li>
-     *   <li><b>1</b>: No / Rifiuto</li>
-     *   <li><b>2</b>: Annulla / Chiudi</li>
+     * <li><b>0</b>: Sì / Conferma</li>
+     * <li><b>1</b>: No / Rifiuto</li>
+     * <li><b>2</b>: Annulla / Chiudi</li>
      * </ul>
      * Questi valori possono essere interpretati liberamente
      * dal chiamante secondo il contesto applicativo.
@@ -42,8 +41,11 @@ public interface GameGUI extends GUI{
     int notifySomething(String header, String message);
 
     void showInformation(String title, String message);
+
     void notifyWarning(String header, String message);
+
     void notifyError(String header, String message);
+
     /**
      * Cambia l'immagine mostrata all'utente, utilizzando il percorso
      * (path) fornito come riferimento all'immagine.

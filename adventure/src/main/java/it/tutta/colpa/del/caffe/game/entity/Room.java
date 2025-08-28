@@ -34,6 +34,7 @@ public class Room implements Serializable {
     private String imagePath;
     private Map<GeneralItem, Integer> objects = new HashMap<>();
     private List<NPC> NPCs = new ArrayList<>();
+    private List<GeneralItem> items = new ArrayList<>();
 
     /**
      *
@@ -59,15 +60,15 @@ public class Room implements Serializable {
     /**
      * Costruisce una stanza completa con tutti i dettagli.
      *
-     * @param id identificatore univoco della stanza
-     * @param name nome della stanza
-     * @param description descrizione generica della stanza
-     * @param look descrizione dettagliata per il comando "look"
-     * @param visible indica se la stanza è visibile
+     * @param id           identificatore univoco della stanza
+     * @param name         nome della stanza
+     * @param description  descrizione generica della stanza
+     * @param look         descrizione dettagliata per il comando "look"
+     * @param visible      indica se la stanza è visibile
      * @param denied_entry indica se l'accesso è negato
-     * @param imageName nome del file immagine associato
-     * @param objects mappa di oggetti presenti e le loro quantità
-     * @param NPCs lista degli NPC presenti nella stanza
+     * @param imageName    nome del file immagine associato
+     * @param objects      mappa di oggetti presenti e le loro quantità
+     * @param NPCs         lista degli NPC presenti nella stanza
      */
     public Room(int id, String name, String description, String look, boolean visible, boolean denied_entry,
             String imageName, Map<GeneralItem, Integer> objects, List<NPC> NPCs) {
@@ -273,5 +274,18 @@ public class Room implements Serializable {
      */
     public String getImagePath() {
         return imagePath;
+    }
+
+    /**
+     * Restituisce la lista degli items nella stanza
+     * 
+     * @return lista di GeneralItem
+     */
+    public List<GeneralItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<GeneralItem> items) {
+        this.items = items;
     }
 }

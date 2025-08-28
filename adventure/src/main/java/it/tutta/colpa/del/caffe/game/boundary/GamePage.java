@@ -23,8 +23,11 @@ import javax.swing.border.LineBorder;
 
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import it.tutta.colpa.del.caffe.game.control.GameController;
+import it.tutta.colpa.del.caffe.game.entity.GameDescription;
+import it.tutta.colpa.del.caffe.game.entity.Inventory;
 import it.tutta.colpa.del.caffe.game.exception.ImageNotFoundException;
 import it.tutta.colpa.del.caffe.game.utility.AudioManager;
+import it.tutta.colpa.del.caffe.game.utility.GameStatus;
 import it.tutta.colpa.del.caffe.game.utility.TypeWriterEffect;
 
 /**
@@ -110,7 +113,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private javax.swing.JButton audioButton;
     private javax.swing.JPopupMenu audioPopupMenu;
     private javax.swing.JMenuItem abbassa_alza;
-    //private javax.swing.JMenuItem decreaseVolumeMenuItem;
+    // private javax.swing.JMenuItem decreaseVolumeMenuItem;
     private javax.swing.JMenuItem toggleMuteMenuItem;
     // --- NUOVI COMPONENTI EFFETTI VISIVI ---
     private javax.swing.JButton visualEffectButton;
@@ -124,7 +127,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="< GUI init >">
     // GEN-BEGIN:initComponents
     private void initComponents() {
@@ -168,7 +170,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         audioButton = new javax.swing.JButton();
         audioPopupMenu = new javax.swing.JPopupMenu();
         abbassa_alza = new javax.swing.JMenuItem("Aumenta/Abbassa Volume");
-        //decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
+        // decreaseVolumeMenuItem = new javax.swing.JMenuItem("Abbassa Volume");
         toggleMuteMenuItem = new javax.swing.JMenuItem("Disattiva/Attiva Audio");
 
         // --- INIZIALIZZAZIONE NUOVI COMPONENTI ---
@@ -231,7 +233,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         // --- SETUP MENU AUDIO ---
         audioPopupMenu.setBorder(new LineBorder(Color.GRAY));
         audioPopupMenu.add(abbassa_alza);
-        //audioPopupMenu.add(decreaseVolumeMenuItem);
+        // audioPopupMenu.add(decreaseVolumeMenuItem);
         audioPopupMenu.add(toggleMuteMenuItem);
         audioButton.addActionListener(this::audioButtonActionPerformed);
         abbassa_alza.addActionListener(this::increaseDecreaseVolumeMenuItemActionPerformed);
@@ -257,26 +259,30 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
-                                .addContainerGap())
-        );
+                                .addContainerGap()));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+                                .addGroup(HeaderPanelLayout
+                                        .createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(audioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(visualEffectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 38,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
         javax.swing.GroupLayout ImagePanelLayout = new javax.swing.GroupLayout(ImagePanel);
         ImagePanel.setLayout(ImagePanelLayout);
@@ -353,7 +359,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                     new ImageIcon((new ImageIcon(getClass().getResource("/images/send_icon.png")))
                             .getImage()
                             .getScaledInstance(32, 32, Image.SCALE_SMOOTH)));
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
         URL skipIconUrl = getClass().getResource("/images/skip_icon.png");
         if (skipIconUrl != null) {
             skipButton.setIcon(
@@ -452,7 +459,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     // <editor-fold desc="< ActionPerformed(s) >">
     private void quitButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        controller.endGame();
+        if (this.controller != null) {
+            controller.endGame();
+        } else {
+            this.dispose();
+        }
     }
 
     private void InvButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -460,7 +471,16 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        controller.saveGame();
+        try {
+            if (this.controller != null) {
+                controller.saveGame();
+
+            } else {
+                showError("Errore", "Impossibile salvare: controller non disponibile");
+            }
+        } catch (Exception e) {
+            showError("Errore di Salvataggio", "Impossibile salvare: " + e.getMessage());
+        }
     }
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -476,7 +496,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     }
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
-        controller.endGame();
+        if (this.controller != null) {
+            controller.endGame();
+        } else {
+            this.dispose();
+        }
     }
     // </editor-fold>
 
@@ -503,16 +527,15 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
         int option = JOptionPane.showConfirmDialog(
                 this,
-                new Object[]{message, slider},
+                new Object[] { message, slider },
                 title,
                 JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.CLOSED_OPTION
-        );
+                JOptionPane.CLOSED_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
             return slider.getValue();
         }
-        return -1; //ha premuto annulla
+        return -1; // ha premuto annulla
     }
 
     private void toggleMuteMenuItemActionPerformed(java.awt.event.ActionEvent evt) {
@@ -609,11 +632,49 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     @Override
     public void linkController(Controller controller) {
+        System.out.println("[DEBUG] linkController chiamato con: " + controller);
         if (controller instanceof GameController) {
             this.controller = (GameController) controller;
+
+            try {
+                GameDescription gameDescription = ((it.tutta.colpa.del.caffe.game.control.Engine) controller)
+                        .getGameDescription();
+
+                if (gameDescription != null && gameDescription.getCurrentRoom() != null) {
+                    setImage(gameDescription.getCurrentRoom().getImagePath());
+                    out(gameDescription.getCurrentRoom().getDescription().translateEscapes());
+                    updateInventoryDisplay(gameDescription.getInventory());
+
+                    // CORREZIONE: Imposta il timer dal salvataggio
+                    if (gameDescription.getTimer() != null) {
+                        setDisplayedClock(gameDescription.getTimer().getTimeFormatted());
+
+                        // Inizializza anche la progress bar con il tempo corretto
+                        boolean hasUsedRestroom = gameDescription.getStatus() == GameStatus.ESAME_DA_FARE;
+                        int remainingTime = gameDescription.getTimer().getRemainingTimeInSeconds();
+                        initProgressBar(remainingTime, hasUsedRestroom);
+
+                        // AGGIUNTA: Imposta il valore corrente della progress bar
+                        // basato sul tempo già trascorso
+                        int totalTime = hasUsedRestroom ? 600 : 2100; // 10 minuti o 35 minuti
+                        int elapsedTime = totalTime - remainingTime;
+                        progressBar.setValue(elapsedTime);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[WARN] Impossibile inizializzare GUI dal salvataggio: " + e.getMessage());
+                out("Partita caricata con successo!");
+            }
+
+            System.out.println("[DEBUG] Controller impostato correttamente: " + this.controller);
         } else {
+            System.err.println("[ERROR] Controller non valido: " + controller.getClass());
             throw new RuntimeException("Il controller per GamePage non è un GameController");
         }
+    }
+
+    private void updateInventoryDisplay(Inventory inventory) {
+        System.out.println("[DEBUG] Inventario caricato: " + inventory.getInventory().size() + " oggetti");
     }
 
     @Override
@@ -629,6 +690,18 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         this.progressBar.setMaximum(sec);
         this.progressBar.setValue(0);
         this.barUtilHasUsedRestroom = hasUsedRestroom;
+
+        // Assicurati che la progress bar sia visibile
+        this.progressBar.setVisible(true);
+
+        // Imposta un valore minimo visibile (es. 1% del massimo)
+        int minVisibleValue = Math.max(1, sec / 100);
+        this.progressBar.setValue(minVisibleValue);
+
+        SwingUtilities.invokeLater(() -> {
+            progressBar.revalidate();
+            progressBar.repaint();
+        });
     }
 
     /**
@@ -645,10 +718,12 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
      * <p>
      * <p>
      * In base al valore aggiornato della barra, cambia il colore e il testo
-     * visualizzato:</p>
+     * visualizzato:
+     * </p>
      * <ul>
      * <li>Valore < 6000: testo "FORZA IL DOVERE CHIAMA" con colore di
-     * default</li> <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol lare"
+     * default</li>
+     * <li>Valore tra 6001 e 9000: testo "ahi ho paura di mol lare"
      * con colore arancione</li>
      * <li>Valore > 9000: testo "Sto quasi per mollare" con colore rosso</li>
      * </ul>
@@ -666,7 +741,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
                 // Cambia solo il colore del riempimento in base al tempo
                 if (newValue < 1050) {
-                    progressBar.setForeground(Color.GREEN);  // riempimento
+                    progressBar.setForeground(Color.GREEN); // riempimento
                     progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                     progressBar.setString("FORZA IL DOVERE CHIAMA");
 
@@ -685,8 +760,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
                     @Override
                     protected void paintString(Graphics g, int x, int y,
-                                               int width, int height,
-                                               int amountFull, Insets b) {
+                            int width, int height,
+                            int amountFull, Insets b) {
                         g.setColor(Color.BLACK);
                         super.paintString(g, x, y, width, height, amountFull, b);
                     }
@@ -703,7 +778,7 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
                 // Cambia solo il colore del riempimento in base al tempo
                 if (newValue < 300) {
-                    progressBar.setForeground(Color.GREEN);  // riempimento
+                    progressBar.setForeground(Color.GREEN); // riempimento
                     progressBar.setBackground(Color.LIGHT_GRAY); // sfondo neutro
                     progressBar.setString("VAI A FARE L'ESAME, SBRIGATI!");
 
@@ -722,8 +797,8 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                 progressBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI() {
                     @Override
                     protected void paintString(Graphics g, int x, int y,
-                                               int width, int height,
-                                               int amountFull, Insets b) {
+                            int width, int height,
+                            int amountFull, Insets b) {
                         g.setColor(Color.BLACK);
                         super.paintString(g, x, y, width, height, amountFull, b);
                     }
