@@ -705,7 +705,7 @@ In pratica, serve a rendere il programma portabile, evitando percorsi di file as
 
 - ### SWING
   Swing è un framework messo a disposizione da Java che permette la creazione di interfacce grafiche di diverso tipo. Esso infatti mette a disposizione diversi componenti per la realizzazione delle interfacce.
-  Per poter creare un programma con interfacce grafiche che usa Swing bisogna innanzitutto scegliere il contenitore di alto livello, senza quest'ultimo il programma Swing non può esistere. Swing ne mette a disposizione tre: `JFrame`, `JDialogue` e `JApplet`. In questo progetto vengono principalmente usati `JFrame` e `JApplet`. Ogni contenitore ad alto livello è visibile su schermo e può contenere tutti gli elementi di cui necessita l'interfaccia: `JButton`, `JTextArea`, `JField` e, in generale, tutti gli elementi messi a disposizione dal framework.
+  Per poter creare un programma con interfacce grafiche che usa Swing bisogna innanzitutto scegliere il contenitore di alto livello, senza quest'ultimo il programma Swing non può esistere. Swing ne mette a disposizione tre: `JFrame`, `JDialog` e `JApplet`. In questo progetto vengono principalmente usati `JFrame` e `JApplet`. Ogni contenitore ad alto livello è visibile su schermo e può contenere tutti gli elementi di cui necessita l'interfaccia: `JButton`, `JTextArea`, `JField` e, in generale, tutti gli elementi messi a disposizione dal framework.
   Le componenti possono appartenere ad un unico contenitore, che sia ad alto livello o non, e innestando contenitori ed elementi si possono creare vere e proprie gerarchie di componenti.
   I componenti che possono essere messi all'interno dei contenitori sono di diverso tipo e possono essere personalizzati, dal punto di vista grafico **mediante i metodi che mettono a disposizione**.
   
@@ -774,7 +774,7 @@ In pratica, serve a rendere il programma portabile, evitando percorsi di file as
   La schermata di fine gioco (usa `JPanel`):
   ![GameEndedPage](img/GameEndedPage.png)
   
-  Adesso seguono due GUI che non utilizzano `JFrame` come top-level container, bensì `JDialogue`. La scelta è mirata ed è stata fatta in base a vincoli imposti sul gioco, infatti quando si osserva le due schermate successive non deve essere possibile interagire con altre parti del programma se non con queste. Questo tipo di finestre sono chiamate **modali**. Le loro implementazioni, al di là del contenitore di alto livello adottato, sfruttano componenti già viste.
+  Adesso seguono due GUI che non utilizzano `JFrame` come top-level container, bensì `JDialog`. La scelta è mirata ed è stata fatta in base a vincoli imposti sul gioco, infatti quando si osserva le due schermate successive non deve essere possibile interagire con altre parti del programma se non con queste. Questo tipo di finestre sono chiamate **modali**. Le loro implementazioni, al di là del contenitore di alto livello adottato, sfruttano componenti già viste.
 
 
   La schermata dell'inventario o zaino (usa `JPanel`, `JLabel` e `JTextArea`):
@@ -846,7 +846,7 @@ In pratica, serve a rendere il programma portabile, evitando percorsi di file as
         }
     ```
     La funzione viene richiamata all'inizio, all'interno del costruttore. Questo passo garantisce che il reperimento delle domande inizi dal momento in cui la GUI che le mostrerà viene mostrata. Prima del quiz c'è un piccolo dialogo con il quale il player dovrà aver a che fare, questo garantisce che nel frattempo il thread recuperi almeno due domande dall'API RESTful, velocizzando così l'esecuzione e rendendo il programma più user-friendly.
-    Il thread utilizza e aggiorna una `BlockingQueve`, collection thread safe.
+    Il thread utilizza e aggiorna una `BlockingQueue`, collection thread safe.
 
     Il Thread mostrato sopra ha un thread che viene eseguito in maniera concorrente a lui, il seguente:
     ```java
@@ -860,7 +860,7 @@ In pratica, serve a rendere il programma portabile, evitando percorsi di file as
                         }
                     }).start();
     ```
-    Questo thread, all'interno del metodo `runNextQuiz()` agisce come un **consumatore** occupandosi di mostrare sulla GUI le domande, volta per volta, con le sue possibili risposte e di attendere (grazie al metodo `take()` di `BlockingQueve`) la risposta nel caso in cui non sia immediatamente disponibile.
+    Questo thread, all'interno del metodo `runNextQuiz()` agisce come un **consumatore** occupandosi di mostrare sulla GUI le domande, volta per volta, con le sue possibili risposte e di attendere (grazie al metodo `take()` di `BlockingQueue`) la risposta nel caso in cui non sia immediatamente disponibile.
 
     Il primo thread funge dunque da **Producer** e il secondo da **Consumer**.
 
