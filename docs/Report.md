@@ -17,7 +17,7 @@
 - ### [Introduzione](#introduzione-1)
 - ### [Descrizione dell'avventura](#descrizione-dellavventura-1)
 - ### [Progettazione](#progettazione-1)
-  - #### [Competenze](#competenze-1)
+  - #### [Individuazione delle classi e Competenze](#individuazione-delle-classi-e-competenze-1))
   - #### [Organizzazione in packages](#organizzazione-in-packages-1)
 - ### [Diagramma delle classi](#diagramma-delle-classi-1)
 - ### [Specifica algebrica](#specifica-algebrica-1)
@@ -52,18 +52,21 @@ Un’avventura testuale tra il grottesco e il quotidiano, dove ogni scelta può 
 
 Preparati a ridere, riflettere... e correre💨.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 # Progettazione
-
-*< Fornire dettagli sulla progettazione. Come sono state individuate le classi, quali sono le competenze di ogni classe, come sono state organizzate le classi in package. >*
-### Individuazione delle classi
-
-### Competenze
+### Individuazione delle classi e Competenze
 La suddivisione delle competenze o **responsabilità** delle classi viene effettuata secondo il principio di presentazione separata **Entity, Control, Boundary** (**ECB**), dove ogni classe ha una propria responsabilità.
 Più precisamente, le responsabilità costituiscono il ciò che un’istanza di una classe è destinato a fare.
 Andando ad assegnare responsabilità precise per ogni classe si va a rendere le classi invarianti ai cambiamenti tra loro.
 
 In questo progetto le classi sono state suddivise per competenze all'interno di relativi packages (entity, control, boundary) e, a livello superiore, è stata effettuata un'ulteriore raggruppamento per "aree" dell'applicativo: `game`, `start`, `loadAndSave` e `rete`; in questo modo abbiamo ottenuto una suddivisione per competenze corretta e, inoltre, la facilità di **individuare** le classi corrette per ogni area dell'applicativo.
+
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 ### Organizzazione in packages
 Per praticità e per coerenza con la suddivisione ECB delle competenze, come già specificato in precedenza, questo progetto è stato scomposto in più package.
@@ -174,17 +177,25 @@ Segue un breve riassunto delle competenze di ciascuna classe, raggruppate per pa
 
 > Per maggiori informazioni riguardanti le classi e le proprie competenze specifiche si rimanda alla [**javadoc**](javadoc/index.html) di questo progetto.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
+
 ## Diagramma delle classi
 *<-- Inserire una diagramma delle classi di una porzione significativa del progetto e commentare il diagramma fornendo dettagli sui principi della programmazione ad oggetti che sono stati utilizzati (ereditarietà, interfacce, classi astratte, composizione, …) -->*
+
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 ## Specifica algebrica
 Di seguito riportiamo la specifica algebrica della struttura dati **Dizionario** (in java chiamata `Map`), utilizzato all'interno del progetto in alcuni contesti importanti, come per la gestione dell'inventario e anche come struttura dati ausiliaria in molti contesti (in particolare in `DataBaseManager`).
 
 ### Sort Necessari
-- Chiave
-- Valore
-- Dizionario - Dato astratto che stiamo definendo
-- boolean - Sort ausiliario
+- `Chiave`
+- `Valore`
+- `Dizionario` - Dato astratto che stiamo definendo
+- `boolean` - Sort ausiliario
 
 ### Specifica Sintattica
 - `CreaDizionario() -> Dizionario`
@@ -206,6 +217,8 @@ Ne consegue la seguente tabella:
 | `Cancella(K', D')`      | `error`                              | `if K' = K then D else Inserisci(Cancella(K', D), K, V)`             |
 | `Appartiene(K', D')`    | `False`                              | `if K = K' then T else Appartiene(D, K')`                            |
 | `Recupera(K', D')`      | `error`                              | `if K = K' then V else Recupera(D, K')`                               |
+
+[👆🏻 Torna all'indice ☕️](#indice)
 
 ---
 
@@ -303,8 +316,16 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
     }
   ```
   Grazie all'interfaccia funzionale il metodo `executeWithRetry(...)` può funzionare indipendentemente dal valore di ritorno che l'azione da ripetere ha. In questo modo il metodo può agire su qualsiasi tipo di richiesta al server e non è necessario sovraccaricare il codice con inutili metodi specifici in più.
+
+  [👆🏻 Torna all'indice ☕️](#indice)
+
+---
+
 - ### File
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 - ### Database (JDBC)
   Java, grazie a JDBC, mette a disposizione una serie di librerie, contenute nel namespaces `java.sql`, che permettono di sfruttare l'utilizzo di basi di dati all'interno del codice.
@@ -448,6 +469,10 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
   ```
   Infine, il metodo qui sopra mostra come ottenere i valori dei campi di una specifica tupla del `ResultSet` per mezzo dei nomi delle colonne della relazione.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
+
 - ### Lamba Expression
   Le espressioni lambda sfruttano un paradigma di programmazione diverso rispetto a quello classico ad oggetti per il quale java è molto conosciuto (e per il quale noi lo adoperiamo).
   Esse, infatti, sfruttano il paradigma operazionale funzionale, basato sul lambda calcolo. Il paradigma funzionale è molto comodo per vari motivi, tra cui:
@@ -549,6 +574,10 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
 
   In altre parti del codice vengono usati le pipeline con l'uso di lambda expressions, li omettiamo per semplicità.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
+
 - ### SWING
   Swing è un framework messo a disposizione da Java che permette la creazione di interfacce grafiche di diverso tipo. Esso infatti mette a disposizione diversi componenti per la realizzazione delle interfacce.
   Per poter creare un programma con interfacce grafiche che usa Swing bisogna innanzitutto scegliere il contenitore di alto livello, senza quest'ultimo il programma Swing non può esistere. Swing ne mette a disposizione tre: `JFrame`, `JDialogue` e `JApplet`. In questo progetto vengono principalmente usati `JFrame` e `JApplet`. Ogni contenitore ad alto livello è visibile su schermo e può contenere tutti gli elementi di cui necessita l'interfaccia: `JButton`, `JTextArea`, `JField` e, in generale, tutti gli elementi messi a disposizione dal framework.
@@ -641,6 +670,11 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
                     JOptionPane.ERROR_MESSAGE);
   ```
   ![Modal](img/Modal.png)
+
+
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 - ### Thread e programmazione concorrente
   I calcolatori sono in grado, grazie ai loro sistemi operativi, di gestire più task nello stesso momento, contemporaneamente. Questo è possibile grazie al *time slicing* della CPU. 
@@ -811,14 +845,107 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
       Se così non fosse, questa funzionalità sarebbe utile.
 
   - **Gestione del Timer della partita**
+    La classe `Clock` è responsabile della gestione del tempo di gioco. Per evitare di bloccare il thread principale del gioco, il countdown viene eseguito in un thread separato. Invece di gestire manualmente un `Thread`, si è scelto di utilizzare un `ScheduledExecutorService`, un'utility più avanzata del package java.`util.concurrent`. Questo approccio offre un controllo più robusto sulla pianificazione di attività ripetute.
+
+    ```java
+      public void start() {
+        if (!isRunning && remainingTimeInSeconds > 0) {
+            isRunning = true;
+            scheduler = Executors.newSingleThreadScheduledExecutor();
+            long delay = (long) (1000 / speedFactor);
+            scheduler.scheduleAtFixedRate(() -> {
+                if (remainingTimeInSeconds > 0) {
+                    remainingTimeInSeconds -= 1;
+                    observer.onTimeUpdate(getTimeFormatted());
+                    gui.increaseProgressBar();
+                } else {
+                    stop();
+                    observer.onTimeExpired();
+                }
+            }, 0, delay, TimeUnit.MILLISECONDS);
+        }
+    }
+    ```
+    Come si vede dal codice, viene creato un `ScheduledExecutorService` con un solo thread. Il metodo `scheduleAtFixedRate()` pianifica **un'operazione** (una lambda expression) **che verrà eseguita ripetutamente**. Questa operazione decrementa il tempo residuo e aggiorna la GUI. L'uso di un `ExecutorService` permette di gestire il **ciclo di vita del thread in modo pulito**: il metodo `stop()` invoca `scheduler.shutdown()`, garantendo che il thread venga terminato correttamente e le risorse rilasciate.
     
+    
+    **Perché abbiamo utilizzato questa classe?**
+    Creare e distruggere `Thread` manualmente è un'operazione costosa in termini di risorse. Inoltre, gestire un gran numero di thread può diventare complesso. L'`ExecutorService`, parte del framework `java.util.concurrent`, offre una soluzione più robusta e di alto livello per gestire l'**esecuzione di task asincroni**. L'abbiamo scelto principalmente per la sua facilità d'uso nello schedulare azioni ripetute a distanza di millisecondi prefissati.
+
 
   - **Gestione della Musica all'interno del Gioco**
+    La gestione dell'audio in un'applicazione interattiva richiede l'uso di thread per evitare di bloccare il flusso principale del programma, specialmente l'interfaccia utente. Un esempio si trova già nella schermata iniziale, dove l'avvio della partita viene gestito in un thread separato per garantire una transizione fluida.
 
+    Il codice che segue è tratto dalla classe `it.tutta.colpa.del.caffe.start.boundary.MainPage` e si occupa di istanziare un `Thread` che viene eseguito in maniera parallela al resto del gioco.
+    ```java
+      start.addActionListener(e -> {
+          if (isAudioEnabled) {
+              AudioManager.getInstance().stop("menu_theme");
+          }
+          new Thread(() -> {
+              try {
+                  Thread.sleep(300);
+                  c.startGame();
+              } catch (InterruptedException ex) {
+                  Thread.currentThread().interrupt();
+              }
+          }).start();
+      });
+    ```
+
+    In questo frammento, quando l'utente clicca sul pulsante "INIZIA", viene creato un nuovo `Thread`. Questo thread prima ferma la musica del menu, poi attende per 300 millisecondi con `Thread.sleep()` per dare tempo all'effetto sonoro di terminare, e infine avvia la partita vera e propria. Eseguire queste operazioni in background assicura che l'interfaccia grafica (GUI) non si "congeli" e resti reattiva.
+
+    Oltre a questo, la classe `AudioManager` utilizza thread dedicati per implementare effetti che si sviluppano nel tempo, come il **fade-in** e il **fade-out**. Se queste operazioni venissero eseguite sul thread principale, l'intera applicazione si bloccherebbe per tutta la durata dell'effetto.
+    
+    Si riporta il codice del metodo `fadeIn()` a scopo esemplificativo.
+    ```java
+      public void fadeIn(String name, boolean loop, int durationMillis) {
+        ...
+        new Thread(() -> {
+            try {
+                ...
+                for (float vol = min; vol < targetVolume; vol += increment) {
+                    gainControl.setValue(vol);
+                    Thread.sleep(30);
+                }
+                gainControl.setValue(targetVolume);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
+      }
+    ```
+    Per ogni effetto di fade, viene creato e avviato un nuovo `Thread`. All'interno del suo metodo `run()`, un ciclo modifica gradualmente il volume del clip audio. La chiamata a `Thread.sleep()` introduce una piccola pausa tra una modifica e la successiva, permettendo all'effetto di essere percepibile nel tempo desiderato senza consumare eccessive risorse della CPU. Questo design garantisce che il gioco rimanga fluido e reattivo mentre gli effetti audio vengono eseguiti in parallelo.
 
   - **Gestione dell'effetto Type Writer nelle GUI**
+    L'effetto "macchina da scrivere" nella classe `TypeWriterEffect` simula la scrittura di testo un carattere alla volta in una `JTextArea`. Per animazioni e aggiornamenti periodici nelle interfacce `Swing`, lanciare un **Thread generico non è la scelta migliore**, poiché tutte le modifiche ai componenti Swing devono avvenire sull'**Event Dispatch Thread** (EDT) per garantire la **thread-safety**.
 
+    Per questo motivo, è stato utilizzato un `javax.swing.Timer`, una classe specificamente progettata per questo scopo. Segue un pezzo di codice, semplificato, che ne mostra l'implementazione con i metodi più importanti.
+    ```java
+      public class TypeWriterEffect {
+          private Timer timer;
+          public TypeWriterEffect(JTextArea textArea, int initialDelay) {
+              this.textArea = textArea;
+              this.delay = initialDelay;
+              this.timer = new Timer(initialDelay, new ActionListener() {
+                  @Override
+                  public void actionPerformed(ActionEvent e) {
+                      if (characterIndex < textToWrite.length()) {
+                          ...
+                      } else {
+                          stop();
+                          ...
+                      }
+                  }
+              });
+          }
+      }
+    ```
+    Il `javax.swing.Timer` esegue l' `actionPerformed()` del suo `ActionListener` a intervalli regolari direttamente sull'EDT. In questo modo, il codice che modifica la `JTextArea` viene eseguito in modo sicuro, **prevenendo problemi di concorrenza tipici delle GUI multithread**. Questa è la pratica standard e **più corretta** per gestire **animazioni e task temporizzati** che interagiscono con l'interfaccia utente in `Swing`.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
 
 - ### Socket e API RESTful
   La programmazione di rete è molto importante per la comunicazione di dati con il mondo esterno. In Java è possibile comunicare e fare richieste a server mediante l'uso di una libreria apposita all'interno del package `java.net`. 
@@ -974,6 +1101,8 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
     }
   ```
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
 ---
 
 ## Modo più veloce per vincere il gioco
@@ -997,3 +1126,6 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
 17. `nord`
 18. `parla` - risolvere il quiz per essere promosso. Le risposte corrette appariranno nella console.
 
+[👆🏻 Torna all'indice ☕️](#indice)
+
+---
