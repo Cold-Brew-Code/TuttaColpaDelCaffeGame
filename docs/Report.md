@@ -322,6 +322,10 @@ Ci teniamo a sottolineare che molto spesso, come nel caso dell'argomento [Databa
 ---
 
 - ### File
+  Per gestire la persistenza dei dati oltre il ciclo di vita di un'applicazione, Java si affida a un robusto meccanismo di Input/Output basato sul concetto di `stream`. Un flusso di I/O è un'astrazione che rappresenta una **sequenza di dati** proveniente da una sorgente o diretta a una destinazione, come un file su disco. Questo paradigma permette di gestire diversi tipi di dati, da semplici byte e caratteri fino a intere strutture di oggetti.
+  Per interagire con il **file system**, Java mette a disposizione sia classi per la manipolazione dei percorsi e delle directory, come la classe `File` , sia una gerarchia di stream specifici per la lettura e scrittura, come `FileInputStream` e `FileReader`. Inoltre, per la persistenza di strutture complesse, il linguaggio offre il meccanismo della **serializzazione**, che consente di trasformare un oggetto in una sequenza di byte per memorizzarlo su un file e poterlo così ricostruire in un secondo momento.
+
+  In questo progetto i file sono stati usati principalmente per effettuare salvataggio e caricamento della partita su disco.
 
 [👆🏻 Torna all'indice ☕️](#indice)
 
