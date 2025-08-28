@@ -30,10 +30,13 @@ public class Parser {
     /**
      * Costruisce un nuovo Parser.
      *
-     * @param stopwords Un insieme di parole comuni (es. "il", "un") da ignorare durante l'analisi.
+     * @param stopwords Un insieme di parole comuni (es. "il", "un") da ignorare
+     *                  durante l'analisi.
      * @param commands  La lista di tutti i comandi validi nel gioco.
-     * @param items     La lista di tutti gli oggetti (GeneralItem) presenti nel gioco.
-     * @param NPCs      La lista di tutti i personaggi non giocanti (NPC) presenti nel gioco.
+     * @param items     La lista di tutti gli oggetti (GeneralItem) presenti nel
+     *                  gioco.
+     * @param NPCs      La lista di tutti i personaggi non giocanti (NPC) presenti
+     *                  nel gioco.
      */
     public Parser(Set<String> stopwords, List<Command> commands, List<GeneralItem> items, List<NPC> NPCs) {
         this.stopwords = stopwords;
@@ -43,10 +46,12 @@ public class Parser {
     }
 
     /**
-     * Controlla se un dato token corrisponde a un comando conosciuto o a uno dei suoi alias.
+     * Controlla se un dato token corrisponde a un comando conosciuto o a uno dei
+     * suoi alias.
      *
      * @param token La stringa da verificare.
-     * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti {@code null}.
+     * @return L'oggetto {@link Command} corrispondente se trovato, altrimenti
+     *         {@code null}.
      */
     private Command checkForCommand(String token) throws ParserException {
         Command c = commands.stream()
@@ -58,7 +63,8 @@ public class Parser {
 
     /**
      * Cerca corrispondenze di oggetti all'interno di un array di token.
-     * Il metodo confronta tutte le sottosequenze dei token con i nomi e gli alias degli oggetti di gioco.
+     * Il metodo confronta tutte le sottosequenze dei token con i nomi e gli alias
+     * degli oggetti di gioco.
      *
      * @param token L'array di token derivato dall'input dell'utente.
      * @return Un array di stringhe contenente i nomi degli oggetti trovati.
@@ -69,10 +75,12 @@ public class Parser {
         this.items.stream()
                 .filter(item -> {
                     // Copio la lista di alias + nome (senza modificare l'originale)
-                    List<String> aliasList = new ArrayList<>(item.getAlias().stream().map(alias->alias.toLowerCase()).collect(Collectors.toList()));
+                    List<String> aliasList = new ArrayList<>(
+                            item.getAlias().stream().map(alias -> alias.toLowerCase()).collect(Collectors.toList()));
                     aliasList.add(item.getName().toLowerCase());
 
-                    // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri speciali)
+                    // Creo regex con tutti gli alias/nome (quote per evitare problemi con caratteri
+                    // speciali)
                     String regex = aliasList.stream()
                             .reduce((a, b) -> a + "|" + b)
                             .orElse("");
@@ -80,19 +88,23 @@ public class Parser {
                     // Se almeno una combinazione dei token matcha, questo oggetto è "trovato"
                     return tentativo(p, token);
                 })
-                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla list
+                .forEach(item -> findObj.add(item.getName())); // per ogni oggetto trovato aggiungo il suo nome alla
+                                                               // list
         return findObj.toArray(new String[0]); // converto la lista array di
     }
 
     /**
-     * Metodo di supporto che verifica se una qualsiasi sottosequenza contigua di token corrisponde a un pattern regex.
+     * Metodo di supporto che verifica se una qualsiasi sottosequenza contigua di
+     * token corrisponde a un pattern regex.
      *
      * @param p     Il {@link Pattern} regex compilato da confrontare.
      * @param token L'array di token da esaminare.
-     * @return {@code true} se viene trovata una corrispondenza, altrimenti {@code false}.
+     * @return {@code true} se viene trovata una corrispondenza, altrimenti
+     *         {@code false}.
      */
     private boolean tentativo(Pattern p, String[] token) {
-        // provo tutte le poossibili sottosequenze di token partendo dalla prima posizione poi dalla seconda ecc
+        // provo tutte le poossibili sottosequenze di token partendo dalla prima
+        // posizione poi dalla seconda ecc
         for (int start = 0; start < token.length; start++) {
             StringBuilder sb = new StringBuilder();
             for (int end = start; end < token.length; end++) {
@@ -114,7 +126,8 @@ public class Parser {
      * Confronta le sottosequenze dei token con i nomi degli NPC.
      *
      * @param tokens L'array di token derivato dall'input dell'utente.
-     * @return L'oggetto {@link NPC} trovato, o {@code null} se nessun NPC corrisponde.
+     * @return L'oggetto {@link NPC} trovato, o {@code null} se nessun NPC
+     *         corrisponde.
      */
     private NPC findNpc(String[] tokens) {
         StringBuilder regex = new StringBuilder("[\\s]+(");
@@ -126,9 +139,8 @@ public class Parser {
 
         regex.append(")[\\s]+");
         for (NPC npc : this.NPCs) {
-            String npcName = npc.getNome().toLowerCase().replaceAll(regex.toString(), " ");
-
-            Set<String> aliasList = new HashSet<>(npc.getAlias().stream().map(alias->alias.toLowerCase()).collect(Collectors.toSet()));
+            Set<String> aliasList = new HashSet<>(
+                    npc.getAlias().stream().map(alias -> alias.toLowerCase()).collect(Collectors.toSet()));
             aliasList.add(npc.getNome().toLowerCase());
 
             // provo tutte le possibili sottosequenze di token
@@ -169,20 +181,25 @@ public class Parser {
                     throw new ParserException("Piano non valido: " + numero + ". I piani validi sono da 1 a 7.");
                 }
             } catch (NumberFormatException ignored) {
-                // poichè se ci sono caratteri non numerici parseInt lancia subito eccezione in questo modo lo evitiamo
+                // poichè se ci sono caratteri non numerici parseInt lancia subito eccezione in
+                // questo modo lo evitiamo
             }
         }
         return -1;
     }
 
     /**
-     * Analizza una stringa di comando dell'utente, la suddivide in token e identifica
+     * Analizza una stringa di comando dell'utente, la suddivide in token e
+     * identifica
      * il comando principale, gli oggetti e/o gli NPC a cui si riferisce.
      *
      * @param command La stringa di input completa fornita dall'utente.
-     * @return Un oggetto {@link ParserOutput} che incapsula il risultato dell'analisi.
-     * Questo oggetto conterrà il comando identificato ed eventuali oggetti o NPC
-     * associati. Se il comando non è valido, l'oggetto ParserOutput lo indicherà.
+     * @return Un oggetto {@link ParserOutput} che incapsula il risultato
+     *         dell'analisi.
+     *         Questo oggetto conterrà il comando identificato ed eventuali oggetti
+     *         o NPC
+     *         associati. Se il comando non è valido, l'oggetto ParserOutput lo
+     *         indicherà.
      */
     public ParserOutput parse(String command) throws ParserException {
         List<String> list = Utils.parseString(command, stopwords);
@@ -191,7 +208,8 @@ public class Parser {
             throw new ParserException("Il comando che hai inserito non è valido!");
         }
         Command cd = checkForCommand(tokens[0]);
-        //System.out.println("ho trovato:\n"+ cd+ cd.getAlias()+cd.getName()+cd.getType());
+        // System.out.println("ho trovato:\n"+ cd+
+        // cd.getAlias()+cd.getName()+cd.getType());
         if (cd == null) {
             throw new ParserException("Errore: comando non riconosciuto o input non valido.");
         }
@@ -205,12 +223,12 @@ public class Parser {
             if (obj.length == 1) {
                 // chiamo il construttore di parserOutput con solo un oggetto
 
-                return new ParserOutput(cd, items.stream().filter(item
-                        -> item.getName().equals(obj[0])
-                ).findFirst().orElse(null));
+                return new ParserOutput(cd,
+                        items.stream().filter(item -> item.getName().equals(obj[0])).findFirst().orElse(null));
 
             } else if (npcP != null) {
-                // non ha trovato niente quindi non è stato indicato nessun oggetto provo con gli npc
+                // non ha trovato niente quindi non è stato indicato nessun oggetto provo con
+                // gli npc
                 // chiama il costruttore con comando ed NPC
                 return new ParserOutput(cd, npcP);
             } else if (piano != -1) {
@@ -220,7 +238,8 @@ public class Parser {
                 throw new ParserException("Oggetti o NPC non riconosciuti.");
             }
         } else {
-            // il semplice comando parla che se ci sono più npc da errore quando si fa talk observer
+            // il semplice comando parla che se ci sono più npc da errore quando si fa talk
+            // observer
             // construttore di parserOutput con comadno e null
             return new ParserOutput(cd);
         }

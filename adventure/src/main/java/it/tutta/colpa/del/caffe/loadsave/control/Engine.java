@@ -4,6 +4,7 @@ import it.tutta.colpa.del.caffe.game.boundary.GUI;
 import it.tutta.colpa.del.caffe.game.control.Controller;
 import java.util.List;
 import java.io.File;
+import javax.swing.JOptionPane;
 
 public class Engine implements LoadController {
     private Controller mainPageController;
@@ -38,11 +39,14 @@ public class Engine implements LoadController {
                         (it.tutta.colpa.del.caffe.start.control.Engine) mainPageController,
                         loadedGame);
             } else {
-                choseSavePage.notifyError("Errore", "File di salvataggio non valido");
+                // Usa JOptionPane direttamente invece di chiamare notifyError su GUI
+                JOptionPane.showMessageDialog(null, "File di salvataggio non valido", "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            choseSavePage.notifyError("Errore di Caricamento",
-                    "Impossibile caricare il salvataggio: " + e.getMessage());
+            // Usa JOptionPane direttamente invece di chiamare notifyError su GUI
+            JOptionPane.showMessageDialog(null, "Impossibile caricare il salvataggio: " + e.getMessage(),
+                    "Errore di Caricamento", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -54,12 +58,18 @@ public class Engine implements LoadController {
 
             if (fileToDelete.exists() && fileToDelete.delete()) {
                 takeSaves();
-                choseSavePage.showInformation("Successo", "Salvataggio eliminato con successo!");
+                // Usa JOptionPane direttamente invece di chiamare showInformation su GUI
+                JOptionPane.showMessageDialog(null, "Salvataggio eliminato con successo!", "Successo",
+                        JOptionPane.INFORMATION_MESSAGE);
             } else {
-                choseSavePage.notifyError("Errore", "Impossibile eliminare il salvataggio");
+                // Usa JOptionPane direttamente invece di chiamare notifyError su GUI
+                JOptionPane.showMessageDialog(null, "Impossibile eliminare il salvataggio", "Errore",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (Exception e) {
-            choseSavePage.notifyError("Errore", "Errore durante l'eliminazione: " + e.getMessage());
+            // Usa JOptionPane direttamente invece di chiamare notifyError su GUI
+            JOptionPane.showMessageDialog(null, "Errore durante l'eliminazione: " + e.getMessage(), "Errore",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -71,7 +81,9 @@ public class Engine implements LoadController {
                 savePage.updateSaveList(saveFiles);
             }
         } catch (Exception e) {
-            choseSavePage.notifyError("Errore", "Impossibile caricare la lista dei salvataggi");
+            // Usa JOptionPane direttamente invece di chiamare notifyError su GUI
+            JOptionPane.showMessageDialog(null, "Impossibile caricare la lista dei salvataggi", "Errore",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

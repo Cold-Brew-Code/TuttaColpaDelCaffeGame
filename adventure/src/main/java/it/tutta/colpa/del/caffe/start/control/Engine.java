@@ -10,16 +10,16 @@ import it.tutta.colpa.del.caffe.start.boundary.MainPage;
  * @author giovav
  * @since 16/07/25
  *
- * La classe {@code Engine} rappresenta il motore principale
- * dell'applicazione
- * e implementa l'interfaccia {@link MainPageController}.
- * <p>
- * Si occupa di gestire il flusso del gioco, permettendo di avviare una
- * nuova partita,
- * caricare un salvataggio, chiudere l'applicazione e controllare
- * l'apertura/chiusura
- * della finestra principale (GUI).
- * </p>
+ *        La classe {@code Engine} rappresenta il motore principale
+ *        dell'applicazione
+ *        e implementa l'interfaccia {@link MainPageController}.
+ *        <p>
+ *        Si occupa di gestire il flusso del gioco, permettendo di avviare una
+ *        nuova partita,
+ *        caricare un salvataggio, chiudere l'applicazione e controllare
+ *        l'apertura/chiusura
+ *        della finestra principale (GUI).
+ *        </p>
  */
 public class Engine implements MainPageController {
 
@@ -44,6 +44,7 @@ public class Engine implements MainPageController {
      * interagire con il resto dell'applicazione.
      * </p>
      */
+    @SuppressWarnings("unused")
     public void startGame() {
         GameHandler gameHandler = new GameHandler(this);
     }
@@ -51,7 +52,8 @@ public class Engine implements MainPageController {
     /**
      * Avvia il processo di caricamento di una partita salvata.
      * <p>
-     * Crea e visualizza la pagina di selezione del salvataggio ({@link ChoseSavePage})
+     * Crea e visualizza la pagina di selezione del salvataggio
+     * ({@link ChoseSavePage})
      * e il suo relativo controller, chiudendo il menu principale.
      * </p>
      */

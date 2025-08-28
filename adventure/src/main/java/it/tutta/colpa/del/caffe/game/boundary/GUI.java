@@ -12,8 +12,4 @@ public interface GUI {
     void close();
 
     void linkController(Controller c);
-
-    void notifyError(String string, String string2);
-
-    void showInformation(String string, String string2);
 }

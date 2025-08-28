@@ -65,7 +65,6 @@ public class InventoryPage extends JDialog implements GUI {
         }
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
@@ -392,15 +391,11 @@ public class InventoryPage extends JDialog implements GUI {
         // controller non necessario per questa finestra
     }
 
-    @Override
     public void notifyError(String string, String string2) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyError'");
     }
 
-    @Override
     public void showInformation(String string, String string2) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'showInformation'");
     }
 }

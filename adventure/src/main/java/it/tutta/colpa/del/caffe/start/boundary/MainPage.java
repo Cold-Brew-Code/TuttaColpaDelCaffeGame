@@ -276,7 +276,7 @@ public class MainPage extends JFrame implements GUI {
 
         int option = JOptionPane.showConfirmDialog(
                 this,
-                new Object[]{message, slider},
+                new Object[] { message, slider },
                 title,
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.CLOSED_OPTION);
@@ -303,7 +303,7 @@ public class MainPage extends JFrame implements GUI {
      *
      * @param c il controller da associare
      * @throws RuntimeException se il controller non è un
-     * {@link MainPageController}
+     *                          {@link MainPageController}
      */
     @Override
     public void linkController(Controller c) {
@@ -344,12 +344,10 @@ public class MainPage extends JFrame implements GUI {
         }
     }
 
-    @Override
     public void notifyError(String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    @Override
     public void showInformation(String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
     }

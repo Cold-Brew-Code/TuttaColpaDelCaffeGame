@@ -20,6 +20,9 @@ public class SaveLoad {
         String projectPath = System.getProperty("user.dir");
         String savePath = projectPath + "/src/main/resources/saves/";
 
+        // Debug: stampa il percorso per verifica
+        System.out.println("Percorso salvataggi: " + savePath);
+
         File savesDir = new File(savePath);
         if (!savesDir.exists()) {
             savesDir.mkdirs();
@@ -31,6 +34,7 @@ public class SaveLoad {
         Path savesDir = Paths.get(SAVE_DIRECTORY);
         if (!Files.exists(savesDir)) {
             Files.createDirectories(savesDir);
+            logger.info("Directory salvataggi creata: " + SAVE_DIRECTORY);
         }
 
         String timestamp = LocalDateTime.now().format(FORMATTER);
@@ -39,8 +43,11 @@ public class SaveLoad {
 
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filePath))) {
             out.writeObject(object);
-            logger.info("Salvataggio creato: " + fileName);
+            logger.info("Salvataggio creato: " + filePath);
             return fileName;
+        } catch (IOException e) {
+            logger.severe("Errore durante il salvataggio: " + e.getMessage());
+            throw e;
         }
     }
 

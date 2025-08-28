@@ -38,7 +38,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
     private GameController controller;
     private boolean barUtilHasUsedRestroom = false;
-    private GameDescription gameDescription;
 
     public GamePage() {
         // <editor-fold defaultstate="collapsed" desc="< Java Layout >">
@@ -128,7 +127,6 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GamePage.class.getName());
     // </editor-fold>
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="< GUI init >">
     // GEN-BEGIN:initComponents
     private void initComponents() {
@@ -265,14 +263,11 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(visualEffectButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(timerLabel, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(saveButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(timerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 100,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+                                .addContainerGap()));
         HeaderPanelLayout.setVerticalGroup(
                 HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(HeaderPanelLayout.createSequentialGroup()
@@ -656,7 +651,14 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
 
                         // Inizializza anche la progress bar con il tempo corretto
                         boolean hasUsedRestroom = gameDescription.getStatus() == GameStatus.ESAME_DA_FARE;
-                        initProgressBar(gameDescription.getTimer().getRemainingTimeInSeconds(), hasUsedRestroom);
+                        int remainingTime = gameDescription.getTimer().getRemainingTimeInSeconds();
+                        initProgressBar(remainingTime, hasUsedRestroom);
+
+                        // AGGIUNTA: Imposta il valore corrente della progress bar
+                        // basato sul tempo già trascorso
+                        int totalTime = hasUsedRestroom ? 600 : 2100; // 10 minuti o 35 minuti
+                        int elapsedTime = totalTime - remainingTime;
+                        progressBar.setValue(elapsedTime);
                     }
                 }
             } catch (Exception e) {
@@ -688,6 +690,18 @@ public class GamePage extends javax.swing.JFrame implements GameGUI {
         this.progressBar.setMaximum(sec);
         this.progressBar.setValue(0);
         this.barUtilHasUsedRestroom = hasUsedRestroom;
+
+        // Assicurati che la progress bar sia visibile
+        this.progressBar.setVisible(true);
+
+        // Imposta un valore minimo visibile (es. 1% del massimo)
+        int minVisibleValue = Math.max(1, sec / 100);
+        this.progressBar.setValue(minVisibleValue);
+
+        SwingUtilities.invokeLater(() -> {
+            progressBar.revalidate();
+            progressBar.repaint();
+        });
     }
 
     /**

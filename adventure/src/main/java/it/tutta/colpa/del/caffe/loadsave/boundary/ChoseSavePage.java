@@ -6,7 +6,6 @@ import it.tutta.colpa.del.caffe.loadsave.control.LoadController;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.List;
@@ -42,7 +41,6 @@ public class ChoseSavePage extends JFrame implements GUI {
 
     }
 
-    @SuppressWarnings("unchecked")
     private void initComponents() {
 
         mainPanel = new javax.swing.JPanel() {
@@ -263,25 +261,6 @@ public class ChoseSavePage extends JFrame implements GUI {
         c.cancelOperation();
     }
 
-    private void deleteFileFromFileSystem() throws FileNotFoundException {
-        File dir = new File("./src/main/resources/saves");
-        if (!(dir.exists() && dir.isDirectory())) {
-            throw new FileNotFoundException("Cartella salvataggi non presente");
-        }
-
-        for (Save s : saves) {
-            if (s.isDeleted()) {
-                File fileToDelete = new File(dir, s.getPath());
-                if (fileToDelete.exists()) {
-                    boolean deleted = fileToDelete.delete();
-                    if (!deleted) {
-                        System.err.println("Impossibile eliminare: " + s.getPath());
-                    }
-                }
-            }
-        }
-    }
-
     private void setSaves() throws FileNotFoundException {
         List<String> saveFiles = it.tutta.colpa.del.caffe.loadsave.control.SaveLoad.getSaveFiles();
 
@@ -486,12 +465,10 @@ public class ChoseSavePage extends JFrame implements GUI {
         }
     }
 
-    @Override
     public void notifyError(String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.ERROR_MESSAGE);
     }
 
-    @Override
     public void showInformation(String title, String message) {
         JOptionPane.showMessageDialog(this, message, title, JOptionPane.INFORMATION_MESSAGE);
     }

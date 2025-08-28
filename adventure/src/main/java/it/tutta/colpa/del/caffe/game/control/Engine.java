@@ -17,7 +17,6 @@ import it.tutta.colpa.del.caffe.game.entity.GameMap;
 import it.tutta.colpa.del.caffe.game.entity.GameObservable;
 import it.tutta.colpa.del.caffe.game.entity.GameObserver;
 import it.tutta.colpa.del.caffe.game.entity.GeneralItem;
-import it.tutta.colpa.del.caffe.game.entity.Item;
 import it.tutta.colpa.del.caffe.game.entity.NPC;
 import it.tutta.colpa.del.caffe.game.entity.Room;
 import it.tutta.colpa.del.caffe.game.exception.GameMapException;
@@ -128,10 +127,14 @@ public class Engine implements GameController, GameObservable, TimeObserver {
             GUI.close();
             GUI.notifyError("Errore", err.toString());
         } else {
+            // PRIMA inizializza la progress bar
+            this.GUI.initProgressBar(2100, false);
+
+            // POI crea e avvia il timer
             this.description.setTimer(new Clock(20, this, this.GUI));
             this.description.getTimer().setRemainingTime(2100);
-            this.GUI.initProgressBar(2100, false);
             this.description.getTimer().start();
+
             GUI.out(description.getWelcomeMsg());
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
             try {
@@ -158,8 +161,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         } else {
             // Se il timer esiste, reimposta gli observer e la GUI
             description.getTimer().accelerate(1.0); // Resetta il fattore di velocità
-            // Non possiamo reimpostare observer e GUI direttamente, quindi
-            // dobbiamo assicurarci che vengano gestiti correttamente
+            description.getTimer().setObserver(this);
+            description.getTimer().setGUI(this.GUI);
         }
 
         initializeLoadedGame();
@@ -217,14 +220,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
         }
     }
 
-    private List<GeneralItem> getAllItemsFromMap(GameMap gameMap) {
-        List<GeneralItem> allItems = new ArrayList<>();
-        for (Room room : gameMap.getGrafo().vertexSet()) {
-            allItems.addAll(room.getItems());
-        }
-        return allItems;
-    }
-
     private List<NPC> getAllNPCsFromMap(GameMap gameMap) {
         List<NPC> allNPCs = new ArrayList<>();
         for (Room room : gameMap.getGrafo().vertexSet()) {
@@ -236,13 +231,18 @@ public class Engine implements GameController, GameObservable, TimeObserver {
     @Override
     public void saveGame() {
         try {
-            String fileName = it.tutta.colpa.del.caffe.loadsave.control.SaveLoad.saveObject(this.description);
-            this.GUI.showInformation("Salvataggio", "Partita salvata con successo!");
+            System.out.println("[DEBUG] Tentativo di salvataggio...");
+            System.out.println("[DEBUG] GameDescription: " + this.description);
+            System.out.println("[DEBUG] Timer: " + this.description.getTimer());
 
-            this.closeGUI();
-            this.mpc.openGUI();
+            String saveFileName = it.tutta.colpa.del.caffe.loadsave.control.SaveLoad.saveObject(this.description);
+
+            System.out.println("[DEBUG] Salvataggio completato: " + saveFileName);
+            this.GUI.showInformation("Salvataggio", "Partita salvata con successo!\nFile: " + saveFileName);
+
         } catch (Exception e) {
             System.err.println("[ERROR] Errore salvataggio: " + e.getMessage());
+            e.printStackTrace();
             this.GUI.notifyError("Salvataggio Fallito", "Errore: " + e.getMessage());
         }
     }

@@ -50,7 +50,6 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
         }
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated
     // Code">//GEN-BEGIN:initComponents
     private void initComponents(GameStatus s) {
@@ -142,15 +141,11 @@ public class GameEndedPage extends javax.swing.JFrame implements GUI {
         this.mpc = (MainPageController) c;
     }
 
-    @Override
     public void notifyError(String string, String string2) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'notifyError'");
     }
 
-    @Override
     public void showInformation(String string, String string2) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'showInformation'");
     }
 }
