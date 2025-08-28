@@ -3,8 +3,6 @@
     <img src="docs/img/icon.png" alt="Icona Gioco" width="25%" />
 </div>
 
-***La tua avventura inizia da qui, ma ogni passo è dettato dai dadi. Sarai tu a scegliere le mosse per sconfiggere i nemici e sopravvivere al mondo che ti circonda.***
-
 ---
 
 ## 📖 Trama del gioco
