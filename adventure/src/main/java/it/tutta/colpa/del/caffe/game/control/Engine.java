@@ -1,7 +1,6 @@
 package it.tutta.colpa.del.caffe.game.control;
 
 import java.awt.Frame;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

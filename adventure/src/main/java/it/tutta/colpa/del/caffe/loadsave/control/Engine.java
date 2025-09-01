@@ -7,8 +7,8 @@ import java.io.File;
 import javax.swing.JOptionPane;
 
 public class Engine implements LoadController {
-    private Controller mainPageController;
-    private GUI choseSavePage;
+    private final Controller mainPageController;
+    private final GUI choseSavePage;
     private it.tutta.colpa.del.caffe.loadsave.boundary.ChoseSavePage savePage;
     private boolean loadWasSuccessful = false;
 
@@ -29,8 +29,7 @@ public class Engine implements LoadController {
         try {
             Object loadedObject = SaveLoad.loadObject(saveFileName);
 
-            if (loadedObject instanceof it.tutta.colpa.del.caffe.game.entity.GameDescription) {
-                it.tutta.colpa.del.caffe.game.entity.GameDescription loadedGame = (it.tutta.colpa.del.caffe.game.entity.GameDescription) loadedObject;
+            if (loadedObject instanceof it.tutta.colpa.del.caffe.game.entity.GameDescription loadedGame) {
 
                 this.loadWasSuccessful = true;
 

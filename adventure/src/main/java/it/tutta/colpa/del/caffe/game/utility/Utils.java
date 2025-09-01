@@ -33,7 +33,6 @@ public class Utils {
         Set<String> lineSet = new HashSet<>();
         // Usa this.getClass() per ottenere il ClassLoader relativo a questa istanza
         try (InputStream inputStream = Utils.class.getResourceAsStream("/" + filePath)) {
-            System.out.println("/"+filePath);
             // È fondamentale controllare se la risorsa è stata trovata
             if (inputStream == null) {
                 System.err.println("File non trovato nel classpath: " + filePath);
@@ -45,7 +44,6 @@ public class Utils {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
             System.err.println("Errore durante la lettura del file: " + e.getMessage());
         }
         return lineSet;
@@ -64,6 +62,7 @@ public class Utils {
      * @return un {@link Set} contenente tutte le righe del file in minuscolo
      * @throws IOException se si verifica un errore durante la lettura del file
      */
+    @SuppressWarnings("unused")
     public static Set<String> loadFileListInSet(File file) throws IOException {
         Set<String> set = new HashSet<>();
         BufferedReader reader = new BufferedReader(new FileReader(file));
