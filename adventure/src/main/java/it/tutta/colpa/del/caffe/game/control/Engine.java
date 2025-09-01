@@ -192,8 +192,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                 GUI.notifyWarning("Attenzione!", "Risorsa immagine non trovata!");
                 try {
                     GUI.setImage("/images/resource_not_found.png");
-                } catch (ImageNotFoundException e2) {
-                }
+                } catch (ImageNotFoundException ignored) { }
             }
 
             GUI.out(description.getCurrentRoom().getDescription().translateEscapes());
@@ -204,7 +203,8 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
     private Parser initParserFromDescription(GameDescription description) {
         try {
-            Set<String> stopwords = Utils.loadFileListInSet(new File("./src/main/resources/stopwords"));
+            Set<String> stopwords = Utils.loadFileListInSet("resources/stopwords");
+
             List<GeneralItem> allItems = new ArrayList<>();
             for (Room room : description.getGameMap().getGrafo().vertexSet()) {
                 allItems.addAll(room.getItems());
@@ -215,7 +215,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
                     description.getCommands(),
                     allItems,
                     getAllNPCsFromMap(description.getGameMap()));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException("Errore nell'inizializzazione del parser: " + e.getMessage(), e);
         }
     }
@@ -242,7 +242,6 @@ public class Engine implements GameController, GameObservable, TimeObserver {
 
         } catch (Exception e) {
             System.err.println("[ERROR] Errore salvataggio: " + e.getMessage());
-            e.printStackTrace();
             this.GUI.notifyError("Salvataggio Fallito", "Errore: " + e.getMessage());
         }
     }
@@ -264,7 +263,7 @@ public class Engine implements GameController, GameObservable, TimeObserver {
      * Inizializza il parser recuperando dal server le liste di oggetti e NPC.
      */
     private Parser initParserFromServer(GameDescription description) throws IOException, ServerCommunicationException {
-        Set<String> stopwords = Utils.loadFileListInSet(new File("./src/main/resources/stopwords"));
+        Set<String> stopwords = Utils.loadFileListInSet("resources/stopwords");
         ServerInterface si = new ServerInterface("localhost", 49152);
 
         // Il server dovrebbe già restituire List<GeneralItem>

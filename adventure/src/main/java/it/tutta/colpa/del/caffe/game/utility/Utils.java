@@ -5,14 +5,12 @@
  */
 package it.tutta.colpa.del.caffe.game.utility;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Classe che contenente metodi statici per operazioni su file e
@@ -22,6 +20,37 @@ import java.util.Set;
  * @author giova
  */
 public class Utils {
+
+
+    /**
+     * Carica un file dal classpath come un Set di stringhe, una per ogni riga.
+     * Questo metodo è di istanza e usa this.getClass() per localizzare la risorsa.
+     *
+     * @param filePath Il percorso del file dalla root del classpath.
+     * @return Un Set contenente le righe del file.
+     */
+    public static Set<String> loadFileListInSet(String filePath) {
+        Set<String> lineSet = new HashSet<>();
+        // Usa this.getClass() per ottenere il ClassLoader relativo a questa istanza
+        try (InputStream inputStream = Utils.class.getResourceAsStream("/" + filePath)) {
+            System.out.println("/"+filePath);
+            // È fondamentale controllare se la risorsa è stata trovata
+            if (inputStream == null) {
+                System.err.println("File non trovato nel classpath: " + filePath);
+                return lineSet; // Ritorna il set vuoto
+            }
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                lineSet = reader.lines().collect(Collectors.toSet());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.err.println("Errore durante la lettura del file: " + e.getMessage());
+        }
+        return lineSet;
+    }
+
 
     /**
      * Carica il contenuto di un file in un {@link Set} di stringhe.
@@ -53,7 +82,7 @@ public class Utils {
      * {@code stopwords} vengono scartate.
      * </p>
      *
-     * @param string la stringa da parsare
+     * @param string    la stringa da parsare
      * @param stopwords un {@link Set} contenente le parole da ignorare
      * @return una {@link List} di token filtrati, mantenendo l'ordine originale
      */

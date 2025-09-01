@@ -9,32 +9,41 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class SaveLoad {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private static final String SAVE_DIRECTORY_NAME = "TuttaColpaDelCaffeSaves";
     private static final String SAVE_DIRECTORY = getSaveDirectory();
 
     private static final Logger logger = Logger.getLogger(SaveLoad.class.getName());
 
     private static String getSaveDirectory() {
-        String projectPath = System.getProperty("user.dir");
-        String savePath = projectPath + "/src/main/resources/saves/";
+        try {
+            // Ottieni il percorso della directory dove si trova il JAR
+            URL location = SaveLoad.class.getProtectionDomain().getCodeSource().getLocation();
+            Path jarPath = Paths.get(location.toURI());
+            Path jarDir = jarPath.getParent();
 
-        // Debug: stampa il percorso per verifica
-        System.out.println("Percorso salvataggi: " + savePath);
+            // Crea il percorso per la nuova cartella di salvataggi
+            Path savePath = jarDir.resolve(SAVE_DIRECTORY_NAME);
 
-        File savesDir = new File(savePath);
-        if (!savesDir.exists()) {
-            savesDir.mkdirs();
+            // Verifica e crea la cartella se non esiste
+            if (!Files.exists(savePath)) {
+                Files.createDirectories(savePath);
+                logger.info("Directory di salvataggio creata: " + savePath);
+            }
+            return savePath.toString() + File.separator;
+        } catch (URISyntaxException | IOException e) {
+            logger.severe("Errore nella creazione della directory di salvataggio: " + e.getMessage());
+            return null;
         }
-        return savePath;
     }
 
     public static String saveObject(Object object) throws IOException {
-        Path savesDir = Paths.get(SAVE_DIRECTORY);
-        if (!Files.exists(savesDir)) {
-            Files.createDirectories(savesDir);
-            logger.info("Directory salvataggi creata: " + SAVE_DIRECTORY);
+        if (SAVE_DIRECTORY == null) {
+            throw new IOException("La directory di salvataggio non è disponibile.");
         }
 
         String timestamp = LocalDateTime.now().format(FORMATTER);
@@ -52,6 +61,9 @@ public class SaveLoad {
     }
 
     public static Object loadObject(String fileName) throws IOException, ClassNotFoundException {
+        if (SAVE_DIRECTORY == null) {
+            throw new IOException("La directory di salvataggio non è disponibile.");
+        }
         String filePath = SAVE_DIRECTORY + fileName;
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filePath))) {
             return in.readObject();
@@ -61,6 +73,10 @@ public class SaveLoad {
     }
 
     public static boolean deleteSave(String fileName) {
+        if (SAVE_DIRECTORY == null) {
+            logger.warning("Impossibile eliminare il file, la directory di salvataggio non è disponibile.");
+            return false;
+        }
         File file = new File(SAVE_DIRECTORY + fileName);
         boolean deleted = file.exists() && file.delete();
         if (deleted) {
@@ -73,6 +89,9 @@ public class SaveLoad {
 
     public static List<String> getSaveFiles() {
         List<String> saveFiles = new ArrayList<>();
+        if (SAVE_DIRECTORY == null) {
+            return saveFiles;
+        }
         File savesDir = new File(SAVE_DIRECTORY);
 
         if (savesDir.exists() && savesDir.isDirectory()) {
