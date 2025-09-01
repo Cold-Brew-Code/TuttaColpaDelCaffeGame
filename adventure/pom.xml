@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>it.tutta.colpa.del.caffe</groupId>
     <artifactId>adventure</artifactId>
-    <version>0.1.0</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
